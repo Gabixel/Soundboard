@@ -1,0 +1,24 @@
+{
+	"name": "soundboard",
+	"version": "1.0.0",
+	"description": "A soundboard for Discord",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron ."
+	},
+	"keywords": [
+		"soundboard",
+		"audio",
+		"voice"
+	],
+	"author": "Gabriel Del Nero",
+	"license": "MIT",
+	"dependencies": {
+		"electron": "^19.0.3",
+		"jquery": "^3.6.0",
+		"npm": "^8.11.0"
+	},
+	"devDependencies": {
+		"@types/jquery": "^3.5.14"
+	}
+}

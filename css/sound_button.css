@@ -1,0 +1,59 @@
+input[type="button"].soundbutton,
+button.soundbutton {
+  --hue: 0;
+  --saturation: 100%;
+  --lightness: 50%;
+  --alpha: 1;
+  --threshold: 0.5;
+  --border-threshold: 0.8;
+  --button-background-hsl: hsl(var(--hue) var(--saturation) var(--lightness) / var(--alpha));
+  --button-background-hover-hsl: hsl(var(--hue) var(--saturation) clamp(0%, var(--lightness) - 5%, 100%)/1);
+  --button-background-active-hsl: hsl(var(--hue) var(--saturation) clamp(0%, var(--lightness) - 10%, 100%)/1);
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  order: var(--index, 0);
+  border-radius: 5px;
+  min-width: 1px;
+  min-height: 1px;
+  border: none;
+  background: none;
+  background-color: var(--button-background-hsl);
+  margin: 0;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  max-width: var(--width);
+  max-height: var(--height);
+  transition: background-color 0.1s, opacity 0.2s, filter 0.2s;
+}
+#buttons-grid:not(.has-dragging-child) input[type="button"].soundbutton:hover,
+#buttons-grid:not(.has-dragging-child) button.soundbutton:hover {
+  background-color: var(--button-background-hover-hsl);
+}
+#buttons-grid:not(.has-dragging-child) input[type="button"].soundbutton:active,
+#buttons-grid:not(.has-dragging-child) button.soundbutton:active {
+  background-color: var(--button-background-active-hsl);
+}
+input[type="button"].soundbutton.dragging,
+button.soundbutton.dragging {
+  z-index: 1;
+  opacity: 0.35;
+  box-shadow: 0 0 2px rgba(0, 0, 0, var(--alpha));
+  pointer-events: none;
+}
+#buttons-grid.has-dragging-child input[type="button"].soundbutton:not(.dragging),
+#buttons-grid.has-dragging-child button.soundbutton:not(.dragging) {
+  filter: blur(2px);
+}
+#buttons-grid.has-dragging-child input[type="button"].soundbutton.drop-destination,
+#buttons-grid.has-dragging-child button.soundbutton.drop-destination {
+  transition: background-color 0.1s, opacity 0.2s;
+  filter: blur(0);
+  box-shadow: 0 0 0 3px #fff;
+}
+input[type="button"].soundbutton.hidden,
+button.soundbutton.hidden {
+  display: none;
+}

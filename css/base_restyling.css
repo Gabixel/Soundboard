@@ -1,0 +1,12 @@
+html,
+body,
+body * {
+  font-family: 'Comfortaa';
+  outline: 0;
+}
+body {
+  font-size: 1rem;
+}
+/*input::selection {
+	background-color: #3a4a61;
+}*/

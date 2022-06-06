@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'Comfortaa';
+  src: url(../resources/fonts/Comfortaa/Comfortaa-Variable.ttf) format('truetype-variations');
+  font-weight: 1 999;
+}
+html,
+body,
+body * {
+  box-sizing: border-box;
+  position: relative;
+}
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+body {
+  overflow: hidden;
+}
+p {
+  display: inline-block;
+  margin: 0;
+  width: fit-content;
+  height: fit-content;
+}

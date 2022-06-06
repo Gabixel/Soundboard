@@ -1,0 +1,35 @@
+// out: false
+
+.flex-center-all() {
+	justify-content: center;
+	align-items: center;
+}
+
+.absolute() {
+	position: absolute;
+}
+
+.set-width(@width: 100%) {
+	width: @width;
+}
+
+.set-height(@height: 100%) {
+	height: @height;
+}
+
+.fill-size() {
+	.set-width(100%);
+	.set-height(100%);
+}
+
+.set-radius(@r: 0) {
+	border-radius: @r;
+}
+
+.hide-overflow() {
+	overflow: hidden;
+}
+
+.block-text-select() {
+	user-select: none;
+}

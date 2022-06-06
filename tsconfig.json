@@ -1,0 +1,38 @@
+{
+	"compilerOptions": {
+		"rootDir": "./ts/",
+		"outDir": "./js/",
+		// "outFile": "./js/build.js",
+		"target": "ESNext",
+		// "module": "AMD",
+		"lib": [
+			"ES2017",
+			"DOM"
+		],
+
+		// Export
+		"preserveConstEnums": true,
+		"removeComments": true,
+
+		// Intellisense
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"noImplicitThis": true,
+		"noImplicitUseStrict": true,
+		"strictNullChecks": false,
+
+		"declaration": true,
+		// "emitDeclarationOnly": true,
+		"esModuleInterop": true,
+		"allowJs": false
+	},
+	"include": [
+		"./ts/*.ts",
+		"./ts/**/*.ts"
+	],
+	"exclude": [
+		"node_modules",
+		// "js"
+	],
+}

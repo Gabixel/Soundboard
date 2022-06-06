@@ -1,0 +1,12 @@
+// out: false
+
+// Border around elements
+&,
+* {
+	/*@outline-size: 1px;
+	outline: @outline-size dashed rgba(204, 0, 255, 0.5);
+	outline-offset: -@outline-size;*/
+
+	@border-size: 1px;
+	box-shadow: 0 0 0 1px rgba(204, 0, 255, 0.5) inset;
+}

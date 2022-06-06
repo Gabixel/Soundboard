@@ -1,0 +1,110 @@
+@import "../functions";
+
+// https://developer.chrome.com/blog/flexbox-layout-isn-t-slow
+// NICE!!
+
+// https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/
+
+input[type="button"].soundbutton,
+button.soundbutton {
+	--hue: 0;
+	--saturation: 100%;
+	--lightness: 50%;
+
+	// --red: 255;
+	// --green: 0;
+	// --blue: 0;
+
+	--alpha: 1;
+
+	// Calculates perceived lightness using the sRGB Luma method.
+	// Luma = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255
+	// --luma: calc(var(--red) * 0.2126 + var(--green) * 0.7152 + var(--blue) * 0.0722 / 255);
+
+	// The threshold at which colors are considered "light". Range: decimals from 0 to 1.
+	--threshold: 0.5;
+
+	// The threshold at which a darker border will be applied. Range: decimals from 0 to 1.
+	--border-threshold: 0.8;
+
+	// Applies a darker border if the luma is higher than the border threshold.
+	// --border-alpha: calc((var(--luma) - var(--border-threshold)) * 100);
+
+	--button-background-hsl: hsl(var(--hue) var(--saturation) var(--lightness) / var(--alpha));
+	--button-background-hover-hsl: hsl(var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 5%, 100%)"/ 1);
+	--button-background-active-hsl: hsl(var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 10%, 100%)"/ 1);
+
+	overflow: hidden;
+	padding: 0;
+
+	display: flex;
+	.flex-center-all();
+
+	order: var(--index, 0);
+
+	border-radius: 5px;
+
+	min-width: 1px;
+	min-height: 1px;
+
+	border: none;
+	background: none;
+	background-color: var(--button-background-hsl);
+
+	margin: 0;
+	margin-right: 8px;
+	margin-bottom: 8px;
+
+	max-width: var(--width);
+	max-height: var(--height);
+
+	transition: background-color .1s, opacity .2s, filter .2s;
+
+	#buttons-grid:not(.has-dragging-child) &:hover {
+		// background-color: #5cb811;
+		// background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
+		background-color: var(--button-background-hover-hsl);
+	}
+
+	#buttons-grid:not(.has-dragging-child) &:active {
+		// position: relative;
+		// top: 1px;
+		background-color: var(--button-background-active-hsl);
+	}
+
+	&.dragging {
+		// outline: 3px solid ~"rgba(max(0, var(--red) - 50), max(0, var(--green) - 50), max(0, var(--blue) - 50), var(--border-alpha))";
+		// transition: opacity .5s;
+		z-index: 1;
+
+		opacity: .35;
+
+		box-shadow: 0 0 2px rgba(0, 0, 0, var(--alpha));
+		pointer-events: none;
+	}
+
+	#buttons-grid.has-dragging-child &:not(.dragging) {
+		filter: blur(2px);
+	}
+
+	#buttons-grid.has-dragging-child &.drop-destination {
+		transition: background-color .1s, opacity .2s;
+		filter: blur(0);
+		// outline: 4px solid #fff;
+		box-shadow: 0 0 0 3px #fff;
+	}
+
+	&.playing {
+		// outline: 1px dashed hsl(var(--hue) 100% 20% / 1);
+
+		// TODO: Dynamic outline
+	}
+
+	&.hidden {
+		display: none;
+	}
+
+	&:focus {
+		
+	}
+}
