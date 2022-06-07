@@ -3,14 +3,20 @@ $("#grid-rows")
 		updateRows(e);
 		updateGrid();
 	})
-	.on("wheel", (e) => EventFunctions.updateInputFromWheel(e));
+	.on("wheel", (e) => {
+		e.preventDefault();
+		EventFunctions.updateInputValueFromWheel(e);
+	});
 
 $("#grid-columns")
 	.on("change", (e) => {
 		updateColumns(e);
 		updateGrid();
 	})
-	.on("wheel", (e) => EventFunctions.updateInputFromWheel(e));
+	.on("wheel", (e) => {
+		e.preventDefault();
+		EventFunctions.updateInputValueFromWheel(e);
+	});
 
 $("#clear-grid").on("click", () => {
 	$("#buttons-grid").empty();
