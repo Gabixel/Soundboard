@@ -397,6 +397,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Specific JS and Typescript Module files
+# Compiled JS and Typescript Module files
 js/**/*.js
 js/**/*.d.ts
+
+# Compiled CSS files
+css/**/*.css
