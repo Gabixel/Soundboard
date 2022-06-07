@@ -30,8 +30,6 @@ $("#volume").trigger("input"); // Initializes volume in the audio player
 $(document).on("wheel", (e) => {
 	if (!e.ctrlKey) return;
 
-	// e.preventDefault();
-
 	const value = EventFunctions.getUpdatedValueFromWheel(
 		e,
 		parseFloat($(document.body).css("zoom").toString()),
