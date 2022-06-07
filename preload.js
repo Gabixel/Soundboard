@@ -1,9 +1,4 @@
-// const { contextBridge, ipcRenderer } = require("electron");
-
-// contextBridge.exposeInMainWorld("electronAPI", {
-// 	testAudio: () => ipcRenderer.sendSync("test-audio"),
-// });
-
-// // ipcRenderer.on("test-audio-get", (event, arg) => {
-// // 	return arg;
-// // });
+const { contextBridge, ipcRenderer } = require("electron");
+contextBridge.exposeInMainWorld("api", {
+    openContextMenu: (args) => ipcRenderer.send("open-context-menu", args),
+});

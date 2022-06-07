@@ -7,6 +7,9 @@ body * {
 body {
   font-size: 1rem;
 }
+i[class*="fa-"] {
+  transform: translateY(0.5px);
+}
 /*input::selection {
 	background-color: #3a4a61;
 }*/

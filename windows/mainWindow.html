@@ -6,9 +6,14 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
-	<meta http-equiv="X-Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+	<meta http-equiv="Content-Security-Policy"
+		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
+	<meta http-equiv="X-Content-Security-Policy"
+		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
 	<title>Soundboard</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+		integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="../css/base.css">
 	<link rel="stylesheet" href="../css/colors.css">
 	<link rel="stylesheet" href="../css/base_restyling.css">
@@ -27,8 +32,8 @@
 				<div id="buttons-grid">
 				</div>
 				<div id="audio-controls">
-					<i class="fa-solid fa-user"></i>
-					<button type="button" id="stop-audio">Stop</button>
+					<button type="button" id="stop-audio"><i class="fas fa-stop"></i></button>
+					<button type="button" id="play-pause-audio"><i class="fas fa-play"></i></button>
 					<button type="button" id="clear-grid">Reset Grid</button>
 					<br>
 					<label for="rows">Rows:</label>
@@ -39,14 +44,17 @@
 					<label for="volume">Volume:</label>
 					<input type="range" id="volume" min="0" max="1000" step="1" style="accent-color: #ccc;">
 					<label for="audio-pan">Pan:</label>
-					<input type="range" id="audio-pan" min="-1" max="1" step="0.1" style="accent-color: #ccc;">
+					<input disabled type="range" id="audio-pan" min="-1" max="1" step="0.1" style="accent-color: #ccc;">
+					<br>
+					<label for="ui-scale">UI Scale:</label>
+					<input type="range" id="ui-scale" min="0.8" max="1.5" step="0.01" value="1" --data-default="1" style="accent-color: #ccc;">
+					<button type="button" id="reset-ui-scale">Reset</button>
 				</div>
 			</main>
 		</div>
 	</div>
 
-	<script src="../resources/scripts/jquery-3.6.0.slim.min.js"></script>
-	<script src="../resources/scripts/font-awesome-all.min.js"></script>
+	<script src="../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>

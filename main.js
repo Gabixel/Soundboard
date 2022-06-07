@@ -45,47 +45,52 @@ const createMainWindow = () => {
 		webPreferences,
 	});
 
-	/* Set the `Menu` instance as the context menu */
-	mainWindow.webContents.on("context-menu", (event, params) => {
+	let ipc = require("electron").ipcMain;
+
+	ipc.on("open-context-menu", (event, args) => {
+		console.log(event);
+		console.log(event.sender);
+		console.log(args);
+		console.log(args["target"]);
+
 		const menu = Menu.buildFromTemplate([
-			{
-				label: "Edit",
-				submenu: [
-					{
-						label: "Edit button",
-						click: () => {},
-					},
-					{
-						label: "Edit sound",
-						click: () => {},
-					},
-					{
-						label: "Edit soundboard",
-						click: () => {},
-					},
-				],
-			},
-			{
+			/*{
 				label: "Help",
 				submenu: [
 					{
 						label: "About",
-						click: () => {
-							createEditButtonWindow(); // test
-						},
+						click: () => {},
 					},
 					{
 						label: "Help",
 						click: () => {},
 					},
 				],
+			},*/
+			{
+				label: "nothing to see here 👀",
+				enabled: false,
+				toolTip: "test tooltip",
 			},
 		]);
 
-		menu.popup(mainWindow, params.x, params.y);
+		if (args.isSoundButton) {
+			menu.insert(
+				0,
+				new MenuItem({
+					label: "Edit",
+					click: () => {
+						createEditButtonWindow(args.buttonName);
+					},
+				})
+			);
+		}
+
+		menu.popup(mainWindow, args.x, args.y);
 	});
 
 	/* Inject script elements to the body of `mainWindows` */
+	// TODO: do this in a js file
 	mainWindow.webContents.on("dom-ready", () => {
 		function addScripts(...scriptPaths) {
 			scriptPaths.forEach((scriptPath) => {
@@ -99,8 +104,10 @@ const createMainWindow = () => {
 			"utility/ExtendedMath",
 			"utility/EventFunctions",
 
+			"audio/AudioPool",
+			"audio/AudioStoreManager",
 			"audio/AudioPlayer",
-			"audio/Volume",
+			"audio/Audio",
 
 			"grid/ButtonsGridSizeChanger",
 			"grid/ButtonsGrid",

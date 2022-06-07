@@ -60,5 +60,33 @@ body #soundboard #main-container main #buttons-grid {
 body #soundboard #main-container main #audio-controls {
   flex-grow: 1;
   overflow: hidden;
-  justify-content: space-between;
+  align-content: center;
+}
+body #soundboard #main-container main #audio-controls #stop-audio {
+  border: none;
+  background-color: #bb0000;
+  color: #fff;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  min-width: 30px;
+  width: 30px;
+  min-height: 30px;
+  height: 30px;
+}
+body #soundboard #main-container main #audio-controls #play-pause-audio {
+  border: none;
+  background-color: #00bb00;
+  color: #fff;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  min-width: 30px;
+  width: 30px;
+  min-height: 30px;
+  height: 30px;
 }
