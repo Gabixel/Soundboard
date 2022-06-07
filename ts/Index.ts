@@ -1,16 +1,29 @@
-async function test() {
-	const devices = await navigator.mediaDevices.enumerateDevices();
-	const audioDevices = devices.filter((device) => device.kind === "audiooutput");
+//#region Types
+type AudioJS = HTMLAudioElement & {
+	setSinkId(deviceId: string): Promise<undefined>;
+	sinkId: string;
+};
+type AudioGroup = {
+	main: AudioJS;
+	playback: AudioJS;
+	lastTrack?: string;
+	forcedEnding?: boolean;
+};
+type SoundButtonData = {
+	title: string;
+	color: {
+		h: number;
+		s: number;
+		l: number;
+	};
+	image: string;
+	tags: string[];
+	path: string;
+	index: number;
+};
+//#endregion
 
-	const audioElement = new Audio();
-	// @ts-ignore: Property 'setSinkId' does not exist on type 'HMLAudioElement'. ts(2339)
-	await audioElement.setSinkId(audioDevices[0].deviceId);
 
-	// @ts-ignore: Property 'sinkId' does not exist on type 'HMLAudioElement'. ts(2339)
-	console.log("Audio is being played on " + audioElement.sinkId);
-	console.log("Audio devices:");
-	console.log(audioDevices);
-}
 
 $("#grid-rows, #grid-columns").trigger("change");
 

@@ -1,19 +1,18 @@
-declare type AudioJS = HTMLAudioElement & {
-    setSinkId(deviceId: string): Promise<undefined>;
-    sinkId: string;
-};
 declare class AudioPlayer {
     private static _volume;
-    private static audioMain;
-    private static audioTree;
-    private static addingAudio;
-    static playAudio(path: string): void;
-    private static createAudio;
-    private static addAudio;
-    private static prepareAudio;
+    private static audioStore;
+    private static audioDevices;
+    static updateAudioDevicesList(): Promise<void>;
+    static addAudio(path: string, useMultiPool?: boolean): void;
+    private static tryAddAudio;
+    private static storeAudio;
+    private static setAudioDevice;
+    static play(): Promise<void>;
+    static pause(): void;
     static stop(): void;
-    private static removeAudio;
+    static get isPlaying(): boolean;
     static get volume(): number;
     static set volume(value: number);
     private static updateExistingVolumes;
+    static setPan(pan: number): void;
 }

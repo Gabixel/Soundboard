@@ -1,80 +1,74 @@
-type AudioJS = HTMLAudioElement & {
-	setSinkId(deviceId: string): Promise<undefined>;
-	sinkId: string;
-};
-
 class AudioPlayer {
-	private static _volume: number = 0.12;
+	private static _volume: number = 0;
 
-	private static audioMain: AudioJS = new Audio() as AudioJS; // TODO
-	private static audioTree: AudioJS[] = [];
+	// private static context: AudioContext = new AudioContext();
+	// private static panner: StereoPannerNode = this.context.createStereoPanner();
 
-	private static addingAudio: boolean = false;
+	private static audioStore: AudioStoreManager = new AudioStoreManager();
 
-	// constructor() {
-	// 	const devices = await navigator.mediaDevices.enumerateDevices();
-	// 	const audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
-	// }
+	// private static mediaList: AudioNode[] = []; // TODO: audio context
+	private static audioDevices: MediaDeviceInfo[];
 
-	public static playAudio(path: string): void {
-		this.createAudio(path);
-
-		// TODO: add logic to check if the audio should play on `audioMain` or on `audioTree`.
-	}
-
-	private static createAudio(path: string): void {
-		let audio: AudioJS = new Audio(path) as AudioJS;
-		$(audio).one("canplay", (e) => this.addAudio(e.target as AudioJS));
-	}
-
-	private static async addAudio(audio: AudioJS) {
-		if (this.addingAudio) return;
-
-		this.addingAudio = true;
-
-		await this.prepareAudio(audio);
-
-		this.addingAudio = false;
-	}
-
-	private static async prepareAudio(audio: AudioJS): Promise<void> {
-		const playback = audio.cloneNode() as AudioJS;
-		this.audioTree.push(audio);
-		this.audioTree.push(playback);
-
-		$(audio).on("ended", this.removeAudio.bind(this, audio));
-		$(playback).on("ended", this.removeAudio.bind(this, playback));
-
+	public static async updateAudioDevicesList(): Promise<void> {
 		const devices = await navigator.mediaDevices.enumerateDevices();
-		const audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
-
-		const mainDevice = audioDevices[2]; // virtual audio cable (but can change after testing)
-		// const playbackDevice = audioDevices[0]; // default device
-
-		audio.loop = playback.loop = false;
-		audio.volume = playback.volume = this.volume;
-
-		try {
-			await audio.play();
-			await playback.play();
-		} catch (e) {}
-
-		await audio.setSinkId(mainDevice.deviceId);
-
-		// No need to change the playback sink, it has to stay to the default device.
-		// console.log("audio sink changed");
+		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
+		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: store preferred device
 	}
 
-	public static stop(): void {
-		this.audioTree.forEach((audio) => {
-			$(audio).attr("ending", "true");
-			audio.volume = 0;
-			audio.currentTime = audio.duration;
+	public static addAudio(path: string, useMultiPool: boolean = false): void {
+		this.tryAddAudio(path, useMultiPool);
+	}
+
+	private static tryAddAudio(path: string, useMultiPool: boolean): void {
+		if(!useMultiPool) {
+			this.audioStore.addAudio(path);
+			return;
+		}
+
+		let audioGroup = new Audio(path) as AudioJS;
+
+		$(audioGroup).one("canplay", (e) => {
+			this.storeAudio(e.target as AudioJS);
 		});
 	}
 
-	private static removeAudio(audio: AudioJS): void {
-		this.audioTree.splice(this.audioTree.indexOf(audio), 1);
+	private static async storeAudio(mainAudio: AudioJS): Promise<void> {
+		const main = mainAudio;
+		const playback = mainAudio.cloneNode() as AudioJS;
+
+		const group: AudioGroup = {
+			main,
+			playback,
+			forcedEnding: false,
+		};
+
+		main.volume = playback.volume = this.volume;
+
+		await this.setAudioDevice(main);
+
+		this.audioStore.addAudio(group);
+	}
+
+	private static async setAudioDevice(audio: AudioJS): Promise<void> {
+		if(!this.audioDevices) await this.updateAudioDevicesList();
+
+		await audio.setSinkId(this.audioDevices[2].deviceId);
+	}
+
+	public static async play(): Promise<void> {
+		await this.audioStore.play();
+	}
+
+	public static pause(): void {
+		this.audioStore.pause();
+	}
+
+	public static stop(): void {
+		this.audioStore.stop();
+	}
+
+	public static get isPlaying(): boolean {
+		return this.audioStore.isPlaying;
 	}
 
 	public static get volume(): number {
@@ -87,10 +81,10 @@ class AudioPlayer {
 	}
 
 	private static updateExistingVolumes(): void {
-		this.audioTree.forEach((audio) => {
-			if ($(audio).attr("ending") === "true") return;
+		this.audioStore.setVolume(this._volume);
+	}
 
-			audio.volume = this.volume;
-		});
+	public static setPan(pan: number): void {
+		// this.panner.pan.value = EMath.clamp(pan, -1, 1);
 	}
 }
