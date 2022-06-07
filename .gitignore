@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Specific JS files
+*.js
+!main.js
+!reload.js
+!resources/scripts/*.js
