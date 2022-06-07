@@ -401,4 +401,4 @@ FodyWeavers.xsd
 *.js
 !main.js
 !reload.js
-!resources/scripts/*.js
+!resources/scripts/*
