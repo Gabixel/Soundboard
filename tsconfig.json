@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
-		"rootDir": "./ts/",
+		"composite": true,
+		"rootDir": "./ts",
 		"outDir": "./js/",
 		// "outFile": "./js/build.js",
 		"target": "ESNext",
@@ -29,7 +30,7 @@
 	},
 	"include": [
 		"./ts/*.ts",
-		"./ts/**/*.ts"
+		"./ts/**/*.ts",
 	],
 	"exclude": [
 		"node_modules",
