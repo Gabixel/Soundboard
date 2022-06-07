@@ -26,7 +26,6 @@ $("#volume")
 		AudioPlayer.volume = ($("#volume").val() as number) / 1000;
 	})
 	.on("wheel", (e) => {
-		e.preventDefault();
 		EventFunctions.updateInputValueFromWheel(e, 50, true, ["input"]);
 	});
 

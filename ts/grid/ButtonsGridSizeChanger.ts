@@ -4,7 +4,6 @@ $("#grid-rows")
 		updateGrid();
 	})
 	.on("wheel", (e) => {
-		e.preventDefault();
 		EventFunctions.updateInputValueFromWheel(e);
 	});
 
@@ -14,7 +13,6 @@ $("#grid-columns")
 		updateGrid();
 	})
 	.on("wheel", (e) => {
-		e.preventDefault();
 		EventFunctions.updateInputValueFromWheel(e);
 	});
 
