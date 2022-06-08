@@ -1,22 +1,31 @@
 class AudioPool {
-	private audioPool: AudioGroup[] = [];
+	private audioPool: AudioPoolGroup[] = [];
 
-	public add(audioGroup: AudioGroup): void {
-		this.audioPool.push(audioGroup);
-		$(audioGroup.playback).one("ended", () => {
-			console.log("audio ended, trying to remove...");
-			this.remove(audioGroup);
+	public add(group: AudioPoolGroup): void {
+		this.audioPool.push(group);
+		// $(group.main).one("ended", () => {
+		// 	console.log("main audio ended, trying to remove...");
+		// 	group.mainEnded = true;
+		// 	this.checkIfGroupIsRemovable(group);
+		// });
+		$(group.playback).one("ended", () => {
+			// console.log("playback audio ended, trying to remove...");
+			// group.playbackEnded = true;
+			this.remove(group);
+			group = null;
 		});
 	}
 
-	public remove(removingItem: AudioGroup | AudioJS): void {
-		console.log(typeof removingItem); // TODO
-		// // if (typeof removingItem) {
-		// // } else {
-		// // 	this.audioPool.splice(this.audioPool.indexOf(removingGroup), 1);
-		// // }
-		// this.audioPool = this.audioPool.filter((group) => group !== removingGroup);
-		// this.audioPool.splice(this.audioPool.indexOf(this.audioPool.filter((group) => group.main === mainAudio)[0]), 1);
+	// private checkIfGroupIsRemovable(group: AudioPoolGroup): void {
+	// 	if (group.mainEnded && group.playbackEnded) {
+	// 		this.remove(group);
+	// 	}
+	// }
+
+	public remove(removingGroup: AudioPoolGroup): void {
+		console.log("remove called");
+
+		this.audioPool.splice(this.audioPool.indexOf(removingGroup), 1);
 	}
 
 	public async play(): Promise<void> {
@@ -30,7 +39,7 @@ class AudioPool {
 
 	public pause(): void {
 		this.audioPool.forEach((group) => {
-			if(group.forcedEnding) return;
+			if (group.forcedEnding) return;
 
 			group.main.pause();
 			group.playback.pause();
@@ -50,14 +59,16 @@ class AudioPool {
 
 	public set volume(value: number) {
 		this.audioPool.forEach((group) => {
-			if(group.forcedEnding) return;
+			if (group.forcedEnding) return;
 
 			group.main.volume = group.playback.volume = value;
 		});
 	}
 
 	public get isPlaying(): boolean {
-		return this.audioPool.some((group) => group.main.paused === false || group.playback.paused === false);
+		return this.audioPool.some(
+			(group) => group.main.paused === false || group.playback.paused === false
+		);
 	}
 
 	public get hasAudio(): boolean {

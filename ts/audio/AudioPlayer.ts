@@ -21,7 +21,7 @@ class AudioPlayer {
 
 	private static tryAddAudio(path: string, useMultiPool: boolean): void {
 		if(!useMultiPool) {
-			this.audioStore.addAudio(path);
+			this.audioStore.addAudioOrPath(path);
 			return;
 		}
 
@@ -36,9 +36,11 @@ class AudioPlayer {
 		const main = mainAudio;
 		const playback = mainAudio.cloneNode() as AudioJS;
 
-		const group: AudioGroup = {
+		const group: AudioPoolGroup = {
 			main,
+			mainEnded: false,
 			playback,
+			playbackEnded: false,
 			forcedEnding: false,
 		};
 
@@ -46,7 +48,7 @@ class AudioPlayer {
 
 		await this.setAudioDevice(main);
 
-		this.audioStore.addAudio(group);
+		this.audioStore.addAudioOrPath(group);
 	}
 
 	private static async setAudioDevice(audio: AudioJS): Promise<void> {
