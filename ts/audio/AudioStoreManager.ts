@@ -14,7 +14,7 @@ class AudioStoreManager {
 		this.singlePool.main.setSinkId(device.deviceId);
 	}
 
-	public addAudio(audio: string | AudioGroup) {
+	public addAudioOrPath(audio: string | AudioPoolGroup) {
 		if (typeof audio === "string") {
 			this.addToSinglePool(audio);
 		} else {
@@ -40,7 +40,7 @@ class AudioStoreManager {
 		this.playGroup(this.singlePool);
 	}
 
-	public addToMultiPool(audioGroup: AudioGroup): void {
+	public addToMultiPool(audioGroup: AudioPoolGroup): void {
 		console.log("adding to multi pool");
 		this.multiPool.add(audioGroup);
 
@@ -83,7 +83,7 @@ class AudioStoreManager {
 		);
 	}
 
-	private playGroup(group: AudioGroup): void {
+	private playGroup(group: AudioGroup | AudioPoolGroup): void {
 		try {
 			group.main.play();
 			group.playback.play();

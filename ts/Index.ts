@@ -6,8 +6,14 @@ type AudioJS = HTMLAudioElement & {
 type AudioGroup = {
 	main: AudioJS;
 	playback: AudioJS;
-	lastTrack?: string;
-	forcedEnding?: boolean;
+	lastTrack: string;
+};
+type AudioPoolGroup = {
+	main: AudioJS;
+	mainEnded: boolean;
+	playback: AudioJS;
+	playbackEnded: boolean;
+	forcedEnding: boolean;
 };
 type SoundButtonData = {
 	title: string;
