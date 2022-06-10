@@ -2,7 +2,7 @@
 const electron = require("electron");
 const path = require("path");
 const fs = require("fs");
-const { systemPreferences } = require("electron");
+const { systemPreferences, screen } = require("electron");
 // to read: https://blog.stranianelli.com/electron-ipcmain-ipcrenderer-typescript-english/
 
 const { app, BrowserWindow, Menu, MenuItem } = electron;
@@ -48,10 +48,10 @@ const createMainWindow = () => {
 	let ipc = require("electron").ipcMain;
 
 	ipc.on("open-context-menu", (event, args) => {
-		console.log(event);
-		console.log(event.sender);
-		console.log(args);
-		console.log(args["target"]);
+		// console.log(event);
+		// console.log(event.sender);
+		// console.log(args);
+		// console.log(args["target"]);
 
 		const menu = Menu.buildFromTemplate([
 			/*{
@@ -80,7 +80,7 @@ const createMainWindow = () => {
 				new MenuItem({
 					label: "Edit",
 					click: () => {
-						createEditButtonWindow(args.buttonName);
+						createEditButtonWindow(args.buttonData);
 					},
 				})
 			);
@@ -123,25 +123,44 @@ const createMainWindow = () => {
 	mainWindow.loadFile(path.join(__dirname, "/windows/mainWindow.html"));
 };
 
-const createEditButtonWindow = (buttonName) => {
+const createEditButtonWindow = (buttonData) => {
+	if (mainWindow == null) return;
+
+	const name = buttonData.title;
+
 	let title = "Edit";
-	if (typeof buttonName === "undefined") {
-		title += ` "${buttonName}"`;
+	if (name != null) {
+		title += ` "${name}"`;
 	}
 	title += " button";
+
+	const width = 400;
+	const height = 300;
+
+	// console.log("pos x:" + mainWindow.getPosition()[0]);
+	// console.log("pos y:" + mainWindow.getPosition()[1]);
+	// console.log("width: " + mainWindow.getSize()[0]);
+	// console.log("height: " + mainWindow.getSize()[1]);
+	// console.log("editor width: " + width);
+	// console.log("editor height: " + height);
+
+	const screenBounds = screen.getDisplayMatching(mainWindow.getBounds()).bounds;
 
 	// Create a window
 	editButtonWindow = new BrowserWindow({
 		title,
 
-		width: 400,
-		height: 300,
+		width,
+		height,
 
-		minWidth: 400,
-		minHeight: 300,
+		minWidth: width,
+		minHeight: height,
 
-		maxWidth: 400,
-		maxHeight: 300,
+		maxWidth: width * 2,
+		maxHeight: height * 2, // TODO: unsure if this is needed
+
+		x: screenBounds.x + (screenBounds.width - width) / 2,
+		y: screenBounds.y + (screenBounds.height - height) / 2,
 
 		autoHideMenuBar: !isProduction,
 
