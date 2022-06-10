@@ -78,8 +78,9 @@ class AudioPlayer {
 	}
 
 	public static set volume(value: number) {
-		this._volume = EMath.getEponentialVolume(value);
+		this._volume = EMath.getEponentialVolume(value, 10);
 		this.updateExistingVolumes();
+		console.log("New volume: " + this._volume);
 	}
 
 	private static updateExistingVolumes(): void {
