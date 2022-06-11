@@ -57,6 +57,8 @@ const createMainWindow = () => {
 		width,
 		height,
 
+		useContentSize: true,
+
 		minWidth: defaultWidth,
 		minHeight: defaultHeight,
 
@@ -159,6 +161,8 @@ const createEditButtonWindow = (buttonData) => {
 
 		width,
 		height,
+
+		useContentSize: true,
 
 		minWidth: width,
 		minHeight: height,
