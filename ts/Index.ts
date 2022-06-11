@@ -61,29 +61,10 @@ $(document).on("wheel", (e) => {
 	$(document.body).css("zoom", value);
 });
 
+SoundButton.setGrid($("#buttons-grid"));
+SoundButton.setClick();
+SoundButton.setContextMenu();
+
 $(document).on("contextmenu", (e) => {
-	// console.log(e.target);
-
-	let $target = $(e.target);
-
-	let args = {
-		x: e.clientX.toString(),
-		y: e.clientY.toString(),
-		isSoundButton: $target.hasClass("soundbutton"),
-		buttonData: {} /*as SoundButtonData*/,
-	};
-
-	if (args.isSoundButton)
-		args.buttonData = {
-			title: $target.text(),
-			color: {
-				h: parseInt($target.css("--hue")),
-				s: parseInt($target.css("--saturation")),
-				l: parseInt($target.css("--lightness")),
-			},
-			// TODO: finish
-		};
-
-	// @ts-ignore: TS2339
-	window.api.openContextMenu(args);
+	SoundBoardApi.openContextMenu();
 });

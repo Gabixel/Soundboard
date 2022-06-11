@@ -1,5 +1,6 @@
 class SoundButton {
 	private static paths: string[] = ["../sounds/Bad to the bone.mp3"];
+	private static $grid: JQuery<HTMLElement>;
 
 	private static getRandomPath(): string {
 		return this.paths[EMath.randomInt(0, this.paths.length)];
@@ -103,8 +104,41 @@ class SoundButton {
 			});
 	}
 
-	public static triggerClick($grid: JQuery<HTMLElement>): void {
-		$grid.on("click", ".soundbutton", (e) => {
+	public static setGrid(grid: JQuery<HTMLElement>): void {
+		this.$grid = grid;
+	}
+
+	public static setContextMenu() {
+		this.$grid.on("contextmenu", ".soundbutton", (e) => {
+			e.stopPropagation(); // To prevent the document's trigger
+			// TODO: convert to async call
+
+			let $target = $(e.target);
+
+			let args = {
+				type: "soundbutton",
+				x: e.clientX.toString(),
+				y: e.clientY.toString(),
+				buttonData: {
+					title: $target.text(),
+					color: {
+						h: parseInt($target.css("--hue")),
+						s: parseInt($target.css("--saturation")),
+						l: parseInt($target.css("--lightness")),
+					},
+					image: $target.attr("data-image"),
+					tags: $target.data("tags"),
+					path: $target.attr("data-path"),
+					index: parseInt($target.css("--index")),
+				} as SoundButtonData,
+			};
+
+			SoundBoardApi.openContextMenu(args);
+		});
+	}
+
+	public static setClick(): void {
+		this.$grid.on("click", ".soundbutton", (e) => {
 			const $button = $(e.target);
 			const path = $button.attr("data-path");
 

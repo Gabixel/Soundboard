@@ -13,8 +13,6 @@ $("#play-pause-audio").on("click", async () => {
 	updatePlayPauseButton();
 });
 
-SoundButton.triggerClick($("#buttons-grid"));
-
 $("#volume")
 	.on("input", () => {
 		AudioPlayer.volume = ($("#volume").val() as number) / 1000;

@@ -2,7 +2,7 @@
 const electron = require("electron");
 const path = require("path");
 const fs = require("fs");
-const { systemPreferences, screen } = require("electron");
+const { systemPreferences, screen, ipcMain } = require("electron");
 // to read: https://blog.stranianelli.com/electron-ipcmain-ipcrenderer-typescript-english/
 
 const { app, BrowserWindow, Menu, MenuItem } = electron;
@@ -50,48 +50,26 @@ const createMainWindow = () => {
 		webPreferences,
 	});
 
-	let ipc = require("electron").ipcMain;
-
-	ipc.on("open-context-menu", (event, args) => {
+	ipcMain.on("open-context-menu", (e, args) => {
 		// console.log(event);
 		// console.log(event.sender);
 		// console.log(args);
-		// console.log(args["target"]);
 
-		const menu = Menu.buildFromTemplate([
-			/*{
-				label: "Help",
-				submenu: [
-					{
-						label: "About",
-						click: () => {},
-					},
-					{
-						label: "Help",
-						click: () => {},
-					},
-				],
-			},*/
-			{
-				label: "nothing to see here 👀",
-				enabled: false,
-				toolTip: "test tooltip",
-			},
-		]);
+		let extraMenu;
 
-		if (args.isSoundButton) {
-			menu.insert(
-				0,
-				new MenuItem({
-					label: "Edit",
-					click: () => {
-						createEditButtonWindow(args.buttonData);
-					},
-				})
-			);
+		if (args != null) {
+			switch (args.type) {
+				case "soundbutton":
+					extraMenu = new MenuItem({
+						label: "Edit",
+						click: () => {
+							createEditButtonWindow(args.buttonData);
+						},
+					});
+			}
 		}
 
-		menu.popup(mainWindow, args.x, args.y);
+		showContextMenu(extraMenu, e.x, e.y);
 	});
 
 	/* Inject script elements to the body of `mainWindows` */
@@ -106,6 +84,7 @@ const createMainWindow = () => {
 		}
 
 		addScripts(
+			"utility/SoundBoardApi",
 			"utility/ExtendedMath",
 			"utility/EventFunctions",
 
@@ -129,7 +108,7 @@ const createMainWindow = () => {
 	// Load HTML into the window
 	mainWindow.loadFile(path.join(__dirname, "/windows/mainWindow.html"));
 
-	if(!isProduction) {
+	if (!isProduction) {
 		mainWindow.webContents.openDevTools({
 			mode: "detach",
 		});
@@ -188,6 +167,35 @@ const createEditButtonWindow = (buttonData) => {
 	editButtonWindow.loadFile(
 		path.join(__dirname, "/windows/editButtonWindow.html")
 	);
+};
+
+const showContextMenu = (extraElements, x, y) => {
+	const menu = Menu.buildFromTemplate([
+		/*{
+				label: "Help",
+				submenu: [
+					{
+						label: "About",
+						click: () => {},
+					},
+					{
+						label: "Help",
+						click: () => {},
+					},
+				],
+			},*/
+		{
+			label: "nothing to see here 👀",
+			enabled: false,
+			toolTip: "test tooltip",
+		},
+	]);
+
+	if (extraElements != null) {
+		menu.insert(0, extraElements);
+	}
+
+	menu.popup(mainWindow, x, y);
 };
 
 // Listen for app to be ready
