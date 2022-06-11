@@ -61,32 +61,8 @@ $(document).on("wheel", (e) => {
 	$(document.body).css("zoom", value);
 });
 
-$("#reset-ui-scale").on("click", () => {
-	$("#ui-scale").val($("#ui-scale").attr("--data-default")).trigger("click");
-});
-
-$("#ui-scale")
-	.on("keydown", (e) => {
-		$(e.target).attr("step", "0.05");
-	})
-	.on("keyup", (e) => {
-		$(e.target).attr("step", "0.01").trigger("click");
-	})
-	.on("focusout", (e) => {
-		$(e.target).attr("step", "0.01"); // In case the user clicks away from the input while still holding the left or right arrow keys
-	})
-	.on("click", (e) => {
-		$(document.body).stop(true, false);
-		$(document.body).animate(
-			{
-				zoom: parseFloat($(e.target).val().toString()),
-			},
-			325
-		);
-	});
-
 $(document).on("contextmenu", (e) => {
-	console.log(e.target);
+	// console.log(e.target);
 
 	let $target = $(e.target);
 
