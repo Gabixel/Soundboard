@@ -14,6 +14,8 @@ const isMac = process.platform === "darwin";
 const isWindows = process.platform === "win32";
 const isLinux = process.platform === "linux";
 
+let screenWidth, screenHeight;
+
 const isProduction = process.env.NODE_ENV === "production";
 
 let mainWindow; // The main soundboard
@@ -35,15 +37,28 @@ const webPreferences = {
 
 //#region Init app
 const createMainWindow = () => {
+	const defaultWidth = 800;
+	const defaultHeight = 600;
+	
+	// Best value between default and screen size, but not bigger than screen size
+	let width = Math.min(
+		Math.max(defaultWidth, parseInt(screenWidth / 2)),
+		screenWidth
+	);
+	let height = Math.min(
+		Math.max(defaultHeight, parseInt(screenHeight / 2)),
+		screenHeight
+	);
+
 	// Create a window
 	mainWindow = new BrowserWindow({
 		title: "Soundboard",
 
-		width: 800,
-		height: 600,
+		width,
+		height,
 
-		minWidth: 400,
-		minHeight: 300,
+		minWidth: defaultWidth,
+		minHeight: defaultHeight,
 
 		autoHideMenuBar: !isProduction,
 
@@ -113,6 +128,10 @@ const createMainWindow = () => {
 			mode: "detach",
 		});
 	}
+
+	mainWindow.once("ready-to-show", () => {
+		mainWindow.show();
+	});
 };
 
 const createEditButtonWindow = (buttonData) => {
@@ -126,15 +145,11 @@ const createEditButtonWindow = (buttonData) => {
 	}
 	title += " button";
 
-	const width = 400;
-	const height = 300;
+	let width = 400;
+	let height = 300;
 
-	// console.log("pos x:" + mainWindow.getPosition()[0]);
-	// console.log("pos y:" + mainWindow.getPosition()[1]);
-	// console.log("width: " + mainWindow.getSize()[0]);
-	// console.log("height: " + mainWindow.getSize()[1]);
-	// console.log("editor width: " + width);
-	// console.log("editor height: " + height);
+	width = Math.min(width, parseInt(screenWidth / 2));
+	height = Math.min(height, parseInt(screenHeight / 2));
 
 	const screenBounds = screen.getDisplayMatching(mainWindow.getBounds()).bounds;
 
@@ -200,6 +215,9 @@ const showContextMenu = (extraElements, x, y) => {
 
 // Listen for app to be ready
 app.whenReady().then(() => {
+	screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+	screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+
 	// Remove default menu
 	if (isProduction) Menu.setApplicationMenu(null);
 
