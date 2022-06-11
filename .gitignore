@@ -403,3 +403,4 @@ js/**/*.d.ts
 
 # Compiled CSS files
 css/**/*.css
+tsconfig.tsbuildinfo
