@@ -46,9 +46,3 @@ function updatePlayPauseButton(
 		$content.addClass("fa-play").removeClass("fa-pause");
 	}
 }
-
-// $("#audio-pan")
-// 	.on("input", () => {
-// 		AudioPlayer.setPan($("#audio-pan").val() as number);
-// 	})
-// 	.on("wheel", (e) => EventFunctions.updateInputFromWheel(e, 0.1, true, ["input"]));
