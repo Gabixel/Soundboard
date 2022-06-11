@@ -20,6 +20,7 @@ body {
 
 		.hide-overflow();
 
+		// "Fixes" the chromium bug with rounded corners cropping children's ones
 		background: linear-gradient(0, var(--main-bg) 50%, var(--menu-bar-bg) 50%);
 
 		nav {
@@ -65,10 +66,30 @@ body {
 				@import "./components/buttons_grid.less";
 
 				#audio-controls {
-					flex-grow: 1;
+					@btn-size: 30px;
+					@radius: 10px;
+					@h: 0;
+					@s: 0;
+					@l: 0;
+					@hsl: hsl(@h, @s, @l);
+					@hsl-middle: hsl(@h, @s, @l + 5%);
+					@hsl-bright: hsl(@h, @s, @l + 10%);
+					@hsl-normal: @hsl;
+					// @hsl-hover: inset @hsl-bright 0 -25px 10px -10px;
+					@hsl-hover: @hsl-bright;
+					@hsl-active: @hsl-middle;
+
+					button {
+						transition: background-color .15s ease;
+					}
+
+					flex-grow: 0;
 					.hide-overflow();
 
-					align-content: center;
+					display: flex;
+					flex-direction: column;
+					justify-content: flex-start;
+					align-items: flex-start;
 
 					>* {
 						width: fit-content;
@@ -76,8 +97,12 @@ body {
 					}
 
 					#stop-audio {
+						@h: 0;
+						@s: 100%;
+						@l: 37%;
+
 						border: none;
-						background-color: rgb(187, 0, 0);
+						background-color: @hsl-normal;
 						color: #fff;
 						.hide-overflow();
 
@@ -85,16 +110,26 @@ body {
 						align-items: center;
 						justify-content: center;
 
-						border-radius: 50%;
-						min-width: 30px;
-						width: 30px;
-						min-height: 30px;
-						height: 30px;
+						border-radius: @radius;
+						width: @btn-size;
+						height: @btn-size;
+
+						&:hover {
+							background-color: @hsl-hover;
+						}
+
+						&:active {
+							background-color: @hsl-active;
+						}
 					}
 
 					#play-pause-audio {
+						@h: 120;
+						@s: 100%;
+						@l: 37%;
+
 						border: none;
-						background-color: rgb(0, 187, 0);
+						background: @hsl-normal;
 						color: #fff;
 						.hide-overflow();
 
@@ -102,14 +137,58 @@ body {
 						align-items: center;
 						justify-content: center;
 
-						border-radius: 50%;
-						min-width: 30px;
-						width: 30px;
-						min-height: 30px;
-						height: 30px;
+						border-radius: @radius;
+						width: @btn-size;
+						height: @btn-size;
+
+						&:hover {
+							background-color: @hsl-hover;
+						}
+
+						&:active {
+							background-color: @hsl-active;
+						}
+					}
+
+					#reset-ui-scale {
+						@h: 0;
+						@s: 0%;
+						@l: 16%;
+
+						border: none;
+						background: @hsl-normal;
+						color: #fff;
+						.hide-overflow();
+
+						display: inline-flex;
+						align-items: center;
+						justify-content: center;
+
+						border-radius: 50px;
+						min-width: @btn-size;
+						min-height: @btn-size;
+
+						&:hover {
+							background-color: @hsl-hover;
+						}
+
+						&:active {
+							background-color: @hsl-active;
+						}
+
+						i {
+							margin-right: 3px;
+						}
 					}
 				}
 			}
 		}
 	}
 }
+
+// TODO: boh
+// @media (prefers-reduced-motion: reduce) {
+// 	*, *::after, *::before {
+// 		transition: none !important;
+// 	}
+// }
