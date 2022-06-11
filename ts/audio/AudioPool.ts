@@ -10,12 +10,6 @@ class AudioPool {
 		});
 	}
 
-	// private checkIfGroupIsRemovable(group: AudioPoolGroup): void {
-	// 	if (group.mainEnded && group.playbackEnded) {
-	// 		this.remove(group);
-	// 	}
-	// }
-
 	public remove(removingGroup: AudioPoolGroup): void {
 		console.log("remove called");
 
