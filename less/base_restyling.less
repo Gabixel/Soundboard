@@ -1,3 +1,5 @@
+@import "functions";
+
 html,
 body,
 body * {
@@ -11,7 +13,20 @@ body {
 
 i[class*="fa-"] {
 	// height: auto;
-	transform: translateX(.5px);
+	transform: translate(.5px, .3px);
+}
+
+p {
+	display: inline-block;
+	margin: 0;
+	width: fit-content;
+	height: fit-content;
+}
+
+*,
+*::after,
+*::before {
+	.block-text-select();
 }
 
 // TODO
