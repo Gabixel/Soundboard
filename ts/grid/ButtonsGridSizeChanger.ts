@@ -76,6 +76,7 @@ function fillEmptyCells(): void {
 		$("#buttons-grid").append(
 			SoundButton.generateRandom(ButtonsGrid.buttonCount)
 		);
+		
 		ButtonsGrid.increaseButtonCount();
 	}
 }
