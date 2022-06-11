@@ -35,7 +35,7 @@ button.soundbutton {
 	--button-background-active-hsl: hsl(var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 10%, 100%)"/ 1);
 
 	overflow: hidden;
-	padding: 0;
+	padding: 4px;
 
 	display: flex;
 	.flex-center-all();
@@ -60,7 +60,8 @@ button.soundbutton {
 
 	transition: background-color .1s, opacity .2s, filter .2s;
 
-	#buttons-grid:not(.has-dragging-child) &:hover {
+	#buttons-grid:not(.has-dragging-child) &:hover,
+	#buttons-grid:not(.has-dragging-child) &.dragover {
 		// background-color: #5cb811;
 		// background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
 		background-color: var(--button-background-hover-hsl);
@@ -84,13 +85,15 @@ button.soundbutton {
 	}
 
 	#buttons-grid.has-dragging-child &:not(.dragging) {
-		filter: blur(2px);
+		// filter: blur(2px);
+		opacity: .5;
 	}
 
 	#buttons-grid.has-dragging-child &.drop-destination {
 		transition: background-color .1s, opacity .2s;
-		filter: blur(0);
-		// outline: 4px solid #fff;
+		// filter: blur(0);
+		opacity: 1;
+		// outline: 4px solid #fff; // Background is better: outline shows a weird empty space.
 		box-shadow: 0 0 0 3px #fff;
 	}
 
