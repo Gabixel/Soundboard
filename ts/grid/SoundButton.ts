@@ -1,18 +1,5 @@
 class SoundButton {
-	private static paths: string[] = [
-		"file:///C:/Users/Gabriel/Documents/Soundboard%20Sounds/HappyHippo.mp3",
-		// "file:///G:/DownloadVideo/8%20Bit%20flying%20music%20-%20DuckTales%20Music%20(NES)%20-%20The%20Moon%20Theme.mp3",
-		// "file:///G:/DownloadVideo/Chad%20meme%20song.mp3",
-		// "file:///G:/DownloadVideo/Crazy%20Japanese%20Man%20running%20in%20tunnel%20screaming%20Sex%20at%20the%20top%20of%20his%20lungs%20but%20it's%20an%20Anime.mp3",
-		// "file:///G:/DownloadVideo/David%20Cutter%20Music%20-%20Sunroof.mp3",
-		// "file:///G:/DownloadVideo/Epic%20Inception%20Sound%20Effect.mp3",
-		// "file:///G:/DownloadVideo/Fazlija%20-%20Helikopter.mp3",
-		// "file:///G:/DownloadVideo/Bad%20to%20the%20bone.mp3",
-		// "file:///G:/Video/Adobe%20Premiere%20Pro/Sound%20Effects/Ba%20Dum%20Tss.mp3",
-		"file:///C:/Users/Gabriel/Desktop/Soundboard/YouveBeenGnomed.mp3",
-		// "file:///G:/DownloadVideo/Discord%20ping.mp3",
-		// "file:///C:/Users/Gabriel/Downloads/Holy_Hand_Grenade_Hallelujah.wav",
-	];
+	private static paths: string[] = ["../sounds/Bad to the bone.mp3"];
 
 	private static getRandomPath(): string {
 		return this.paths[EMath.randomInt(0, this.paths.length)];
@@ -26,7 +13,7 @@ class SoundButton {
 		];
 
 		let data: SoundButtonData = {
-			title: index.toString(),
+			title: (index + 1).toString(),
 			color: { h, s, l },
 			image: "",
 			tags: [],
@@ -63,6 +50,66 @@ class SoundButton {
 
 			.css("--hue", data.color.h.toString())
 			.css("--saturation", data.color.s.toString() + "%")
-			.css("--lightness", data.color.l.toString() + "%");
+			.css("--lightness", data.color.l.toString() + "%")
+
+			// Item drop
+			.on("dragenter", (e: JQuery.DragEnterEvent) => {
+				e.stopPropagation();
+				e.preventDefault();
+				e.originalEvent.dataTransfer.dropEffect = "link";
+
+				$button.addClass("dragover");
+				console.log("dragenter");
+			})
+			.on("dragover", (e: JQuery.DragOverEvent) => {
+				e.preventDefault();
+				e.stopPropagation();
+				e.originalEvent.dataTransfer.dropEffect = "link";
+
+				// $button.addClass("dragover");
+			})
+			.on("drop", (e: JQuery.DropEvent) => {
+				console.log("drop");
+
+				const notSuccesful =
+					!e.originalEvent.dataTransfer ||
+					!e.originalEvent.dataTransfer.files.length;
+
+				if (notSuccesful) return;
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				$button.removeClass("dragover");
+
+				const files = e.originalEvent.dataTransfer.files;
+
+				for (let i = 0; i < files.length; i++) {
+					// @ts-ignore
+					console.log(files[i].path);
+				}
+
+				// @ts-ignore
+				$button.attr("data-path", decodeURI(files[0].path));
+				$button.text(files[0].name);
+			})
+			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				$button.removeClass("dragover");
+				console.log("dragleave");
+				// $button.on("dragover");
+			});
+	}
+
+	public static triggerClick($grid: JQuery<HTMLElement>): void {
+		$grid.on("click", ".soundbutton", (e) => {
+			const $button = $(e.target);
+			const path = $button.attr("data-path");
+
+			AudioPlayer.addAudio(path, e.shiftKey);
+			updatePlayPauseButton();
+		});
 	}
 }

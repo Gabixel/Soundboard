@@ -13,13 +13,7 @@ $("#play-pause-audio").on("click", async () => {
 	updatePlayPauseButton();
 });
 
-$("#buttons-grid").on("click", ".soundbutton", (e) => {
-	const $button = $(e.target);
-	const path = $button.data("path");
-
-	AudioPlayer.addAudio(path, e.shiftKey);
-	updatePlayPauseButton();
-});
+SoundButton.triggerClick($("#buttons-grid"));
 
 $("#volume")
 	.on("input", () => {

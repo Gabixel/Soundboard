@@ -29,6 +29,19 @@ type SoundButtonData = {
 };
 //#endregion
 
+$(window).on("dragover", null, false, (e) => {
+	e.preventDefault();
+	e.originalEvent.dataTransfer.dropEffect = "none";
+	return false;
+});
+// $(window).on("drop", null, false, (e) => {
+// 	e.preventDefault();
+// 	return false;
+// });
+
+window.addEventListener("dragover", (event) => event.preventDefault());
+window.addEventListener("drop", (event) => event.preventDefault());
+
 $("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
 AudioPlayer.updateAudioDevicesList();
 $("#volume").trigger("input"); // Initializes volume in the audio player
