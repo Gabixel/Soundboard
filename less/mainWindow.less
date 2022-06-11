@@ -27,6 +27,8 @@ body {
 			display: flex;
 			flex-direction: row;
 
+			z-index: 1;
+
 			@margin: 3px;
 			margin: @margin (@main-radius + 1px) 0;
 
@@ -42,7 +44,7 @@ body {
 				&:hover {
 					color: var(--menu-bar-hover-fg);
 					background-color: var(--menu-bar-hover-bg);
-					box-shadow: 0 1px 2px 1px var(--menu-bar-hover-bg);
+					// box-shadow: 0 1px 2px 1px var(--menu-bar-hover-bg);
 				}
 			}
 		}
@@ -53,6 +55,8 @@ body {
 
 			background-color: #707070;
 			padding: (@main-radius / 2);
+
+			z-index: 0;
 
 			main {
 				.fill-size();
@@ -80,7 +84,7 @@ body {
 					@hsl-active: @hsl-middle;
 
 					button {
-						transition: background-color .15s ease;
+						transition: background-color .1s ease;
 					}
 
 					flex-grow: 0;
@@ -90,11 +94,6 @@ body {
 					flex-direction: column;
 					justify-content: flex-start;
 					align-items: flex-start;
-
-					>* {
-						width: fit-content;
-						height: fit-content;
-					}
 
 					#stop-audio {
 						@h: 0;
@@ -160,6 +159,8 @@ body {
 						color: #fff;
 						.hide-overflow();
 
+						// padding: 0 10px;
+
 						display: inline-flex;
 						align-items: center;
 						justify-content: center;
@@ -176,9 +177,9 @@ body {
 							background-color: @hsl-active;
 						}
 
-						i {
-							margin-right: 3px;
-						}
+						// i {
+						// 	margin-right: 3px;
+						// }
 					}
 				}
 			}
