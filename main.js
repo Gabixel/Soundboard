@@ -11,6 +11,9 @@ const { app, BrowserWindow, Menu, MenuItem } = electron;
 // process.env.NODE_ENV = "production";
 
 const isMac = process.platform === "darwin";
+const isWindows = process.platform === "win32";
+const isLinux = process.platform === "linux";
+
 const isProduction = process.env.NODE_ENV === "production";
 
 let mainWindow; // The main soundboard
@@ -18,6 +21,8 @@ let editButtonWindow; // The button editor
 
 const webPreferences = {
 	preload: path.join(__dirname, "/preload.js"),
+
+	devTools: !isProduction,
 
 	spellcheck: false,
 
@@ -104,15 +109,17 @@ const createMainWindow = () => {
 			"utility/ExtendedMath",
 			"utility/EventFunctions",
 
+			"grid/ButtonsGridSizeChanger",
+			"grid/ButtonsGrid",
+			"grid/ButtonSwap",
+			"grid/SoundButton",
+
 			"audio/AudioPool",
 			"audio/AudioStoreManager",
 			"audio/AudioPlayer",
 			"audio/Audio",
 
-			"grid/ButtonsGridSizeChanger",
-			"grid/ButtonsGrid",
-			"grid/ButtonSwap",
-			"grid/SoundButton",
+			"settings/UiScale",
 
 			"TopBarManager",
 			"Index"
@@ -121,6 +128,12 @@ const createMainWindow = () => {
 
 	// Load HTML into the window
 	mainWindow.loadFile(path.join(__dirname, "/windows/mainWindow.html"));
+
+	if(!isProduction) {
+		mainWindow.webContents.openDevTools({
+			mode: "detach",
+		});
+	}
 };
 
 const createEditButtonWindow = (buttonData) => {
