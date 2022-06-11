@@ -18,6 +18,7 @@ class AudioStoreManager {
 		if (typeof audio === "string") {
 			this.addToSinglePool(audio);
 		} else {
+			if(this.multiPool.length < 50) // Limited sounds to prevent memory issues
 			this.addToMultiPool(audio);
 		}
 	}

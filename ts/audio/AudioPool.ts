@@ -3,14 +3,8 @@ class AudioPool {
 
 	public add(group: AudioPoolGroup): void {
 		this.audioPool.push(group);
-		// $(group.main).one("ended", () => {
-		// 	console.log("main audio ended, trying to remove...");
-		// 	group.mainEnded = true;
-		// 	this.checkIfGroupIsRemovable(group);
-		// });
+		
 		$(group.playback).one("ended", () => {
-			// console.log("playback audio ended, trying to remove...");
-			// group.playbackEnded = true;
 			this.remove(group);
 			group = null;
 		});
@@ -69,6 +63,14 @@ class AudioPool {
 		return this.audioPool.some(
 			(group) => group.main.paused === false || group.playback.paused === false
 		);
+	}
+
+	public get length() : number {
+		return this.audioPool.length;
+	}
+
+	public get multiLength() : number {
+		return this.audioPool.length * 2;
 	}
 
 	public get hasAudio(): boolean {
