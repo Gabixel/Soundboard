@@ -102,12 +102,15 @@ function getElementFromPoint(x: number, y: number): JQuery<HTMLElement> | null {
 	else return null;
 }
 
-function swapButtons($lastTarget: JQuery<HTMLElement>, $dropTarget: JQuery<HTMLElement>): void {
+function swapButtons(
+	$lastTarget: JQuery<HTMLElement>,
+	$dropTarget: JQuery<HTMLElement>
+): void {
 	const dropTargetIndex = parseInt($dropTarget.css("--index"));
 	const lastTargetIndex = parseInt($lastTarget.css("--index"));
 
-	$dropTarget.attr("id", lastTargetIndex);
-	$lastTarget.attr("id", dropTargetIndex);
+	$dropTarget.attr("id", "sound_btn_" + lastTargetIndex);
+	$lastTarget.attr("id", "sound_btn_" + dropTargetIndex);
 
 	$dropTarget.attr("tabindex", lastTargetIndex);
 	$lastTarget.attr("tabindex", dropTargetIndex);
