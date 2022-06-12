@@ -29,42 +29,36 @@ type SoundButtonData = {
 };
 //#endregion
 
-$(window).on("dragover", null, false, (e) => {
-	e.preventDefault();
-	e.originalEvent.dataTransfer.dropEffect = "none";
-	return false;
-});
-// $(window).on("drop", null, false, (e) => {
-// 	e.preventDefault();
-// 	return false;
-// });
+init();
 
-window.addEventListener("dragover", (event) => event.preventDefault());
-window.addEventListener("drop", (event) => event.preventDefault());
+async function init() {
+	$(window).on("dragover", null, false, (e) => {
+		e.preventDefault();
+		e.originalEvent.dataTransfer.dropEffect = "none";
+		return false;
+	});
+	// $(window).on("drop", null, false, (e) => {
+	// 	e.preventDefault();
+	// 	return false;
+	// });
 
-$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
-AudioPlayer.updateAudioDevicesList();
-$("#volume").trigger("input"); // Initializes volume in the audio player
+	window.addEventListener("dragover", (event) => event.preventDefault());
+	window.addEventListener("drop", (event) => event.preventDefault());
 
-$(document).on("wheel", (e) => {
-	if (!e.ctrlKey) return;
+	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
+	await AudioPlayer.updateAudioDevicesList();
+	$("#volume").trigger("input"); // Initializes volume in the audio player
 
-	const value = EventFunctions.getUpdatedValueFromWheel(
-		e,
-		parseFloat($(document.body).css("zoom").toString()),
-		0.08,
-		[0.8, 1.5]
-	).toString();
+	$(document).on("contextmenu", (e) => {
+		SoundBoardApi.openContextMenu();
+	});
 
-	$(document.body).stop(true, false);
-	$("#ui-scale").val(value);
-	$(document.body).css("zoom", value);
-});
+	SoundButton.setGrid($("#buttons-grid"));
+	SoundButton.initClick();
+	SoundButton.initContextMenu();
 
-SoundButton.setGrid($("#buttons-grid"));
-SoundButton.setClick();
-SoundButton.setContextMenu();
-
-$(document).on("contextmenu", (e) => {
-	SoundBoardApi.openContextMenu();
-});
+	UiScale.setSlider($("#ui-scale"));
+	UiScale.setLock($("#ui-scale-lock"));
+	UiScale.setReset($("#ui-scale-reset"));
+	UiScale.initWheelShortcut();
+}
