@@ -11,16 +11,45 @@ class AudioPlayer {
 
 	public static async updateAudioDevicesList(): Promise<void> {
 		const devices = await navigator.mediaDevices.enumerateDevices();
+
+		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
+		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: store preferred device
+
+		console.log("Devices updated: " + this.audioDevices.length);
+		console.log(this.audioDevices);
+	}
+
+	/*
+	public static updateAudioDevicesList(): void {
+		navigator.mediaDevices.enumerateDevices().then(
+			(devicesList) => {
+				this.setAudioDevicesList(devicesList);
+			},
+			(err) => {
+				console.log(err);
+			}
+		);
+	}
+
+	private static setAudioDevicesList(devices: MediaDeviceInfo[]): void {
+		this.audioDevices = devices;
+
+		console.log("Devices updated: " + devices.length);
+		console.log(devices);
+
 		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: store preferred device
 	}
+	*/
+
+	public static initVolume(): void {}
 
 	public static addAudio(path: string, useMultiPool: boolean = false): void {
 		this.tryAddAudio(path, useMultiPool);
 	}
 
 	private static tryAddAudio(path: string, useMultiPool: boolean): void {
-		if(!useMultiPool) {
+		if (!useMultiPool) {
 			this.audioStore.addAudioOrPath(path);
 			return;
 		}
@@ -46,13 +75,13 @@ class AudioPlayer {
 
 		main.volume = playback.volume = this.volume;
 
-		await this.setAudioDevice(main);
+		await this.setSinkId(main);
 
 		this.audioStore.addAudioOrPath(group);
 	}
 
-	private static async setAudioDevice(audio: AudioJS): Promise<void> {
-		if(!this.audioDevices) await this.updateAudioDevicesList();
+	private static async setSinkId(audio: AudioJS): Promise<void> {
+		if (!this.audioDevices) await this.updateAudioDevicesList();
 
 		await audio.setSinkId(this.audioDevices[2].deviceId);
 	}
