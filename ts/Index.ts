@@ -47,18 +47,19 @@ async function init() {
 
 	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
 	await AudioPlayer.updateAudioDevicesList();
+	// TODO: https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
+	AudioPlayer.setVolumeSlider($("#volume"));
 	$("#volume").trigger("input"); // Initializes volume in the audio player
 
 	$(document).on("contextmenu", (e) => {
-		SoundBoardApi.openContextMenu();
+		SoundboardApi.openContextMenu();
 	});
 
 	SoundButton.setGrid($("#buttons-grid"));
-	SoundButton.initClick();
-	SoundButton.initContextMenu();
 
-	UiScale.setSlider($("#ui-scale"));
-	UiScale.setLock($("#ui-scale-lock"));
-	UiScale.setReset($("#ui-scale-reset"));
-	UiScale.initWheelShortcut();
+	UiScale.setControls(
+		$("#ui-scale-slider"),
+		$("#ui-scale-lock"),
+		$("#ui-scale-reset")
+	);
 }
