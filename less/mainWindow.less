@@ -78,6 +78,7 @@ body {
 					@hsl: hsl(@h, @s, @l);
 					@hsl-middle: hsl(@h, @s, @l + 5%);
 					@hsl-bright: hsl(@h, @s, @l + 10%);
+					@hsl-dark: hsl(@h, @s, @l - 10%);
 					@hsl-normal: @hsl;
 					// @hsl-hover: inset @hsl-bright 0 -25px 10px -10px;
 					@hsl-hover: @hsl-bright;
@@ -120,6 +121,10 @@ body {
 						&:active {
 							background-color: @hsl-active;
 						}
+
+						&:disabled {
+							background-color: @hsl-dark
+						}
 					}
 
 					#play-pause-audio {
@@ -146,6 +151,10 @@ body {
 
 						&:active {
 							background-color: @hsl-active;
+						}
+
+						&:disabled {
+							background-color: @hsl-dark
 						}
 					}
 
@@ -175,6 +184,10 @@ body {
 
 						&:active {
 							background-color: @hsl-active;
+						}
+
+						&:disabled {
+							background-color: @hsl-dark
 						}
 
 						// i {
