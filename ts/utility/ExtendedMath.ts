@@ -115,8 +115,36 @@ class EMath {
 		return [r, g, b];
 	}
 
-	public static getEponentialVolume(volume: number, base: number = 50): number {
-		// Return an exponential version of the volume
-		return parseFloat(((Math.pow(base, volume) - 1) / (base - 1)).toFixed(2));
+	public static getEponentialValue(
+		initialValue: number,
+		base: number = 50
+	): number {
+		// Return an exponential version of the value
+		return parseFloat(
+			((Math.pow(base, initialValue) - 1) / (base - 1)).toFixed(2)
+		);
+	}
+
+	public static logarithmicValue(
+		pos: number,
+		minPos: number = 0,
+		maxPos: number = 100,
+		minRes: number = 0,
+		maxRes: number = 1
+	): number {
+		// Return a logarithmic version of the value (https://stackoverflow.com/questions/846221/logarithmic-slider)
+
+		minRes = Math.log(minRes);
+		maxRes = Math.log(maxRes);
+
+		const scale = (maxRes - minRes) / (maxPos - minPos);
+
+		return Math.exp(minRes + scale * (pos - minPos));
+		// return (Math.log(pos) - minRes) / scale + maxPos;
+
+		// return (
+		// 	(Math.log(maxRes - minRes) / Math.log(maxPos - minPos)) * (pos - minPos) +
+		// 	minRes
+		// );
 	}
 }
