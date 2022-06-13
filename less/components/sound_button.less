@@ -91,7 +91,7 @@
 	}
 
 	#buttons-grid.has-dragging-child &.drop-destination {
-		transition: box-shadow .05s;
+		transition: none;
 
 		opacity: 1;
 		box-shadow: 0 0 0 3px #fff; // Background is better: outline shows a weird empty space.
@@ -107,5 +107,7 @@
 		display: none;
 	}
 
-	&:focus {}
+	&:focus-visible {
+		outline: 3px solid var(--button-background-hover-hsl);
+	}
 }

@@ -4,7 +4,6 @@ html,
 body,
 body * {
 	font-family: 'Comfortaa';
-	outline: 0;
 }
 
 body, body * {
@@ -23,9 +22,12 @@ p {
 	height: fit-content;
 }
 
-*,
-*::after,
-*::before {
+body,
+body *,
+body *::after,
+body *::before {
+	outline: none;
+
 	.block-text-select();
 }
 
