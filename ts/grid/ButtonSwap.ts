@@ -3,6 +3,7 @@ let isDragging = false;
 
 let dragStartCoords = { x: 0, y: 0 };
 let $lastTarget: JQuery<HTMLElement> | null = null;
+let $dragTarget: JQuery<HTMLElement> | null = null;
 let indexChanged = false;
 let isStyled = false;
 
@@ -16,17 +17,21 @@ $(document)
 	.on("mousedown", ".soundbutton", (e) => {
 		if (e.which != 1) return;
 
-		const $newTarget = $(e.target);
+		// Set the drag target
+		$dragTarget = $(e.target);
 
+		// This is needed when trying to apply the opacity delay animation.
 		indexChanged =
 			$lastTarget == null ||
-			$newTarget.css("--index") !== $lastTarget.css("--index");
+			$lastTarget.css("--index") !== $dragTarget.css("--index"); // Check if the index is the same as the last one
 
-		console.log("index changed: " + indexChanged);
-		$lastTarget = $newTarget;
+		// Overwrite the last target
+		$lastTarget = $dragTarget;
 
+		// Set the drag start coordinates
 		dragStartCoords = { x: e.pageX, y: e.pageY };
 
+		// Prepare the drag
 		preparingDrag = true;
 	})
 	.on("mouseup", (e) => {
@@ -35,24 +40,24 @@ $(document)
 		const $dropTarget = getElementFromPoint(e.pageX, e.pageY);
 
 		if (
-			$lastTarget != $dropTarget &&
-			$lastTarget != null &&
+			$dragTarget != $dropTarget &&
+			$dragTarget != null &&
 			$dropTarget != null
 		) {
-			swapButtons($lastTarget, $dropTarget);
+			swapButtons($dragTarget, $dropTarget);
 		}
 
 		// Remove properties to last target
-		if ($lastTarget != null && isStyled) {
-			$lastTarget.removeClass("dragging");
+		if ($dragTarget != null && isStyled) {
+			$dragTarget.removeClass("dragging");
 			$("#buttons-grid").removeClass("has-dragging-child");
-			$lastTarget.css("transform", "");
+			$dragTarget.css("transform", "");
 		}
 
 		$dropTarget?.removeClass("drop-destination");
 		clearOpacityDelay();
 		isStyled = false;
-		// $lastTarget = null;
+		$dragTarget = null;
 	})
 	.on("mouseenter", ".soundbutton", (e) => {
 		onSoundButtonMouseEnter(e);
@@ -75,7 +80,7 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 	if (isDragging || d > 10) {
 		isDragging = true;
 
-		$lastTarget.css(
+		$dragTarget.css(
 			"transform",
 			`translate(${e.pageX - dragStartCoords.x}px, ${
 				e.pageY - dragStartCoords.y
@@ -85,7 +90,7 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 		if (!isStyled) {
 			isStyled = true;
 
-			$lastTarget.addClass("dragging");
+			$dragTarget.addClass("dragging");
 
 			const rows = parseInt($("#grid-rows").val().toString());
 			const cols = parseInt($("#grid-columns").val().toString());
@@ -104,7 +109,7 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 }
 
 function setOpacityDelay(cols: number, rows: number): void {
-	const btnDragIndex = parseInt($lastTarget.css("--index"));
+	const btnDragIndex = parseInt($dragTarget.css("--index"));
 
 	const multiplier = 0.05;
 
