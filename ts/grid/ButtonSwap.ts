@@ -78,7 +78,66 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 			isStyled = true;
 
 			$lastTarget.addClass("dragging");
-			$lastTarget.parent().addClass("has-dragging-child");
+
+			const rows = parseInt($("#grid-rows").val().toString());
+			const cols = parseInt($("#grid-columns").val().toString());
+
+			if ($("#buttons-grid .soundbutton").length > 1 && rows > 4 && cols > 4) {
+				const btnDragIndex = parseInt($lastTarget.css("--index"));
+				const btnDragIndexRow = Math.floor(btnDragIndex / cols);
+				const btnDragIndexCol = btnDragIndex % cols;
+
+				const multiplier = 0.05;
+
+				let maxPossibleDelay = Math.max(
+					btnDragIndexCol,
+					Math.abs(btnDragIndexCol - cols),
+					btnDragIndexRow,
+					Math.abs(btnDragIndexRow - rows)
+				);
+				maxPossibleDelay += 1;
+				maxPossibleDelay *= multiplier;
+
+				console.log(maxPossibleDelay / multiplier);
+
+				const maxDelay = multiplier * 6;
+				const minForExponential = multiplier * 3;
+
+				// Delay effect for the buttons around the dragged one
+				$("#buttons-grid .soundbutton")
+					.filter((_i, el) => {
+						return !$(el).hasClass("dragging")/* && !$(el).hasClass("hidden")*/;
+					})
+					.each((_i, el) => {
+						const $el = $(el);
+
+						const index = parseInt($el.css("--index"));
+						const row = Math.floor(index / cols);
+						const col = index % cols;
+
+						const x = Math.abs(row - Math.floor(btnDragIndex / cols));
+						const y = Math.abs(col - (btnDragIndex % cols));
+						const sum = x + y;
+						const distance = sum * multiplier / 2;
+						console.log(distance)
+
+						/*if (distance >= minForExponential) {
+							distance = EMath.logarithmicValue(
+								distance,
+
+								minForExponential,
+								maxPossibleDelay * 1.7,
+
+								minForExponential,
+								maxDelay
+							);
+						}*/
+
+						$el.css("--opacity-delay", distance + "s");
+					});
+			}
+
+			$("#buttons-grid").addClass("has-dragging-child");
 		}
 	}
 }
@@ -118,4 +177,3 @@ function swapButtons(
 	$dropTarget.css("--index", lastTargetIndex.toString());
 	$lastTarget.css("--index", dropTargetIndex.toString());
 }
-

@@ -8,7 +8,7 @@
 
 	padding-top: 8px;
 	padding-left: 8px;
-	
+
 	display: grid;
 
 	grid-template-columns: 1fr 1fr 1fr;
@@ -16,4 +16,10 @@
 	background-color: var(--buttons-grid-bg);
 
 	margin-bottom: 10px;
+
+	&.has-dragging-child {
+		&, & .soundbutton {
+			cursor: grabbing;
+		}
+	}
 }

@@ -5,8 +5,7 @@
 
 // https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/
 
-input[type="button"].soundbutton,
-button.soundbutton {
+.soundbutton {
 	--hue: 0;
 	--saturation: 100%;
 	--lightness: 50%;
@@ -26,6 +25,8 @@ button.soundbutton {
 
 	// The threshold at which a darker border will be applied. Range: decimals from 0 to 1.
 	--border-threshold: 0.8;
+
+	// --opacity-delay: 10s;
 
 	// Applies a darker border if the luma is higher than the border threshold.
 	// --border-alpha: calc((var(--luma) - var(--border-threshold)) * 100);
@@ -58,7 +59,9 @@ button.soundbutton {
 	max-width: var(--width);
 	max-height: var(--height);
 
-	transition: background-color .1s, opacity .2s, filter .2s;
+	transition:
+		background-color .1s,
+		opacity .2s;
 
 	#buttons-grid:not(.has-dragging-child) &:hover,
 	#buttons-grid:not(.has-dragging-child) &.dragover {
@@ -74,8 +77,6 @@ button.soundbutton {
 	}
 
 	&.dragging {
-		// outline: 3px solid ~"rgba(max(0, var(--red) - 50), max(0, var(--green) - 50), max(0, var(--blue) - 50), var(--border-alpha))";
-		// transition: opacity .5s;
 		z-index: 1;
 
 		opacity: .35;
@@ -85,16 +86,15 @@ button.soundbutton {
 	}
 
 	#buttons-grid.has-dragging-child &:not(.dragging) {
-		// filter: blur(2px);
+		transition-delay: var(--opacity-delay, 0);
 		opacity: .5;
 	}
 
 	#buttons-grid.has-dragging-child &.drop-destination {
-		transition: background-color .1s, opacity .2s;
-		// filter: blur(0);
+		transition: box-shadow .05s;
+
 		opacity: 1;
-		// outline: 4px solid #fff; // Background is better: outline shows a weird empty space.
-		box-shadow: 0 0 0 3px #fff;
+		box-shadow: 0 0 0 3px #fff; // Background is better: outline shows a weird empty space.
 	}
 
 	&.playing {
@@ -107,7 +107,5 @@ button.soundbutton {
 		display: none;
 	}
 
-	&:focus {
-		
-	}
+	&:focus {}
 }
