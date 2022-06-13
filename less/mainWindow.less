@@ -158,14 +158,15 @@ body {
 						}
 					}
 
-					#reset-ui-scale {
+					#ui-scale-reset {
 						@h: 0;
 						@s: 0%;
-						@l: 16%;
+						@l: 80%;
+						@btn-size: 20px;
 
 						border: none;
 						background: @hsl-normal;
-						color: #fff;
+						color: var(--window-bg);
 						.hide-overflow();
 
 						// padding: 0 10px;
@@ -174,9 +175,13 @@ body {
 						align-items: center;
 						justify-content: center;
 
-						border-radius: 50px;
-						min-width: @btn-size;
-						min-height: @btn-size;
+						border-radius: 50%;
+						width: @btn-size;
+						height: @btn-size;
+
+						* {
+							font-size: .8em;
+						}
 
 						&:hover:not(:disabled) {
 							background-color: @hsl-hover;
