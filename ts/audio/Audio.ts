@@ -13,14 +13,6 @@ $("#play-pause-audio").on("click", async () => {
 	updatePlayPauseButton();
 });
 
-$("#volume")
-	.on("input", () => {
-		AudioPlayer.volume = ($("#volume").val() as number) / 1000;
-	})
-	.on("wheel", (e) => {
-		EventFunctions.updateInputValueFromWheel(e, 50, true, ["input"]);
-	});
-
 function updatePlayPauseButton(
 	doTimeout: boolean = true,
 	i: number = 0,

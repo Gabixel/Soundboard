@@ -106,9 +106,11 @@ class SoundButton {
 
 	public static setGrid(grid: JQuery<HTMLElement>): void {
 		this.$grid = grid;
+		this.initContextMenu();
+		this.initClick();
 	}
 
-	public static setContextMenu() {
+	private static initContextMenu() {
 		this.$grid.on("contextmenu", ".soundbutton", (e) => {
 			e.stopPropagation(); // To prevent the document's trigger
 			// TODO: convert to async call
@@ -133,11 +135,11 @@ class SoundButton {
 				} as SoundButtonData,
 			};
 
-			SoundBoardApi.openContextMenu(args);
+			SoundboardApi.openContextMenu(args);
 		});
 	}
 
-	public static setClick(): void {
+	private static initClick(): void {
 		this.$grid.on("click", ".soundbutton", (e) => {
 			const $button = $(e.target);
 			const path = $button.attr("data-path");

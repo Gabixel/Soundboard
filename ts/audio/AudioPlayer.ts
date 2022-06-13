@@ -1,5 +1,6 @@
 class AudioPlayer {
 	private static _volume: number = 0;
+	private static $volumeSlider: JQuery<HTMLElement>;
 
 	// private static context: AudioContext = new AudioContext();
 	// private static panner: StereoPannerNode = this.context.createStereoPanner();
@@ -42,7 +43,20 @@ class AudioPlayer {
 	}
 	*/
 
-	public static initVolume(): void {}
+	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
+		this.$volumeSlider = $slider;
+		this.initVolumeSlider();
+	}
+
+	private static initVolumeSlider(): void {
+		this.$volumeSlider
+			.on("input", () => {
+				AudioPlayer.volume = ($("#volume").val() as number) / 1000;
+			})
+			.on("wheel", (e) => {
+				EventFunctions.updateInputValueFromWheel(e, 50, true, ["input"]);
+			});
+	}
 
 	public static addAudio(path: string, useMultiPool: boolean = false): void {
 		this.tryAddAudio(path, useMultiPool);
@@ -107,7 +121,7 @@ class AudioPlayer {
 	}
 
 	public static set volume(value: number) {
-		this._volume = EMath.getEponentialVolume(value, 10);
+		this._volume = EMath.getEponentialValue(value, 10);
 		this.updateExistingVolumes();
 		console.log("New volume: " + this._volume);
 	}
