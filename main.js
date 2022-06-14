@@ -89,39 +89,6 @@ const createMainWindow = () => {
 		showContextMenu(extraMenu, e.x, e.y);
 	});
 
-	/* Inject script elements to the body of `mainWindows` */
-	// TODO: do this in a js file
-	mainWindow.webContents.on("dom-ready", () => {
-		function addScripts(...scriptPaths) {
-			scriptPaths.forEach((scriptPath) => {
-				mainWindow.webContents.executeJavaScript(
-					fs.readFileSync(path.join(__dirname, "js", scriptPath + ".js"), "utf8")
-				);
-			});
-		}
-
-		addScripts(
-			"utility/SoundBoardApi",
-			"utility/ExtendedMath",
-			"utility/EventFunctions",
-
-			"grid/ButtonsGridSizeChanger",
-			"grid/ButtonsGrid",
-			"grid/ButtonSwap",
-			"grid/SoundButton",
-
-			"audio/AudioPool",
-			"audio/AudioStoreManager",
-			"audio/AudioPlayer",
-			"audio/Audio",
-
-			"settings/UiScale",
-
-			"TopBarManager",
-			"Index"
-		);
-	});
-
 	// Load HTML into the window
 	mainWindow.loadFile(path.join(__dirname, "/windows/mainWindow.html"));
 
