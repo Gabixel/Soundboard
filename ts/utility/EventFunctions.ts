@@ -15,16 +15,13 @@ class EventFunctions {
 		const max = parseFloat($target.attr("max").toString());
 		const min = parseFloat($target.attr("min").toString());
 
-		const newValue = currentValue + delta * stepValue;
-		// console.log("delta is " + delta);
-		// console.log("old value is " + value);
-		// console.log("max is " + max);
-		// console.log("min is " + min);
-		// console.log("newValue is " + newValue);
-		// console.log("clamped value is " + EMath.clamp(newValue, min, max));
-		// console.log("------------------");
+		const newValue = EMath.clamp(currentValue + delta * stepValue, min, max);
 
-		$target.val(EMath.clamp(newValue, min, max));
+		const previousValue = parseFloat($target.val().toString());
+
+		if(previousValue === newValue) return;
+
+		$target.val(newValue);
 
 		if (!trigger) return;
 
