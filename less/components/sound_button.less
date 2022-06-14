@@ -39,6 +39,8 @@
 	padding: 4px;
 
 	display: flex;
+	// justify-content: flex-start;
+	// align-items: center;
 	.flex-center-all();
 
 	order: var(--index, 0);
@@ -59,9 +61,8 @@
 	max-width: var(--width);
 	max-height: var(--height);
 
-	transition:
-		background-color .1s,
-		opacity .2s;
+	transition: background-color .1s,
+	opacity .2s;
 
 	#buttons-grid:not(.has-dragging-child) &:hover,
 	#buttons-grid:not(.has-dragging-child) &.dragover {
@@ -86,8 +87,21 @@
 	}
 
 	#buttons-grid.has-dragging-child &:not(.dragging) {
-		transition-delay: var(--opacity-delay, 0);
+		animation: drag-choose .2s ease var(--opacity-delay, 0);
 		opacity: .5;
+
+		// transition: none;
+		// transition-delay: var(--opacity-delay, 0);
+
+		@keyframes drag-choose {
+			from {
+				opacity: 1
+			}
+
+			to {
+				opacity: .5
+			}
+		}
 	}
 
 	#buttons-grid.has-dragging-child &.drop-destination {
