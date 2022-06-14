@@ -45,6 +45,7 @@ function updateColumns(e: JQuery.ChangeEvent) {
 function updateGrid() {
 	fillEmptyCells();
 	updateVisibleButtons();
+	updateButtonFontSize();
 }
 
 function updateVisibleButtons(): void {
@@ -79,4 +80,14 @@ function fillEmptyCells(): void {
 		
 		ButtonsGrid.increaseButtonCount();
 	}
+}
+
+function updateButtonFontSize(): void {
+	const $el = $($("#buttons-grid .soundbutton")[0])
+	const buttonHeight =
+		(Math.min($el.innerHeight(), $el.innerWidth()) -
+			parseFloat($el.css("padding-top")) * 2) /
+		2;
+
+	$("#buttons-grid").css("--button-font-size", buttonHeight + "px");
 }
