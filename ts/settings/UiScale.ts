@@ -72,8 +72,11 @@ class UiScale {
 
 	private static initLock() {
 		this.$lock.on("change", (e: JQuery.ChangeEvent) => {
-			this.$slider.prop("disabled", e.target.checked);
-			this.$reset.prop("disabled", e.target.checked);
+			const checked = e.target.checked;
+			this.$slider.prop("disabled", checked);
+			this.$reset.prop("disabled", checked);
+			const lock = $(`<i class="fa-solid fa-lock${!checked ? "-open" : ''}"></i>`)[0];
+			$(`label[for="${this.$lock.attr("id")}"]`).html(lock);
 		});
 	}
 
