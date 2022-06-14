@@ -121,10 +121,6 @@ body {
 						&:active:not(:disabled) {
 							background-color: @hsl-active;
 						}
-
-						&:disabled {
-							background-color: @hsl-dark
-						}
 					}
 
 					#play-pause-audio {
@@ -152,9 +148,12 @@ body {
 						&:active:not(:disabled) {
 							background-color: @hsl-active;
 						}
+					}
 
+					#ui-scale-slider {
+						transition: filter .2s;
 						&:disabled {
-							background-color: @hsl-dark
+							filter: brightness(.9);
 						}
 					}
 
