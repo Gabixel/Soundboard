@@ -15,6 +15,8 @@ $("#buttons-grid").on("mousemove", (e) => {
 
 $(document)
 	.on("mousedown", ".soundbutton", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
 		if (e.which != 1) return;
 
 		// Set the drag target
@@ -35,6 +37,8 @@ $(document)
 		preparingDrag = true;
 	})
 	.on("mouseup", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
 		isDragging = preparingDrag = false;
 
 		const $dropTarget = getElementFromPoint(e.pageX, e.pageY);
@@ -60,9 +64,13 @@ $(document)
 		$dragTarget = null;
 	})
 	.on("mouseenter", ".soundbutton", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
 		onSoundButtonMouseEnter(e);
 	})
 	.on("mouseleave", ".soundbutton", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
 		onSoundButtonMouseLeave(e);
 	});
 
@@ -97,7 +105,9 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 
 			if (
 				rows > 4 &&
+				rows < 11 &&
 				cols > 4 &&
+				rows < 11 &&
 				($("#buttons-grid .soundbutton").length > 16 || indexChanged)
 			) {
 				setOpacityDelay(cols, rows);
@@ -112,6 +122,7 @@ function setOpacityDelay(cols: number, rows: number): void {
 	const btnDragIndex = parseInt($dragTarget.css("--index"));
 
 	const multiplier = 0.05;
+	const sumOffset = 2;
 
 	// Delay effect for the buttons around the dragged one
 	$("#buttons-grid .soundbutton")
@@ -127,8 +138,8 @@ function setOpacityDelay(cols: number, rows: number): void {
 
 			const x = Math.abs(row - Math.floor(btnDragIndex / cols));
 			const y = Math.abs(col - (btnDragIndex % cols));
-			const sum = x + y;
-			const distance = (sum * multiplier) / 2;
+			const sum = x + y + sumOffset;
+			const distance = (sum * multiplier) / 1.5;
 
 			$el.css("--opacity-delay", distance + "s");
 		});
