@@ -41,7 +41,7 @@ class SoundButton {
 	): void {
 		$button
 			.attr("id", "sound_btn_" + data.index)
-			.attr("tabindex", data.index)
+			.attr("tabindex", data.index + 1)
 			.css("--index", data.index.toString())
 
 			// TODO: apply color
