@@ -48,8 +48,7 @@ async function init() {
 	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
 	await AudioPlayer.updateAudioDevicesList();
 	// TODO: https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
-	AudioPlayer.setVolumeSlider($("#volume"));
-	$("#volume").trigger("input"); // Initializes volume in the audio player
+	AudioPlayer.setVolumeSlider($("#volume-slider")); // Initializes volume in the audio player
 
 	$(document).on("contextmenu", (e) => {
 		SoundboardApi.openContextMenu();

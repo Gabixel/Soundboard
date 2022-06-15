@@ -1,6 +1,7 @@
 class AudioPlayer {
 	private static _volume: number = 0;
 	private static $volumeSlider: JQuery<HTMLElement>;
+	private static maxSliderValue = 1000;
 
 	// private static context: AudioContext = new AudioContext();
 	// private static panner: StereoPannerNode = this.context.createStereoPanner();
@@ -20,38 +21,19 @@ class AudioPlayer {
 		console.log(this.audioDevices);
 	}
 
-	/*
-	public static updateAudioDevicesList(): void {
-		navigator.mediaDevices.enumerateDevices().then(
-			(devicesList) => {
-				this.setAudioDevicesList(devicesList);
-			},
-			(err) => {
-				console.log(err);
-			}
-		);
-	}
-
-	private static setAudioDevicesList(devices: MediaDeviceInfo[]): void {
-		this.audioDevices = devices;
-
-		console.log("Devices updated: " + devices.length);
-		console.log(devices);
-
-		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
-		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: store preferred device
-	}
-	*/
-
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
+		console.log("slider set!");
 		this.$volumeSlider = $slider;
-		this.initVolumeSlider();
+		console.log(this.$volumeSlider);
+		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
+		this.updateVolume();
+		this.initSliderEvents();
 	}
 
-	private static initVolumeSlider(): void {
+	private static initSliderEvents(): void {
 		this.$volumeSlider
 			.on("input", () => {
-				AudioPlayer.volume = ($("#volume").val() as number) / 1000;
+				this.updateVolume();
 			})
 			.on("wheel", (e) => {
 				EventFunctions.updateInputValueFromWheel(e, 50, true, ["input"]);
@@ -120,10 +102,15 @@ class AudioPlayer {
 		return this._volume;
 	}
 
-	public static set volume(value: number) {
-		this._volume = EMath.getEponentialValue(value, 10);
+	private static updateVolume(): void {
+		let value = (this.$volumeSlider.val() as number) / this.maxSliderValue;
+
+		value = EMath.getEponentialValue(value, 10);
+
+		this._volume = value;
 		this.updateExistingVolumes();
-		console.log("New volume: " + this._volume);
+
+		console.log("New volume: " + value);
 	}
 
 	private static updateExistingVolumes(): void {
