@@ -20,8 +20,8 @@ window.onload = () => {
 		"utility/ExtendedMath",
 		"utility/EventFunctions",
 
-		"grid/ButtonsGridSizeChanger",
-		"grid/ButtonsGrid",
+		"grid/GridResizer",
+		"grid/Grid",
 		"grid/ButtonSwap",
 		"grid/SoundButton",
 
