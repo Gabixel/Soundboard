@@ -7,6 +7,8 @@ let $dragTarget: JQuery<HTMLElement> | null = null;
 let indexChanged = false;
 let isStyled = false;
 
+// TODO: remove event listeners on mouseup and reassign them on mousedown
+
 $("#buttons-grid").on("mousemove", (e) => {
 	if (e.which != 1) return;
 
