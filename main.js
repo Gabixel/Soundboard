@@ -59,8 +59,8 @@ const createMainWindow = () => {
 
 		useContentSize: true,
 
-		minWidth: defaultWidth,
-		minHeight: defaultHeight,
+		minWidth: 534,
+		minHeight: 400,
 
 		autoHideMenuBar: !isProduction,
 
