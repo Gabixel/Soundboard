@@ -3,6 +3,11 @@ class Grid {
 	private static gridCols = 1;
 	private static gridSize = 1;
 
+	private static grid: JQuery<HTMLElement>;
+
+	// TODO: move SizeChanger logic to this
+	private static gridResizer: any;
+
 	private static btnCount = 0;
 
 	public static setRows(newValue: number): void {
