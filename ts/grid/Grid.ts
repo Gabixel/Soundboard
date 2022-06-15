@@ -1,16 +1,16 @@
-class ButtonsGrid {
+class Grid {
 	private static gridRows = 1;
 	private static gridCols = 1;
 	private static gridSize = 1;
 
 	private static btnCount = 0;
 
-	public static updateRows(newValue: number): void {
+	public static setRows(newValue: number): void {
 		this.gridRows = newValue;
 		this.updateSize();
 	}
 
-	public static updateColumns(newValue: number): void {
+	public static setColumns(newValue: number): void {
 		this.gridCols = newValue;
 		this.updateSize();
 	}

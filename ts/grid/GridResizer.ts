@@ -1,3 +1,13 @@
+class GridResizer {
+	private grid: Grid;
+
+	constructor(grid: Grid) {
+		this.grid = grid;
+	}
+}
+
+// TODO: move all to class //////////////////////////////////////////////////////
+
 $("#grid-rows")
 	.on("change", (e) => {
 		updateRows(e);
@@ -10,7 +20,7 @@ $("#grid-rows")
 $("#grid-columns")
 	.on("change", (e) => {
 		updateColumns(e);
-		updateGrid();
+		if (Grid.rows == 0) updateGrid();
 	})
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
@@ -18,7 +28,7 @@ $("#grid-columns")
 
 $("#clear-grid").on("click", () => {
 	$("#buttons-grid").empty();
-	ButtonsGrid.resetButtonCount();
+	Grid.resetButtonCount();
 	fillEmptyCells();
 });
 
@@ -29,7 +39,7 @@ function updateRows(e: JQuery.ChangeEvent) {
 		gridTemplateRows: `repeat(${rows}, 1fr)`,
 	});
 
-	ButtonsGrid.updateRows(rows);
+	Grid.setRows(rows);
 }
 
 function updateColumns(e: JQuery.ChangeEvent) {
@@ -39,7 +49,7 @@ function updateColumns(e: JQuery.ChangeEvent) {
 		gridTemplateColumns: `repeat(${columns}, 1fr)`,
 	});
 
-	ButtonsGrid.updateColumns(columns);
+	Grid.setColumns(columns);
 }
 
 function updateGrid() {
@@ -60,7 +70,7 @@ function updateVisibleButtons(): void {
 	).each((i: number, e: HTMLElement) => {
 		const index = parseInt($(e).css("--index").toString());
 
-		if (index >= ButtonsGrid.size) {
+		if (index >= Grid.size) {
 			$(e).addClass("hidden");
 		} else {
 			$(e).removeClass("hidden");
@@ -69,25 +79,35 @@ function updateVisibleButtons(): void {
 }
 
 function fillEmptyCells(): void {
-	if (!ButtonsGrid.isGridIncomplete) return;
+	if (!Grid.isGridIncomplete) return;
 
-	const emptyCells = ButtonsGrid.size - ButtonsGrid.buttonCount;
+	const emptyCells = Grid.size - Grid.buttonCount;
 
 	for (let i = 0; i < emptyCells; i++) {
 		$("#buttons-grid").append(
-			SoundButton.generateRandom(ButtonsGrid.buttonCount)
+			SoundButton.generateRandom(Grid.buttonCount)
 		);
-		
-		ButtonsGrid.increaseButtonCount();
+
+		Grid.increaseButtonCount();
 	}
 }
 
 function updateButtonFontSize(): void {
-	const $el = $($("#buttons-grid .soundbutton")[0])
-	const buttonHeight =
+	const $el = $($("#buttons-grid .soundbutton")[0]);
+
+	const minFontSize = parseInt($(document.body).css("font-size").toString());
+	const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
+
+	const size =
 		(Math.min($el.innerHeight(), $el.innerWidth()) -
 			parseFloat($el.css("padding-top")) * 2) /
 		2;
+
+	console.log(minFontSize);
+	console.log(maxFontSize);
+	console.log(size);
+
+	const buttonHeight = EMath.clamp(size, minFontSize, maxFontSize);
 
 	$("#buttons-grid").css("--button-font-size", buttonHeight + "px");
 }
