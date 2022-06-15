@@ -103,14 +103,26 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 			const rows = parseInt($("#grid-rows").val().toString());
 			const cols = parseInt($("#grid-columns").val().toString());
 
+			const draggedButtonIndex = parseInt($dragTarget.css("--index"));
+			const dragButtonRow = Math.floor(draggedButtonIndex / cols);
+			const dragButtonCol = draggedButtonIndex % cols;
+
+			const maxPossibleDistance = Math.max(
+				dragButtonCol,
+				Math.abs(dragButtonCol - cols),
+				dragButtonRow,
+				Math.abs(dragButtonRow - rows)
+			);
+
 			if (
+				maxPossibleDistance > 3 &&
 				rows > 4 &&
 				rows < 11 &&
 				cols > 4 &&
 				rows < 11 &&
 				($("#buttons-grid .soundbutton").length > 16 || indexChanged)
 			) {
-				setOpacityDelay(cols, rows);
+				setOpacityDelay(cols, draggedButtonIndex);
 			}
 
 			$("#buttons-grid").addClass("has-dragging-child");
@@ -118,9 +130,7 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 	}
 }
 
-function setOpacityDelay(cols: number, rows: number): void {
-	const btnDragIndex = parseInt($dragTarget.css("--index"));
-
+function setOpacityDelay(cols: number, draggedButtonIndex: number): void {
 	const multiplier = 0.05;
 	const sumOffset = 2;
 
@@ -136,8 +146,8 @@ function setOpacityDelay(cols: number, rows: number): void {
 			const row = Math.floor(index / cols);
 			const col = index % cols;
 
-			const x = Math.abs(row - Math.floor(btnDragIndex / cols));
-			const y = Math.abs(col - (btnDragIndex % cols));
+			const x = Math.abs(row - Math.floor(draggedButtonIndex / cols));
+			const y = Math.abs(col - (draggedButtonIndex % cols));
 			const sum = x + y + sumOffset;
 			const distance = (sum * multiplier) / 1.5;
 
