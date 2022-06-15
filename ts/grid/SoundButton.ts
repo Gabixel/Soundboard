@@ -106,8 +106,8 @@ class SoundButton {
 
 	public static setGrid(grid: JQuery<HTMLElement>): void {
 		this.$grid = grid;
-		this.initContextMenu();
 		this.initClick();
+		this.initContextMenu();
 	}
 
 	private static initContextMenu() {
