@@ -1,9 +1,11 @@
 class GridResizer {
-	private grid: Grid;
+	private static grid: Grid;
 
-	constructor(grid: Grid) {
+	public static setGrid(grid: Grid): void {
 		this.grid = grid;
 	}
+
+	private static setupResizeEvents(): void {}
 }
 
 // TODO: move all to class //////////////////////////////////////////////////////
@@ -20,7 +22,7 @@ $("#grid-rows")
 $("#grid-columns")
 	.on("change", (e) => {
 		updateColumns(e);
-		if (Grid.rows == 0) updateGrid();
+		updateGrid();
 	})
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
@@ -84,9 +86,7 @@ function fillEmptyCells(): void {
 	const emptyCells = Grid.size - Grid.buttonCount;
 
 	for (let i = 0; i < emptyCells; i++) {
-		$("#buttons-grid").append(
-			SoundButton.generateRandom(Grid.buttonCount)
-		);
+		$("#buttons-grid").append(SoundButton.generateRandom(Grid.buttonCount));
 
 		Grid.increaseButtonCount();
 	}
