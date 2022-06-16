@@ -1,5 +1,6 @@
-// @import "debug";
-@import "functions";
+// @import "utils/debug";
+@import "utils/functions";
+@import "utils/variables";
 
 body {
 	background-color: var(--window-bg);
@@ -8,8 +9,6 @@ body {
 	padding: 10px; // .625em
 
 	#soundboard {
-		@main-radius: 10px;
-
 		.fill-size();
 
 		display: flex;
@@ -50,154 +49,63 @@ body {
 		}
 
 		#main-container {
-			flex-grow: 1;
 			.set-radius(@main-radius);
+			.hide-overflow();
 
 			background-color: #707070;
-			padding: (@main-radius / 2);
 
 			z-index: 0;
 
+			flex-grow: 1;
+			display: flex;
+			flex-direction: row-reverse;
+
 			main {
 				.fill-size();
+				.set-radius(@main-radius);
+				.hide-overflow();
 
+				z-index: 1;
+
+				// box-shadow: 4px 0 2px -2px rgb(0 0 0 / .5);
+
+				padding: @main-padding;
 				display: flex;
 				flex-direction: column;
 				align-items: stretch;
 
 				background-color: #707070;
+			}
 
-				@import "./components/buttons_grid.less";
+			#presets-container {
+				z-index: 0;
 
-				#audio-controls {
-					@btn-size: 30px;
-					@radius: 10px;
-					@h: 0;
-					@s: 0;
-					@l: 0;
-					@hsl: hsl(@h, @s, @l);
-					@hsl-middle: hsl(@h, @s, @l + 5%);
-					@hsl-bright: hsl(@h, @s, @l + 10%);
-					@hsl-dark: hsl(@h, @s, @l - 10%);
-					@hsl-normal: @hsl;
-					// @hsl-hover: inset @hsl-bright 0 -25px 10px -10px;
-					@hsl-hover: @hsl-bright;
-					@hsl-active: @hsl-middle;
+				&.hidden {
+					width: 20px;
+				}
 
-					button {
-						transition: background-color .1s ease;
+				.open-btn {
+					--hsl-active: hsl(10, 10%, 10%);
+
+					background-color: #707070;
+					color: #fff;
+
+					&:hover {
+						background-color: #636363;
 					}
 
-					flex-grow: 0;
-					.hide-overflow();
-
-					display: flex;
-					flex-direction: column;
-					justify-content: flex-start;
-					align-items: flex-start;
-
-					#stop-audio {
-						@h: 0;
-						@s: 100%;
-						@l: 37%;
-
-						border: none;
-						background-color: @hsl-normal;
-						color: #fff;
-						.hide-overflow();
-
-						display: inline-flex;
-						align-items: center;
-						justify-content: center;
-
-						border-radius: @radius;
-						width: @btn-size;
-						height: @btn-size;
-
-						&:hover:not(:disabled) {
-							background-color: @hsl-hover;
-						}
-
-						&:active:not(:disabled) {
-							background-color: @hsl-active;
-						}
+					&:active {
+						background-color: #575757;
 					}
 
-					#play-pause-audio {
-						@h: 120;
-						@s: 100%;
-						@l: 37%;
+					height: 100%;
+					width: calc(100% + @main-radius);
+					margin-left: calc(@main-radius * -1);
 
-						border: none;
-						background: @hsl-normal;
-						color: #fff;
-						.hide-overflow();
-
-						display: inline-flex;
-						align-items: center;
-						justify-content: center;
-
-						border-radius: @radius;
-						width: @btn-size;
-						height: @btn-size;
-
-						&:hover:not(:disabled) {
-							background-color: @hsl-hover;
-						}
-
-						&:active:not(:disabled) {
-							background-color: @hsl-active;
-						}
-					}
-
-					#ui-scale-slider {
-						transition: filter .2s;
-						&:disabled {
-							filter: brightness(.9);
-						}
-					}
-
-					#ui-scale-reset {
-						@h: 0;
-						@s: 0%;
-						@l: 80%;
-						@btn-size: 20px;
-
-						border: none;
-						background: @hsl-normal;
-						color: var(--window-bg);
-						.hide-overflow();
-
-						// padding: 0 10px;
-
-						display: inline-flex;
-						align-items: center;
-						justify-content: center;
-
-						border-radius: 50%;
-						width: @btn-size;
-						height: @btn-size;
-
-						* {
-							font-size: .8em;
-						}
-
-						&:hover:not(:disabled) {
-							background-color: @hsl-hover;
-						}
-
-						&:active:not(:disabled) {
-							background-color: @hsl-active;
-						}
-
-						&:disabled {
-							background-color: @hsl-dark
-						}
-
-						// i {
-						// 	margin-right: 3px;
-						// }
-					}
+					padding-left: calc(@main-radius * 1.5);
+					// background-color: #000;
+					// color: #fff;
+					border: none // border: 1px solid white;
 				}
 			}
 		}
