@@ -24,7 +24,6 @@ class AudioPlayer {
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
 		console.log("slider set!");
 		this.$volumeSlider = $slider;
-		console.log(this.$volumeSlider);
 		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
 		this.updateVolume();
 		this.initSliderEvents();
