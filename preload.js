@@ -7,9 +7,9 @@ contextBridge.exposeInMainWorld("api", {
 const appendScripts = (...scripts) => {
 	scripts.forEach((s) => {
 		const script = window.document.createElement("script");
+        script.async = false;
 		script.type = "text/javascript";
 		script.src = "../js/" + s + ".js";
-        script.async = false;
 		window.document.body.appendChild(script);
 	});
 };
