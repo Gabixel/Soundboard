@@ -32,11 +32,6 @@ type SoundButtonData = {
 init();
 
 async function init() {
-	$(window).on("dragover", null, false, (e) => {
-		e.preventDefault();
-		e.originalEvent.dataTransfer.dropEffect = "none";
-		return false;
-	});
 	// $(window).on("drop", null, false, (e) => {
 	// 	e.preventDefault();
 	// 	return false;
@@ -50,10 +45,6 @@ async function init() {
 	// TODO: https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
 	AudioPlayer.setVolumeSlider($("#volume-slider")); // Initializes volume in the audio player
 
-	$(document).on("contextmenu", (e) => {
-		SoundboardApi.openContextMenu();
-	});
-
 	SoundButton.setGrid($("#buttons-grid"));
 
 	UiScale.setControls(
@@ -62,3 +53,13 @@ async function init() {
 		$("#ui-scale-reset")
 	);
 }
+
+$(document).on("contextmenu", (e) => {
+	SoundboardApi.openContextMenu();
+});
+
+$(window).on("dragover", null, false, (e) => {
+	e.preventDefault();
+	e.originalEvent.dataTransfer.dropEffect = "none";
+	return false;
+});
