@@ -17,17 +17,17 @@ $("#buttons-grid").on("mousemove", (e) => {
 
 $(document)
 	.on("mousedown", ".soundbutton", (e) => {
-		e.preventDefault();
+		// e.preventDefault(); // Seems to break the arrows inside the number inputs.
 		e.stopPropagation();
 		if (e.which != 1) return;
 
-		// Set the drag target
+		// Set the new drag target
 		$dragTarget = $(e.target);
 
 		// This is needed when trying to apply the opacity delay animation.
 		indexChanged =
 			$lastTarget == null ||
-			$lastTarget.css("--index") !== $dragTarget.css("--index"); // Check if the index is the same as the last one
+			$lastTarget.css("--index") !== $dragTarget.css("--index"); // Checks if the index is the same as the last one
 
 		// Overwrite the last target
 		$lastTarget = $dragTarget;
@@ -39,7 +39,7 @@ $(document)
 		preparingDrag = true;
 	})
 	.on("mouseup", (e) => {
-		e.preventDefault();
+		// e.preventDefault(); // Seems to break the arrows inside the number inputs.
 		e.stopPropagation();
 		isDragging = preparingDrag = false;
 
