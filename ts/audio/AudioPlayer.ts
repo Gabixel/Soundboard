@@ -17,12 +17,14 @@ class AudioPlayer extends LogExtend {
 		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: store preferred device
 
-		console.log("Devices updated: " + this.audioDevices.length);
-		console.log(this.audioDevices);
+		this.log(
+			this.updateAudioDevicesList,
+			"Devices updated!\n",
+			this.audioDevices);
 	}
 
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
-		this.log("Slider set!", $slider);
+		this.log(this.setVolumeSlider, "Slider set!\n", $slider);
 		this.$volumeSlider = $slider;
 		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
 		this.updateVolume();
@@ -109,7 +111,7 @@ class AudioPlayer extends LogExtend {
 		this._volume = value;
 		this.updateExistingVolumes();
 
-		console.log("New volume: " + value);
+		this.log(this.updateVolume, "Volume:", this._volume * 100, "%");
 	}
 
 	private static updateExistingVolumes(): void {
