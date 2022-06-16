@@ -105,25 +105,12 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 			const rows = parseInt($("#grid-rows").val().toString());
 			const cols = parseInt($("#grid-columns").val().toString());
 
-			const draggedButtonIndex = parseInt($dragTarget.css("--index"));
-			const dragButtonRow = Math.floor(draggedButtonIndex / cols);
-			const dragButtonCol = draggedButtonIndex % cols;
-
-			const maxPossibleDistance = Math.max(
-				dragButtonCol,
-				Math.abs(dragButtonCol - cols),
-				dragButtonRow,
-				Math.abs(dragButtonRow - rows)
-			);
-
 			if (
-				maxPossibleDistance > 3 &&
-				rows > 4 &&
-				rows < 11 &&
-				cols > 4 &&
-				rows < 11 &&
-				($("#buttons-grid .soundbutton").length > 16 || indexChanged)
+				rows > 7 &&
+				cols > 7 &&
+				($("#buttons-grid .soundbutton").length > 49 || indexChanged)
 			) {
+			const draggedButtonIndex = parseInt($dragTarget.css("--index"));
 				setOpacityDelay(cols, draggedButtonIndex);
 			}
 
