@@ -3,12 +3,8 @@ class AudioPlayer extends LogExtend {
 	private static $volumeSlider: JQuery<HTMLElement>;
 	private static maxSliderValue = 1000;
 
-	// private static context: AudioContext = new AudioContext();
-	// private static panner: StereoPannerNode = this.context.createStereoPanner();
-
 	private static audioStore: AudioStoreManager = new AudioStoreManager();
 
-	// private static mediaList: AudioNode[] = []; // TODO: audio context
 	private static audioDevices: MediaDeviceInfo[];
 
 	public static async updateAudioDevicesList(): Promise<void> {
@@ -116,9 +112,5 @@ class AudioPlayer extends LogExtend {
 
 	private static updateExistingVolumes(): void {
 		this.audioStore.setVolume(this._volume);
-	}
-
-	public static setPan(pan: number): void {
-		// this.panner.pan.value = EMath.clamp(pan, -1, 1);
 	}
 }
