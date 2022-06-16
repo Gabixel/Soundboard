@@ -1,4 +1,4 @@
-@import "functions";
+@import "utils/functions";
 
 html,
 body,
@@ -28,6 +28,15 @@ body *::before {
 
 input[type="range"] {
 	margin: 0;
+}
+
+// If we want to overwrite this, we need to specify the html element too
+// (e.g. "button.coolbutton" instead of ".coolbutton")
+input[type="button"]:not(.default),
+button:not(.default) {
+	border: none;
+	background-color: #fff;
+	color: #000;
 }
 
 // TODO
