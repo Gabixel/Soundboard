@@ -1,4 +1,4 @@
-class AudioPlayer {
+class AudioPlayer extends LogExtend {
 	private static _volume: number = 0;
 	private static $volumeSlider: JQuery<HTMLElement>;
 	private static maxSliderValue = 1000;
@@ -22,7 +22,7 @@ class AudioPlayer {
 	}
 
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
-		console.log("slider set!");
+		this.log("Slider set!", $slider);
 		this.$volumeSlider = $slider;
 		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
 		this.updateVolume();

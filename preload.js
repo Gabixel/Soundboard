@@ -19,6 +19,7 @@ window.onload = () => {
 		"utility/SoundBoardApi",
 		"utility/ExtendedMath",
 		"utility/EventFunctions",
+		"utility/Logger",
 
 		"grid/GridResizer",
 		"grid/Grid",
