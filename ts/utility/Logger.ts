@@ -30,15 +30,24 @@ class Logger {
 		let hash = 0;
 		if (str.length === 0) return hash;
 
+		hash = this.getHashFromString(str);
+
+		const result = hash % 360;
+		if (result < 0) return result + 360;
+		else return result;
+	}
+
+	private static getHashFromString(str: string): number {
+		let hash = 0;
+		if (str.length === 0) return hash;
+
 		for (let i = 0; i < str.length; i++) {
 			const char = str.charCodeAt(i);
 			hash = (hash << 5) - hash + char;
 			hash |= 0; // Convert to 32bit integer
 		}
 
-		const result = hash % 360;
-		if (result < 0) return result + 360;
-		else return result;
+		return hash;
 	}
 }
 
