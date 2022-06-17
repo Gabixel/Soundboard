@@ -92,22 +92,19 @@ function fillEmptyCells(): void {
 	}
 }
 
+// TODO: update on window resize and on ui scale change
 function updateButtonFontSize(): void {
 	const $el = $($("#buttons-grid .soundbutton")[0]);
 
-	const minFontSize = parseInt($(document.body).css("font-size").toString());
+	const minFontSize = 10; /*parseInt($(document.body).css("font-size").toString());*/
 	const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
 
-	const size =
+	let size =
 		(Math.min($el.innerHeight(), $el.innerWidth()) -
 			parseFloat($el.css("padding-top")) * 2) /
 		2;
 
-	console.log(minFontSize);
-	console.log(maxFontSize);
-	console.log(size);
+	size = EMath.clamp(size, minFontSize, maxFontSize);
 
-	const buttonHeight = EMath.clamp(size, minFontSize, maxFontSize);
-
-	$("#buttons-grid").css("--button-font-size", buttonHeight + "px");
+	$("#buttons-grid").css("--button-font-size", size + "px");
 }
