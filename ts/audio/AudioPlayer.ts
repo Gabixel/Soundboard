@@ -3,6 +3,8 @@ class AudioPlayer extends LogExtend {
 	private static $volumeSlider: JQuery<HTMLElement>;
 	private static maxSliderValue = 1000;
 
+	private static volumeLogTimeout: NodeJS.Timeout;
+
 	private static audioStore: AudioStoreManager = new AudioStoreManager();
 
 	private static audioDevices: MediaDeviceInfo[];
@@ -11,12 +13,13 @@ class AudioPlayer extends LogExtend {
 		const devices = await navigator.mediaDevices.enumerateDevices();
 
 		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
-		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: store preferred device
+		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: Store preferred device
 
 		this.log(
 			this.updateAudioDevicesList,
 			"Devices updated!\n",
-			this.audioDevices);
+			this.audioDevices
+		);
 	}
 
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
@@ -107,7 +110,12 @@ class AudioPlayer extends LogExtend {
 		this._volume = value;
 		this.updateExistingVolumes();
 
-		this.log(this.updateVolume, "Volume:", this._volume * 100, "%");
+		// Log after some time to avoid spamming
+		if (this.volumeLogTimeout == null)
+			this.volumeLogTimeout = setTimeout(() => {
+				this.log(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+				this.volumeLogTimeout = null;
+			}, 1000);
 	}
 
 	private static updateExistingVolumes(): void {
