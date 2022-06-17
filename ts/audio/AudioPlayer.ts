@@ -3,7 +3,7 @@ class AudioPlayer extends LogExtend {
 	private static $volumeSlider: JQuery<HTMLElement>;
 	private static maxSliderValue = 1000;
 
-	private static volumeLogTimeout: NodeJS.Timeout;
+	private static canLogVolume: boolean = true;
 
 	private static audioStore: AudioStoreManager = new AudioStoreManager();
 
@@ -111,11 +111,15 @@ class AudioPlayer extends LogExtend {
 		this.updateExistingVolumes();
 
 		// Log after some time to avoid spamming
-		if (this.volumeLogTimeout == null)
-			this.volumeLogTimeout = setTimeout(() => {
-				this.log(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
-				this.volumeLogTimeout = null;
-			}, 1000);
+		if (this.canLogVolume) {
+			this.canLogVolume = false;
+
+			this.log(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+
+			setTimeout(() => {
+				this.canLogVolume = true;
+			}, 500);
+		}
 	}
 
 	private static updateExistingVolumes(): void {
