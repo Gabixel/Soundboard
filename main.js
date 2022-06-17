@@ -135,7 +135,7 @@ const createEditButtonWindow = (buttonData) => {
 		minHeight: height,
 
 		maxWidth: width * 2,
-		maxHeight: height * 2, // TODO: unsure if this is needed
+		maxHeight: height * 2, // TODO: unsure if max size is needed
 
 		x: screenBounds.x + (screenBounds.width - width) / 2,
 		y: screenBounds.y + (screenBounds.height - height) / 2,
