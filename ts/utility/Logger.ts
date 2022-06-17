@@ -4,18 +4,15 @@ class Logger {
 
 	public static log(
 		_class: any,
-		callerFunction: (...a: any[]) => any | null,
+		callerFunction: (...a: any[]) => any,
 		...args: any[]
 	): void {
 		console.log(
-			`%c[%c${_class.name}%c] (%c${callerFunction?.name ?? ""}%c) >`,
+			`%c[%c${_class?.name ?? ""}%c] (%c${callerFunction?.name ?? ""}%c) >`,
 			"color: inherit; margin: 5px 0",
-			`color: ${this.getHslFromString(_class.name)}; ${this.boldEffect}`,
+			`color: ${this.getHslFromString(_class?.name ?? "43")}; ${this.boldEffect}`,
 			"color: inherit",
-			`color: ${
-				callerFunction?.name != null
-					? this.getHslFromString(callerFunction.name)
-					: "inherit"
+			`color: ${this.getHslFromString(callerFunction?.name ?? "43")
 			}; ${this.boldEffect}`,
 			"color: inherit",
 			...args
