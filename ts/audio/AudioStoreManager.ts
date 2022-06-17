@@ -1,4 +1,4 @@
-class AudioStoreManager {
+class AudioStoreManager extends LogExtend {
 	private singlePool: AudioGroup = {
 		main: new Audio() as AudioJS,
 		playback: new Audio() as AudioJS,
@@ -7,6 +7,7 @@ class AudioStoreManager {
 	private multiPool: AudioPool = new AudioPool();
 
 	constructor(volume: number = 0) {
+		super();
 		this.singlePool.main.volume = this.singlePool.playback.volume = volume;
 	}
 
@@ -24,17 +25,18 @@ class AudioStoreManager {
 	}
 
 	public addToSinglePool(path: string): void {
-		console.log("setting to single pool");
 		this.stopMultiPoolAudio();
-
+		
 		if (this.singlePool.lastTrack !== path) {
 			this.singlePool.lastTrack = path;
 			this.singlePool.main.src = this.singlePool.playback.src = path;
+		AudioStoreManager.log(this.addToSinglePool, "Setting new path to single pool:", path);
 
 			this.singlePool.main.load();
 			this.singlePool.playback.load();
 		} else {
 			// set both track at 0 if the last track hasn't changed
+			AudioStoreManager.log(this.addToSinglePool, "Path is the same as last track, setting time to 0...");
 			this.singlePool.main.currentTime = this.singlePool.playback.currentTime = 0;
 		}
 
@@ -42,7 +44,8 @@ class AudioStoreManager {
 	}
 
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {
-		console.log("adding to multi pool");
+		AudioStoreManager.log(this.addToMultiPool, "Adding to multi pool:", audioGroup);
+
 		this.multiPool.add(audioGroup);
 
 		this.playGroup(audioGroup);
@@ -89,7 +92,7 @@ class AudioStoreManager {
 			group.main.play();
 			group.playback.play();
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 		}
 	}
 
