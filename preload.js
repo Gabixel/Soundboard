@@ -31,7 +31,8 @@ window.onload = () => {
 		"audio/AudioPlayer",
 		"audio/Audio",
 
-		"settings/UiScale",
+		"controls/Presets_Panel",
+		"controls/UiScale",
 
 		"TopBarManager",
 		"Index"
