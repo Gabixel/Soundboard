@@ -8,7 +8,7 @@ class Logger {
 		callerFunction: (...a: any[]) => any,
 		...args: any[]
 	): void {
-		console.log(
+		console.info(
 			`%c[%c${_class?.name ?? ""}%c] (%c${callerFunction?.name ?? ""}%c) >`,
 			`color: inherit; margin: 5px 0`,
 			`color: ${this.getHslFromString(_class?.name ?? "43")};
