@@ -1,6 +1,7 @@
 class Logger {
-	private static boldEffect: string =
-		"text-shadow: 0 .5px 3px rgb(255 255 255 / .1); font-weight: bold";
+	private static boldEffect: string = "font-weight: bold";
+	private static shadowEffect: string =
+		"text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
 
 	public static log(
 		_class: any,
@@ -9,12 +10,14 @@ class Logger {
 	): void {
 		console.log(
 			`%c[%c${_class?.name ?? ""}%c] (%c${callerFunction?.name ?? ""}%c) >`,
-			"color: inherit; margin: 5px 0",
-			`color: ${this.getHslFromString(_class?.name ?? "43")}; ${this.boldEffect}`,
-			"color: inherit",
-			`color: ${this.getHslFromString(callerFunction?.name ?? "43")
-			}; ${this.boldEffect}`,
-			"color: inherit",
+			`color: inherit; margin: 5px 0`,
+			`color: ${this.getHslFromString(_class?.name ?? "43")};
+				${this.boldEffect};
+				${this.shadowEffect}`,
+			`color: inherit`,
+			`color: ${this.getHslFromString(callerFunction?.name ?? "43")};
+				${this.boldEffect}`,
+			`color: inherit`,
 			...args
 		);
 	}
