@@ -1,14 +1,11 @@
 class Grid {
-	private static gridRows = 1;
-	private static gridCols = 1;
-	private static gridSize = 1;
+	private static gridRows = 0;
+	private static gridCols = 0;
+	private static gridSize = 0;
 
 	private static grid: JQuery<HTMLElement>;
 
-	// TODO: move SizeChanger logic to this
-	private static gridResizer: any;
-
-	private static btnCount = 0;
+	private static soundButtonCount = 0;
 
 	public static setRows(newValue: number): void {
 		this.gridRows = newValue;
@@ -37,18 +34,18 @@ class Grid {
 	}
 
 	public static get buttonCount(): number {
-		return this.btnCount;
+		return this.soundButtonCount;
 	}
 
-	public static resetButtonCount(): void {
-		this.btnCount = 0;
+	public static resetSoundButtonCount(): void {
+		this.soundButtonCount = 0;
 	}
 
-	public static increaseButtonCount(): void {
-		this.btnCount++;
+	public static increaseSoundButtonCount(): void {
+		this.soundButtonCount++;
 	}
 
 	public static get isGridIncomplete(): boolean {
-		return this.btnCount < this.size;
+		return this.soundButtonCount < this.size;
 	}
 }
