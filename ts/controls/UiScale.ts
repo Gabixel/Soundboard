@@ -1,4 +1,4 @@
-class UiScale {
+class UiScale extends LogExtend {
 	private static $slider: JQuery<HTMLElement>;
 	private static $lock: JQuery<HTMLElement>;
 	private static $reset: JQuery<HTMLElement>;
@@ -49,17 +49,24 @@ class UiScale {
 	}
 
 	private static initSlider(): void {
+		this.setSliderPrevValue();
+
 		this.$slider
 			// .on("keydown", (e) => {
 			// 	$(e.target).attr("step", "0.2");
 			// })
 			.on("keyup", (e) => {
-				$(e.target).trigger("click"); //.attr("step", "0.1")
+					$(e.target).trigger("click"); //.attr("step", "0.1")
 			})
 			// .on("focusout", (e) => {
 			// 	$(e.target).attr("step", "0.1"); // In case the user clicks away from the input while still holding the left or right arrow keys
 			// })
 			.on("click", (e) => {
+				if (this.getSliderPrevValue() === this.getSliderValue())
+					return;
+
+				this.setSliderPrevValue();
+
 				$(document.body).stop(true, false);
 				$(document.body).animate(
 					{
@@ -67,7 +74,24 @@ class UiScale {
 					},
 					325
 				);
+				this.log(
+					this.initSlider,
+					"UI Scale changed:",
+					parseFloat($(e.target).val().toString())
+				);
 			});
+	}
+
+	private static setSliderPrevValue(): void {
+		this.$slider.attr("data-prev-value", this.$slider.val().toString());
+	}
+
+	private static getSliderPrevValue(): number {
+		return parseFloat(this.$slider.attr("data-prev-value").toString());
+	}
+
+	private static getSliderValue(): number {
+		return parseFloat(this.$slider.val().toString());
 	}
 
 	private static initLock() {
@@ -75,7 +99,9 @@ class UiScale {
 			const checked = e.target.checked;
 			this.$slider.prop("disabled", checked);
 			this.$reset.prop("disabled", checked);
-			const lock = $(`<i class="fa-solid fa-lock${!checked ? "-open" : ''}"></i>`)[0];
+			const lock = $(
+				`<i class="fa-solid fa-lock${!checked ? "-open" : ""}"></i>`
+			)[0];
 			$(`label[for="${this.$lock.attr("id")}"]`).html(lock);
 		});
 	}
