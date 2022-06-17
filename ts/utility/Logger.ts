@@ -10,14 +10,14 @@ class Logger {
 	): void {
 		console.info(
 			`%c[%c${_class?.name ?? ""}%c] (%c${callerFunction?.name ?? ""}%c) >`,
-			`color: inherit; margin: 5px 0`,
+			"margin: 5px 0",
 			`color: ${this.getHslFromString(_class?.name ?? "43")};
 				${this.boldEffect};
 				${this.shadowEffect}`,
-			`color: inherit`,
+			null,
 			`color: ${this.getHslFromString(callerFunction?.name ?? "43")};
 				${this.boldEffect}`,
-			`color: inherit`,
+			null,
 			...args
 		);
 	}
