@@ -1,5 +1,5 @@
-	private static paths: string[] = ["../sounds/Bad to the bone.mp3"];
 class SoundButton extends LogExtend {
+	private static paths: string[] = ["../../sounds/Bad to the bone.mp3"];
 	private static $grid: JQuery<HTMLElement>;
 
 	private static getRandomPath(): string {
@@ -83,23 +83,41 @@ class SoundButton extends LogExtend {
 
 				$button.removeClass("dragover");
 
-
-				for (let i = 0; i < files.length; i++) {
-					// @ts-ignore
-					console.log(files[i].path);
-				}
+				const file = e.originalEvent.dataTransfer.files[0];
 
 				// @ts-ignore
-				$button.attr("data-path", decodeURI(files[0].path));
-				$button.text(files[0].name);
+				const path: string = file.path;
+
+				// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters. This is a workaround.
+				const encodedPath = encodeURI(path.replace(/\\/g, "/"));
+
+				this.log(
+					this.applyData,
+					`Audio drop successful.\n,
+					• Files: %O
+					\n\t---------\n
+					• First file: %O
+					\n\t---------\n
+					• First file path (encoded for browser): %O`,
+					e.originalEvent.dataTransfer.files,
+					e.originalEvent.dataTransfer.files[0],
+					// @ts-ignore
+					encodedPath
+				);
+
+				SoundboardApi.isPathFile(path);
+
+				// @ts-ignore
+				$button.attr("data-path", encodedPath);
+				$button.text(file.name); // of course, this is temporary
 			})
 			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
 
-				$button.removeClass("dragover");
-				console.log("dragleave");
 				// $button.on("dragover");
+				$button.removeClass("dragover");
+				this.log(this.applyData, "'dragleave' triggered");
 			});
 	}
 
