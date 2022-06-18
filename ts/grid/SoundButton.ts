@@ -1,5 +1,5 @@
-class SoundButton {
 	private static paths: string[] = ["../sounds/Bad to the bone.mp3"];
+class SoundButton extends LogExtend {
 	private static $grid: JQuery<HTMLElement>;
 
 	private static getRandomPath(): string {
@@ -60,7 +60,7 @@ class SoundButton {
 				e.originalEvent.dataTransfer.dropEffect = "link";
 
 				$button.addClass("dragover");
-				console.log("dragenter");
+				this.log(this.applyData, "'dragenter' triggered");
 			})
 			.on("dragover", (e: JQuery.DragOverEvent) => {
 				e.preventDefault();
@@ -70,7 +70,7 @@ class SoundButton {
 				// $button.addClass("dragover");
 			})
 			.on("drop", (e: JQuery.DropEvent) => {
-				console.log("drop");
+				this.log(this.applyData, "'drop' triggered");
 
 				const notSuccesful =
 					!e.originalEvent.dataTransfer ||
@@ -83,7 +83,6 @@ class SoundButton {
 
 				$button.removeClass("dragover");
 
-				const files = e.originalEvent.dataTransfer.files;
 
 				for (let i = 0; i < files.length; i++) {
 					// @ts-ignore
@@ -141,6 +140,8 @@ class SoundButton {
 
 	private static initClick(): void {
 		this.$grid.on("click", ".soundbutton", (e) => {
+			this.log(this.initClick, `SoundButton "%s" clicked`, $(e.target).text());
+
 			const $button = $(e.target);
 			const path = $button.attr("data-path");
 

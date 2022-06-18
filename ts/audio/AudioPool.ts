@@ -1,9 +1,12 @@
 class AudioPool {
+class AudioPool extends LogExtend {
 	private audioPool: AudioPoolGroup[] = [];
 
 	public add(group: AudioPoolGroup): void {
+		AudioPool.log(this.add, "Adding group to pool:", group);
+
 		this.audioPool.push(group);
-		
+
 		$(group.playback).one("ended", () => {
 			this.remove(group);
 			group = null;
@@ -11,9 +14,12 @@ class AudioPool {
 	}
 
 	public remove(removingGroup: AudioPoolGroup): void {
-		console.log("remove called");
+		const index = this.audioPool.indexOf(removingGroup);
 
-		this.audioPool.splice(this.audioPool.indexOf(removingGroup), 1);
+		// if (!removingGroup.forcedEnding)
+		AudioPool.log(this.remove, "Removing pool:", removingGroup);
+
+		this.audioPool.splice(index, 1);
 	}
 
 	public async play(): Promise<void> {
@@ -35,6 +41,7 @@ class AudioPool {
 	}
 
 	public stop(): void {
+		AudioPool.log(this.remove, "Forced pool stop");
 		this.audioPool.forEach((group) => {
 			group.forcedEnding = true;
 
@@ -59,11 +66,11 @@ class AudioPool {
 		);
 	}
 
-	public get length() : number {
+	public get length(): number {
 		return this.audioPool.length;
 	}
 
-	public get multiLength() : number {
+	public get multiLength(): number {
 		return this.audioPool.length * 2;
 	}
 

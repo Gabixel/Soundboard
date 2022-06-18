@@ -1,4 +1,5 @@
 $("#stop-audio").on("click", async () => {
+	Logger.log(null, null, "Stop audio button clicked");
 	AudioPlayer.stop();
 	updatePlayPauseButton();
 });

@@ -17,7 +17,7 @@ class AudioPlayer extends LogExtend {
 
 		this.log(
 			this.updateAudioDevicesList,
-			"Devices updated!\n",
+			"Devices list updated!\n",
 			this.audioDevices
 		);
 	}
@@ -41,6 +41,13 @@ class AudioPlayer extends LogExtend {
 	}
 
 	public static addAudio(path: string, useMultiPool: boolean = false): void {
+		this.log(
+			this.addAudio,
+			`Trying to use path "%c%s%c"`,
+			"font-style: italic",
+			path,
+			"font-style: normal"
+		);
 		this.tryAddAudio(path, useMultiPool);
 	}
 
@@ -50,11 +57,22 @@ class AudioPlayer extends LogExtend {
 			return;
 		}
 
-		let audioGroup = new Audio(path) as AudioJS;
+		// The next audio goes to the multi-pool
 
-		$(audioGroup).one("canplay", (e) => {
-			this.storeAudio(e.target as AudioJS);
-		});
+		let mainAudio = new Audio(path) as AudioJS;
+
+		$(mainAudio)
+			.one("canplay", (e) => {
+				this.storeAudio(e.target as AudioJS);
+			})
+			.one("error", (e) => {
+				this.error(
+					this.tryAddAudio,
+					"Error loading audio\n",
+					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
+					e
+				);
+			});
 	}
 
 	private static async storeAudio(mainAudio: AudioJS): Promise<void> {
@@ -114,7 +132,12 @@ class AudioPlayer extends LogExtend {
 		if (this.canLogVolume) {
 			this.canLogVolume = false;
 
-			this.log(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+			this.log(
+				this.updateVolume,
+				"Volume:",
+				Math.round(this._volume * 100),
+				"%"
+			);
 
 			setTimeout(() => {
 				this.canLogVolume = true;

@@ -19,24 +19,30 @@ class AudioStoreManager extends LogExtend {
 		if (typeof audio === "string") {
 			this.addToSinglePool(audio);
 		} else {
-			if(this.multiPool.length < 50) // Limited sounds to prevent memory issues
-			this.addToMultiPool(audio);
+			if (this.multiPool.length < 50)
+				// Limited sounds to prevent memory issues
+				this.addToMultiPool(audio);
 		}
 	}
 
 	public addToSinglePool(path: string): void {
 		this.stopMultiPoolAudio();
-		
+
 		if (this.singlePool.lastTrack !== path) {
 			this.singlePool.lastTrack = path;
 			this.singlePool.main.src = this.singlePool.playback.src = path;
-		AudioStoreManager.log(this.addToSinglePool, "Setting new path to single pool:", path);
+			AudioStoreManager.log(
+				this.addToSinglePool,
+				`Setting new path: "%c%s%c"`,
+				"font-style: italic",
+				path,
+				""
+			);
 
 			this.singlePool.main.load();
 			this.singlePool.playback.load();
 		} else {
 			// set both track at 0 if the last track hasn't changed
-			AudioStoreManager.log(this.addToSinglePool, "Path is the same as last track, setting time to 0...");
 			this.singlePool.main.currentTime = this.singlePool.playback.currentTime = 0;
 		}
 
@@ -44,7 +50,11 @@ class AudioStoreManager extends LogExtend {
 	}
 
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {
-		AudioStoreManager.log(this.addToMultiPool, "Adding to multi pool:", audioGroup);
+		AudioStoreManager.log(
+			this.addToMultiPool,
+			"Adding new group to multi pool:",
+			audioGroup
+		);
 
 		this.multiPool.add(audioGroup);
 
