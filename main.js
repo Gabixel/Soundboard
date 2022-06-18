@@ -22,7 +22,8 @@ let mainWindow; // The main soundboard
 let editButtonWindow; // The button editor
 
 const webPreferences = {
-	preload: path.join(__dirname, "/preload.js"),
+	// preload: path.join(__dirname, "/preload.js"),
+	preload: "/preload.js",
 
 	devTools: !isProduction,
 
@@ -35,11 +36,26 @@ const webPreferences = {
 	experimentalFeatures: false,
 };
 
+const mainWindowPath = path.join(__dirname, "windows", "mainWindow");
+let mainWindowPreferences = JSON.parse(JSON.stringify(webPreferences));
+mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
+
+const editButtonWindowPath = path.join(
+	__dirname,
+	"windows",
+	"editButtonWindow"
+);
+let editButtonWindowPreferences = JSON.parse(JSON.stringify(webPreferences));
+editButtonWindowPreferences.preload = path.join(
+	editButtonWindowPath,
+	"preload.js"
+);
+
 //#region Init app
 const createMainWindow = () => {
 	const defaultWidth = 800;
 	const defaultHeight = 600;
-	
+
 	// Best value between default and screen size, but not bigger than screen size
 	let width = Math.min(
 		Math.max(defaultWidth, parseInt(screenWidth / 2)),
@@ -64,43 +80,23 @@ const createMainWindow = () => {
 
 		autoHideMenuBar: !isProduction,
 
-		webPreferences,
+		show: false,
+
+		webPreferences: mainWindowPreferences,
 	});
 
-	ipcMain.on("open-context-menu", (e, args) => {
-		// console.log(event);
-		// console.log(event.sender);
-		// console.log(args);
-
-		let extraMenu;
-
-		if (args != null) {
-			switch (args.type) {
-				case "soundbutton":
-					extraMenu = new MenuItem({
-						label: "Edit",
-						click: () => {
-							createEditButtonWindow(args.buttonData);
-						},
-					});
-			}
-		}
-
-		showContextMenu(extraMenu, e.x, e.y);
+	mainWindow.once("ready-to-show", () => {
+		mainWindow.show();
 	});
 
 	// Load HTML into the window
-	mainWindow.loadFile(path.join(__dirname, "/windows/mainWindow.html"));
+	mainWindow.loadFile(path.join(mainWindowPath, "/mainWindow.html"));
 
 	if (!isProduction) {
 		mainWindow.webContents.openDevTools({
 			mode: "detach",
 		});
 	}
-
-	mainWindow.once("ready-to-show", () => {
-		mainWindow.show();
-	});
 };
 
 const createEditButtonWindow = (buttonData) => {
@@ -142,7 +138,15 @@ const createEditButtonWindow = (buttonData) => {
 
 		autoHideMenuBar: !isProduction,
 
-		webPreferences,
+		parent: mainWindow,
+		modal: true,
+		show: false,
+
+		webPreferences: editButtonWindowPreferences,
+	});
+
+	editButtonWindow.once("ready-to-show", () => {
+		editButtonWindow.show();
 	});
 
 	editButtonWindow.once("close", () => {
@@ -151,7 +155,7 @@ const createEditButtonWindow = (buttonData) => {
 
 	// Load HTML into the window
 	editButtonWindow.loadFile(
-		path.join(__dirname, "/windows/editButtonWindow.html")
+		path.join(editButtonWindowPath, "editButtonWindow.html")
 	);
 };
 
@@ -182,6 +186,34 @@ const showContextMenu = (extraElements, x, y) => {
 	}
 
 	menu.popup(mainWindow, x, y);
+};
+
+const initIpc = () => {
+	ipcMain
+		.on("open-context-menu", (e, args) => {
+			// console.log(event);
+			// console.log(event.sender);
+			// console.log(args);
+
+			let extraMenu;
+
+			if (args != null) {
+				switch (args.type) {
+					case "soundbutton":
+						extraMenu = new MenuItem({
+							label: "Edit",
+							click: () => {
+								createEditButtonWindow(args.buttonData);
+							},
+						});
+				}
+			}
+
+			showContextMenu(extraMenu, e.x, e.y);
+		})
+		.on("is-path-file", (e, args) => {
+			console.log(fs.lstatSync(args));
+		});
 };
 
 // Listen for app to be ready
