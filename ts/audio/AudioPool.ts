@@ -1,4 +1,3 @@
-class AudioPool {
 class AudioPool extends LogExtend {
 	private audioPool: AudioPoolGroup[] = [];
 
