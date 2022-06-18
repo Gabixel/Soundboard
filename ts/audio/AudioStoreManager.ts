@@ -43,6 +43,12 @@ class AudioStoreManager extends LogExtend {
 			this.singlePool.playback.load();
 		} else {
 			// set both track at 0 if the last track hasn't changed
+			AudioStoreManager.log(
+				this.addToSinglePool,
+				"New path is the same as last one, setting time to 0.\n",
+				`• Last track path: "${this.singlePool.lastTrack}"\n`,
+				`• New track path:  "${path}"`
+			);
 			this.singlePool.main.currentTime = this.singlePool.playback.currentTime = 0;
 		}
 
