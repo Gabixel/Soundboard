@@ -4,22 +4,94 @@ class Logger {
 		"text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
 
 	public static log(
-		_class: any,
+		callerClass: any,
 		callerFunction: (...a: any[]) => any,
+		message: string,
 		...args: any[]
 	): void {
-		console.info(
-			`%c[%c${_class?.name ?? ""}%c] (%c${callerFunction?.name ?? ""}%c) >`,
-			"color: inherit; margin: 5px 0",
-			`color: ${this.getHslFromString(_class?.name ?? "43")};
-				${this.boldEffect};
-				${this.shadowEffect}`,
-			"color: inherit",
-			`color: ${this.getHslFromString(callerFunction?.name ?? "43")};
-				${this.boldEffect}`,
-			"color: inherit",
-			...args
+		if (SoundboardApi.isProduction) return;
+
+		this.logInfo(callerClass, callerFunction, message, ...args);
+	}
+
+	public static error(
+		callerClass: any,
+		callerFunction: (...a: any[]) => any,
+		message: string,
+		...args: any[]
+	): void {
+		if (SoundboardApi.isProduction) return;
+
+		this.logError(callerClass, callerFunction, message, ...args);
+	}
+
+	private static logInfo(
+		callerClass: any,
+		callerFunction: (...a: any[]) => any,
+		message: string,
+		...args: any[]
+	): void {
+		let attributes = this.getExtraAttributes(
+			callerClass,
+			callerFunction,
+			message
 		);
+
+		console.info(attributes[0], ...attributes[1], ...args);
+	}
+
+	private static logError(
+		callerClass: any,
+		callerFunction: (...a: any[]) => any,
+		message: string,
+		...args: any[]
+	): void {
+		let attributes = this.getExtraAttributes(
+			callerClass,
+			callerFunction,
+			message
+		);
+
+		console.error(attributes[0], ...attributes[1], ...args);
+	}
+
+	private static getExtraAttributes(
+		callerClass: any,
+		callerFunction: (...a: any[]) => any,
+		message: string
+	): [string, string[]] {
+		let callerClassName = "-";
+		let callerClassProperties: string[] = [];
+		if (callerClass?.name != null) {
+			callerClassName = `%c${callerClass.name}`;
+			callerClassProperties.push(
+				`color: ${this.getHslFromString(callerClass.name)};
+				${this.boldEffect};
+				${this.shadowEffect}`
+			);
+		}
+
+		let callerFunctionName = "-";
+		let callerFunctionProperties: string[] = [];
+		if (callerFunction?.name != null) {
+			callerFunctionName = `%c${callerFunction.name}`;
+			callerFunctionProperties.push(
+				`color: ${this.getHslFromString(callerFunction.name)};
+				${this.boldEffect};
+				${this.shadowEffect}`
+			);
+		}
+
+		return [
+			`%c[${callerClassName}%c] (${callerFunctionName}%c) → ` + message,
+			[
+				"color: inherit; margin: 5px 0",
+				...callerClassProperties,
+				"color: inherit",
+				...callerFunctionProperties,
+				"color: inherit",
+			],
+		];
 	}
 
 	private static getHslFromString(str: string): string {
@@ -54,8 +126,17 @@ class Logger {
 class LogExtend {
 	protected static log(
 		callerFunction: (...a: any[]) => any | null,
+		message: string,
 		...args: any[]
 	): void {
-		Logger.log(this, callerFunction, ...args);
+		Logger.log(this, callerFunction, message, ...args);
+	}
+
+	protected static error(
+		callerFunction: (...a: any[]) => any | null,
+		message: string,
+		...args: any[]
+	): void {
+		Logger.error(this, callerFunction, message, ...args);
 	}
 }
