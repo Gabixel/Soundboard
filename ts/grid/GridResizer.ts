@@ -18,6 +18,9 @@ $("#grid-rows")
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
 	});
+	// .on("mouseup", (e) => {
+	// 	e.stopPropagation();
+	// });
 
 $("#grid-columns")
 	.on("change", (e) => {
@@ -27,6 +30,9 @@ $("#grid-columns")
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
 	});
+	// .on("mouseup", (e) => {
+	// 	e.stopPropagation();
+	// });
 
 $("#clear-grid").on("click", () => {
 	$("#buttons-grid").empty();
