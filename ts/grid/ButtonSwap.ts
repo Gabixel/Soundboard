@@ -1,3 +1,5 @@
+// TODO: class for this
+
 let preparingDrag = false;
 let isDragging = false;
 
@@ -7,12 +9,15 @@ let $dragTarget: JQuery<HTMLElement> | null = null;
 let indexChanged = false;
 let isStyled = false;
 
-// TODO: remove event listeners on mouseup and reassign them on mousedown
+let dragFunction = mouseDrag_1;
+
+// TODO: Remove event listeners on mouseup and reassign them on mousedown.
+// This should alleviate performance issues during window resizing.
 
 $("#buttons-grid").on("mousemove", (e) => {
-	if (e.which != 1) return;
+	if (e.which != 1) return; // If not left mouse button
 
-	onButtonsGridMouseDrag(e);
+	dragFunction(e);
 });
 
 $(document)
@@ -46,9 +51,9 @@ $(document)
 		const $dropTarget = getElementFromPoint(e.pageX, e.pageY);
 
 		if (
-			$dragTarget != $dropTarget &&
 			$dragTarget != null &&
-			$dropTarget != null
+			$dropTarget != null &&
+			$dragTarget.css("--index") != $dropTarget.css("--index")
 		) {
 			swapButtons($dragTarget, $dropTarget);
 		}
@@ -64,6 +69,7 @@ $(document)
 		clearOpacityDelay();
 		isStyled = false;
 		$dragTarget = null;
+		dragFunction = mouseDrag_1;
 	})
 	.on("mouseenter", ".soundbutton", (e) => {
 		e.preventDefault();
@@ -76,7 +82,7 @@ $(document)
 		onSoundButtonMouseLeave(e);
 	});
 
-function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
+function mouseDrag_1(e: JQuery.MouseMoveEvent): void {
 	if (!preparingDrag) return;
 
 	// Small delay to prevent the mouse to start dragging instantly
@@ -87,35 +93,45 @@ function onButtonsGridMouseDrag(e: JQuery.MouseMoveEvent): void {
 				Math.pow(e.pageY - dragStartCoords.y, 2)
 		);
 
-	if (isDragging || d > 10) {
-		isDragging = true;
+	if (d <= 10) return;
 
-		$dragTarget.css(
-			"transform",
-			`translate(${e.pageX - dragStartCoords.x}px, ${
-				e.pageY - dragStartCoords.y
-			}px)`
-		);
+	isDragging = true;
+	dragFunction = mouseDrag_2;
+}
 
-		if (!isStyled) {
-			isStyled = true;
+function mouseDrag_2(e: JQuery.MouseMoveEvent): void {
+	if (!isDragging) return;
 
-			$dragTarget.addClass("dragging");
+	// TODO: get the ui scale from a future class
+	$dragTarget.css(
+		"transform",
+		`translate(${
+			(e.pageX - dragStartCoords.x) /
+			parseFloat($("#ui-scale-slider").val().toString())
+		}px, ${
+			(e.pageY - dragStartCoords.y) /
+			parseFloat($("#ui-scale-slider").val().toString())
+		}px)`
+	);
 
-			const rows = parseInt($("#grid-rows").val().toString());
-			const cols = parseInt($("#grid-columns").val().toString());
+	if (!isStyled) {
+		isStyled = true;
 
-			if (
-				rows > 7 &&
-				cols > 7 &&
-				($("#buttons-grid .soundbutton").length > 49 || indexChanged)
-			) {
+		$dragTarget.addClass("dragging");
+
+		const rows = parseInt($("#grid-rows").val().toString());
+		const cols = parseInt($("#grid-columns").val().toString());
+
+		if (
+			rows > 7 &&
+			cols > 7 &&
+			($("#buttons-grid .soundbutton").length > 49 || indexChanged)
+		) {
 			const draggedButtonIndex = parseInt($dragTarget.css("--index"));
-				setOpacityDelay(cols, draggedButtonIndex);
-			}
-
-			$("#buttons-grid").addClass("has-dragging-child");
+			setOpacityDelay(cols, draggedButtonIndex);
 		}
+
+		$("#buttons-grid").addClass("has-dragging-child");
 	}
 }
 
@@ -168,18 +184,24 @@ function getElementFromPoint(x: number, y: number): JQuery<HTMLElement> | null {
 }
 
 function swapButtons(
-	$lastTarget: JQuery<HTMLElement>,
-	$dropTarget: JQuery<HTMLElement>
+	$drag: JQuery<HTMLElement>,
+	$drop: JQuery<HTMLElement>
 ): void {
-	const dropTargetIndex = parseInt($dropTarget.css("--index"));
-	const lastTargetIndex = parseInt($lastTarget.css("--index"));
+	const dropTargetIndex = parseInt($drop.css("--index"));
+	const lastTargetIndex = parseInt($drag.css("--index"));
 
-	$dropTarget.attr("id", "sound_btn_" + lastTargetIndex);
-	$lastTarget.attr("id", "sound_btn_" + dropTargetIndex);
+	$drop.attr("id", "sound_btn_" + lastTargetIndex);
+	$drag.attr("id", "sound_btn_" + dropTargetIndex);
 
-	$dropTarget.attr("tabindex", lastTargetIndex);
-	$lastTarget.attr("tabindex", dropTargetIndex);
+	$drop.attr("tabindex", lastTargetIndex);
+	$drag.attr("tabindex", dropTargetIndex);
 
-	$dropTarget.css("--index", lastTargetIndex.toString());
-	$lastTarget.css("--index", dropTargetIndex.toString());
+	$drop.css("--index", lastTargetIndex.toString());
+	$drag.css("--index", dropTargetIndex.toString());
+
+	Logger.log(
+		null,
+		swapButtons,
+		`Swapped buttons "${$drag.text()}" and "${$drop.text()}"`
+	);
 }
