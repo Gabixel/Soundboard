@@ -36,7 +36,7 @@ $("#grid-columns")
 
 $("#clear-grid").on("click", () => {
 	$("#buttons-grid").empty();
-	Grid.resetButtonCount();
+	Grid.resetSoundButtonCount();
 	fillEmptyCells();
 });
 
@@ -94,7 +94,7 @@ function fillEmptyCells(): void {
 	for (let i = 0; i < emptyCells; i++) {
 		$("#buttons-grid").append(SoundButton.generateRandom(Grid.buttonCount));
 
-		Grid.increaseButtonCount();
+		Grid.increaseSoundButtonCount();
 	}
 }
 
