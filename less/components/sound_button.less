@@ -62,6 +62,7 @@ button.soundbutton {
 	max-width: var(--width);
 	max-height: var(--height);
 
+	animation: none;
 	transition: background-color .1s,
 	opacity .2s;
 
@@ -91,9 +92,6 @@ button.soundbutton {
 		animation: drag-choose .2s ease var(--opacity-delay, 0);
 		opacity: .5;
 
-		// transition: none;
-		// transition-delay: var(--opacity-delay, 0);
-
 		@keyframes drag-choose {
 			from {
 				opacity: 1
@@ -108,6 +106,8 @@ button.soundbutton {
 	#buttons-grid.has-dragging-child &.drop-destination {
 		transition: none;
 
+		// cursor: ;
+
 		opacity: 1;
 		box-shadow: 0 0 0 3px #fff; // Background is better: outline shows a weird empty space.
 	}
@@ -115,14 +115,14 @@ button.soundbutton {
 	// &.playing {
 	// 	// outline: 1px dashed hsl(var(--hue) 100% 20% / 1);
 
-	// 	// TODO: Dynamic outline
+	// 	// TODO: Playing effect?
 	// }
 
 	&.hidden {
 		display: none;
 	}
 
-	// &:focus {
-	// 	outline: 3px solid var(--button-background-hover-hsl);
-	// }
+	&:focus {
+		outline: 3px solid var(--button-background-hover-hsl);
+	}
 }
