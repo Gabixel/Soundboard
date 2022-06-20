@@ -68,7 +68,10 @@ class AudioStoreManager extends LogExtend {
 	}
 
 	public async play(): Promise<void> {
-		if (this.singlePool.lastTrack != "") {
+		if (
+			this.singlePool.lastTrack != "" /* &&
+			this.singlePool.main.currentTime != this.singlePool.main.duration*/ // This is a nice feature
+		) {
 			await this.singlePool.main.play();
 			await this.singlePool.playback.play();
 		}
