@@ -9,7 +9,7 @@ class EventFunctions {
 
 		const $target = $(e.target);
 
-		// @ts-ignore: TS2339
+		// @ts-ignore
 		const delta = Math.round(-e.originalEvent.deltaY / 120);
 		const currentValue = parseFloat($target.val().toString());
 		const max = parseFloat($target.attr("max").toString());
@@ -38,7 +38,7 @@ class EventFunctions {
 	): number {
 		const $target = $(e.target);
 
-		// @ts-ignore: TS2339
+		// @ts-ignore
 		const delta = Math.round(-e.originalEvent.deltaY / 120);
 		const currentValue = parseFloat($target.val().toString());
 		const max = parseFloat($target.attr("max").toString());
@@ -55,7 +55,7 @@ class EventFunctions {
 		stepValue: number = 1,
 		clamp: [number, number] | null = undefined
 	): number {
-		// @ts-ignore: TS2339
+		// @ts-ignore
 		const delta = Math.round(-e.originalEvent.deltaY / 120);
 
 		const newValue = currentValue + delta * stepValue;

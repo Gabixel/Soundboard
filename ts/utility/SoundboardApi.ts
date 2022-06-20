@@ -1,6 +1,6 @@
 class SoundboardApi {
 	public static openContextMenu(args: any = null): void {
-		// @ts-ignore: TS2339
+		// @ts-ignore
 		window.api.openContextMenu(args);
 	}
 }
