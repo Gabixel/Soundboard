@@ -93,12 +93,12 @@ class SoundButton extends LogExtend {
 
 				this.log(
 					this.applyData,
-					`Audio drop successful.\n,
-					• Files: %O
-					\n\t---------\n
-					• First file: %O
-					\n\t---------\n
-					• First file path (encoded for browser): %O`,
+					"Audio drop successful.\n" +
+					"• Files: %O\n" +
+					"\t---------\n" +
+					"• First file: %O\n" +
+					"\t---------\n" +
+					"• First file path (encoded for browser): %O",
 					e.originalEvent.dataTransfer.files,
 					e.originalEvent.dataTransfer.files[0],
 					// @ts-ignore
