@@ -19,19 +19,7 @@ class LogExtend {
 class Logger {
 	private static chosenStyle: number = 0;
 
-	//#region Effects
 	private static boldEffect: string = "font-weight: bold";
-
-	private static shadowEffect: string =
-		"text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
-
-	private static headerStartEffect: string =
-		"background-color: #fff; color: #000; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0";
-	private static headerMiddleEffect: string =
-		"background-color: #fff; color: #000; border-radius: 0; padding: 2px 0; margin-left: -0.2px";
-	private static headerEndEffect: string =
-		"background-color: #fff; color: #000; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.2px";
-	//#endregion
 
 	public static log(
 		callerClass: any,
@@ -132,6 +120,8 @@ class Logger {
 		callerFunction: (...a: any[]) => any,
 		message: string
 	): [string, string[]] {
+		const shadowEffect: string = "text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
+
 		let callerClassName = "-";
 		let callerClassProperties: string[] = [];
 		if (callerClass?.name != null) {
@@ -139,7 +129,7 @@ class Logger {
 			callerClassProperties.push(
 				`color: ${this.getHslFromString(callerClass.name, 70)};
 				${this.boldEffect};
-				${this.shadowEffect}`
+				${shadowEffect}`
 			);
 		}
 
@@ -150,7 +140,7 @@ class Logger {
 			callerFunctionProperties.push(
 				`color: ${this.getHslFromString(callerFunction.name, 70)};
 				${this.boldEffect};
-				${this.shadowEffect}`
+				${shadowEffect}`
 			);
 		}
 
@@ -171,36 +161,41 @@ class Logger {
 		callerFunction: (...a: any[]) => any,
 		message: string
 	): [string, string[]] {
-		let callerClassName = "-";
-		let callerClassProperties: string[] = [];
+		const bgColor = this.getHslFromString(callerClass.name ?? "???", 20);
+		const fgColor = this.getHslFromString(callerClass.name ?? "???", 90);
+
+		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 1px 0 1px 1px; border-style: solid; border-color: ${fgColor}`;
+		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 1px 0; border-style: solid; border-color: ${fgColor}`;
+		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 1px 1px 1px 0; border-style: solid; border-color: ${fgColor}`;
+
+		let callerClassName = "%c???";
+		let callerClassProperties: string[] = ["color: #fff"];
 		if (callerClass?.name != null) {
 			callerClassName = `%c${callerClass.name}`;
-			callerClassProperties.push(
-				`${this.headerMiddleEffect};
-				color: ${this.getHslFromString(callerClass.name, 30)};
-				${this.boldEffect};`
-			);
+			callerClassProperties = [
+				`${headerMiddleEffect};
+				${this.boldEffect};`,
+			];
 		}
 
-		let callerFunctionName = "-";
+		let callerFunctionName = "";
 		let callerFunctionProperties: string[] = [];
 		if (callerFunction?.name != null) {
-			callerFunctionName = `%c${callerFunction.name}`;
-			callerFunctionProperties.push(
-				` ${this.headerMiddleEffect};
-				color: ${this.getHslFromString(callerFunction.name, 30)};
-				${this.boldEffect};`
-			);
+			callerFunctionName = `%c → %c${callerFunction.name}`;
+			callerFunctionProperties = [
+				headerMiddleEffect,
+				`${headerMiddleEffect};
+				${this.boldEffect};`,
+			];
 		}
 
 		return [
-			`%c ${callerClassName}%c.${callerFunctionName}%c %c ` + message,
+			`%c ${callerClassName}${callerFunctionName}%c %c ` + message,
 			[
-				this.headerStartEffect,
+				headerStartEffect,
 				...callerClassProperties,
-				this.headerMiddleEffect,
 				...callerFunctionProperties,
-				this.headerEndEffect,
+				headerEndEffect,
 				"color: inherit",
 			],
 		];
