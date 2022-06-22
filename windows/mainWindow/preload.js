@@ -32,6 +32,7 @@ window.onload = () => {
 		"grid/GridResizer",
 		"grid/Grid",
 		"grid/ButtonSwap",
+		"grid/ButtonFilter",
 		"grid/SoundButton",
 
 		"audio/AudioPool",

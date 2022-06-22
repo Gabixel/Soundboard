@@ -18,9 +18,9 @@ $("#grid-rows")
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
 	});
-	// .on("mouseup", (e) => {
-	// 	e.stopPropagation();
-	// });
+// .on("mouseup", (e) => {
+// 	e.stopPropagation();
+// });
 
 $("#grid-columns")
 	.on("change", (e) => {
@@ -30,14 +30,14 @@ $("#grid-columns")
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
 	});
-	// .on("mouseup", (e) => {
-	// 	e.stopPropagation();
-	// });
+// .on("mouseup", (e) => {
+// 	e.stopPropagation();
+// });
 
 $("#clear-grid").on("click", () => {
 	$("#buttons-grid").empty();
 	Grid.resetSoundButtonCount();
-	fillEmptyCells();
+	updateGrid();
 });
 
 function updateRows(e: JQuery.ChangeEvent) {
@@ -61,7 +61,8 @@ function updateColumns(e: JQuery.ChangeEvent) {
 }
 
 function updateGrid() {
-	fillEmptyCells();
+	if (fillEmptyCells()) refreshFilter();
+	
 	updateVisibleButtons();
 	updateButtonFontSize();
 }
@@ -86,8 +87,8 @@ function updateVisibleButtons(): void {
 	});
 }
 
-function fillEmptyCells(): void {
-	if (!Grid.isGridIncomplete) return;
+function fillEmptyCells(): boolean {
+	if (!Grid.isGridIncomplete) return false;
 
 	const emptyCells = Grid.size - Grid.buttonCount;
 
@@ -96,6 +97,8 @@ function fillEmptyCells(): void {
 
 		Grid.increaseSoundButtonCount();
 	}
+
+	return true;
 }
 
 // TODO: update on window resize and on ui scale change
