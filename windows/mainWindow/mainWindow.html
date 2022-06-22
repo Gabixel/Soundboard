@@ -44,7 +44,10 @@
 						<button type="button" id="clear-grid">Reset Grid</button>
 					</div>
 					<div>
-						<input type="text" id="buttons-filter" placeholder="Filter buttons">
+						<input type="text" id="buttons-filter" placeholder="Filter buttons" style="min-width: 200px; max-width: 300px;">
+						<input type="button" id="clear-filter" value="Clear" onclick="$('#buttons-filter').val('').trigger('input')">
+						<label>Filter:</label>
+						<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index" style="accent-color: #ccc;" checked><label for="buttons-filter-index">Index/ID</label>|<input type="checkbox" id="buttons-filter-tags" style="accent-color: #ccc;" checked><label for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path" style="accent-color: #ccc;" checked><label for="buttons-filter-path">Path</label>
 					</div>
 					<div>
 						<label for="audio-outputs-select">Output:</label>

@@ -1,13 +1,24 @@
-// class ButtonsFilter {
+// class ButtonFilter {
 
 // }
 
-// Trigger "#buttons-filter" with jquery when the text changes
-$("#buttons-filter").on("input", () => {
+// TODO: filter when a function for updating a button is implemented.
+
+// Trigger the filter input when the text changes
+$("#buttons-filter").on("input", (e) => {
 	applyFilter($("#buttons-filter").val().toString());
 });
 
+$(
+	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-tags, #buttons-filter-path"
+).on("change", (e) => {
+	if ($("#buttons-filter").val().toString().length === 0) return;
+
+	$("#buttons-filter").trigger("input");
+});
+
 function refreshFilter(): void {
+	Logger.log(null, applyFilter, "Refreshing filter...");
 	$("#buttons-filter").trigger("input");
 }
 
@@ -18,8 +29,6 @@ function applyFilter(filterText: string): void {
 		return;
 	}
 
-	Logger.log(null, applyFilter, `Applying filter "${filterText}"...`);
-
 	$("#buttons-grid .soundbutton").each((index, button) => {
 		const $button = $(button);
 		const isMatch = !buttonFilterCheck($button, filterText);
@@ -29,7 +38,11 @@ function applyFilter(filterText: string): void {
 
 	const filteredButtons = $("#buttons-grid .soundbutton.filtered").length;
 
-	Logger.log(null, applyFilter, "Filtered " + filteredButtons + " buttons");
+	Logger.log(
+		null,
+		applyFilter,
+		"Filtered " + filteredButtons + ' buttons with filter "' + filterText + '"'
+	);
 
 	if (filteredButtons > 0) $("#buttons-grid").addClass("filtering");
 	else $("#buttons-grid").removeClass("filtering");
@@ -39,17 +52,31 @@ const buttonFilterCheck = function (
 	$button: JQuery<HTMLElement>,
 	filterText: string
 ): boolean {
-	const title = $button.text(); // TODO: not sure if I should use .text() or use an .attr() for the text (probably just the rendered text).
-	const id = $button.attr("id")?.substring(10);
-	const tags = $button.attr("data-tags");
-	const path = $button.attr("data-path");
+	if (
+		$("#buttons-filter-text").is(":checked") &&
+		$button.text().includes(filterText)
+	)
+		return true;
 
-	return (
-		title?.includes(filterText) ||
-		id?.includes(filterText) ||
-		tags?.includes(filterText) ||
-		path?.includes(filterText)
-	);
+	if (
+		$("#buttons-filter-index").is(":checked") &&
+		$button.attr("id")?.substring(10).includes(filterText)
+	)
+		return true;
+
+	if (
+		$("#buttons-filter-tags").is(":checked") &&
+		$button.attr("data-tags")?.includes(filterText)
+	)
+		return true;
+
+	if (
+		$("#buttons-filter-path").is(":checked") &&
+		decodeURI($button.attr("data-path")).includes(filterText)
+	)
+		return true;
+
+	return false;
 };
 
 // Remove the "filtered" class from all buttons
