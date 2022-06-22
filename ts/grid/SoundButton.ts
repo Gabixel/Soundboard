@@ -164,7 +164,6 @@ class SoundButton extends LogExtend {
 			const path = $button.attr("data-path");
 
 			AudioPlayer.addAudio(path, e.shiftKey);
-			updatePlayPauseButton();
 		});
 	}
 }

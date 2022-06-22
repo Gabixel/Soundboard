@@ -1,7 +1,8 @@
+// let playPauseTimeout: NodeJS.Timeout;
+
 $("#stop-audio").on("click", async () => {
 	Logger.log(null, null, "Stop audio button clicked");
 	AudioPlayer.stop();
-	updatePlayPauseButton();
 });
 
 $("#play-pause-audio").on("click", async () => {
@@ -10,22 +11,27 @@ $("#play-pause-audio").on("click", async () => {
 	} else {
 		await AudioPlayer.play();
 	}
-
-	updatePlayPauseButton();
 });
 
-function updatePlayPauseButton(
+/*function updatePlayPauseButton(
 	doTimeout: boolean = true,
 	i: number = 0,
 	wasPlaying: boolean = false
 ): void {
-	if (i == 0) updatePlayPauseButton(doTimeout, i + 1, wasPlaying);
+	// if (doTimeout) {
+	// 	clearTimeout(playPauseTimeout);
+	// 	playPauseTimeout = setTimeout(() => {
+	// 		const isAudioChanged = wasPlaying != AudioPlayer.isPlaying;
+	// 		updatePlayPauseButton(isAudioChanged, i + 1, wasPlaying);
+	// 	}, 15);
+	// }
 
-	if (doTimeout)
-		setTimeout(() => {
-			const isAudioChanged = wasPlaying != AudioPlayer.isPlaying;
-			updatePlayPauseButton(isAudioChanged, i + 1, wasPlaying);
-		}, 10);
+	Logger.log(
+		null,
+		updatePlayPauseButton,
+		"Updating play/pause button, current state:",
+		AudioPlayer.isPlaying
+	);
 
 	const isPlaying = AudioPlayer.isPlaying;
 
@@ -36,4 +42,14 @@ function updatePlayPauseButton(
 	} else {
 		$content.addClass("fa-play").removeClass("fa-pause");
 	}
+
+	Logger.log(
+		null,
+		updatePlayPauseButton,
+		"New play/pause button state:",
+		isPlaying
+	);
 }
+*/
+
+// TODO: make play/pause button work correctly.
