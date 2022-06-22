@@ -17,9 +17,7 @@ class LogExtend {
 }
 
 class Logger {
-	private static chosenStyle: number = 0;
-
-	private static boldEffect: string = "font-weight: bold";
+	private static chosenStyle: number = 1;
 
 	public static log(
 		callerClass: any,
@@ -122,13 +120,15 @@ class Logger {
 	): [string, string[]] {
 		const shadowEffect: string = "text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
 
+		const boldEffect: string = "font-weight: bold";
+
 		let callerClassName = "-";
 		let callerClassProperties: string[] = [];
 		if (callerClass?.name != null) {
 			callerClassName = `%c${callerClass.name}`;
 			callerClassProperties.push(
 				`color: ${this.getHslFromString(callerClass.name, 70)};
-				${this.boldEffect};
+				${boldEffect};
 				${shadowEffect}`
 			);
 		}
@@ -139,7 +139,7 @@ class Logger {
 			callerFunctionName = `%c${callerFunction.name}`;
 			callerFunctionProperties.push(
 				`color: ${this.getHslFromString(callerFunction.name, 70)};
-				${this.boldEffect};
+				${boldEffect};
 				${shadowEffect}`
 			);
 		}
@@ -161,32 +161,26 @@ class Logger {
 		callerFunction: (...a: any[]) => any,
 		message: string
 	): [string, string[]] {
-		const bgColor = this.getHslFromString(callerClass.name ?? "???", 20);
-		const fgColor = this.getHslFromString(callerClass.name ?? "???", 90);
+		const colorName = callerFunction?.name ?? callerClass?.name ?? "???";
+		const bgColor = this.getHslFromString(colorName, 20);
+		const fgColor = this.getHslFromString(colorName, 90);
 
-		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 1px 0 1px 1px; border-style: solid; border-color: ${fgColor}`;
-		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 1px 0; border-style: solid; border-color: ${fgColor}`;
-		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 1px 1px 1px 0; border-style: solid; border-color: ${fgColor}`;
+		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
+		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
+		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 
-		let callerClassName = "%c???";
-		let callerClassProperties: string[] = ["color: #fff"];
+		let callerClassName = "%c...";
+		let callerClassProperties: string[] = [headerMiddleEffect];
+
 		if (callerClass?.name != null) {
 			callerClassName = `%c${callerClass.name}`;
-			callerClassProperties = [
-				`${headerMiddleEffect};
-				${this.boldEffect};`,
-			];
 		}
 
 		let callerFunctionName = "";
 		let callerFunctionProperties: string[] = [];
 		if (callerFunction?.name != null) {
 			callerFunctionName = `%c → %c${callerFunction.name}`;
-			callerFunctionProperties = [
-				headerMiddleEffect,
-				`${headerMiddleEffect};
-				${this.boldEffect};`,
-			];
+			callerFunctionProperties = [headerMiddleEffect, headerMiddleEffect];
 		}
 
 		return [
