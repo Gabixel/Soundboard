@@ -1,9 +1,15 @@
 class SoundButton extends LogExtend {
-	private static paths: string[] = ["../../sounds/Bad to the bone.mp3"];
+	private static paths: string[] = [
+		// "Bad to the bone.mp3",
+		"Polygon Dust.mp3",
+		"He's a Pirate.mp3",
+	];
 	private static $grid: JQuery<HTMLElement>;
 
 	private static getRandomPath(): string {
-		return this.paths[EMath.randomInt(0, this.paths.length)];
+		return encodeURI(
+			"../../resources/sounds/" + this.paths[EMath.randomInt(0, this.paths.length)]
+		);
 	}
 
 	public static generateRandom(index: number): HTMLElement {
