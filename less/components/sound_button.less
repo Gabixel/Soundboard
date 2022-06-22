@@ -31,9 +31,15 @@ button.soundbutton {
 	// Applies a darker border if the luma is higher than the border threshold.
 	// --border-alpha: calc((var(--luma) - var(--border-threshold)) * 100);
 
-	--button-background-hsl: hsl(var(--hue) var(--saturation) var(--lightness) / var(--alpha));
-	--button-background-hover-hsl: hsl(var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 5%, 100%)"/ 1);
-	--button-background-active-hsl: hsl(var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 10%, 100%)"/ 1);
+	--button-background-hsl: hsl(
+		var(--hue) var(--saturation) var(--lightness) / var(--alpha)
+	);
+	--button-background-hover-hsl: hsl(
+		var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 5%, 100%)"/ 1
+	);
+	--button-background-active-hsl: hsl(
+		var(--hue) var(--saturation) ~"clamp(0%, var(--lightness) - 10%, 100%)"/ 1
+	);
 
 	overflow: hidden;
 	padding: 4px;
@@ -63,8 +69,7 @@ button.soundbutton {
 	max-height: var(--height);
 
 	animation: none;
-	transition: background-color .1s,
-	opacity .2s;
+	transition: background-color 0.1s, opacity 0.2s;
 
 	#buttons-grid:not(.has-dragging-child) &:hover,
 	#buttons-grid:not(.has-dragging-child) &.dragover {
@@ -82,34 +87,74 @@ button.soundbutton {
 	&.dragging {
 		z-index: 1;
 
-		opacity: .35;
+		opacity: 0.35;
 
 		box-shadow: 0 0 2px rgba(0, 0, 0, var(--alpha));
 		pointer-events: none;
 	}
 
+	&.hidden {
+		display: none;
+	}
+
+	&.filtered {
+		opacity: 0.3;
+	}
+
 	#buttons-grid.has-dragging-child &:not(.dragging) {
-		animation: drag-choose .2s ease var(--opacity-delay, 0);
-		opacity: .5;
+		animation: drag-choose 0.2s ease var(--opacity-delay, 0) normal;
+		opacity: 0.5;
 
 		@keyframes drag-choose {
 			from {
-				opacity: 1
+				opacity: 1;
 			}
 
 			to {
-				opacity: .5
+				opacity: 0.5;
 			}
 		}
 	}
 
-	#buttons-grid.has-dragging-child &.drop-destination {
+	#buttons-grid.has-dragging-child.filtering &:not(.filtered):not(.dragging) {
+		// transition: background-color 0.1s, box-shadow 0.5s;
+		// box-shadow: 0 0 0 1.5px #0f0;
+		--border-color: #0f0; // TODO: fully show the shadow even if the buttons have reduced opacity.
+
+		opacity: 0.65;
+
+		animation: highlight-start 0.5s ease normal,
+			highlight 2s ease infinite 0.5s normal;
+
+		@keyframes highlight-start {
+			from {
+				box-shadow: 0 0 0 0 var(--border-color);
+			}
+
+			to {
+				box-shadow: 0 0 0 2px var(--border-color);
+			}
+		}
+
+		@keyframes highlight {
+			0%,
+			100% {
+				box-shadow: 0 0 0 2px var(--border-color);
+			}
+
+			50% {
+				box-shadow: 0 0 0 1.5px var(--border-color);
+			}
+		}
+	}
+
+	#buttons-grid.has-dragging-child &.drop-destination,
+	#buttons-grid.has-dragging-child.filtering &.drop-destination:not(.filtered):not(.dragging) {
 		transition: none;
 
 		// cursor: ;
-
 		opacity: 1;
-		box-shadow: 0 0 0 3px #fff; // Background is better: outline shows a weird empty space.
+		outline: 3px solid #fff;
 	}
 
 	// &.playing {
@@ -118,11 +163,7 @@ button.soundbutton {
 	// 	// TODO: Playing effect?
 	// }
 
-	&.hidden {
-		display: none;
-	}
-
-	&:focus {
+	/*&:focus {
 		outline: 3px solid var(--button-background-hover-hsl);
-	}
+	}*/
 }
