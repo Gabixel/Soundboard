@@ -43,9 +43,10 @@ $("#clear-grid").on("click", () => {
 function updateRows(e: JQuery.ChangeEvent) {
 	const rows = parseInt($(e.target).val().toString());
 
-	$("#buttons-grid").css({
-		gridTemplateRows: `repeat(${rows}, 1fr)`,
-	});
+	// $("#buttons-grid").css({
+	// 	gridTemplateRows: `repeat(${rows}, 1fr)`,
+	// });
+	$("#buttons-grid").css("--rows", rows);
 
 	Grid.setRows(rows);
 }
@@ -53,9 +54,10 @@ function updateRows(e: JQuery.ChangeEvent) {
 function updateColumns(e: JQuery.ChangeEvent) {
 	const columns = parseInt($(e.target).val().toString());
 
-	$("#buttons-grid").css({
-		gridTemplateColumns: `repeat(${columns}, 1fr)`,
-	});
+	// $("#buttons-grid").css({
+	// 	gridTemplateColumns: `repeat(${columns}, 1fr)`,
+	// });
+	$("#buttons-grid").css("--columns", columns);
 
 	Grid.setColumns(columns);
 }
