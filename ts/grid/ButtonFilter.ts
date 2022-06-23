@@ -1,82 +1,98 @@
-// class ButtonFilter {
+class ButtonFilter {
+	private static _filter: string = "";
 
-// }
+	public static get filter(): string {
+		return this._filter;
+	}
+
+	public static get isFiltering(): boolean {
+		return this._filter != "";
+	}
+
+	public static updateFilter(): void {
+		this._filter = $("#buttons-filter").val().toString();
+	}
+}
 
 // TODO: filter when a function for updating a button is implemented.
 
 // Trigger the filter input when the text changes
 $("#buttons-filter").on("input", (e) => {
-	applyFilter($("#buttons-filter").val().toString());
+	ButtonFilter.updateFilter();
+	globallyUpdateFilter();
 });
 
 $(
 	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-tags, #buttons-filter-path"
 ).on("change", (e) => {
-	if ($("#buttons-filter").val().toString().length === 0) return;
+	if (ButtonFilter.filter.length === 0) return;
 
 	$("#buttons-filter").trigger("input");
 });
 
-function refreshFilter(): void {
-	Logger.log(null, applyFilter, "Refreshing filter...");
-	$("#buttons-filter").trigger("input");
-}
-
-function applyFilter(filterText: string): void {
-	if (filterText === "") {
-		Logger.log(null, applyFilter, "Cleared filter.");
+function globallyUpdateFilter(): void {
+	if (!ButtonFilter.isFiltering) {
+		Logger.log(null, globallyUpdateFilter, "Cleared filter.");
 		clearFilter();
 		return;
 	}
 
 	$("#buttons-grid .soundbutton").each((index, button) => {
-		const $button = $(button);
-		const isMatch = !buttonFilterCheck($button, filterText);
-
-		$button.toggleClass("filtered", isMatch);
+		filterButton($(button));
 	});
 
 	const filteredButtons = $("#buttons-grid .soundbutton.filtered").length;
 
 	Logger.log(
 		null,
-		applyFilter,
-		"Filtered " + filteredButtons + ' buttons with filter "' + filterText + '"'
+		globallyUpdateFilter,
+		"Filtered " +
+			filteredButtons +
+			' buttons with filter "' +
+			ButtonFilter.filter +
+			'"'
 	);
 
-	if (filteredButtons > 0) $("#buttons-grid").addClass("filtering");
-	else $("#buttons-grid").removeClass("filtering");
+	$("#buttons-grid").toggleClass("filtering", filteredButtons > 0);
 }
 
-const buttonFilterCheck = function (
+function filterButton($button: JQuery<HTMLElement>) {
+	const shouldHide = buttonHideCheck($button, ButtonFilter.filter);
+
+	if (shouldHide) $button.removeClass("filtered").addClass("filtered");
+	else {
+		$button.addClass("filtered");
+		$button[0].offsetHeight;
+		$button.removeClass("filtered");
+	}
+}
+
+const buttonHideCheck = function (
 	$button: JQuery<HTMLElement>,
 	filterText: string
 ): boolean {
-	if (
-		$("#buttons-filter-text").is(":checked") &&
-		$button.text().includes(filterText)
-	)
-		return true;
+	let filters = filterText.split(" ").filter((f) => f.length > 0);
 
-	if (
-		$("#buttons-filter-index").is(":checked") &&
-		$button.attr("id")?.substring(10).includes(filterText)
-	)
-		return true;
+	let shouldHide = true;
 
-	if (
-		$("#buttons-filter-tags").is(":checked") &&
-		$button.attr("data-tags")?.includes(filterText)
-	)
-		return true;
+	filters.forEach((f) => {
+		f = f.toLowerCase();
 
-	if (
-		$("#buttons-filter-path").is(":checked") &&
-		decodeURI($button.attr("data-path")).includes(filterText)
-	)
-		return true;
+		if (
+			($("#buttons-filter-text").is(":checked") &&
+				$button.text()?.toLowerCase().includes(f)) ||
+			($("#buttons-filter-index").is(":checked") &&
+				$button.css("--index")?.includes(f)) ||
+			($("#buttons-filter-tags").is(":checked") &&
+				$button.attr("data-tags")?.toLowerCase().split(" ").includes(f)) ||
+			($("#buttons-filter-path").is(":checked") &&
+				decodeURI($button.attr("data-path"))?.toLowerCase().includes(f))
+		) {
+			shouldHide = false;
+		}
+	});
 
-	return false;
+	return shouldHide;
 };
 
 // Remove the "filtered" class from all buttons

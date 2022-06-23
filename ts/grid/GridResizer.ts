@@ -61,8 +61,8 @@ function updateColumns(e: JQuery.ChangeEvent) {
 }
 
 function updateGrid() {
-	if (fillEmptyCells()) refreshFilter();
-	
+	fillEmptyCells();
+
 	updateVisibleButtons();
 	updateButtonFontSize();
 }
@@ -87,18 +87,20 @@ function updateVisibleButtons(): void {
 	});
 }
 
-function fillEmptyCells(): boolean {
-	if (!Grid.isGridIncomplete) return false;
+function fillEmptyCells(): void {
+	if (!Grid.isGridIncomplete) return;
 
 	const emptyCells = Grid.size - Grid.buttonCount;
 
 	for (let i = 0; i < emptyCells; i++) {
-		$("#buttons-grid").append(SoundButton.generateRandom(Grid.buttonCount));
+		const $button = $(SoundButton.generateRandom(Grid.buttonCount));
+
+		if (ButtonFilter.isFiltering) filterButton($button);
+
+		$("#buttons-grid").append($button[0]);
 
 		Grid.increaseSoundButtonCount();
 	}
-
-	return true;
 }
 
 // TODO: update on window resize and on ui scale change
