@@ -6,6 +6,8 @@ class SoundButton extends LogExtend {
 	];
 	private static $grid: JQuery<HTMLElement>;
 
+	private static dropEffect: "none" | "copy" | "link" | "move" = "none";
+
 	private static getRandomPath(): string {
 		return encodeURI(
 			"../../resources/sounds/" + this.paths[EMath.randomInt(0, this.paths.length)]
@@ -25,6 +27,11 @@ class SoundButton extends LogExtend {
 			image: "",
 			tags: [],
 			path: this.getRandomPath(),
+			time: {
+				start: 20500,//19300,//62265, // TODO
+				end: 0,
+				condition: "after",
+			},
 			index: index,
 		};
 
@@ -57,17 +64,25 @@ class SoundButton extends LogExtend {
 			// .data("tags", data.tags)
 			.attr("data-path", data.path)
 
+			.attr("data-start-time", data.time.start)
+			.attr("data-end-time", data.time.end)
+			.attr("data-end-type", data.time.condition)
+
 			.css("--hue", data.color.h.toString())
 			.css("--saturation", data.color.s.toString() + "%")
-			.css("--lightness", data.color.l.toString() + "%")
+			.css("--lightness", data.color.l.toString() + "%");
 
-			// Item drop
+		this.addDragAndDrop($button);
+	}
+
+	private static addDragAndDrop($button: JQuery<HTMLElement>): void {
+		$button
 			.on("dragenter", (e: JQuery.DragEnterEvent) => {
 				e.stopPropagation();
 				e.preventDefault();
-				e.originalEvent.dataTransfer.dropEffect = "link";
+				e.originalEvent.dataTransfer.dropEffect = this.dropEffect;
 
-				$button.addClass("dragover");
+				$button.addClass("file-dragover");
 				this.log(this.applyData, "'dragenter' triggered");
 			})
 			.on("dragover", (e: JQuery.DragOverEvent) => {
@@ -75,7 +90,7 @@ class SoundButton extends LogExtend {
 				e.stopPropagation();
 				e.originalEvent.dataTransfer.dropEffect = "link";
 
-				// $button.addClass("dragover");
+				// $button.addClass("file-dragover");
 			})
 			.on("drop", (e: JQuery.DropEvent) => {
 				this.log(this.applyData, "'drop' triggered");
@@ -89,7 +104,7 @@ class SoundButton extends LogExtend {
 				e.preventDefault();
 				e.stopPropagation();
 
-				$button.removeClass("dragover");
+				$button.removeClass("file-dragover");
 
 				const file = e.originalEvent.dataTransfer.files[0];
 
@@ -97,7 +112,7 @@ class SoundButton extends LogExtend {
 				const path: string = file.path;
 
 				// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters. This is a workaround.
-				const encodedPath = encodeURI(path.replace(/\\/g, "/"));
+				const encodedPath = encodeURIComponent(path.replace(/\\/g, "/")).replace(/(%2F)+/g, "/").replace(/(%3A)+/g, ":");
 
 				this.log(
 					this.applyData,
@@ -124,7 +139,7 @@ class SoundButton extends LogExtend {
 				e.stopPropagation();
 
 				// $button.on("dragover");
-				$button.removeClass("dragover");
+				$button.removeClass("file-dragover");
 				this.log(this.applyData, "'dragleave' triggered");
 			});
 	}
@@ -169,9 +184,18 @@ class SoundButton extends LogExtend {
 			this.log(this.initClick, `SoundButton "%s" clicked`, $(e.target).text());
 
 			const $button = $(e.target);
+
 			const path = $button.attr("data-path");
 
-			AudioPlayer.addAudio(path, e.shiftKey);
+			const time: AudioTimings = {
+				start: parseInt($button.attr("data-start-time")),
+				end: parseInt($button.attr("data-end-time")),
+				condition: $button.attr("data-end-type") as "at" | "after",
+			};
+
+			const useMultiPool = e.shiftKey; // If the shift key is pressed, use the multi-pool
+
+			AudioPlayer.addAudio(path, time, useMultiPool);
 		});
 	}
 }
