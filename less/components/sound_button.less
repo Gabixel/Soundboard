@@ -62,10 +62,12 @@
 	}
 
 	&.has-dragging-child .soundbutton {
+		.transition(0.2s);
+
 		&:not(.dragging) {
 			opacity: 0.5;
 
-			animation: drag-choose 0.2s ease var(--opacity-delay, 0s) normal;
+			animation: drag-choose 0.2s ease var(--opacity-delay, 0) normal;
 
 			@keyframes drag-choose {
 				from {
@@ -117,6 +119,10 @@
 			background-color: var(--button-background-active-hsl);
 		}
 	}
+}
+
+.transition(@outline-time: 0s) {
+	transition: background-color 0.1s, opacity 0.2s, box-shadow 0.2s, outline @outline-time;
 }
 
 .style() {
@@ -182,10 +188,6 @@
 
 	// animation: none;
 	.transition();
-}
-
-.transition() {
-	transition: background-color 0.1s, opacity 0.2s, box-shadow 0.2s, outline 0.2s;
 }
 
 /*.soundbutton {
