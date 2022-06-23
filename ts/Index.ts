@@ -16,6 +16,7 @@ type AudioPoolGroup = {
 	forcedEnding: boolean;
 };
 type SoundButtonData = {
+	index: number;
 	title: string;
 	color: {
 		h: number;
@@ -25,7 +26,6 @@ type SoundButtonData = {
 	image: string;
 	tags: string[];
 	path: string;
-	index: number;
 };
 //#endregion
 

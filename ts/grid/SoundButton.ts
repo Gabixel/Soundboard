@@ -22,6 +22,7 @@ class SoundButton extends LogExtend {
 		];
 
 		let data: SoundButtonData = {
+			index,
 			title: (index + 1).toString(),
 			color: { h, s, l },
 			image: "",
@@ -32,7 +33,6 @@ class SoundButton extends LogExtend {
 				end: 0,
 				condition: "after",
 			},
-			index: index,
 		};
 
 		return SoundButton.createWithData(data);
