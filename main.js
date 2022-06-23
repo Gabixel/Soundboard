@@ -86,6 +86,7 @@ const createMainWindow = () => {
 	});
 
 	mainWindow.once("ready-to-show", () => {
+		initIpc();
 		mainWindow.show();
 	});
 
