@@ -28,7 +28,7 @@ class SoundButton extends LogExtend {
 			tags: [],
 			path: this.getRandomPath(),
 			time: {
-				start: 20500,//19300,//62265, // TODO
+				start: 0,//20500,//19300,//62265, // TODO
 				end: 0,
 				condition: "after",
 			},
