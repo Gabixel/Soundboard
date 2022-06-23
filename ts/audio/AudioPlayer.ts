@@ -27,14 +27,17 @@ class AudioPlayer extends LogExtend {
 		this.$volumeSlider = $slider;
 		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
 		this.updateVolume();
-		this.initSliderEvents();
+		this.initSlider();
 	}
 
-	private static initSliderEvents(): void {
+	private static initSlider(): void {
 		this.$volumeSlider
 			.on("input", () => {
 				this.updateVolume();
 			})
+			// .on("blur", (e) => {
+			// 	this.$volumeSlider.trigger("input");
+			// })
 			.on("wheel", (e) => {
 				EventFunctions.updateInputValueFromWheel(e, 50, true, ["input"]);
 			});

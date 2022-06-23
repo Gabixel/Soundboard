@@ -56,14 +56,16 @@ class UiScale extends LogExtend {
 			// 	$(e.target).attr("step", "0.2");
 			// })
 			.on("keyup", (e) => {
-					$(e.target).trigger("click"); //.attr("step", "0.1")
+				$(e.target).trigger("click"); //.attr("step", "0.1")
+			})
+			.on("blur", (e) => {
+				$(e.target).trigger("click");
 			})
 			// .on("focusout", (e) => {
 			// 	$(e.target).attr("step", "0.1"); // In case the user clicks away from the input while still holding the left or right arrow keys
 			// })
 			.on("click", (e) => {
-				if (this.getSliderPrevValue() === this.getSliderValue())
-					return;
+				if (this.getSliderPrevValue() === this.getSliderValue()) return;
 
 				this.setSliderPrevValue();
 
