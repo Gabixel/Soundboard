@@ -12,8 +12,6 @@
 
 		position: relative;
 
-		order: var(--index, 0);
-
 		// Hidden
 		&.hidden {
 			display: none;
@@ -188,6 +186,8 @@
 
 	// animation: none;
 	.transition();
+
+	order: var(--index);
 }
 
 /*.soundbutton {
