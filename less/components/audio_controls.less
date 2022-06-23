@@ -16,7 +16,7 @@
 	@hsl-active: @hsl-middle;
 
 	button {
-		transition: background-color .1s ease;
+		transition: background-color 0.1s ease;
 	}
 
 	flex-grow: 0;
@@ -85,17 +85,28 @@
 	// https://stackoverflow.com/questions/1895476/how-do-i-style-a-select-dropdown-with-only-css
 	// http://jsfiddle.net/danield770/YvCHW/10613/
 	#audio-output-select {
-		
 	}
 
 	#ui-scale-slider {
-		transition: filter .2s;
+		transition: filter 0.2s;
 
 		&:disabled {
-			filter: brightness(.9);
+			filter: brightness(0.9);
+		}
+
+		// mask-image: linear-gradient(rgba(255, 255, 255, 1), transparent);
+		// mask-mode: auto;
+
+		&::-webkit-slider-thumb {
+			-webkit-appearance: none; /* Override default look */
+			appearance: none;
+			
+			width: 25px; /* Set a specific slider handle width */
+			height: 25px; /* Slider handle height */
+			background: #04aa6d; /* Green background */
+			cursor: pointer; /* Cursor on hover */
 		}
 	}
-
 	#ui-scale-reset {
 		@h: 0;
 		@s: 0%;
@@ -118,7 +129,7 @@
 		height: @btn-size;
 
 		i {
-			font-size: .8em;
+			font-size: 0.8em;
 		}
 
 		&:hover:not(:disabled) {
@@ -130,7 +141,7 @@
 		}
 
 		&:disabled {
-			background-color: @hsl-dark
+			background-color: @hsl-dark;
 		}
 
 		// i {
