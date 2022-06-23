@@ -48,7 +48,7 @@ class SoundButton extends LogExtend {
 		data: SoundButtonData
 	): void {
 		$button
-			.attr("id", "sound_btn_" + (data.index + 1))
+			.attr("id", "sound_btn_" + data.index)
 			.attr("tabindex", data.index + 1)
 			.css("--index", data.index.toString())
 
