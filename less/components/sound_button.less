@@ -32,49 +32,63 @@
 		&.filtered {
 			opacity: 0.15;
 		}
+	}
 
+	&:not(.has-dragging-child).filtering .soundbutton {
 		&:not(.filtered) {
-			animation: visual-light 3s normal;
+			animation: visual-light 2.5s ease-in-out;
 
 			@keyframes visual-light {
 				from {
-					box-shadow: 0 0 4px 2px #fff;
+					box-shadow: 0 0 2px 2px rgb(255 255 255 / 1);
 				}
 
 				to {
-					box-shadow: 0 0 4px 2px rgb(255 255 255 / 0);
+					box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
 				}
 			}
 		}
 	}
 
+	&.has-dragging-child.filtering .soundbutton {
+		&:not(.filtered) {
+			outline: 2px dashed #0f0;
+		}
+
+		&.drop-destination {
+			opacity: 1;
+			outline: 3px solid #fff;
+		}
+	}
+
 	&.has-dragging-child .soundbutton {
-		// &:not(.dragging) {
-		// 	animation: drag-choose 0.2s ease var(--opacity-delay, 0s) backwards;
-
-		// 	@keyframes drag-choose {
-		// 		from {
-		// 			opacity: 1;
-		// 		}
-
-		// 		to {
-		// 			opacity: 0.5;
-		// 		}
-		// 	}
-		// }
-
 		&:not(.dragging) {
-			transition: background-color 0.1s, opacity 0.2s ease var(--opacity-delay, 0s);
 			opacity: 0.5;
+
+			animation: drag-choose 0.2s ease var(--opacity-delay, 0s) normal;
+
+			@keyframes drag-choose {
+				from {
+					opacity: 1;
+				}
+
+				to {
+					opacity: 0.5;
+				}
+			}
+
+			box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
 		}
 
 		&.hovered {
-			.transition(); // This removes the intro delay
+			animation: none;
+			// .transition(); // This removes the intro delay
 		}
 
 		&.drop-destination,
 		&.drop-destination.filtered {
 			transition: none;
+			animation: none;
 
 			// cursor: ;
 
@@ -88,7 +102,7 @@
 
 			opacity: 0.35;
 
-			box-shadow: 0 0 2px rgba(0, 0, 0, var(--alpha));
+			box-shadow: 0 0 2px #000;
 			pointer-events: none;
 		}
 	}
@@ -101,13 +115,6 @@
 
 		&:active {
 			background-color: var(--button-background-active-hsl);
-		}
-	}
-
-	&.has-dragging-child.filtering .soundbutton {
-		&:not(.filtered):not(.dragging) {
-			transition: outline 0.2s;
-			outline: 2px dashed #0f0;
 		}
 	}
 }
@@ -132,8 +139,6 @@
 
 	// The threshold at which a darker border will be applied. Range: decimals from 0 to 1.
 	--border-threshold: 0.8;
-
-	// --opacity-delay: 10s;
 
 	// Applies a darker border if the luma is higher than the border threshold.
 	// --border-alpha: calc((var(--luma) - var(--border-threshold)) * 100);
@@ -173,12 +178,14 @@
 	max-width: var(--width);
 	max-height: var(--height);
 
-	animation: none;
+	outline: 0 solid transparent;
+
+	// animation: none;
 	.transition();
 }
 
 .transition() {
-	transition: background-color 0.1s, opacity 0.2s;
+	transition: background-color 0.1s, opacity 0.2s, box-shadow 0.2s, outline 0.2s;
 }
 
 /*.soundbutton {
