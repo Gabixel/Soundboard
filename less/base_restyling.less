@@ -8,6 +8,7 @@ body * {
 
 body, body * {
 	font-size: 14px;
+	text-rendering: optimizeLegibility;
 }
 
 p {
@@ -30,7 +31,7 @@ input[type="range"] {
 	margin: 0;
 }
 
-// If we want to overwrite this, we need to specify the html element too
+// If we want to overwrite this, we need more specificity
 // (e.g. "button.coolbutton" instead of ".coolbutton")
 input[type="button"]:not(.default),
 button:not(.default) {
