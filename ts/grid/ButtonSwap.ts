@@ -67,6 +67,7 @@ $(document)
 
 		$dropTarget?.removeClass("drop-destination");
 		clearOpacityDelay();
+		$("#buttons-grid .soundbutton.hovered").removeClass("hovered");
 		isStyled = false;
 		$dragTarget = null;
 		dragFunction = mouseDrag_1;
@@ -83,6 +84,7 @@ $(document)
 	});
 
 function mouseDrag_1(e: JQuery.MouseMoveEvent): void {
+	// if ($("#buttons-grid").hasClass("filtering")) return; // TODO: wtf doesn't work.
 	if (!preparingDrag) return;
 
 	// Small delay to prevent the mouse to start dragging instantly
@@ -167,7 +169,7 @@ function clearOpacityDelay(): void {
 function onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
 	if (!isDragging) return;
 
-	$(e.target).addClass("drop-destination");
+	$(e.target).addClass("drop-destination").addClass("hovered");
 }
 
 function onSoundButtonMouseLeave(e: JQuery.MouseLeaveEvent): void {
