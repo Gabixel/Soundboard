@@ -28,13 +28,15 @@ class SoundButton extends LogExtend {
 			index: index,
 		};
 
-		return SoundButton.generate(data);
+		return SoundButton.createWithData(data);
 	}
 
-	public static generate(data: SoundButtonData): HTMLElement {
+	public static createWithData(data: SoundButtonData): HTMLElement {
 		const $button = $(
-			`<button type="button" class="soundbutton">${data.title}</button>`
+			`<button type="button" class="soundbutton"></button>`
 		);
+
+		$button.text(data.title).append(`<div class="outline-overlay"></div>`);
 
 		this.applyData($button, data);
 
