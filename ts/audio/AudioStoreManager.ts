@@ -9,20 +9,24 @@ class AudioStoreManager extends LogExtend {
 	constructor(volume: number = 0) {
 		super();
 		this.singlePool.main.volume = this.singlePool.playback.volume = volume;
+		$(this.singlePool.main)
+			.add(this.singlePool.playback)
+			.on("canplay", (e) => {
+				AudioStoreManager.log(null, "Audio can play");
+				this.playGroup(this.singlePool);
+			})
+			.on("error", (e) => {
+				AudioStoreManager.error(
+					null,
+					"Error loading audio\n",
+					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
+					e
+				);
+			});
 	}
 
 	public updateAudioDevice(device: MediaDeviceInfo): void {
 		this.singlePool.main.setSinkId(device.deviceId);
-	}
-
-	public addAudioOrPath(audio: string | AudioPoolGroup) {
-		if (typeof audio === "string") {
-			this.addToSinglePool(audio);
-		} else {
-			if (this.multiPool.length < 50)
-				// Limited sounds to prevent memory issues
-				this.addToMultiPool(audio);
-		}
 	}
 
 	public addToSinglePool(path: string): void {
@@ -51,11 +55,15 @@ class AudioStoreManager extends LogExtend {
 			);
 			this.singlePool.main.currentTime = this.singlePool.playback.currentTime = 0;
 		}
-
-		this.playGroup(this.singlePool);
 	}
 
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {
+		// Limited sounds to prevent memory or human ear issues
+		if (this.multiPool.length > 50) {
+			AudioStoreManager.log(this.addToMultiPool, "Pool limit exceeded.");
+			return;
+		}
+
 		AudioStoreManager.log(
 			this.addToMultiPool,
 			"Adding new group to multi pool:",
@@ -107,12 +115,12 @@ class AudioStoreManager extends LogExtend {
 	}
 
 	private playGroup(group: AudioGroup | AudioPoolGroup): void {
-		try {
-			group.main.play();
-			group.playback.play();
-		} catch (e) {
-			console.error(e);
-		}
+		// try {
+		group.main.play();
+		group.playback.play();
+		// } catch (e) {
+		// 	AudioStoreManager.error(this.playGroup, e); // TODO
+		// }
 	}
 
 	public setVolume(value: number): void {

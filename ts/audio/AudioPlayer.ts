@@ -91,7 +91,7 @@ class AudioPlayer extends LogExtend {
 
 		await this.setSinkId(main);
 
-		this.audioStore.addAudioOrPath(group);
+		this.audioStore.addToMultiPool(group);
 	}
 
 	private static async setSinkId(audio: AudioJS): Promise<void> {
@@ -132,12 +132,7 @@ class AudioPlayer extends LogExtend {
 		if (this.canLogVolume) {
 			this.canLogVolume = false;
 
-			this.log(
-				this.updateVolume,
-				"Volume:",
-				Math.round(this._volume * 100),
-				"%"
-			);
+			this.log(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
 
 			setTimeout(() => {
 				this.canLogVolume = true;
