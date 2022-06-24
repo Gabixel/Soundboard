@@ -7,9 +7,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 	<meta http-equiv="Content-Security-Policy"
-		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
+		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self'">
 	<meta http-equiv="X-Content-Security-Policy"
-		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
+		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self'">
 	<title>Soundboard</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
 		integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
@@ -45,9 +45,9 @@
 					</div>
 					<div>
 						<input type="text" id="buttons-filter" placeholder="Filter buttons" style="min-width: 200px; max-width: 300px;">
-						<input type="button" id="clear-filter" value="Clear" onclick="$('#buttons-filter').val('').trigger('input')">
-						<label>Filter:</label>
-						<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index" style="accent-color: #ccc;" checked><label for="buttons-filter-index">Index/ID</label>|<input type="checkbox" id="buttons-filter-tags" style="accent-color: #ccc;" checked><label for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path" style="accent-color: #ccc;" checked><label for="buttons-filter-path">Path</label>
+						<input type="button" id="clear-filter" value="Clear">
+						<label>Filters:</label>
+						<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index" style="accent-color: #ccc;"><label for="buttons-filter-index">Index</label>|<input type="checkbox" id="buttons-filter-tags" style="accent-color: #ccc;"><label for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path" style="accent-color: #ccc;"><label for="buttons-filter-path">Path</label>
 					</div>
 					<div>
 						<label for="audio-outputs-select">Output:</label>

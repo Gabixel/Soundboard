@@ -22,6 +22,10 @@ $("#buttons-filter").on("input", (e) => {
 	globallyUpdateFilter();
 });
 
+$("#clear-filter").on("click", () => {
+	$("#buttons-filter").val("").trigger("input");
+});
+
 $(
 	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-tags, #buttons-filter-path"
 ).on("change", (e) => {
