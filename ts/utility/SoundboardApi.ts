@@ -1,5 +1,7 @@
-class SoundboardApi {
+class SoundboardApi extends LogExtend {
 	public static openContextMenu(args: any = null): void {
+		this.log(this.openContextMenu, "Opening context menu with args:", args);
+
 		// @ts-ignore
 		window.api.openContextMenu(args);
 	}
