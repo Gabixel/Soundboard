@@ -24,10 +24,10 @@ const appendScripts = (...scripts) => {
 
 window.onload = () => {
 	appendScripts(
-		"utility/SoundBoardApi",
 		"utility/ExtendedMath",
 		"utility/EventFunctions",
 		"utility/Logger",
+		"utility/SoundBoardApi",
 
 		"grid/GridResizer",
 		"grid/Grid",
