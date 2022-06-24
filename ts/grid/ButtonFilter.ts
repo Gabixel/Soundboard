@@ -67,7 +67,7 @@ function filterButton($button: JQuery<HTMLElement>) {
 	}
 }
 
-const buttonHideCheck = function (
+function buttonHideCheck(
 	$button: JQuery<HTMLElement>,
 	filterText: string
 ): boolean {
@@ -76,24 +76,15 @@ const buttonHideCheck = function (
 	let shouldHide = true;
 
 	filters.forEach((f) => {
-		f = f.toLowerCase();
-
-		if (
-			($("#buttons-filter-text").is(":checked") &&
-				$button.text()?.toLowerCase().includes(f)) ||
-			($("#buttons-filter-index").is(":checked") &&
-				$button.css("--index")?.includes(f)) ||
-			($("#buttons-filter-tags").is(":checked") &&
-				$button.attr("data-tags")?.toLowerCase().split(" ").includes(f)) ||
-			($("#buttons-filter-path").is(":checked") &&
-				decodeURI($button.attr("data-path"))?.toLowerCase().includes(f))
-		) {
-			shouldHide = false;
-		}
+		shouldHide = !isMatch($button, f.toLowerCase());
 	});
 
 	return shouldHide;
-};
+}
+
+function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
+	return matches.some((match) => match($button, f));
+}
 
 // Remove the "filtered" class from all buttons
 function clearFilter() {
@@ -104,3 +95,26 @@ function clearFilter() {
 function showButton(index: number, button: HTMLElement) {
 	$(button).removeClass("filtered");
 }
+
+const matches: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
+	// Text
+	($button: JQuery<HTMLElement>, f: string): boolean =>
+		$("#buttons-filter-text").is(":checked") &&
+		$button.text()?.toLowerCase().includes(f),
+	// CSS Index
+	($button: JQuery<HTMLElement>, f: string): boolean =>
+		$("#buttons-filter-index").is(":checked") &&
+		$button.css("--index")?.includes(f),
+	// Tags
+	($button: JQuery<HTMLElement>, f: string): boolean =>
+		$("#buttons-filter-tags").is(":checked") &&
+		$button
+			.attr("data-tags")
+			?.toLowerCase()
+			.split(" ")
+			.some((tag) => tag.includes(f)),
+	// Path
+	($button: JQuery<HTMLElement>, f: string): boolean =>
+		$("#buttons-filter-path").is(":checked") &&
+		decodeURI($button.attr("data-path"))?.toLowerCase().includes(f),
+];
