@@ -22,42 +22,40 @@ class SoundButton extends LogExtend {
 		];
 
 		let data: SoundButtonData = {
-			index,
 			title: (index + 1).toString(),
 			color: { h, s, l },
 			image: "",
 			tags: [],
 			path: this.getRandomPath(),
 			time: {
-				start: 0,//20500,//19300,//62265, // TODO
+				start: 0, //20500,//19300,//62265, // TODO
 				end: 0,
 				condition: "after",
 			},
 		};
 
-		return SoundButton.createWithData(data);
+		return SoundButton.createWithData(data, index);
 	}
 
-	public static createWithData(data: SoundButtonData): HTMLElement {
-		const $button = $(
-			`<button type="button" class="soundbutton"></button>`
-		);
+	public static createWithData(data: SoundButtonData, index: number): HTMLElement {
+		const $button = $(`<button type="button" class="soundbutton"></button>`);
 
 		$button.text(data.title).append(`<div class="outline-overlay"></div>`);
 
-		this.applyData($button, data);
+		this.applyInitialData($button, data, index);
 
 		return $button[0];
 	}
 
-	private static applyData(
+	private static applyInitialData(
 		$button: JQuery<HTMLElement>,
-		data: SoundButtonData
+		data: SoundButtonData,
+		index: number
 	): void {
 		$button
-			.attr("id", "sound_btn_" + data.index)
-			.attr("tabindex", data.index + 1)
-			.css("--index", data.index.toString())
+			.attr("id", "sound_btn_" + index)
+			.attr("tabindex", index + 1)
+			.css("--index", index.toString())
 
 			// TODO: apply color
 			// TODO: apply image
@@ -83,7 +81,7 @@ class SoundButton extends LogExtend {
 				e.originalEvent.dataTransfer.dropEffect = this.dropEffect;
 
 				$button.addClass("file-dragover");
-				this.log(this.applyData, "'dragenter' triggered");
+				this.log(this.applyInitialData, "'dragenter' triggered");
 			})
 			.on("dragover", (e: JQuery.DragOverEvent) => {
 				e.preventDefault();
@@ -93,11 +91,13 @@ class SoundButton extends LogExtend {
 				// $button.addClass("file-dragover");
 			})
 			.on("drop", (e: JQuery.DropEvent) => {
-				this.log(this.applyData, "'drop' triggered");
+				this.log(this.applyInitialData, "'drop' triggered");
 
 				const notSuccesful =
 					!e.originalEvent.dataTransfer ||
 					!e.originalEvent.dataTransfer.files.length;
+
+					// TODO: check if file type is supported by the browser.
 
 				if (notSuccesful) return;
 
@@ -111,11 +111,14 @@ class SoundButton extends LogExtend {
 				// @ts-ignore
 				const path: string = file.path;
 
-				// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters. This is a workaround.
-				const encodedPath = encodeURIComponent(path.replace(/\\/g, "/")).replace(/(%2F)+/g, "/").replace(/(%3A)+/g, ":");
+				// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters.
+				const encodedPath =
+				encodeURIComponent(path.replace(/\\/g, "/"))
+					.replace(/(%2F)+/g, "/") // Replace slashes
+					.replace(/(%3A)+/g, ":"); // Replace colons
 
 				this.log(
-					this.applyData,
+					this.applyInitialData,
 					"Audio drop successful.\n" +
 						"• Files: %O\n" +
 						"\t---------\n" +
@@ -140,8 +143,22 @@ class SoundButton extends LogExtend {
 
 				// $button.on("dragover");
 				$button.removeClass("file-dragover");
-				this.log(this.applyData, "'dragleave' triggered");
+				this.log(this.applyInitialData, "'dragleave' triggered");
 			});
+	}
+
+	public static updateData(
+		$button: JQuery<HTMLElement>,
+		data: SoundButtonData
+	): void {
+		const keys = Object.keys(data);
+		for (let i = 0; i < keys.length; i++) {
+			switch (keys[i]) {
+				case "title":
+				// TODO: change title
+				break;
+			}
+		}
 	}
 
 	public static setGrid(grid: JQuery<HTMLElement>): void {

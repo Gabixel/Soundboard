@@ -16,16 +16,39 @@ type AudioPoolGroup = {
 	forcedEnding: boolean;
 };
 type SoundButtonData = {
-	index: number;
-	title: string;
-	color: {
+	/**
+	 * The (unredered) text
+	 */
+	title?: string;
+	/**
+	 * The color (fallback if image fails)
+	 */
+	color?: {
 		h: number;
 		s: number;
 		l: number;
 	};
-	image: string;
-	tags: string[];
-	path: string;
+	/**
+	 * 
+	 */
+	image?: string;
+	tags?: string[];
+	time?: AudioTimings;
+	path?: string;
+};
+type AudioTimings = {
+	/**
+	 * Start time (in milliseconds)
+	 */
+	start: number;
+	/**
+	 * End time (in milliseconds)
+	 */
+	end: number;
+	/**
+	 * Ending condition
+	 */
+	condition: "at" | "after";
 };
 //#endregion
 
