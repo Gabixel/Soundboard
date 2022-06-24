@@ -1,11 +1,13 @@
 class Grid {
-	private static gridRows = 0;
-	private static gridCols = 0;
-	private static gridSize = 0;
+	private static gridRows: number = 0;
+	private static gridCols: number = 0;
+	private static gridSize: number = 0;
 
 	private static grid: JQuery<HTMLElement>;
 
-	private static soundButtonCount = 0;
+	private static soundButtonCount: number = 0;
+
+	private static filtering: boolean = false;
 
 	public static setRows(newValue: number): void {
 		this.gridRows = newValue;
@@ -47,5 +49,13 @@ class Grid {
 
 	public static get isGridIncomplete(): boolean {
 		return this.soundButtonCount < this.size;
+	}
+
+	public static get isFiltering(): boolean {
+		return this.filtering;
+	}
+
+	public static set isFiltering(value: boolean) {
+		this.filtering = value;
 	}
 }
