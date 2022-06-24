@@ -87,7 +87,7 @@ function buttonHideCheck(
 }
 
 function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
-	return matches.some((match) => match($button, f));
+	return conditions.some((match) => match($button, f));
 }
 
 // Remove the "filtered" class from all buttons
@@ -100,7 +100,7 @@ function showButton(index: number, button: HTMLElement) {
 	$(button).removeClass("filtered");
 }
 
-const matches: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
+const conditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
 	// Text
 	($button: JQuery<HTMLElement>, f: string): boolean => {
 		return (

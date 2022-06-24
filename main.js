@@ -14,8 +14,6 @@ const isMac = process.platform === "darwin";
 const isWindows = process.platform === "win32";
 const isLinux = process.platform === "linux";
 
-let screenWidth, screenHeight;
-
 const isProduction = process.env.NODE_ENV === "production";
 
 let mainWindow; // The main soundboard
@@ -52,7 +50,7 @@ editButtonWindowPreferences.preload = path.join(
 );
 
 //#region Init app
-const createMainWindow = () => {
+const createMainWindow = (screenWidth, screenHeight) => {
 	const defaultWidth = 800;
 	const defaultHeight = 600;
 
@@ -219,18 +217,18 @@ const initIpc = () => {
 
 // Listen for app to be ready
 app.whenReady().then(() => {
-	screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
-	screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+	let screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+	let screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
 	// Remove default menu
 	if (isProduction) Menu.setApplicationMenu(null);
 
-	createMainWindow();
+	createMainWindow(screenWidth, screenHeight);
 
 	app.on("activate", () => {
 		// On macOS it's common to re-create a window in the app when the
 		// dock icon is clicked and there are no other windows open.
-		if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
+		if (BrowserWindow.getAllWindows().length === 0) createMainWindow(screenWidth, screenHeight);
 	});
 });
 
