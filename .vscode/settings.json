@@ -2,5 +2,8 @@
 	"less.compile": {
 		"out": "${workspaceFolder}/css/",
 		"compress": true,
+	},
+	"files.exclude": {
+		"**/node_modules": true
 	}
 }
