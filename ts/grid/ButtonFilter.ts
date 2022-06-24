@@ -108,7 +108,7 @@ const matches: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
 	// CSS Index
 	($button: JQuery<HTMLElement>, f: string): boolean =>
 		$("#buttons-filter-index").is(":checked") &&
-		$button.css("--index")?.includes(f),
+		$button.css("--index") === f,
 	// Tags
 	($button: JQuery<HTMLElement>, f: string): boolean =>
 		$("#buttons-filter-tags").is(":checked") &&
