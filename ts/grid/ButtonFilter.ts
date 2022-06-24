@@ -102,23 +102,31 @@ function showButton(index: number, button: HTMLElement) {
 
 const matches: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
 	// Text
-	($button: JQuery<HTMLElement>, f: string): boolean =>
-		$("#buttons-filter-text").is(":checked") &&
-		$button.children(".button-theme").text()?.toLowerCase().includes(f),
+	($button: JQuery<HTMLElement>, f: string): boolean => {
+		return (
+			$("#buttons-filter-text").is(":checked") &&
+			$button.children(".button-theme").text()?.toLowerCase().includes(f)
+		);
+	},
 	// CSS Index
-	($button: JQuery<HTMLElement>, f: string): boolean =>
-		$("#buttons-filter-index").is(":checked") &&
-		$button.css("--index") === f,
+	($button: JQuery<HTMLElement>, f: string): boolean => {
+		return (
+			$("#buttons-filter-index").is(":checked") && $button.css("--index") === f
+		);
+	},
 	// Tags
-	($button: JQuery<HTMLElement>, f: string): boolean =>
-		$("#buttons-filter-tags").is(":checked") &&
-		$button
-			.attr("data-tags")
-			?.toLowerCase()
-			.split(" ")
-			.some((tag) => tag.includes(f)),
+	($button: JQuery<HTMLElement>, f: string): boolean => {
+		const tags = $button.attr("data-tags")?.toLowerCase().split(" ");
+
+		return (
+			$("#buttons-filter-tags").is(":checked") &&
+			tags.some((tag) => tag.includes(f))
+		);
+	},
 	// Path
-	($button: JQuery<HTMLElement>, f: string): boolean =>
-		$("#buttons-filter-path").is(":checked") &&
-		decodeURI($button.attr("data-path"))?.toLowerCase().includes(f),
+	($button: JQuery<HTMLElement>, f: string): boolean => {
+		const path = decodeURI($button.attr("data-path"))?.toLowerCase();
+
+		return $("#buttons-filter-path").is(":checked") && path.includes(f);
+	},
 ];
