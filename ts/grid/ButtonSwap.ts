@@ -204,6 +204,8 @@ function swapButtons(
 	Logger.log(
 		null,
 		swapButtons,
-		`Swapped buttons "${$drag.text()}" and "${$drop.text()}"`
+		`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
+			.children(".button-theme")
+			.text()}"`
 	);
 }

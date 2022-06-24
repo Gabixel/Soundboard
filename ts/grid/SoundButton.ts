@@ -37,10 +37,12 @@ class SoundButton extends LogExtend {
 		return SoundButton.createWithData(data, index);
 	}
 
-	public static createWithData(data: SoundButtonData, index: number): HTMLElement {
+	public static createWithData(
+		data: SoundButtonData,
+		index: number
+	): HTMLElement {
 		const $button = $(`<button type="button" class="soundbutton"></button>`);
-
-		$button.text(data.title).append(`<div class="outline-overlay"></div>`);
+		$button.append(`<div class="button-theme">${data.title}</div>`);
 
 		this.applyInitialData($button, data, index);
 
@@ -112,8 +114,7 @@ class SoundButton extends LogExtend {
 				const path: string = file.path;
 
 				// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters.
-				const encodedPath =
-				encodeURIComponent(path.replace(/\\/g, "/"))
+				const encodedPath = encodeURIComponent(path.replace(/\\/g, "/"))
 					.replace(/(%2F)+/g, "/") // Replace slashes
 					.replace(/(%3A)+/g, ":"); // Replace colons
 
@@ -155,8 +156,8 @@ class SoundButton extends LogExtend {
 		for (let i = 0; i < keys.length; i++) {
 			switch (keys[i]) {
 				case "title":
-				// TODO: change title
-				break;
+					// TODO: change title
+					break;
 			}
 		}
 	}
@@ -179,7 +180,7 @@ class SoundButton extends LogExtend {
 				x: e.clientX.toString(),
 				y: e.clientY.toString(),
 				buttonData: {
-					title: $target.text(),
+					title: $target.find(".button-theme").text(),
 					color: {
 						h: parseInt($target.css("--hue")),
 						s: parseInt($target.css("--saturation")),
@@ -198,7 +199,11 @@ class SoundButton extends LogExtend {
 
 	private static initClick(): void {
 		this.$grid.on("click", ".soundbutton", (e) => {
-			this.log(this.initClick, `SoundButton "%s" clicked`, $(e.target).text());
+			this.log(
+				this.initClick,
+				`SoundButton "%s" clicked`,
+				$(e.target).children(".button-theme").text()
+			);
 
 			const $button = $(e.target);
 
