@@ -84,7 +84,7 @@ $(document).on("contextmenu", (e) => {
 	SoundboardApi.openContextMenu();
 });
 
-$(window).on("dragover", null, false, (e) => {
+$(window).on("dragover", (e) => {
 	e.preventDefault();
 	e.originalEvent.dataTransfer.dropEffect = "none";
 	return false;
