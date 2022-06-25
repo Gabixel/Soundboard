@@ -48,18 +48,21 @@ function globallyUpdateFilter(): void {
 
 	const filteredButtons = $("#buttons-grid .soundbutton.filtered").length;
 
+	const conditions = [
+		$("#buttons-filter-text").is(":checked") ? "text" : "",
+		$("#buttons-filter-index").is(":checked") ? "index" : "",
+		$("#buttons-filter-tags").is(":checked") ? "tags" : "",
+		$("#buttons-filter-path").is(":checked") ? "path" : "",
+	].filter((f) => f.length > 0);
+
 	Logger.log(
 		null,
 		globallyUpdateFilter,
-		"Filtered " + filteredButtons + " buttons. Filter:",
+		"Filtered " + filteredButtons + " buttons.",
+		"\nFilter:",
 		ButtonFilter.filter,
-		"\nConditions:",
-		[
-			$("#buttons-filter-text").is(":checked") ? "text" : "",
-			$("#buttons-filter-index").is(":checked") ? "index" : "",
-			$("#buttons-filter-tags").is(":checked") ? "tags" : "",
-			$("#buttons-filter-path").is(":checked") ? "path" : "",
-		].filter((f) => f.length > 0).join(", ")
+		`\nConditions (${conditions.length}):`,
+		conditions.length > 0 ? conditions.join(", ") : "none"
 	);
 
 	$("#buttons-grid").toggleClass("filtering", filteredButtons > 0);
@@ -96,44 +99,43 @@ function showButton(index: number, button: HTMLElement) {
 	$(button).removeClass("filtered");
 }
 
-const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
-	// Text
-	($button: JQuery<HTMLElement>, f: string): boolean => {
-		const text = $button.children(".button-theme").text();
+const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
+	[
+		// Text
+		($button: JQuery<HTMLElement>, f: string): boolean => {
+			const text = $button.children(".button-theme").text();
 
-		return (
-			$("#buttons-filter-text").is(":checked") && text != null && text.includes(f)
-		);
-	},
-	// CSS Index
-	($button: JQuery<HTMLElement>, f: string): boolean => {
-		const index = $button.css("--index");
+			return (
+				$("#buttons-filter-text").is(":checked") && text != null && text.includes(f)
+			);
+		},
+		// CSS Index
+		($button: JQuery<HTMLElement>, f: string): boolean => {
+			const index = $button.css("--index");
 
-		return (
-			$("#buttons-filter-index").is(":checked") && index === f
-		);
-	},
-	// Tags
-	($button: JQuery<HTMLElement>, f: string): boolean => {
-		const tags = $button
-			.attr("data-tags")
-			?.split(" ")
-			.filter((tag) => tag.length > 0);
+			return $("#buttons-filter-index").is(":checked") && index === f;
+		},
+		// Tags
+		($button: JQuery<HTMLElement>, f: string): boolean => {
+			const tags = $button
+				.attr("data-tags")
+				?.split(" ")
+				.filter((tag) => tag.length > 0);
 
-		return (
-			$("#buttons-filter-tags").is(":checked") &&
-			tags != null &&
-			tags.some((tag) => tag.includes(f))
-		);
-	},
-	// Path
-	($button: JQuery<HTMLElement>, f: string): boolean => {
-		const path = $button.attr("data-path");
+			return (
+				$("#buttons-filter-tags").is(":checked") &&
+				tags != null &&
+				tags.some((tag) => tag.includes(f))
+			);
+		},
+		// Path
+		($button: JQuery<HTMLElement>, f: string): boolean => {
+			const path = $button.attr("data-path");
 
-		return (
-			$("#buttons-filter-path").is(":checked") &&
-			path != null &&
-			decodeURI(path).includes(f)
-		);
-	},
-];
+			return (
+				$("#buttons-filter-path").is(":checked") &&
+				path != null &&
+				decodeURI(path).includes(f)
+			);
+		},
+	];
