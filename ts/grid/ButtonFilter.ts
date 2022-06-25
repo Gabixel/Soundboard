@@ -81,12 +81,12 @@ function shouldHide(
 	// // });
 
 	for (const f in ButtonFilter.filter) {
-		const hide = !isMatch($button, f.toLowerCase());
+		const show = isMatch($button, f.toLowerCase());
 
-		if (hide) return true;
+		if (show) return false;
 	}
 
-	return false;
+	return true;
 }
 
 function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
