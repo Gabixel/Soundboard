@@ -1,0 +1,59 @@
+#audio-controls #volume-slider {
+	// Override default CSS appearance
+	-webkit-appearance: none;
+	appearance: none;
+	outline: none;
+	border: none;
+
+	@height: 0.65em;
+
+	height: @height;
+	border-radius: 1em;
+
+	background: none;
+	background-image: @bar-gradient;
+
+	// Grey (Thumb color)
+	// @hsl-grey: 0 0% 44%;
+	@hsl-grey: 0 0% 22%;
+
+	// Green
+	@hsl-green: 140 100% 68%;
+
+	// Yellow / Orange
+	@hsl-yellow: 39 100% 79%;
+
+	// Red
+	@hsl-red: 0 100% 67%;
+
+	@bar-gradient: linear-gradient(
+		90deg,
+		hsl(@hsl-green / 1) 30%,
+		hsl(@hsl-yellow / 1) 50% 70%,
+		hsl(@hsl-red / 1) 100%
+	);
+
+	@thumb-gradient: radial-gradient(
+		hsl(@hsl-grey / 0.5) 0% 22%,
+		hsl(@hsl-grey / 1) 24%
+	);
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none; /* Override default look */
+		appearance: none;
+
+		aspect-ratio: 1;
+		width: auto;
+		box-sizing: content-box;
+		
+		border-radius: 50%;
+		
+		height: @height;
+		transform: scale(3); // This hack allows the creation of a draggable "border" for the slider thumb (instead of doing "@height * 3)
+
+		background: none;
+		background-image: @thumb-gradient;
+
+		cursor: w-resize;
+	}
+}
