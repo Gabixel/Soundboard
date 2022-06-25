@@ -75,19 +75,21 @@ function buttonHideCheck(
 	$button: JQuery<HTMLElement>,
 	filterText: string
 ): boolean {
-	let filters = filterText.split(" ").filter((f) => f.length > 0);
+	const filters = filterText.split(" ").filter((f) => f.length > 0);
 
 	let shouldHide = true;
 
-	filters.forEach((f) => {
+	filters.every((f) => {
+		// We need to break when the first `false` is found, and `every()` does exactly that.
 		shouldHide = !isMatch($button, f.toLowerCase());
+		return shouldHide;
 	});
 
 	return shouldHide;
 }
 
 function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
-	return conditions.some((match) => match($button, f));
+	return conditions.some((match) => match($button, f)); // TODO: doesn't filter multiple matches
 }
 
 // Remove the "filtered" class from all buttons
