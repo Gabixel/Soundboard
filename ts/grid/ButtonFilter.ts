@@ -92,7 +92,7 @@ function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
 	return conditions.some((match) => match($button, f)); // TODO: doesn't filter multiple matches
 }
 
-// Remove the "filtered" class from all buttons
+// Removes the "filtered" class from all buttons
 function clearFilter() {
 	$("#buttons-grid .soundbutton.filtered").each(showButton);
 	$("#buttons-grid").removeClass("filtering");
