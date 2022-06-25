@@ -134,6 +134,8 @@
 }
 
 .style() {
+	order: var(--index);
+
 	--hue: 0;
 	--saturation: 100%;
 	--lightness: 50%;
@@ -189,15 +191,10 @@
 	margin-right: 8px;
 	margin-bottom: 8px;
 
-	max-width: var(--width);
-	max-height: var(--height);
-
 	outline: 0 solid transparent;
 
 	// animation: none;
 	.base-transition();
-
-	order: var(--index);
 
 	position: relative;
 
