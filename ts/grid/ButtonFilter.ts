@@ -1,16 +1,17 @@
 class ButtonFilter {
-	private static _filter: string = "";
+	private static _filter: string[] = [];
 
-	public static get filter(): string {
+	public static get filter(): string[] {
 		return this._filter;
 	}
 
 	public static get isFiltering(): boolean {
-		return this._filter != "";
+		return this._filter.length > 0;
 	}
 
 	public static updateFilter(): void {
-		this._filter = $("#buttons-filter").val().toString();
+		const f = $("#buttons-filter").val().toString();
+		this._filter = f.split(" ").filter((f) => f.length > 0);
 	}
 }
 
@@ -29,7 +30,7 @@ $("#clear-filter").on("click", () => {
 $(
 	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-tags, #buttons-filter-path"
 ).on("change", (e) => {
-	if (ButtonFilter.filter.length === 0) return;
+	if (!ButtonFilter.isFiltering) return;
 
 	$("#buttons-filter").trigger("input");
 });
@@ -52,18 +53,17 @@ function globallyUpdateFilter(): void {
 		globallyUpdateFilter,
 		"Filtered " +
 			filteredButtons +
-			' buttons with filter "' +
-			ButtonFilter.filter +
-			'"'
+			" buttons. Filter:",
+			ButtonFilter.filter
 	);
 
 	$("#buttons-grid").toggleClass("filtering", filteredButtons > 0);
 }
 
 function filterButton($button: JQuery<HTMLElement>) {
-	const shouldHide = buttonHideCheck($button, ButtonFilter.filter);
+	const shouldHideButton = shouldHide($button);
 
-	if (shouldHide) $button.removeClass("filtered").addClass("filtered");
+	if (shouldHideButton) $button.removeClass("filtered").addClass("filtered");
 	else {
 		$button.addClass("filtered");
 		$button[0].offsetHeight;
@@ -71,21 +71,22 @@ function filterButton($button: JQuery<HTMLElement>) {
 	}
 }
 
-function buttonHideCheck(
-	$button: JQuery<HTMLElement>,
-	filterText: string
+function shouldHide(
+	$button: JQuery<HTMLElement>
 ): boolean {
-	const filters = filterText.split(" ").filter((f) => f.length > 0);
+	// // // We need to break when the first false is found, and `every()` does exactly that.
+	// // ButtonFilter.filter.every((f) => {
+	// // 	shouldHide = !isMatch($button, f.toLowerCase());
+	// // 	return shouldHide; // We want to hide the button only when every condition is true.
+	// // });
 
-	let shouldHide = true;
+	for (const f in ButtonFilter.filter) {
+		const hide = !isMatch($button, f.toLowerCase());
 
-	filters.every((f) => {
-		// We need to break when the first `false` is found, and `every()` does exactly that.
-		shouldHide = !isMatch($button, f.toLowerCase());
-		return shouldHide;
-	});
+		if (hide) return true;
+	}
 
-	return shouldHide;
+	return false;
 }
 
 function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
