@@ -51,10 +51,15 @@ function globallyUpdateFilter(): void {
 	Logger.log(
 		null,
 		globallyUpdateFilter,
-		"Filtered " +
-			filteredButtons +
-			" buttons. Filter:",
-			ButtonFilter.filter
+		"Filtered " + filteredButtons + " buttons. Filter:",
+		ButtonFilter.filter,
+		"\nConditions:",
+		[
+			$("#buttons-filter-text").is(":checked") ? "text" : "",
+			$("#buttons-filter-index").is(":checked") ? "index" : "",
+			$("#buttons-filter-tags").is(":checked") ? "tags" : "",
+			$("#buttons-filter-path").is(":checked") ? "path" : "",
+		].filter((f) => f.length > 0).join(", ")
 	);
 
 	$("#buttons-grid").toggleClass("filtering", filteredButtons > 0);
@@ -71,26 +76,14 @@ function filterButton($button: JQuery<HTMLElement>) {
 	}
 }
 
-function shouldHide(
-	$button: JQuery<HTMLElement>
-): boolean {
-	// // // We need to break when the first false is found, and `every()` does exactly that.
-	// // ButtonFilter.filter.every((f) => {
-	// // 	shouldHide = !isMatch($button, f.toLowerCase());
-	// // 	return shouldHide; // We want to hide the button only when every condition is true.
-	// // });
-
-	for (const f in ButtonFilter.filter) {
-		const show = isMatch($button, f.toLowerCase());
-
-		if (show) return false;
-	}
-
-	return true;
+function shouldHide($button: JQuery<HTMLElement>): boolean {
+	return !ButtonFilter.filter.some((f) => {
+		return isMatch($button, f);
+	});
 }
 
 function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
-	return conditions.some((match) => match($button, f)); // TODO: doesn't filter multiple matches
+	return showConditions.some((match) => match($button, f));
 }
 
 // Removes the "filtered" class from all buttons
@@ -103,33 +96,44 @@ function showButton(index: number, button: HTMLElement) {
 	$(button).removeClass("filtered");
 }
 
-const conditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
+const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] = [
 	// Text
 	($button: JQuery<HTMLElement>, f: string): boolean => {
+		const text = $button.children(".button-theme").text();
+
 		return (
-			$("#buttons-filter-text").is(":checked") &&
-			$button.children(".button-theme").text()?.toLowerCase().includes(f)
+			$("#buttons-filter-text").is(":checked") && text != null && text.includes(f)
 		);
 	},
 	// CSS Index
 	($button: JQuery<HTMLElement>, f: string): boolean => {
+		const index = $button.css("--index");
+
 		return (
-			$("#buttons-filter-index").is(":checked") && $button.css("--index") === f
+			$("#buttons-filter-index").is(":checked") && index === f
 		);
 	},
 	// Tags
 	($button: JQuery<HTMLElement>, f: string): boolean => {
-		const tags = $button.attr("data-tags")?.toLowerCase().split(" ");
+		const tags = $button
+			.attr("data-tags")
+			?.split(" ")
+			.filter((tag) => tag.length > 0);
 
 		return (
 			$("#buttons-filter-tags").is(":checked") &&
+			tags != null &&
 			tags.some((tag) => tag.includes(f))
 		);
 	},
 	// Path
 	($button: JQuery<HTMLElement>, f: string): boolean => {
-		const path = decodeURI($button.attr("data-path"))?.toLowerCase();
+		const path = $button.attr("data-path");
 
-		return $("#buttons-filter-path").is(":checked") && path.includes(f);
+		return (
+			$("#buttons-filter-path").is(":checked") &&
+			path != null &&
+			decodeURI(path).includes(f)
+		);
 	},
 ];
