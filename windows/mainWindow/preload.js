@@ -43,7 +43,7 @@ window.onload = () => {
 		"controls/Presets_Panel",
 		"controls/UiScale",
 
-		"TopBarManager",
+		"ToolbarManager",
 		"Index"
 	);
 };
