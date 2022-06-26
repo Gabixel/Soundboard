@@ -29,10 +29,18 @@ class AudioStoreManager extends LogExtend {
 		this.singlePool.main.setSinkId(device.deviceId);
 	}
 
-	public addToSinglePool(path: string): void {
+	public addToSinglePool(path: string, time: AudioTimings): void {
 		this.stopMultiPoolAudio();
 
+		// If the path is different from the previous one
 		if (this.singlePool.lastTrack !== path) {
+			AudioStoreManager.log(
+				this.addToSinglePool,
+				"New path different from previous one.\n",
+				`• Last track path: "${this.singlePool.lastTrack}"\n`,
+				`• New track path:  "${path}"`
+			);
+
 			this.singlePool.lastTrack = path;
 			this.singlePool.main.src = this.singlePool.playback.src = path;
 			AudioStoreManager.log(
@@ -45,16 +53,13 @@ class AudioStoreManager extends LogExtend {
 
 			this.singlePool.main.load();
 			this.singlePool.playback.load();
-		} else {
-			// set both track at 0 if the last track hasn't changed
-			AudioStoreManager.log(
-				this.addToSinglePool,
-				"New path is the same as last one, setting time to 0.\n",
-				`• Last track path: "${this.singlePool.lastTrack}"\n`,
-				`• New track path:  "${path}"`
-			);
-			this.singlePool.main.currentTime = this.singlePool.playback.currentTime = 0;
 		}
+
+		const timeInSeconds = time.start === 0 ? time.start : time.start / 1000;
+
+		this.singlePool.main.currentTime = this.singlePool.playback.currentTime =
+			timeInSeconds;
+		// TODO: notify if the start time is longer than the actual duration of the track
 	}
 
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {

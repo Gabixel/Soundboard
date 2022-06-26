@@ -55,18 +55,13 @@ type AudioTimings = {
 init();
 
 async function init() {
-	// $(window).on("drop", null, false, (e) => {
-	// 	e.preventDefault();
-	// 	return false;
-	// });
-
 	window.addEventListener("dragover", (event) => event.preventDefault());
 	window.addEventListener("drop", (event) => event.preventDefault());
 
 	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
 	await AudioPlayer.updateAudioDevicesList();
 
-	// TODO: Extract audio from video file?
+	// TODO: Extract audio from video file? (probably not necessary)
 	// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
 	
 	AudioPlayer.setVolumeSlider($("#volume-slider")); // Initializes volume in the audio player

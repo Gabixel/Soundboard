@@ -43,30 +43,45 @@ class AudioPlayer extends LogExtend {
 			});
 	}
 
-	public static addAudio(path: string, useMultiPool: boolean = false): void {
+	public static addAudio(
+		path: string,
+		time: AudioTimings,
+		useMultiPool: boolean = false
+	): void {
 		this.log(
 			this.addAudio,
-			`Trying to use path "%c%s%c"`,
+			`Using path "%c${path}%c"%s`,
 			"font-style: italic",
-			path,
-			"font-style: normal"
+			"font-style: normal",
+			"\n- Start time:",
+			time.start,
+			"(ms)\n- End time:",
+			time.end,
+			`(ms)\n- Type: "${time.condition}"`
 		);
-		this.tryAddAudio(path, useMultiPool);
+
+		// TODO: clamp time? (e.g. -1000ms = 0ms)
+		
+		this.tryAddAudio(path, time, useMultiPool);
 	}
 
-	private static tryAddAudio(path: string, useMultiPool: boolean): void {
+	private static tryAddAudio(
+		path: string,
+		time: AudioTimings,
+		useMultiPool: boolean
+	): void {
 		if (!useMultiPool) {
-			this.audioStore.addAudioOrPath(path);
+			this.audioStore.addToSinglePool(path, time);
+			// this.audioStore.addToSinglePool(path, startTime, endTime, endType);
 			return;
 		}
-
-		// The next audio goes to the multi-pool
 
 		let mainAudio = new Audio(path) as AudioJS;
 
 		$(mainAudio)
 			.one("canplay", (e) => {
-				this.storeAudio(e.target as AudioJS);
+				this.log(this.tryAddAudio, "Audio file created. Duration: " + e.target.duration + " seconds");
+				this.storeAudio(e.target as AudioJS, time);
 			})
 			.one("error", (e) => {
 				this.error(
@@ -78,7 +93,10 @@ class AudioPlayer extends LogExtend {
 			});
 	}
 
-	private static async storeAudio(mainAudio: AudioJS): Promise<void> {
+	private static async storeAudio(
+		mainAudio: AudioJS,
+		time: AudioTimings
+	): Promise<void> {
 		const main = mainAudio;
 		const playback = mainAudio.cloneNode() as AudioJS;
 
@@ -91,6 +109,7 @@ class AudioPlayer extends LogExtend {
 		};
 
 		main.volume = playback.volume = this.volume;
+		main.currentTime = playback.currentTime = time.start / 1000;
 
 		await this.setSinkId(main);
 
