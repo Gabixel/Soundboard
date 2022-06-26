@@ -28,7 +28,7 @@ $("#clear-filter").on("click", () => {
 });
 
 $(
-	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-tags, #buttons-filter-path"
+	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-index-offset, #buttons-filter-tags, #buttons-filter-path"
 ).on("change", (e) => {
 	if (!ButtonFilter.isFiltering) return;
 
@@ -48,9 +48,11 @@ function globallyUpdateFilter(): void {
 
 	const filteredButtons = $("#buttons-grid .soundbutton.filtered").length;
 
+	const offset = $("#buttons-filter-index-offset option:selected").val();
+
 	const conditions = [
 		$("#buttons-filter-text").is(":checked") ? "text" : "",
-		$("#buttons-filter-index").is(":checked") ? "index" : "",
+		$("#buttons-filter-index").is(":checked") ? `index (offset: ${offset})` : "",
 		$("#buttons-filter-tags").is(":checked") ? "tags" : "",
 		$("#buttons-filter-path").is(":checked") ? "path" : "",
 	].filter((f) => f.length > 0);
@@ -111,9 +113,14 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 		},
 		// CSS Index
 		($button: JQuery<HTMLElement>, f: string): boolean => {
-			const index = $button.css("--index");
+			const index = parseInt($button.css("--index"));
+			const offset = parseInt(
+				$("#buttons-filter-index-offset option:selected").val().toString()
+			);
 
-			return $("#buttons-filter-index").is(":checked") && index === f;
+			return (
+				$("#buttons-filter-index").is(":checked") && index + offset === parseInt(f)
+			);
 		},
 		// Tags
 		($button: JQuery<HTMLElement>, f: string): boolean => {
