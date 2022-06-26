@@ -25,7 +25,7 @@ class SoundButton extends LogExtend {
 			title: (index + 1).toString(),
 			color: { h, s, l },
 			image: "",
-			tags: [],
+			tags: [""],
 			path: this.getRandomPath(),
 			time: {
 				start: 0, //20500,//19300,//62265, // TODO
@@ -61,8 +61,8 @@ class SoundButton extends LogExtend {
 
 			// TODO: apply color
 			// TODO: apply image
-			// .data("tags", data.tags)
 			.attr("data-path", data.path)
+			.attr("data-tags", data.tags.join(","))
 
 			.attr("data-start-time", data.time.start)
 			.attr("data-end-time", data.time.end)
@@ -99,7 +99,7 @@ class SoundButton extends LogExtend {
 					!e.originalEvent.dataTransfer ||
 					!e.originalEvent.dataTransfer.files.length;
 
-					// TODO: check if file type is supported by the browser.
+				// TODO: check if file type is supported by the browser.
 
 				if (notSuccesful) return;
 
@@ -136,7 +136,7 @@ class SoundButton extends LogExtend {
 
 				// @ts-ignore
 				$button.attr("data-path", encodedPath);
-				$button.text(file.name); // of course, this is temporary
+				$button.children(".button-theme").text(file.name); // of course, this is temporary
 			})
 			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
 				e.preventDefault();
@@ -180,14 +180,17 @@ class SoundButton extends LogExtend {
 				x: e.clientX.toString(),
 				y: e.clientY.toString(),
 				buttonData: {
-					title: $target.find(".button-theme").text(),
+					title: $target.children(".button-theme").text(),
 					color: {
 						h: parseInt($target.css("--hue")),
 						s: parseInt($target.css("--saturation")),
 						l: parseInt($target.css("--lightness")),
 					},
 					image: $target.attr("data-image"),
-					tags: $target.data("tags"),
+					tags: $target
+						.attr("data-tags")
+						.split(" ")
+						.filter((tag) => tag.length > 0),
 					path: $target.attr("data-path"),
 					index: parseInt($target.css("--index")),
 				} as SoundButtonData,
