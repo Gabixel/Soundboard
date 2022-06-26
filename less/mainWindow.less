@@ -22,32 +22,6 @@ body {
 		// "Fixes" the chromium bug with rounded corners cropping children's ones
 		background: linear-gradient(0, var(--main-bg) 50%, var(--menu-bar-bg) 50%);
 
-		nav {
-			display: flex;
-			flex-direction: row;
-
-			z-index: 1;
-
-			@margin: 3px;
-			margin: @margin (@main-radius + 1px) 0;
-
-			div {
-				color: var(--menu-bar-fg);
-				font-size: .8rem;
-				font-weight: 600;
-
-				padding: (@margin + 1) 10px (@margin - 1);
-
-				.set-radius(@main-radius @main-radius 0 0);
-
-				&:hover {
-					color: var(--menu-bar-hover-fg);
-					background-color: var(--menu-bar-hover-bg);
-					// box-shadow: 0 1px 2px 1px var(--menu-bar-hover-bg);
-				}
-			}
-		}
-
 		#main-container {
 			.set-radius(@main-radius);
 			.hide-overflow();

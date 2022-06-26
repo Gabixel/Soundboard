@@ -1,10 +1,10 @@
-class TopBarManager {
+class ToolbarManager {
 	readonly menu: HTMLElement;
 	readonly container: HTMLElement;
 
 	constructor(container: HTMLElement) {
 		this.container = container;
-		this.menu = document.getElementById("topBarMenu");
+		this.menu = document.getElementById("toolbar");
 		this.menu.style.display = "none";
 	}
 	/**
