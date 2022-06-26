@@ -10,8 +10,11 @@ class ButtonFilter {
 	}
 
 	public static updateFilter(): void {
-		const f = $("#buttons-filter").val().toString();
-		this._filter = f.split(" ").filter((f) => f.length > 0);
+		const f = $("#buttons-filter").val().toString().split(" ");
+		this._filter = f.filter((text) => text.length > 0);
+		this._filter.forEach((text, i) => {
+			this._filter[i] = text.toLowerCase();
+		});
 	}
 }
 
@@ -108,7 +111,9 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 			const text = $button.children(".button-theme").text();
 
 			return (
-				$("#buttons-filter-text").is(":checked") && text != null && text.includes(f)
+				$("#buttons-filter-text").is(":checked") &&
+				text != null &&
+				text.toLowerCase().includes(f)
 			);
 		},
 		// CSS Index
@@ -132,7 +137,7 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 			return (
 				$("#buttons-filter-tags").is(":checked") &&
 				tags != null &&
-				tags.some((tag) => tag.includes(f))
+				tags.some((tag) => tag.toLowerCase().includes(f))
 			);
 		},
 		// Path
@@ -142,7 +147,7 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 			return (
 				$("#buttons-filter-path").is(":checked") &&
 				path != null &&
-				decodeURI(path).includes(f)
+				decodeURI(path).toLowerCase().includes(f)
 			);
 		},
 	];
