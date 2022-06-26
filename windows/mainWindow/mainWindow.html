@@ -42,14 +42,25 @@
 				<div id="audio-controls">
 					<div>
 						<button type="button" id="stop-audio"><i class="fas fa-stop"></i></button>
-						<button type="button" id="play-pause-audio"><i class="fas fa-pause" style="margin-right: 5px;"></i><i class="fas fa-play"></i></button>
+						<button type="button" id="play-pause-audio"><i class="fas fa-pause"
+								style="margin-right: 5px;"></i><i class="fas fa-play"></i></button>
 						<button type="button" id="clear-grid">Reset Grid</button>
 					</div>
 					<div>
-						<input type="text" id="buttons-filter" placeholder="Filter buttons" style="min-width: 200px; max-width: 300px;">
-						<input type="button" id="clear-filter" value="Clear">
+						<input type="text" id="buttons-filter" placeholder="Filter buttons"
+							style="min-width: 200px; max-width: 300px;">
+						<input type="button" id="clear-filter" value="Clear"><br>
 						<label>Filters:</label>
-						<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index" style="accent-color: #ccc;"><label for="buttons-filter-index">Index</label>|<input type="checkbox" id="buttons-filter-tags" style="accent-color: #ccc;"><label for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path" style="accent-color: #ccc;"><label for="buttons-filter-path">Path</label>
+						<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label
+							for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index"
+							style="accent-color: #ccc;"><label for="buttons-filter-index">Index (from </label><select
+							id="buttons-filter-index-offset">
+							<option value="0">0</option>
+							<option value="1">1</option>
+						</select><label for="buttons-filter-index">)</label>|<input type="checkbox"
+							id="buttons-filter-tags" style="accent-color: #ccc;"><label
+							for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path"
+							style="accent-color: #ccc;"><label for="buttons-filter-path">Path</label>
 					</div>
 					<div>
 						<label for="audio-outputs-select">Output:</label>
@@ -73,7 +84,7 @@
 						<label for="ui-scale-slider">UI Scale:</label>
 						<button type="button" id="ui-scale-reset" style="margin-left: 4px;"><i
 								class="fa-solid fa-arrow-rotate-left"></i></button>
-						<input type="range" id="ui-scale-slider" min="0.8" max="1.2" step="0.1" value="1"
+						<input type="range" id="ui-scale-slider" min="0.8" max="1.4" step="0.05" value="1"
 							--data-default="1" style="accent-color: #ccc;">
 						<input type="checkbox" hidden id="ui-scale-lock" style="accent-color: #ccc;"><label
 							for="ui-scale-lock" style="margin-left: 4px;"><i class="fa-solid fa-lock-open"></i></label>
