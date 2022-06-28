@@ -20,24 +20,25 @@ p {
 
 body,
 body *,
-body *::after,
-body *::before {
+body *:after,
+body *:before {
 	outline: none;
 
 	.block-text-select();
 }
 
-input[type="range"] {
+input {
 	margin: 0;
+	// align-items: center;
 }
 
 // If we want to overwrite this, we need more specificity
 // (e.g. "button.coolbutton" instead of ".coolbutton")
-input[type="button"]:not(.default),
-button:not(.default) {
-	border: none;
+input,
+button {
 	background-color: #fff;
 	color: #000;
+	border: none;
 }
 
 // TODO: text selection color
