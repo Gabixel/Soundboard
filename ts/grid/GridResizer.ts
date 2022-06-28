@@ -10,10 +10,18 @@ class GridResizer {
 
 // TODO: move all to class //////////////////////////////////////////////////////
 
+let resizerStarted = false;
+
+function initResizer() {
+	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
+	resizerStarted = true;
+	updateGrid();
+}
+
 $("#grid-rows")
 	.on("change", (e) => {
 		updateRows(e);
-		updateGrid();
+		if(resizerStarted) updateGrid();
 	})
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
@@ -25,7 +33,7 @@ $("#grid-rows")
 $("#grid-columns")
 	.on("change", (e) => {
 		updateColumns(e);
-		updateGrid();
+		if (resizerStarted) updateGrid();
 	})
 	.on("wheel", (e) => {
 		EventFunctions.updateInputValueFromWheel(e);
@@ -95,7 +103,7 @@ function fillEmptyCells(): void {
 	const emptyCells = Grid.size - Grid.buttonCount;
 
 	for (let i = 0; i < emptyCells; i++) {
-		const $button = $(SoundButton.generateRandom(Grid.buttonCount));
+		const $button = $(SoundButton.generateRandom(Grid.size + i - emptyCells));
 
 		if (ButtonFilter.isFiltering) filterButton($button);
 
