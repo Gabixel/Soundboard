@@ -19,6 +19,15 @@
 		transition: background-color 0.1s ease;
 	}
 
+	&>div {
+		&:not(:first-child) {
+			margin-top: 5px;
+		}
+		&:not(:last-child) {
+			margin-bottom: 5px;
+		}
+	}
+
 	flex-grow: 0;
 	.hide-overflow();
 
@@ -27,6 +36,7 @@
 	justify-content: flex-start;
 	align-items: flex-start;
 
+	// Stop button
 	#stop-audio {
 		@h: 0;
 		@s: 100%;
@@ -54,6 +64,7 @@
 		}
 	}
 
+	// Play/Pause Button
 	#play-pause-audio {
 		@h: 120;
 		@s: 100%;
@@ -78,6 +89,34 @@
 
 		&:active:not(:disabled) {
 			background-color: @hsl-active;
+		}
+	}
+
+	#buttons-filter :nth-child(1) {
+		display: flex;
+		align-items: baseline;
+
+		:nth-child(2) {
+			margin-left: 5px;
+		}
+	}
+
+	// Filter container
+	#buttons-filter :nth-child(2) {
+		display: flex;
+		align-items: baseline;
+
+		label:first-child {
+			margin-right: .3em;
+		}
+
+		select {
+			margin-left: .3em;
+		}
+
+		input[type="checkbox"] {
+			align-self: center;
+			margin: 0 .15em;
 		}
 	}
 
