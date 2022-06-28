@@ -14,6 +14,7 @@ let dragFunction = mouseDrag_1;
 // TODO: Remove event listeners on mouseup and reassign them on mousedown.
 // This should alleviate performance issues during window resizing.
 
+// Cannot use "Grid.$grid" for now
 $("#buttons-grid").on("mousemove", (e) => {
 	if (e.which != 1) return; // If not left mouse button
 
@@ -61,7 +62,7 @@ $(document)
 		// Remove properties to last target
 		if ($dragTarget != null && isStyled) {
 			$dragTarget.removeClass("dragging");
-			$("#buttons-grid").removeClass("has-dragging-child");
+			Grid.$grid.removeClass("has-dragging-child");
 			$dragTarget.css("transform", "");
 		}
 
@@ -133,7 +134,7 @@ function mouseDrag_2(e: JQuery.MouseMoveEvent): void {
 			setOpacityDelay(cols, draggedButtonIndex);
 		}
 
-		$("#buttons-grid").addClass("has-dragging-child");
+		Grid.$grid.addClass("has-dragging-child");
 	}
 }
 

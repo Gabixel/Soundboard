@@ -58,7 +58,10 @@ async function init() {
 	window.addEventListener("dragover", (event) => event.preventDefault());
 	window.addEventListener("drop", (event) => event.preventDefault());
 
-	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
+	Grid.initGrid($("#buttons-grid"));
+
+	initResizer(); // TODO: move to class
+
 	await AudioPlayer.updateAudioDevicesList();
 
 	// TODO: Extract audio from video file? (probably not necessary)
@@ -66,7 +69,7 @@ async function init() {
 	
 	AudioPlayer.setVolumeSlider($("#volume-slider")); // Initializes volume in the audio player
 
-	SoundButton.setGrid($("#buttons-grid"));
+	SoundButton.setGrid(Grid.$grid);
 
 	UiScale.setControls(
 		$("#ui-scale-slider"),

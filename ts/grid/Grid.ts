@@ -3,24 +3,19 @@ class Grid {
 	private static gridCols: number = 0;
 	private static gridSize: number = 0;
 
-	private static grid: JQuery<HTMLElement>;
+	private static _$grid: JQuery<HTMLElement>;
 
 	private static soundButtonCount: number = 0;
 
-	private static filtering: boolean = false;
+	private static _isFiltering: boolean = false;
 
-	public static setRows(newValue: number): void {
-		this.gridRows = newValue;
-		this.updateSize();
+	//#region Getters
+	public static get grid(): HTMLElement {
+		return this._$grid?.[0];
 	}
 
-	public static setColumns(newValue: number): void {
-		this.gridCols = newValue;
-		this.updateSize();
-	}
-
-	private static updateSize(): void {
-		this.gridSize = this.gridRows * this.gridCols;
+	public static get $grid(): JQuery<HTMLElement> {
+		return this._$grid;
 	}
 
 	public static get rows(): number {
@@ -39,6 +34,41 @@ class Grid {
 		return this.soundButtonCount;
 	}
 
+	public static get isGridIncomplete(): boolean {
+		return this.soundButtonCount < this.size;
+	}
+
+	public static get isFiltering(): boolean {
+		return this._isFiltering;
+	}
+
+	public static get $buttons(): JQuery<HTMLElement> {
+		return this._$grid.children(".soundbutton");
+	}
+
+	public static get buttons(): HTMLElement[] {
+		return this._$grid.children(".soundbutton").toArray();
+	}
+	//#endregion
+
+	public static initGrid($container: JQuery<HTMLElement>): void {
+		this._$grid = $container;
+	}
+
+	public static setRows(newValue: number): void {
+		this.gridRows = newValue;
+		this.updateSize();
+	}
+
+	public static setColumns(newValue: number): void {
+		this.gridCols = newValue;
+		this.updateSize();
+	}
+
+	private static updateSize(): void {
+		this.gridSize = this.gridRows * this.gridCols;
+	}
+
 	public static resetSoundButtonCount(): void {
 		this.soundButtonCount = 0;
 	}
@@ -47,15 +77,49 @@ class Grid {
 		this.soundButtonCount++;
 	}
 
-	public static get isGridIncomplete(): boolean {
-		return this.soundButtonCount < this.size;
-	}
-
-	public static get isFiltering(): boolean {
-		return this.filtering;
-	}
-
 	public static set isFiltering(value: boolean) {
-		this.filtering = value;
+		this._isFiltering = value;
+	}
+
+	// TODO: store buttons in an array
+	public static getButtonAtIndex(index: number): HTMLElement {
+		if (this._$grid?.[0] == null) {
+			throw new Error("Grid is not initialized");
+		}
+
+		if (index >= this.gridSize) {
+			Logger.error(
+				this,
+				this.getButtonAtIndex,
+				`Index '${index}' is out of bounds. Current max index: (${
+					this.gridSize
+				} - 1 = ${this.gridSize - 1})`
+			);
+
+			return null;
+		}
+
+		const $btn = this.buttons.filter((e) => {
+			const i: string = $(e).css("--index");
+			return i != null && i === index.toString();
+		});
+
+		if ($btn.length > 0) return $btn[0];
+		else return null;
+	}
+
+	public static getEmptyIndexes(): number[] {
+		const indexes: number[] = [] as number[];
+
+		for (let i = 0; i < this.gridSize; i++) {
+			if (this.isCellEmpty(i)) indexes.push(i);
+		}
+
+		return indexes;
+	}
+
+	public static isCellEmpty(index: number): boolean {
+		console.log(this.$buttons.css("--index"));
+		return true;
 	}
 }

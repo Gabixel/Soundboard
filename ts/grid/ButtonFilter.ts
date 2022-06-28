@@ -70,7 +70,7 @@ function globallyUpdateFilter(): void {
 		conditions.length > 0 ? conditions.join(", ") : "none"
 	);
 
-	$("#buttons-grid").toggleClass("filtering", filteredButtons > 0);
+	Grid.$grid.toggleClass("filtering", filteredButtons > 0);
 }
 
 function filterButton($button: JQuery<HTMLElement>) {
@@ -97,7 +97,7 @@ function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
 // Removes the "filtered" class from all buttons
 function clearFilter() {
 	$("#buttons-grid .soundbutton.filtered").each(showButton);
-	$("#buttons-grid").removeClass("filtering");
+	Grid.$grid.removeClass("filtering");
 }
 
 function showButton(index: number, button: HTMLElement) {
