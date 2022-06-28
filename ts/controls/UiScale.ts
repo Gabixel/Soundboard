@@ -38,8 +38,8 @@ class UiScale extends LogExtend {
 			const value = EventFunctions.getUpdatedValueFromWheel(
 				e,
 				parseFloat($(document.body).css("zoom").toString()),
-				0.08,
-				[0.8, 1.5]
+				parseFloat(this.$slider.attr("step")),
+				[this.min, this.max]
 			);
 
 			$(document.body).stop(true, false);
