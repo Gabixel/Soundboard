@@ -10,7 +10,7 @@ class ButtonFilter {
 	}
 
 	public static updateFilter(): void {
-		const f = $("#buttons-filter").val().toString().split(" ");
+		const f = $("#buttons-filter-input").val().toString().split(" ");
 		this._filter = f.filter((text) => text.length > 0);
 		this._filter.forEach((text, i) => {
 			this._filter[i] = text.toLowerCase();
@@ -21,13 +21,13 @@ class ButtonFilter {
 // TODO: filter when a function for updating a button is implemented.
 
 // Trigger the filter input when the text changes
-$("#buttons-filter").on("input", (e) => {
+$("#buttons-filter-input").on("input", (e) => {
 	ButtonFilter.updateFilter();
 	globallyUpdateFilter();
 });
 
 $("#clear-filter").on("click", () => {
-	$("#buttons-filter").val("").trigger("input");
+	$("#buttons-filter-input").val("").trigger("input");
 });
 
 $(
@@ -35,7 +35,7 @@ $(
 ).on("change", (e) => {
 	if (!ButtonFilter.isFiltering) return;
 
-	$("#buttons-filter").trigger("input");
+	$("#buttons-filter-input").trigger("input");
 });
 
 function globallyUpdateFilter(): void {

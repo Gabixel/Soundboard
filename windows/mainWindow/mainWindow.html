@@ -46,21 +46,25 @@
 								style="margin-right: 5px;"></i><i class="fas fa-play"></i></button>
 						<button type="button" id="clear-grid">Reset Grid</button>
 					</div>
-					<div>
-						<input type="text" id="buttons-filter" placeholder="Filter buttons"
-							style="min-width: 200px; max-width: 300px;">
-						<input type="button" id="clear-filter" value="Clear"><br>
-						<label>Filters:</label>
-						<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label
-							for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index"
-							style="accent-color: #ccc;"><label for="buttons-filter-index">Index (from </label><select
-							id="buttons-filter-index-offset">
-							<option value="0">0</option>
-							<option value="1">1</option>
-						</select><label for="buttons-filter-index">)</label>|<input type="checkbox"
-							id="buttons-filter-tags" style="accent-color: #ccc;"><label
-							for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path"
-							style="accent-color: #ccc;"><label for="buttons-filter-path">Path</label>
+					<div id="buttons-filter">
+						<div>
+							<input type="text" id="buttons-filter-input" placeholder="Filter buttons"
+								style="min-width: 200px; max-width: 300px;">
+							<input type="button" id="clear-filter" value="Clear">
+						</div>
+						<div>
+							<label>Filters:</label>
+							<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label
+								for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index"
+								style="accent-color: #ccc;"><label for="buttons-filter-index">Index (from </label><select
+								id="buttons-filter-index-offset">
+								<option value="0">0</option>
+								<option value="1">1</option>
+							</select><label for="buttons-filter-index">)</label>|<input type="checkbox"
+								id="buttons-filter-tags" style="accent-color: #ccc;"><label
+								for="buttons-filter-tags">Tags</label>|<input type="checkbox" id="buttons-filter-path"
+								style="accent-color: #ccc;"><label for="buttons-filter-path">Path</label>
+						</div>
 					</div>
 					<div>
 						<label for="audio-outputs-select">Output:</label>
@@ -96,10 +100,5 @@
 
 	<script type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>
-
-<!--
-	- Editor window
-	- Auto play with voice recognition
--->
 
 </html>
