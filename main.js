@@ -98,7 +98,7 @@ const createMainWindow = (screenWidth, screenHeight) => {
 	}
 };
 
-const createEditButtonWindow = (buttonData) => {
+const createEditButtonWindow = (buttonData, screenWidth, screenHeight) => {
 	if (mainWindow == null) return;
 
 	const name = buttonData.title;
@@ -194,6 +194,9 @@ const initIpc = () => {
 			// console.log(event.sender);
 			// console.log(args);
 
+			let screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+			let screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+
 			let extraMenu;
 
 			if (args != null) {
@@ -202,7 +205,7 @@ const initIpc = () => {
 						extraMenu = new MenuItem({
 							label: "Edit",
 							click: () => {
-								createEditButtonWindow(args.buttonData);
+								createEditButtonWindow(args.buttonData, screenWidth, screenHeight);
 							},
 						});
 				}
@@ -228,7 +231,8 @@ app.whenReady().then(() => {
 	app.on("activate", () => {
 		// On macOS it's common to re-create a window in the app when the
 		// dock icon is clicked and there are no other windows open.
-		if (BrowserWindow.getAllWindows().length === 0) createMainWindow(screenWidth, screenHeight);
+		if (BrowserWindow.getAllWindows().length === 0)
+			createMainWindow(screenWidth, screenHeight);
 	});
 });
 
