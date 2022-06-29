@@ -248,4 +248,16 @@ app.on("will-quit", () => {
 app.on("window-all-closed", () => {
 	if (!isMac) app.quit();
 });
+
+app.setAboutPanelOptions({
+	applicationName: "Soundboard",
+	applicationVersion: "Version 1.0",
+	copyright: "Copyright (c) 2022 Gabriel Del Nero",
+	version: "Version 1.0",
+	credits: null,
+	authors: "Gabriel Del Nero",
+	website: null,
+	iconPath: null,
+});
+
 //#endregion
