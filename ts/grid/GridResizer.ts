@@ -43,7 +43,7 @@ $("#grid-columns")
 // });
 
 $("#clear-grid").on("click", () => {
-	$("#buttons-grid").empty();
+	Grid.$grid.empty();
 	Grid.resetSoundButtonCount();
 	updateGrid();
 });
@@ -54,7 +54,7 @@ function updateRows(e: JQuery.ChangeEvent) {
 	// $("#buttons-grid").css({
 	// 	gridTemplateRows: `repeat(${rows}, 1fr)`,
 	// });
-	$("#buttons-grid").css("--rows", rows);
+	Grid.$grid.css("--rows", rows);
 
 	Grid.setRows(rows);
 }
@@ -65,7 +65,7 @@ function updateColumns(e: JQuery.ChangeEvent) {
 	// $("#buttons-grid").css({
 	// 	gridTemplateColumns: `repeat(${columns}, 1fr)`,
 	// });
-	$("#buttons-grid").css("--columns", columns);
+	Grid.$grid.css("--columns", columns);
 
 	Grid.setColumns(columns);
 }
@@ -107,7 +107,7 @@ function fillEmptyCells(): void {
 
 		if (ButtonFilter.isFiltering) filterButton($button);
 
-		$("#buttons-grid").append($button[0]);
+		Grid.$grid.append($button[0]);
 
 		Grid.increaseSoundButtonCount();
 	}
@@ -127,5 +127,5 @@ function updateButtonFontSize(): void {
 
 	size = EMath.clamp(size, minFontSize, maxFontSize);
 
-	$("#buttons-grid").css("--button-font-size", size + "px");
+	Grid.$grid.css("--button-font-size", size + "px");
 }
