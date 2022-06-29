@@ -3,12 +3,12 @@ type AudioJS = HTMLAudioElement & {
 	setSinkId(deviceId: string): Promise<undefined>;
 	sinkId: string;
 };
-type AudioGroup = {
+type AudioGroup = { // TODO: rename to singlepoolgroup
 	main: AudioJS;
 	playback: AudioJS;
 	lastTrack: string;
 };
-type AudioPoolGroup = {
+type AudioPoolGroup = { // TODO: rename to multipoolgroup
 	main: AudioJS;
 	mainEnded: boolean;
 	playback: AudioJS;
