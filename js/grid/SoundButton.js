@@ -82,7 +82,6 @@ class SoundButton extends LogExtend {
                 "• First file: %O\n" +
                 "\t---------\n" +
                 "• First file path (encoded for browser): %O", e.originalEvent.dataTransfer.files, e.originalEvent.dataTransfer.files[0], encodedPath);
-            SoundboardApi.isPathFile(path);
             $button.attr("data-path", encodedPath);
             $button.children(".button-theme").text(file.name);
         })

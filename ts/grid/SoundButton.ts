@@ -132,7 +132,7 @@ class SoundButton extends LogExtend {
 					encodedPath
 				);
 
-				SoundboardApi.isPathFile(path);
+				// SoundboardApi.isPathFile(path); // TODO
 
 				// @ts-ignore
 				$button.attr("data-path", encodedPath);
@@ -223,4 +223,6 @@ class SoundButton extends LogExtend {
 			AudioPlayer.addAudio(path, time, useMultiPool);
 		});
 	}
+
+	// Create a constructor and use it inside itself?
 }
