@@ -52,9 +52,9 @@ type AudioTimings = {
 };
 //#endregion
 
-init();
+initMainWindow();
 
-async function init() {
+async function initMainWindow() {
 	window.addEventListener("dragover", (event) => event.preventDefault());
 	window.addEventListener("drop", (event) => event.preventDefault());
 
