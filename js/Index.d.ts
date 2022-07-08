@@ -31,4 +31,4 @@ declare type AudioTimings = {
     end: number;
     condition: "at" | "after";
 };
-declare function init(): Promise<void>;
+declare function initMainWindow(): Promise<void>;

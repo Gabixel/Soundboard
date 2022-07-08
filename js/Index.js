@@ -1,5 +1,5 @@
-init();
-async function init() {
+initMainWindow();
+async function initMainWindow() {
     window.addEventListener("dragover", (event) => event.preventDefault());
     window.addEventListener("drop", (event) => event.preventDefault());
     Grid.initGrid($("#buttons-grid"));
