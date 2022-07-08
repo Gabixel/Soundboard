@@ -10,6 +10,8 @@ const { app, BrowserWindow, Menu, MenuItem } = electron;
 // Set app to production
 // process.env.NODE_ENV = "production";
 
+app.commandLine.appendSwitch("lang", "en-US"); // TODO: localization???
+
 const isMac = process.platform === "darwin";
 const isWindows = process.platform === "win32";
 const isLinux = process.platform === "linux";
