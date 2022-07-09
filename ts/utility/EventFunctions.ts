@@ -7,6 +7,8 @@ class EventFunctions {
 	): void {
 		if ($(e.target).attr("disabled")) return;
 
+		e.preventDefault();
+
 		const $target = $(e.target);
 
 		// @ts-ignore
@@ -37,10 +39,14 @@ class EventFunctions {
 		stepValue: number = 1,
 	): number {
 		const $target = $(e.target);
+		const currentValue = parseFloat($target.val().toString());
+		
+		if ($target.attr("disabled")) return currentValue;
+
+		e.preventDefault();
 
 		// @ts-ignore
 		const delta = Math.round(-e.originalEvent.deltaY / 120);
-		const currentValue = parseFloat($target.val().toString());
 		const max = parseFloat($target.attr("max").toString());
 		const min = parseFloat($target.attr("min").toString());
 
@@ -55,6 +61,10 @@ class EventFunctions {
 		stepValue: number = 1,
 		clamp: [number, number] | null = undefined
 	): number {
+		if ($(e.target).attr("disabled")) return currentValue;
+
+		e.preventDefault();
+
 		// @ts-ignore
 		const delta = Math.round(-e.originalEvent.deltaY / 120);
 

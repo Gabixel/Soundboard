@@ -2,6 +2,7 @@ class EventFunctions {
     static updateInputValueFromWheel(e, stepValue = 1, trigger = true, triggers = ["change"]) {
         if ($(e.target).attr("disabled"))
             return;
+        e.preventDefault();
         const $target = $(e.target);
         const delta = Math.round(-e.originalEvent.deltaY / 120);
         const currentValue = parseFloat($target.val().toString());
@@ -21,14 +22,20 @@ class EventFunctions {
     }
     static getUpdatedInputValueFromWheel(e, stepValue = 1) {
         const $target = $(e.target);
-        const delta = Math.round(-e.originalEvent.deltaY / 120);
         const currentValue = parseFloat($target.val().toString());
+        if ($target.attr("disabled"))
+            return currentValue;
+        e.preventDefault();
+        const delta = Math.round(-e.originalEvent.deltaY / 120);
         const max = parseFloat($target.attr("max").toString());
         const min = parseFloat($target.attr("min").toString());
         const newValue = currentValue + delta * stepValue;
         return EMath.clamp(newValue, min, max);
     }
     static getUpdatedValueFromWheel(e, currentValue, stepValue = 1, clamp = undefined) {
+        if ($(e.target).attr("disabled"))
+            return currentValue;
+        e.preventDefault();
         const delta = Math.round(-e.originalEvent.deltaY / 120);
         const newValue = currentValue + delta * stepValue;
         if (clamp != null)
