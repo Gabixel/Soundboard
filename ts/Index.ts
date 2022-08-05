@@ -17,7 +17,7 @@ type AudioPoolGroup = { // TODO: rename to multipoolgroup
 };
 type SoundButtonData = {
 	/**
-	 * The (unredered) text
+	 * The (unrendered) text
 	 */
 	title?: string;
 	/**
