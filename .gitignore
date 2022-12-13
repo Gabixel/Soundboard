@@ -408,3 +408,6 @@ js/**/*.js
 
 # TSConfig
 tsconfig.tsbuildinfo
+
+# TypeScript generated files
+*.d.ts
