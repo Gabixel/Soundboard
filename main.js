@@ -18,6 +18,11 @@ const isLinux = process.platform === "linux";
 
 const isProduction = process.env.NODE_ENV === "production";
 
+/**
+ * Root path for app windows.
+ */
+const windowsRootPath = path.join(__dirname, "windows");
+
 let mainWindow; // The main soundboard
 let editButtonWindow; // The button editor
 
@@ -36,18 +41,18 @@ const webPreferences = {
 	experimentalFeatures: false,
 };
 
-const mainWindowPath = path.join(__dirname, "windows", "mainWindow");
+// Main windows
+const mainWindowPath = path.join(windowsRootPath, "mainWindow");
 let mainWindowPreferences = JSON.parse(JSON.stringify(webPreferences));
 mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
 
-const editButtonWindowPath = path.join(
-	__dirname,
-	"windows",
-	"editButtonWindow"
-);
+// Edit button window
+const editButtonWindowPath = path.join(windowsRootPath, "editButtonWindow");
 let editButtonWindowPreferences = JSON.parse(JSON.stringify(webPreferences));
 editButtonWindowPreferences.preload = path.join(
-	editButtonWindowPath,
+	__dirname,
+	"windows",
+	"editButtonWindow",
 	"preload.js"
 );
 
@@ -103,13 +108,14 @@ const createMainWindow = (screenWidth, screenHeight) => {
 const createEditButtonWindow = (buttonData, screenWidth, screenHeight) => {
 	if (mainWindow == null) return;
 
-	const name = buttonData.title;
+	let name = buttonData.title;
 
-	let title = "Edit";
+	let title;
 	if (name != null) {
-		title += ` "${name}"`;
+		title = `Edit "${name}" button`;
+	} else {
+		title = "Edit button";
 	}
-	title += " button";
 
 	let width = 400;
 	let height = 300;
@@ -138,6 +144,7 @@ const createEditButtonWindow = (buttonData, screenWidth, screenHeight) => {
 		y: screenBounds.y + (screenBounds.height - height) / 2,
 
 		autoHideMenuBar: !isProduction,
+		maximizable: false,
 
 		parent: mainWindow,
 		modal: true,
@@ -248,7 +255,9 @@ app.on("will-quit", () => {
 // explicitly with Cmd + Q.
 // https://www.electronjs.org/docs/latest/tutorial/quick-start#manage-your-windows-lifecycle
 app.on("window-all-closed", () => {
-	if (!isMac) app.quit();
+	if (!isMac) {
+		app.quit();
+	}
 });
 
 app.setAboutPanelOptions({
