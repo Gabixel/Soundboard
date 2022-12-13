@@ -1,4 +1,4 @@
-class ButtonFilter {
+abstract class ButtonFilter {
 	private static _filter: string[] = [];
 
 	public static get filter(): string[] {
@@ -40,7 +40,7 @@ $(
 
 function globallyUpdateFilter(): void {
 	if (!ButtonFilter.isFiltering) {
-		Logger.log(null, globallyUpdateFilter, "Cleared filter.");
+		Logger.logInfo(null, globallyUpdateFilter, "Cleared filter.");
 		clearFilter();
 		return;
 	}
@@ -60,7 +60,7 @@ function globallyUpdateFilter(): void {
 		$("#buttons-filter-path").is(":checked") ? "path" : "",
 	].filter((f) => f.length > 0);
 
-	Logger.log(
+	Logger.logInfo(
 		null,
 		globallyUpdateFilter,
 		"Filtered " + filteredButtons + " buttons.",

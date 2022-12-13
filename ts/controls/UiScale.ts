@@ -1,4 +1,4 @@
-class UiScale extends LogExtend {
+abstract class UiScale {
 	private static $slider: JQuery<HTMLElement>;
 	private static $lock: JQuery<HTMLElement>;
 	private static $reset: JQuery<HTMLElement>;
@@ -76,7 +76,8 @@ class UiScale extends LogExtend {
 					},
 					325
 				);
-				this.log(
+				Logger.logInfo(
+					this.name,
 					this.initSlider,
 					"UI Scale changed:",
 					parseFloat($(e.target).val().toString())

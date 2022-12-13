@@ -1,151 +1,133 @@
-class LogExtend {
-	protected static log(
-		callerFunction: (...a: any[]) => any | null,
-		message: string,
-		...args: any[]
-	): void {
-		Logger.log(this, callerFunction, message, ...args);
-	}
-
-	protected static error(
-		callerFunction: (...a: any[]) => any | null,
-		message: string,
-		...args: any[]
-	): void {
-		Logger.error(this, callerFunction, message, ...args);
-	}
-}
-
-class Logger {
+abstract class Logger {
 	private static chosenStyle: number = 1;
 
-	public static log(
-		callerClass: any,
-		callerFunction: (...a: any[]) => any,
+	/** Info-level logging */
+	public static logInfo(
+		callerClass: string,
+		callerFunction: ((...any: any[]) => any) | string,
 		message: string,
 		...args: any[]
 	): void {
-		if (SoundboardApi.isProduction) return;
+		if (SoundboardApi.isProduction) {
+			return;
+		}
 
-		this.logInfo(callerClass, callerFunction, message, ...args);
-	}
-
-	public static error(
-		callerClass: any,
-		callerFunction: (...a: any[]) => any,
-		message: string,
-		...args: any[]
-	): void {
-		if (SoundboardApi.isProduction) return;
-
-		this.logError(callerClass, callerFunction, message, ...args);
-	}
-
-	private static logInfo(
-		callerClass: any,
-		callerFunction: (...a: any[]) => any,
-		message: string,
-		...args: any[]
-	): void {
-		let attributes = this.getStyledAttributes(
-			callerClass,
-			callerFunction,
-			message
-		);
+		let attributes: [string, string[]];
+		if (typeof callerFunction === "string") {
+			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
+		} else {
+			attributes = this.getStyledAttributes(
+				callerClass,
+				callerFunction?.name,
+				message
+			);
+		}
 
 		console.info(attributes[0], ...attributes[1], ...args);
 	}
 
-	private static logError(
-		callerClass: any,
-		callerFunction: (...a: any[]) => any,
+	/** Error-level logging */
+	public static logError(
+		callerClass: string,
+		callerFunction: ((...any: any[]) => any) | string,
 		message: string,
 		...args: any[]
 	): void {
-		let attributes = this.getStyledAttributes(
-			callerClass,
-			callerFunction,
-			message
-		);
+		if (SoundboardApi.isProduction) {
+			return;
+		}
+
+		let attributes: [string, string[]];
+		if (typeof callerFunction === "string") {
+			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
+		} else {
+			attributes = this.getStyledAttributes(
+				callerClass,
+				callerFunction?.name,
+				message
+			);
+		}
 
 		console.error(attributes[0], ...attributes[1], ...args);
 	}
 
-	private static getHslFromString(str: string, lightness: number): string {
-		return `hsl(${this.getHueFromString(str)}, 100%, ${lightness}%)`;
-	}
-
-	private static getHueFromString(str: string): number {
-		let hash = 0;
-		if (str.length === 0) return hash;
-
-		hash = this.getHashFromString(str);
-
-		const result = hash % 360;
-		if (result < 0) return result + 360;
-		else return result;
-	}
-
-	private static getHashFromString(str: string): number {
-		let hash = 0;
-		if (str.length === 0) return hash;
-
-		for (let i = 0; i < str.length; i++) {
-			const char = str.charCodeAt(i);
-			hash = (hash << 5) - hash + char;
-			hash |= 0; // Convert to 32bit integer
+	/** Debug-level logging */
+	public static logDebug(
+		callerClass: string,
+		callerFunction: ((...any: any[]) => any) | string,
+		message: string,
+		...args: any[]
+	): void {
+		if (SoundboardApi.isProduction) {
+			return;
 		}
 
-		return hash;
+		let attributes: [string, string[]];
+		if (typeof callerFunction === "string") {
+			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
+		} else {
+			attributes = this.getStyledAttributes(
+				callerClass,
+				callerFunction?.name,
+				message
+			);
+		}
+
+		console.debug(attributes[0], ...attributes[1], ...args);
 	}
 
 	private static getStyledAttributes(
 		callerClass: any,
-		callerFunction: (...a: any[]) => any,
+		callerFunction: string,
 		message: string
 	): [string, string[]] {
 		switch (this.chosenStyle) {
 			case 0:
-				return this.style0(callerClass, callerFunction, message);
+				return this.getStyle_0(callerClass, callerFunction, message);
 
+			case 1:
 			default:
-				return this.style1(callerClass, callerFunction, message);
+				return this.getStyle_1(callerClass, callerFunction, message);
 		}
 	}
 
-	private static style0(
-		callerClass: any,
-		callerFunction: (...a: any[]) => any,
+	private static getStyle_0(
+		callerClass: string,
+		callerFunction: string,
 		message: string
 	): [string, string[]] {
 		const shadowEffect: string = "text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
 
 		const boldEffect: string = "font-weight: bold";
 
-		let callerClassName = "-";
+		let callerClassRendered = "-";
 		let callerClassProperties: string[] = [];
-		if (callerClass?.name != null) {
-			callerClassName = `%c${callerClass.name}`;
+
+		// Not empty/null string
+		if (callerClass) {
+			callerClassRendered = `%c${callerClass}`;
 			callerClassProperties.push(
-				`color: ${this.getHslFromString(callerClass.name, 70)};
+				`color: ${this.getHslFromString(callerClass, 70)};
 				${boldEffect};
 				${shadowEffect}`
 			);
 		}
 
-		let callerFunctionName = "-";
+		let callerFunctionRendered = "-";
 		let callerFunctionProperties: string[] = [];
-		if (callerFunction?.name != null) {
-			callerFunctionName = `%c${callerFunction.name}`;
+
+		// Not empty/null string
+		if (callerFunction) {
+			callerFunctionRendered = `%c${callerFunction}`;
 			callerFunctionProperties.push(
-				`color: ${this.getHslFromString(callerFunction.name, 70)};
+				`color: ${this.getHslFromString(callerFunction, 70)};
 				${boldEffect};
 				${shadowEffect}`
 			);
 		}
 
 		return [
-			`%c[${callerClassName}%c] (${callerFunctionName}%c) → ` + message,
+			`%c[${callerClassRendered}%c] (${callerFunctionRendered}%c) → ` + message,
 			[
 				"color: inherit; margin: 5px 0",
 				...callerClassProperties,
@@ -156,35 +138,37 @@ class Logger {
 		];
 	}
 
-	private static style1(
+	private static getStyle_1(
 		callerClass: any,
-		callerFunction: (...a: any[]) => any,
+		callerFunction: string,
 		message: string
 	): [string, string[]] {
-		const colorName = callerFunction?.name ?? callerClass?.name ?? "???";
+		const colorName = callerFunction ?? callerClass ?? "???";
 		const bgColor = this.getHslFromString(colorName, 20);
 		const fgColor = this.getHslFromString(colorName, 90);
-
 		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 
-		let callerClassName = "%c...";
+		let callerClassRendered = "%c...";
 		let callerClassProperties: string[] = [headerMiddleEffect];
 
-		if (callerClass?.name != null) {
-			callerClassName = `%c${callerClass.name}`;
+		// Not empty/null string
+		if (callerClass) {
+			callerClassRendered = `%c${callerClass}`;
 		}
 
-		let callerFunctionName = "";
+		let callerFunctionRendered = "";
 		let callerFunctionProperties: string[] = [];
-		if (callerFunction?.name != null) {
-			callerFunctionName = `%c → %c${callerFunction.name}`;
+
+		// Not empty/null string
+		if (callerFunction) {
+			callerFunctionRendered = `%c → %c${callerFunction}`;
 			callerFunctionProperties = [headerMiddleEffect, headerMiddleEffect];
 		}
 
 		return [
-			`%c ${callerClassName}${callerFunctionName}%c %c ` + message,
+			`%c ${callerClassRendered}${callerFunctionRendered}%c %c ` + message,
 			[
 				headerStartEffect,
 				...callerClassProperties,
@@ -193,5 +177,35 @@ class Logger {
 				"color: inherit",
 			],
 		];
+	}
+
+	private static getHslFromString(str: string, lightness: number) {
+		return `hsl(${this.getHueFromString(str)}, 100%, ${lightness}%)`;
+	}
+
+	private static getHueFromString(str: string) {
+		let hash = this.getHashFromString(str);
+
+		const result = hash % 360;
+		if (result < 0) return result + 360;
+		else return result;
+	}
+
+	/**
+	 * Converts a string to an hash code.
+	 *
+	 * See {@link https://stackoverflow.com/a/7616484/16804863}.
+	 */
+	private static getHashFromString(str: string) {
+		let hash = 0;
+		if (str.length === 0) return hash;
+
+		for (let i = 0; i < str.length; i++) {
+			const char = str.charCodeAt(i);
+			hash = (hash << 5) - hash + char;
+			hash |= 0; // Convert to 32bit integer
+		}
+
+		return hash;
 	}
 }

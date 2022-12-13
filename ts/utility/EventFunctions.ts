@@ -1,4 +1,4 @@
-class EventFunctions {
+abstract class EventFunctions {
 	public static updateInputValueFromWheel(
 		e: JQuery.TriggeredEvent,
 		stepValue: number = 1,
