@@ -397,8 +397,14 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# TSConfig
-tsconfig.tsbuildinfo
-
 # Environment variables (using `dotenv`)
 .env
+
+# CSS files
+*.css
+
+# JavaScript generated files
+js/*.js
+
+# TSConfig
+tsconfig.tsbuildinfo

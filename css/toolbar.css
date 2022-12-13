@@ -1,1 +1,0 @@
-#soundboard nav.toolbar{display:flex;flex-direction:row;z-index:1;margin:3px 11px 0}#soundboard nav.toolbar div{color:var(--menu-bar-fg);font-size:.8rem;font-weight:600;padding:4px 10px 2px;border-radius:10px 10px 0 0}#soundboard nav.toolbar div:hover{color:var(--menu-bar-hover-fg);background-color:var(--menu-bar-hover-bg)}
