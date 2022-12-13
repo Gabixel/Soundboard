@@ -2,7 +2,10 @@
 	"name": "soundboard",
 	"version": "1.0.0",
 	"description": "A soundboard for Discord",
+	"productName": "SoundBoard",
 	"main": "main.js",
+	"author": "Gabixel",
+	"license": "MIT",
 	"scripts": {
 		"start": "electron ."
 	},
@@ -11,8 +14,6 @@
 		"audio",
 		"voice"
 	],
-	"author": "Gabriel Del Nero",
-	"license": "MIT",
 	"dependencies": {
 		"discord-rpc": "^4.0.1",
 		"dotenv": "^16.0.1",
