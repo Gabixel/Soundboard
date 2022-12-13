@@ -53,13 +53,13 @@ abstract class AudioPlayer {
 			this.name,
 			this.addAudio,
 			`Using path "%c${path}%c"%s`,
-			"font-style: italic",
-			"font-style: normal",
+			"color: #03fc98;",
+			"",
 			"\n- Start time:",
 			time.start,
 			"(ms)\n- End time:",
 			time.end,
-			`(ms)\n- Type: "${time.condition}"`
+			`(ms)\n- Condition: "${time.condition}"`
 		);
 
 		// TODO: clamp time? (e.g. -1000ms = 0ms)

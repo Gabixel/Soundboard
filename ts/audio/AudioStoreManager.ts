@@ -37,9 +37,15 @@ class AudioStoreManager {
 			Logger.logInfo(
 				"AudioStoreManager",
 				this.addToSinglePool,
-				"New path different from previous one.\n",
-				`• Last track path: "${this.singlePool.lastTrack}"\n`,
-				`• New track path:  "${path}"`
+				"New path different from previous one.\n%s",
+				`• Last track path: "%c%s%c"\n%s`,
+				"color: #03fc98;",
+				this.singlePool.lastTrack,
+				"",
+				`• New track path: "%c%s%c"`,
+				"color: #03fc98;",
+				path,
+				""
 			);
 
 			this.singlePool.lastTrack = path;
@@ -48,7 +54,7 @@ class AudioStoreManager {
 				"AudioStoreManager",
 				this.addToSinglePool,
 				`Setting new path: "%c%s%c"`,
-				"font-style: italic",
+				"color: #03fc98;",
 				path,
 				""
 			);
