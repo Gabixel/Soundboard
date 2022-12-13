@@ -1,4 +1,4 @@
-class AudioPlayer extends LogExtend {
+abstract class AudioPlayer {
 	private static _volume: number = 0;
 	private static $volumeSlider: JQuery<HTMLElement>;
 	private static maxSliderValue = 1000;
@@ -15,7 +15,8 @@ class AudioPlayer extends LogExtend {
 		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: Store preferred device
 
-		this.log(
+		Logger.logInfo(
+			this.name,
 			this.updateAudioDevicesList,
 			"Devices list updated!\n",
 			this.audioDevices
@@ -23,7 +24,7 @@ class AudioPlayer extends LogExtend {
 	}
 
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
-		this.log(this.setVolumeSlider, "Slider set!\n", $slider);
+		Logger.logInfo(this.name, this.setVolumeSlider, "Slider set!\n", $slider);
 		this.$volumeSlider = $slider;
 		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
 		this.updateVolume();
@@ -48,7 +49,8 @@ class AudioPlayer extends LogExtend {
 		time: AudioTimings,
 		useMultiPool: boolean = false
 	): void {
-		this.log(
+		Logger.logInfo(
+			this.name,
 			this.addAudio,
 			`Using path "%c${path}%c"%s`,
 			"font-style: italic",
@@ -80,11 +82,16 @@ class AudioPlayer extends LogExtend {
 
 		$(mainAudio)
 			.one("canplay", (e) => {
-				this.log(this.tryAddAudio, "Audio file created. Duration: " + e.target.duration + " seconds");
+				Logger.logInfo(
+					this.name,
+					this.tryAddAudio,
+					"Audio file created. Duration: " + e.target.duration + " seconds"
+				);
 				this.storeAudio(e.target as AudioJS, time);
 			})
 			.one("error", (e) => {
-				this.error(
+				Logger.logError(
+					this.name,
 					this.tryAddAudio,
 					"Error loading audio\n",
 					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
@@ -154,7 +161,7 @@ class AudioPlayer extends LogExtend {
 		if (this.canLogVolume) {
 			this.canLogVolume = false;
 
-			this.log(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+			Logger.logInfo(this.name, this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
 
 			setTimeout(() => {
 				this.canLogVolume = true;

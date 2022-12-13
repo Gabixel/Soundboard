@@ -1,7 +1,7 @@
 // let playPauseTimeout: NodeJS.Timeout;
 
 $("#stop-audio").on("click", async () => {
-	Logger.log(null, null, "Stop audio button clicked");
+	Logger.logInfo(null, null, "Stop audio button clicked");
 	AudioPlayer.stop();
 });
 

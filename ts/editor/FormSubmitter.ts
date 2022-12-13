@@ -1,4 +1,4 @@
-class FormSubmitter extends LogExtend {
+abstract class FormSubmitter {
 	private static $form: JQuery<HTMLElement>;
 
 	public static initForm($form: JQuery<HTMLElement>): void {
@@ -9,7 +9,7 @@ class FormSubmitter extends LogExtend {
 	private static setupFormSubmitEvent() {
 		this.$form.on('submit', (e) => {
 			e.preventDefault();
-			this.log(this.setupFormSubmitEvent, "Form submitted.");
+			Logger.logInfo(this.name, this.setupFormSubmitEvent, "Form submitted.");
 		});
 	}
 }

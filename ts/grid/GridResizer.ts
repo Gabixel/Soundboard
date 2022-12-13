@@ -1,4 +1,4 @@
-class GridResizer {
+abstract class GridResizer {
 	private static grid: Grid;
 
 	public static setGrid(grid: Grid): void {
