@@ -6,7 +6,7 @@
 
 	"compilerOptions": {
 		// "composite": true,
-		"rootDir": "./ts",
+		"rootDir": "./ts/",
 		"outDir": "./js/",
 		// "outFile": "./js/build.js",
 		"target": "ESNext",
