@@ -1,15 +1,17 @@
+// Also check https://github.com/tsconfig/bases/blob/main/bases/node16.json
+
 {
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "Node 16",
+
 	"compilerOptions": {
-		"composite": true,
+		// "composite": true,
 		"rootDir": "./ts",
 		"outDir": "./js/",
 		// "outFile": "./js/build.js",
 		"target": "ESNext",
 		// "module": "AMD",
-		"lib": [
-			"ES2017",
-			"DOM"
-		],
+		"lib": ["ES2021", "DOM"],
 
 		// Export
 		"preserveConstEnums": true,
@@ -20,20 +22,22 @@
 		"noImplicitReturns": true,
 		"noImplicitOverride": true,
 		"noImplicitThis": true,
-		"noImplicitUseStrict": true,
+		// "noImplicitUseStrict": true,
 		"strictNullChecks": false,
+
+		"strict": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
 
 		"declaration": true,
 		// "emitDeclarationOnly": true,
-		"esModuleInterop": true,
 		"allowJs": false
 	},
-	"include": [
-		"./ts/*.ts",
-		"./ts/**/*.ts",
-	],
+
+	"include": ["./ts/**/*.ts"],
 	"exclude": [
-		"node_modules",
+		"node_modules"
 		// "js"
-	],
+	]
 }
