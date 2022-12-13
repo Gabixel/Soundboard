@@ -404,7 +404,7 @@ FodyWeavers.xsd
 *.css
 
 # JavaScript generated files
-js/*.js
+js/*/*.js
 
 # TSConfig
 tsconfig.tsbuildinfo
