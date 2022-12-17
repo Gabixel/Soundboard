@@ -6,5 +6,5 @@
 	"files.exclude": {
 		"**/node_modules": true
 	},
-	"terminal.integrated.cwd": "C:\\Users\\Gabriel\\source\\repos\\Electron\\Soundboard\\"
+	"terminal.integrated.cwd": "${fileDirname}"
 }
