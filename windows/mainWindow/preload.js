@@ -12,38 +12,38 @@ contextBridge.exposeInMainWorld("api", {
 	isProduction: process.env.NODE_ENV === "production",
 });
 
-const appendScripts = (...scripts) => {
-	scripts.forEach((s) => {
-		const script = window.document.createElement("script");
-		script.async = false;
-		script.type = "text/javascript";
-		script.src = "../../js/" + s + ".js";
-		window.document.body.appendChild(script);
-	});
-};
+// const appendScripts = (...scripts) => {
+// 	scripts.forEach((s) => {
+// 		const script = window.document.createElement("script");
+// 		script.async = false;
+// 		script.type = "text/javascript";
+// 		script.src = "../../js/" + s + ".js";
+// 		window.document.body.appendChild(script);
+// 	});
+// };
 
-window.onload = () => {
-	appendScripts(
-		"utility/ExtendedMath",
-		"utility/EventFunctions",
-		"utility/Logger",
-		"utility/SoundBoardApi",
+// window.onload = () => {
+// 	appendScripts(
+// 		"utility/ExtendedMath",
+// 		"utility/EventFunctions",
+// 		"utility/Logger",
+// 		"utility/SoundBoardApi",
 
-		"grid/GridResizer",
-		"grid/Grid",
-		"grid/ButtonSwap",
-		"grid/ButtonFilter",
-		"grid/SoundButton",
+// 		"grid/GridResizer",
+// 		"grid/Grid",
+// 		"grid/ButtonSwap",
+// 		"grid/ButtonFilter",
+// 		"grid/SoundButton",
 
-		"audio/AudioPool",
-		"audio/AudioStoreManager",
-		"audio/AudioPlayer",
-		"audio/Audio",
+// 		"audio/AudioPool",
+// 		"audio/AudioStoreManager",
+// 		"audio/AudioPlayer",
+// 		"audio/Audio",
 
-		"controls/Presets_Panel",
-		"controls/UiScale",
+// 		"controls/Presets_Panel",
+// 		"controls/UiScale",
 
-		"ToolbarManager",
-		"Index"
-	);
-};
+// 		"ToolbarManager",
+// 		"Index"
+// 	);
+// };

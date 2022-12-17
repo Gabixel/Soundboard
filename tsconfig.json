@@ -6,9 +6,9 @@
 
 	"compilerOptions": {
 		// "composite": true,
-		"rootDir": "./ts/",
-		"outDir": "./js/",
-		// "outFile": "./js/build.js",
+		// "rootDir": "./ts/",
+		// "outDir": "./js/",
+		"outFile": "./js/build.js",
 		"target": "ESNext",
 		// "module": "AMD",
 		"lib": ["ES2021", "DOM"],
@@ -35,9 +35,32 @@
 		"allowJs": false
 	},
 
-	"include": ["./ts/**/*.ts"],
+	// "include": ["./ts/**/*.ts"],
 	"exclude": [
 		"node_modules"
 		// "js"
+	],
+	"files": [
+		"./ts/utility/ExtendedMath.ts",
+		"./ts/utility/EventFunctions.ts",
+		"./ts/utility/Logger.ts",
+		"./ts/utility/SoundBoardApi.ts",
+
+		"./ts/grid/GridResizer.ts",
+		"./ts/grid/Grid.ts",
+		"./ts/grid/ButtonSwap.ts",
+		"./ts/grid/ButtonFilter.ts",
+		"./ts/grid/SoundButton.ts",
+
+		"./ts/audio/AudioPool.ts",
+		"./ts/audio/AudioStoreManager.ts",
+		"./ts/audio/AudioPlayer.ts",
+		"./ts/audio/Audio.ts",
+
+		"./ts/controls/Presets_Panel.ts",
+		"./ts/controls/UiScale.ts",
+
+		"./ts/ToolbarManager.ts",
+		"./ts/Index.ts"
 	]
 }
