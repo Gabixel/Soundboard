@@ -43,12 +43,12 @@ const webPreferences = {
 
 // Main windows
 const mainWindowPath = path.join(windowsRootPath, "mainWindow");
-let mainWindowPreferences = JSON.parse(JSON.stringify(webPreferences));
+let mainWindowPreferences = { ...webPreferences };
 mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
 
 // Edit button window
 const editButtonWindowPath = path.join(windowsRootPath, "editButtonWindow");
-let editButtonWindowPreferences = JSON.parse(JSON.stringify(webPreferences));
+let editButtonWindowPreferences = { ...webPreferences };
 editButtonWindowPreferences.preload = path.join(
 	__dirname,
 	"windows",
