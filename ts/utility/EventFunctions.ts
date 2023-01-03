@@ -1,76 +1,88 @@
 abstract class EventFunctions {
 	public static updateInputValueFromWheel(
-		e: JQuery.TriggeredEvent,
+		e: WheelEvent | JQuery.TriggeredEvent,
+		targetInput: JQuery<HTMLElement> | null = null,
 		stepValue: number = 1,
-		trigger: boolean = true,
-		triggers: string[] = ["change"]
+		postTriggers: string[] = ["change"]
 	): void {
-		if ($(e.target).attr("disabled")) return;
+		if (!this.shouldDoEvent(e)) {
+			return;
+		}
 
-		e.preventDefault();
+		let $target = $(targetInput ?? e.target);
 
-		const $target = $(e.target);
+		let delta = this.getDeltaY(e);
+		let currentValue = parseFloat($target.val().toString());
+		let max = parseFloat($target.attr("max").toString());
+		let min = parseFloat($target.attr("min").toString());
 
-		// @ts-ignore
-		const delta = Math.round(-e.originalEvent.deltaY / 120);
-		const currentValue = parseFloat($target.val().toString());
-		const max = parseFloat($target.attr("max").toString());
-		const min = parseFloat($target.attr("min").toString());
+		let newValue = EMath.clamp(currentValue + delta * stepValue, min, max);
 
-		const newValue = EMath.clamp(currentValue + delta * stepValue, min, max);
+		let previousValue = parseFloat($target.val().toString());
 
-		const previousValue = parseFloat($target.val().toString());
-
-		if(previousValue === newValue) return;
+		if (previousValue === newValue) return;
 
 		$target.val(newValue);
 
-		if (!trigger) return;
-
-		triggers.forEach((trigger) => {
+		// If there are post triggers to call
+		postTriggers.forEach((trigger) => {
 			$target.trigger(trigger);
 		});
-
-		return;
 	}
 
 	public static getUpdatedInputValueFromWheel(
-		e: JQuery.TriggeredEvent,
-		stepValue: number = 1,
+		e: WheelEvent | JQuery.TriggeredEvent,
+		stepValue: number = 1
 	): number {
-		const $target = $(e.target);
-		const currentValue = parseFloat($target.val().toString());
-		
-		if ($target.attr("disabled")) return currentValue;
+		let $target = $(e.target);
+		let currentValue = parseFloat($target.val().toString());
 
-		e.preventDefault();
+		if (!this.shouldDoEvent(e)) {
+			return currentValue;
+		}
 
-		// @ts-ignore
-		const delta = Math.round(-e.originalEvent.deltaY / 120);
-		const max = parseFloat($target.attr("max").toString());
-		const min = parseFloat($target.attr("min").toString());
+		// e.preventDefault();
+		e.stopPropagation();
 
-		const newValue = currentValue + delta * stepValue;
+		let delta = this.getDeltaY(e);
+		let max = parseFloat($target.attr("max").toString());
+		let min = parseFloat($target.attr("min").toString());
+
+		let newValue = currentValue + delta * stepValue;
 
 		return EMath.clamp(newValue, min, max);
 	}
 
 	public static getUpdatedValueFromWheel(
-		e: JQuery.TriggeredEvent,
+		e: WheelEvent | JQuery.TriggeredEvent,
 		currentValue: number,
 		stepValue: number = 1,
 		clamp: [number, number] | null = undefined
 	): number {
-		if ($(e.target).attr("disabled")) return currentValue;
+		if (!this.shouldDoEvent(e)) {
+			return currentValue;
+		}
 
-		e.preventDefault();
-
-		// @ts-ignore
-		const delta = Math.round(-e.originalEvent.deltaY / 120);
-
-		const newValue = currentValue + delta * stepValue;
+		let delta = this.getDeltaY(e);
+		let newValue = currentValue + delta * stepValue;
 
 		if (clamp != null) return EMath.clamp(newValue, clamp[0], clamp[1]);
 		else return newValue;
+	}
+
+	private static getDeltaY(e: WheelEvent | JQuery.TriggeredEvent) {
+		return Math.round(
+			-((e as JQuery.TriggeredEvent).originalEvent != null
+				? ((e as JQuery.TriggeredEvent).originalEvent as WheelEvent).deltaY
+				: (e as WheelEvent).deltaY) / 120
+		);
+	}
+
+	private static shouldDoEvent(e: WheelEvent | JQuery.TriggeredEvent): boolean {
+		if ($(e.target).attr("disabled")) {
+			return false;
+		}
+
+		return true;
 	}
 }

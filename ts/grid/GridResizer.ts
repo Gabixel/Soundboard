@@ -21,9 +21,12 @@ function initResizer() {
 $("#grid-rows")
 	.on("change", (e) => {
 		updateRows(e);
-		if(resizerStarted) updateGrid();
+		if (resizerStarted) updateGrid();
 	})
 	.on("wheel", (e) => {
+		if (e.ctrlKey) return;
+		// e.preventDefault();
+		e.stopImmediatePropagation();
 		EventFunctions.updateInputValueFromWheel(e);
 	});
 // .on("mouseup", (e) => {
@@ -36,6 +39,9 @@ $("#grid-columns")
 		if (resizerStarted) updateGrid();
 	})
 	.on("wheel", (e) => {
+		if (e.ctrlKey) return;
+		// e.preventDefault();
+		e.stopImmediatePropagation();
 		EventFunctions.updateInputValueFromWheel(e);
 	});
 // .on("mouseup", (e) => {

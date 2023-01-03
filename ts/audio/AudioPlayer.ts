@@ -7,18 +7,18 @@ abstract class AudioPlayer extends Logger {
 
 	private static audioStore: AudioStoreManager = new AudioStoreManager();
 
-	private static audioDevices: MediaDeviceInfo[];
+	private static audioDevicesInfo: MediaDeviceInfo[];
 
 	public static async updateAudioDevicesList(): Promise<void> {
 		const devices = await navigator.mediaDevices.enumerateDevices();
 
-		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
-		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: Store preferred device
+		this.audioDevicesInfo = devices.filter(({ kind }) => kind === "audiooutput");
+		this.audioStore.updateAudioDevice(this.audioDevicesInfo[2]); // TODO: Store preferred device
 
 		this.logInfo(
 			this.updateAudioDevicesList,
 			"Devices list updated!\n",
-			this.audioDevices
+			this.audioDevicesInfo
 		);
 	}
 
@@ -32,14 +32,23 @@ abstract class AudioPlayer extends Logger {
 
 	private static initSlider(): void {
 		this.$volumeSlider
+			// On input changes
 			.on("input", () => {
 				this.updateVolume();
-			})
-			// .on("blur", (e) => {
-			// 	this.$volumeSlider.trigger("input");
-			// })
-			.on("wheel", (e) => {
-				EventFunctions.updateInputValueFromWheel(e, 50, true, ["input"]);
+			});
+		// .on("blur", (e) => {
+		// 	this.$volumeSlider.trigger("input");
+		// })
+
+		// Update volume slider on scroll (only when control is not active)
+		this.$volumeSlider
+			.parent()
+			// On scroll wheel
+			.on("wheel", { passive: true }, (e) => {
+				if (e.ctrlKey) return;
+				// e.preventDefault();
+				e.stopImmediatePropagation();
+				EventFunctions.updateInputValueFromWheel(e, this.$volumeSlider, 50, ["input"]);
 			});
 	}
 
@@ -120,9 +129,9 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	private static async setSinkId(audio: AudioJS): Promise<void> {
-		if (!this.audioDevices) await this.updateAudioDevicesList();
+		if (!this.audioDevicesInfo) await this.updateAudioDevicesList();
 
-		await audio.setSinkId(this.audioDevices[2].deviceId);
+		await audio.setSinkId(this.audioDevicesInfo[2].deviceId);
 	}
 
 	public static async play(): Promise<void> {
