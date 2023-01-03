@@ -115,7 +115,7 @@ abstract class EMath {
 		return [r, g, b];
 	}
 
-	public static getEponentialValue(
+	public static getExponentialValue(
 		initialValue: number,
 		base: number = 50
 	): number {
