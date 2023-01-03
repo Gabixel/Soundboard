@@ -1,4 +1,4 @@
-abstract class SoundButton {
+abstract class SoundButton extends Logger{
 	private static paths: string[] = [
 		"Bad to the bone.mp3",
 		// "Polygon Dust.mp3",
@@ -83,7 +83,7 @@ abstract class SoundButton {
 				e.originalEvent.dataTransfer.dropEffect = this.dropEffect;
 
 				$button.addClass("file-dragover");
-				Logger.logInfo(this.name, this.applyInitialData, "'dragenter' triggered");
+				this.logInfo(this.applyInitialData, "'dragenter' triggered");
 			})
 			.on("dragover", (e: JQuery.DragOverEvent) => {
 				e.preventDefault();
@@ -93,7 +93,7 @@ abstract class SoundButton {
 				// $button.addClass("file-dragover");
 			})
 			.on("drop", (e: JQuery.DropEvent) => {
-				Logger.logInfo(this.name, this.applyInitialData, "'drop' triggered");
+				this.logInfo(this.applyInitialData, "'drop' triggered");
 
 				const notSuccesful =
 					!e.originalEvent.dataTransfer ||
@@ -118,8 +118,7 @@ abstract class SoundButton {
 					.replace(/(%2F)+/g, "/") // Replace slashes
 					.replace(/(%3A)+/g, ":"); // Replace colons
 
-				Logger.logInfo(
-					this.name,
+				this.logInfo(
 					this.applyInitialData,
 					"Audio drop successful.\n" +
 						"• Files: %O\n" +
@@ -145,7 +144,7 @@ abstract class SoundButton {
 
 				// $button.on("dragover");
 				$button.removeClass("file-dragover");
-				Logger.logInfo(this.name, this.applyInitialData, "'dragleave' triggered");
+				this.logInfo(this.applyInitialData, "'dragleave' triggered");
 			});
 	}
 
@@ -203,8 +202,7 @@ abstract class SoundButton {
 
 	private static initClick(): void {
 		this.$grid.on("click", ".soundbutton", (e) => {
-			Logger.logInfo(
-				this.name,
+			this.logInfo(
 				this.initClick,
 				`SoundButton "%s" clicked`,
 				$(e.target).children(".button-theme").text()

@@ -203,7 +203,6 @@ function swapButtons(
 	$drag.css("--index", dropTargetIndex.toString());
 
 	Logger.logInfo(
-		null,
 		swapButtons,
 		`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
 			.children(".button-theme")

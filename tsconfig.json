@@ -41,10 +41,10 @@
 		// "js"
 	],
 	"files": [
-		"./ts/utility/ExtendedMath.ts",
-		"./ts/utility/EventFunctions.ts",
 		"./ts/utility/Logger.ts",
 		"./ts/utility/SoundBoardApi.ts",
+		"./ts/utility/ExtendedMath.ts",
+		"./ts/utility/EventFunctions.ts",
 
 		"./ts/grid/GridResizer.ts",
 		"./ts/grid/Grid.ts",

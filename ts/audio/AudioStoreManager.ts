@@ -1,4 +1,4 @@
-class AudioStoreManager {
+class AudioStoreManager extends Logger {
 	private singlePool: AudioGroup = {
 		main: new Audio() as AudioJS,
 		playback: new Audio() as AudioJS,
@@ -7,17 +7,17 @@ class AudioStoreManager {
 	private multiPool: AudioPool = new AudioPool();
 
 	constructor(volume: number = 0) {
+		super();
 		this.singlePool.main.volume = this.singlePool.playback.volume = volume;
 		$(this.singlePool.main)
 			.add(this.singlePool.playback)
 			.on("canplay", (e) => {
-				Logger.logInfo("AudioStoreManager", "[constructor]", "Audio can play");
+				AudioStoreManager.logInfo("[constructor]", "Audio can play");
 				this.playGroup(this.singlePool);
 			})
 			.on("error", (e) => {
-				Logger.logError(
-					"AudioStoreManager",
-					"[constructor]",
+				AudioStoreManager.logError(
+					"(singlePool.main 'onerror' event)",
 					"Error loading audio\n",
 					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
 					e
@@ -34,8 +34,7 @@ class AudioStoreManager {
 
 		// If the path is different from the previous one
 		if (this.singlePool.lastTrack !== path) {
-			Logger.logInfo(
-				"AudioStoreManager",
+			AudioStoreManager.logInfo(
 				this.addToSinglePool,
 				"New path different from previous one.\n%s",
 				`• Last track path: "%c%s%c"\n%s`,
@@ -50,8 +49,7 @@ class AudioStoreManager {
 
 			this.singlePool.lastTrack = path;
 			this.singlePool.main.src = this.singlePool.playback.src = path;
-			Logger.logInfo(
-				"AudioStoreManager",
+			AudioStoreManager.logInfo(
 				this.addToSinglePool,
 				`Setting new path: "%c%s%c"`,
 				"color: #03fc98;",
@@ -73,16 +71,11 @@ class AudioStoreManager {
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {
 		// Limited sounds to prevent memory or human ear issues
 		if (this.multiPool.length > 50) {
-			Logger.logInfo(
-				"AudioStoreManager",
-				this.addToMultiPool,
-				"Pool limit exceeded."
-			);
+			AudioStoreManager.logInfo(this.addToMultiPool, "Pool limit exceeded.");
 			return;
 		}
 
-		Logger.logInfo(
-			"AudioStoreManager",
+		AudioStoreManager.logInfo(
 			this.addToMultiPool,
 			"Adding new group to multi pool:",
 			audioGroup

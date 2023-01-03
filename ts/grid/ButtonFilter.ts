@@ -40,7 +40,7 @@ $(
 
 function globallyUpdateFilter(): void {
 	if (!ButtonFilter.isFiltering) {
-		Logger.logInfo(null, globallyUpdateFilter, "Cleared filter.");
+		Logger.logInfo(globallyUpdateFilter, "Cleared filter.");
 		clearFilter();
 		return;
 	}
@@ -61,7 +61,6 @@ function globallyUpdateFilter(): void {
 	].filter((f) => f.length > 0);
 
 	Logger.logInfo(
-		null,
 		globallyUpdateFilter,
 		"Filtered " + filteredButtons + " buttons.",
 		"\nFilter:",

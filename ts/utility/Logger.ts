@@ -3,7 +3,6 @@ abstract class Logger {
 
 	/** Info-level logging */
 	public static logInfo(
-		callerClass: string,
 		callerFunction: ((...any: any[]) => any) | string,
 		message: string,
 		...args: any[]
@@ -12,7 +11,9 @@ abstract class Logger {
 			return;
 		}
 
+		const callerClass = this?.name;
 		let attributes: [string, string[]];
+
 		if (typeof callerFunction === "string") {
 			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
 		} else {
@@ -28,7 +29,6 @@ abstract class Logger {
 
 	/** Error-level logging */
 	public static logError(
-		callerClass: string,
 		callerFunction: ((...any: any[]) => any) | string,
 		message: string,
 		...args: any[]
@@ -37,7 +37,9 @@ abstract class Logger {
 			return;
 		}
 
+		const callerClass = this.name;
 		let attributes: [string, string[]];
+
 		if (typeof callerFunction === "string") {
 			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
 		} else {
@@ -53,7 +55,6 @@ abstract class Logger {
 
 	/** Debug-level logging */
 	public static logDebug(
-		callerClass: string,
 		callerFunction: ((...any: any[]) => any) | string,
 		message: string,
 		...args: any[]
@@ -62,7 +63,9 @@ abstract class Logger {
 			return;
 		}
 
+		const callerClass = this.name;
 		let attributes: [string, string[]];
+
 		if (typeof callerFunction === "string") {
 			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
 		} else {

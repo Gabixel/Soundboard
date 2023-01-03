@@ -1,4 +1,4 @@
-abstract class AudioPlayer {
+abstract class AudioPlayer extends Logger {
 	private static _volume: number = 0;
 	private static $volumeSlider: JQuery<HTMLElement>;
 	private static maxSliderValue = 1000;
@@ -15,8 +15,7 @@ abstract class AudioPlayer {
 		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 		this.audioStore.updateAudioDevice(this.audioDevices[2]); // TODO: Store preferred device
 
-		Logger.logInfo(
-			this.name,
+		this.logInfo(
 			this.updateAudioDevicesList,
 			"Devices list updated!\n",
 			this.audioDevices
@@ -24,7 +23,7 @@ abstract class AudioPlayer {
 	}
 
 	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
-		Logger.logInfo(this.name, this.setVolumeSlider, "Slider set!\n", $slider);
+		this.logInfo(this.setVolumeSlider, "Slider set!\n", $slider);
 		this.$volumeSlider = $slider;
 		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
 		this.updateVolume();
@@ -49,8 +48,7 @@ abstract class AudioPlayer {
 		time: AudioTimings,
 		useMultiPool: boolean = false
 	): void {
-		Logger.logInfo(
-			this.name,
+		this.logInfo(
 			this.addAudio,
 			`Using path "%c${path}%c"%s`,
 			"color: #03fc98;",
@@ -82,16 +80,14 @@ abstract class AudioPlayer {
 
 		$(mainAudio)
 			.one("canplay", (e) => {
-				Logger.logInfo(
-					this.name,
+				this.logInfo(
 					this.tryAddAudio,
 					"Audio file created. Duration: " + e.target.duration + " seconds"
 				);
 				this.storeAudio(e.target as AudioJS, time);
 			})
 			.one("error", (e) => {
-				Logger.logError(
-					this.name,
+				this.logError(
 					this.tryAddAudio,
 					"Error loading audio\n",
 					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
@@ -161,7 +157,7 @@ abstract class AudioPlayer {
 		if (this.canLogVolume) {
 			this.canLogVolume = false;
 
-			Logger.logInfo(this.name, this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+			this.logInfo(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
 
 			setTimeout(() => {
 				this.canLogVolume = true;

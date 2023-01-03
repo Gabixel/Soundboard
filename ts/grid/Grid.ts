@@ -1,4 +1,4 @@
-abstract class Grid {
+abstract class Grid extends Logger {
 	private static gridRows: number = 0;
 	private static gridCols: number = 0;
 	private static gridSize: number = 0;
@@ -88,8 +88,7 @@ abstract class Grid {
 		}
 
 		if (index >= this.gridSize) {
-			Logger.logError(
-				this.name,
+			this.logError(
 				this.getButtonAtIndex,
 				`Index '${index}' is out of bounds. Current max index: (${
 					this.gridSize

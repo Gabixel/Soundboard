@@ -1,8 +1,8 @@
-class AudioPool {
+class AudioPool extends Logger {
 	private audioPool: AudioPoolGroup[] = [];
 
 	public add(group: AudioPoolGroup): void {
-		Logger.logInfo("AudioPool", this.add, "Adding group to pool:", group);
+		AudioPool.logInfo(this.add, "Adding group to pool:", group);
 
 		this.audioPool.push(group);
 
@@ -16,7 +16,7 @@ class AudioPool {
 		const index = this.audioPool.indexOf(removingGroup);
 
 		// if (!removingGroup.forcedEnding)
-		Logger.logInfo("AudioPool", this.remove, "Removing pool:", removingGroup);
+		AudioPool.logInfo(this.remove, "Removing pool:", removingGroup);
 
 		this.audioPool.splice(index, 1);
 	}
@@ -40,7 +40,7 @@ class AudioPool {
 	}
 
 	public stop(): void {
-		Logger.logInfo("AudioPool", this.remove, "Forced pool stop");
+		AudioPool.logInfo(this.remove, "Forced pool stop");
 		this.audioPool.forEach((group) => {
 			group.forcedEnding = true;
 
