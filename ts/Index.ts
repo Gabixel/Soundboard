@@ -52,9 +52,42 @@ type AudioTimings = {
 };
 //#endregion
 
-initMainWindow();
+function fixJQueryPassiveEvents() {
+	console.log("test");
+
+	jQuery.event.special.touchstart = {
+		setup: function (_, ns, handle) {
+			//@ts-ignore
+			this.addEventListener("touchstart", handle, {
+				passive: !ns.includes("noPreventDefault"),
+			});
+		},
+	};
+	jQuery.event.special.touchmove = {
+		setup: function (_, ns, handle) {
+			//@ts-ignore
+			this.addEventListener("touchmove", handle, {
+				passive: !ns.includes("noPreventDefault"),
+			});
+		},
+	};
+	jQuery.event.special.wheel = {
+		setup: function (_, ns, handle) {
+			//@ts-ignore
+			this.addEventListener("wheel", handle, { passive: true });
+		},
+	};
+	jQuery.event.special.mousewheel = {
+		setup: function (_, ns, handle) {
+			//@ts-ignore
+			this.addEventListener("mousewheel", handle, { passive: true });
+		},
+	};
+}
 
 async function initMainWindow() {
+	fixJQueryPassiveEvents();
+
 	window.addEventListener("dragover", (event) => event.preventDefault());
 	window.addEventListener("drop", (event) => event.preventDefault());
 
@@ -66,7 +99,7 @@ async function initMainWindow() {
 
 	// TODO: Extract audio from video file? (probably not necessary)
 	// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
-	
+
 	AudioPlayer.setVolumeSlider($("#volume-slider")); // Initializes volume in the audio player
 
 	SoundButton.setGrid(Grid.$grid);
@@ -76,14 +109,14 @@ async function initMainWindow() {
 		$("#ui-scale-lock"),
 		$("#ui-scale-reset")
 	);
+
+	$(document).on("contextmenu", (e) => {
+		SoundboardApi.openContextMenu();
+	});
+
+	$(window).on("dragover", (e) => {
+		e.preventDefault();
+		e.originalEvent.dataTransfer.dropEffect = "none";
+		return false;
+	});
 }
-
-$(document).on("contextmenu", (e) => {
-	SoundboardApi.openContextMenu();
-});
-
-$(window).on("dragover", (e) => {
-	e.preventDefault();
-	e.originalEvent.dataTransfer.dropEffect = "none";
-	return false;
-});
