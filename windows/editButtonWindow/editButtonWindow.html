@@ -7,14 +7,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 	<meta http-equiv="Content-Security-Policy"
-		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self'">
+		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
 	<meta http-equiv="X-Content-Security-Policy"
-		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self'">
+		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
 	<!-- Window title is set in the caller -->
 	<link rel="stylesheet" href="../../css/base.css">
 	<link rel="stylesheet" href="../../css/colors.css">
 	<link rel="stylesheet" href="../../css/base_restyling.css">
 	<link rel="stylesheet" href="../../css/editButtonWindow.css">
+	<script defer type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
+	<script defer src="../../js/build.js" onload=""></script><!-- TODO: initEditButtonWindow(PARAMS?) -->
 </head>
 
 <body>
@@ -24,8 +26,6 @@
 		<label for="path-selector">Button path: </label><input type="file" name="" id="path-selector">
 		<input type="submit" value="submit">
 	</form>
-
-	<script type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>
