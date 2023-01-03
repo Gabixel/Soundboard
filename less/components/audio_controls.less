@@ -19,7 +19,7 @@
 		transition: background-color 0.1s ease;
 	}
 
-	&>div {
+	& > div {
 		&:not(:first-child) {
 			margin-top: 5px;
 		}
@@ -71,17 +71,45 @@
 		@l: 37%;
 
 		border: none;
-		background: @hsl-normal;
+		background-color: @hsl-normal;
 		color: #fff;
 		.hide-overflow();
 
 		display: inline-flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: space-between;
 
 		border-radius: @radius;
 		width: @btn-size;
 		height: @btn-size;
+
+		&:hover:not(:disabled) {
+			background-color: @hsl-hover;
+		}
+
+		&:active:not(:disabled) {
+			background-color: @hsl-active;
+		}
+	}
+
+	#clear-grid {
+		@h: 352;
+		@s: 80%;
+		@l: 46%;
+
+		border-radius: @radius;
+		height: @btn-size;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		color: #fff;
+
+		background-color: @hsl-normal;
+
+		i {
+			margin-right: 4px;
+		}
 
 		&:hover:not(:disabled) {
 			background-color: @hsl-hover;
@@ -107,16 +135,16 @@
 		align-items: baseline;
 
 		label:first-child {
-			margin-right: .3em;
+			margin-right: 0.3em;
 		}
 
 		select {
-			margin-left: .3em;
+			margin-left: 0.3em;
 		}
 
 		input[type="checkbox"] {
 			align-self: center;
-			margin: 0 .15em;
+			margin: 0 0.15em;
 		}
 	}
 
