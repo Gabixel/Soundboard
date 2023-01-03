@@ -24,6 +24,7 @@
 	<link rel="stylesheet" href="../../css/sound_button.css">
 	<link rel="stylesheet" href="../../css/volume_slider.css">
 	<script defer type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
+	<script defer src="../../js/build.js" onload="initMainWindow();"></script>
 </head>
 
 <body>
@@ -43,9 +44,9 @@
 				<div id="audio-controls">
 					<div>
 						<button type="button" id="stop-audio"><i class="fas fa-stop"></i></button>
-						<button type="button" id="play-pause-audio"><i class="fas fa-pause"
-								style="margin-right: 5px;"></i><i class="fas fa-play"></i></button>
-						<button type="button" id="clear-grid">Reset Grid</button>
+						<button type="button" id="play-pause-audio"><i class="fas fa-play"></i><i class="fas fa-pause"
+								style="margin-right: 5px;"></i></button>
+						<button type="button" id="clear-grid"><i class="fa-solid fa-trash-can"></i>Reset Grid</button>
 					</div>
 					<div id="buttons-filter">
 						<div>
@@ -57,8 +58,8 @@
 							<label>Filters:</label>
 							<input type="checkbox" id="buttons-filter-text" style="accent-color: #ccc;" checked><label
 								for="buttons-filter-text">Text</label>|<input type="checkbox" id="buttons-filter-index"
-								style="accent-color: #ccc;"><label for="buttons-filter-index">Index (from </label><select
-								id="buttons-filter-index-offset">
+								style="accent-color: #ccc;"><label for="buttons-filter-index">Index (from
+							</label><select id="buttons-filter-index-offset">
 								<option value="0">0</option>
 								<option value="1">1</option>
 							</select><label for="buttons-filter-index">)</label>|<input type="checkbox"
