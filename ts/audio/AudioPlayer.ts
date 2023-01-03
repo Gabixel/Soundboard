@@ -10,10 +10,12 @@ abstract class AudioPlayer extends Logger {
 	private static audioDevicesInfo: MediaDeviceInfo[];
 
 	public static async updateAudioDevicesList(): Promise<void> {
+		// Get audio output devices
 		const devices = await navigator.mediaDevices.enumerateDevices();
-
 		this.audioDevicesInfo = devices.filter(({ kind }) => kind === "audiooutput");
-		this.audioStore.updateAudioDevice(this.audioDevicesInfo[2]); // TODO: Store preferred device
+
+		// FIXME: Store preferred device
+		this.audioStore.updateAudioDevice(this.audioDevicesInfo[2]);
 
 		this.logInfo(
 			this.updateAudioDevicesList,

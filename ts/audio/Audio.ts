@@ -1,3 +1,5 @@
+// TODO: move inside AudioPlayer ?
+
 // let playPauseTimeout: NodeJS.Timeout;
 
 $("#stop-audio").on("click", async () => {
