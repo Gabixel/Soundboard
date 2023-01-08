@@ -3,19 +3,26 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"display": "Node 16",
+	"compileOnSave": true,
 
 	"compilerOptions": {
 		// "composite": true,
-		// "rootDir": "./ts/",
+		"rootDir": ".",
 		// "outDir": "./js/",
-		"outFile": "./js/build.js",
+		// "outFile": "./js/build.js",
 		"target": "ESNext",
-		// "module": "AMD",
-		"lib": ["ES2021", "DOM"],
+		// "module": "CommonJS",
+		"sourceMap": true,
+		"lib": ["ES2015", "DOM"],
+		"moduleResolution": "node",
+		"baseUrl": ".",
 
 		// Export
 		"preserveConstEnums": true,
 		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"stripInternal": true,
 
 		// Intellisense
 		"noImplicitAny": true,
@@ -28,7 +35,6 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"moduleResolution": "node",
 
 		"declaration": true,
 		// "emitDeclarationOnly": true,
@@ -37,30 +43,7 @@
 
 	// "include": ["./ts/**/*.ts"],
 	"exclude": [
-		"node_modules"
-		// "js"
-	],
-	"files": [
-		"./ts/utility/Logger.ts",
-		"./ts/utility/SoundBoardApi.ts",
-		"./ts/utility/ExtendedMath.ts",
-		"./ts/utility/EventFunctions.ts",
-
-		"./ts/grid/GridResizer.ts",
-		"./ts/grid/Grid.ts",
-		"./ts/grid/ButtonSwap.ts",
-		"./ts/grid/ButtonFilter.ts",
-		"./ts/grid/SoundButton.ts",
-
-		"./ts/audio/AudioPool.ts",
-		"./ts/audio/AudioStoreManager.ts",
-		"./ts/audio/AudioPlayer.ts",
-		"./ts/audio/Audio.ts",
-
-		"./ts/controls/Presets_Panel.ts",
-		"./ts/controls/UiScale.ts",
-
-		"./ts/ToolbarManager.ts",
-		"./ts/Index.ts"
+		"node_modules/",	
+		"src/"
 	]
 }

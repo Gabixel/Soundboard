@@ -1,6 +1,6 @@
 {
 	"less.compile": {
-		"out": "${workspaceFolder}/css/",
+		"out": "${workspaceFolder}/src/css/",
 		"compress": true,
 	},
 	"files.exclude": {

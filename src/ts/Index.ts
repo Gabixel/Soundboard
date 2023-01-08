@@ -1,57 +1,3 @@
-//#region Types
-type AudioJS = HTMLAudioElement & {
-	setSinkId(deviceId: string): Promise<undefined>;
-	sinkId: string;
-};
-type AudioGroup = { // TODO: rename to singlepoolgroup
-	main: AudioJS;
-	playback: AudioJS;
-	lastTrack: string;
-};
-type AudioPoolGroup = { // TODO: rename to multipoolgroup
-	main: AudioJS;
-	mainEnded: boolean;
-	playback: AudioJS;
-	playbackEnded: boolean;
-	forcedEnding: boolean;
-};
-type SoundButtonData = {
-	/**
-	 * The (unrendered) text
-	 */
-	title?: string;
-	/**
-	 * The color (fallback if image fails)
-	 */
-	color?: {
-		h: number;
-		s: number;
-		l: number;
-	};
-	/**
-	 * 
-	 */
-	image?: string;
-	tags?: string[];
-	time?: AudioTimings;
-	path?: string;
-};
-type AudioTimings = {
-	/**
-	 * Start time (in milliseconds)
-	 */
-	start: number;
-	/**
-	 * End time (in milliseconds)
-	 */
-	end: number;
-	/**
-	 * Ending condition
-	 */
-	condition: "at" | "after";
-};
-//#endregion
-
 function fixJQueryPassiveEvents() {
 	console.log("test");
 
@@ -120,3 +66,78 @@ async function initMainWindow() {
 		return false;
 	});
 }
+
+//#region Types
+type AudioJS = HTMLAudioElement & {
+	setSinkId(deviceId: string): Promise<undefined>;
+	sinkId: string;
+};
+type AudioGroup = {
+	// TODO: rename to singlepoolgroup
+	main: AudioJS;
+	playback: AudioJS;
+	lastTrack: string;
+};
+type AudioPoolGroup = {
+	// TODO: rename to multipoolgroup
+	main: AudioJS;
+	mainEnded: boolean;
+	playback: AudioJS;
+	playbackEnded: boolean;
+	forcedEnding: boolean;
+};
+type SoundButtonData = {
+	/**
+	 * The (unrendered) text
+	 */
+	title?: string;
+	/**
+	 * The color (fallback if image fails)
+	 */
+	color?: {
+		/**
+		 * Hue
+		 */
+		h: number;
+		/**
+		 * Saturation
+		 */
+		s: number;
+		/**
+		 * Lightness
+		 */
+		l: number;
+	};
+	/**
+	 * The background image
+	 */
+	image?: string;
+	/**
+	 * Search tags
+	 */
+	tags?: string[];
+	/**
+	 * The audio start/end timestamp conditions
+	 */
+	time?: AudioTimings;
+	/**
+	 * Audio file path
+	 */
+	path?: string;
+};
+type AudioTimings = {
+	/**
+	 * Start time (in milliseconds)
+	 */
+	start: number;
+	/**
+	 * End time (in milliseconds)
+	 */
+	end: number;
+	// TODO: better explanation of 'condition'
+	/**
+	 * Ending condition
+	 */
+	condition: "at" | "after";
+};
+//#endregion
