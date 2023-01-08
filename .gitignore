@@ -406,6 +406,9 @@ FodyWeavers.xsd
 # JavaScript generated files
 *.js
 
+# JavaScript maps files
+*.js.map
+
 # TSConfig
 tsconfig.tsbuildinfo
 
