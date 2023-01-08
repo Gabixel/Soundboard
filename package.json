@@ -1,8 +1,8 @@
 {
 	"name": "soundboard",
 	"version": "1.0.0",
-	"description": "A soundboard for Discord",
-	"productName": "SoundBoard",
+	"description": "A soundboard for your friends!",
+	"productName": "Soundboard",
 	"main": "main.js",
 	"author": "Gabixel",
 	"license": "MIT",
