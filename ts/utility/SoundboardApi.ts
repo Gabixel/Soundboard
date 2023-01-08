@@ -14,4 +14,9 @@ abstract class SoundboardApi extends Logger {
 		// @ts-ignore
 		return window.api.isProduction;
 	}
+
+	public static isPathFile(path: string): boolean {
+		// @ts-ignore
+		return window.api.isPathFile(path);
+	}
 }
