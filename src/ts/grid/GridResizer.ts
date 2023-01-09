@@ -1,8 +1,8 @@
 abstract class GridResizer {
-	private static grid: Grid;
+	private static _grid: Grid;
 
 	public static setGrid(grid: Grid): void {
-		this.grid = grid;
+		this._grid = grid;
 	}
 
 	private static setupResizeEvents(): void {}

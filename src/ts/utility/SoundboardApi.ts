@@ -1,22 +1,37 @@
 abstract class SoundboardApi extends Logger {
 	public static openContextMenu(args: any = null): void {
-		this.logInfo(
-			this.openContextMenu,
-			"Opening context menu with args:",
-			args
-		);
+		this.logInfo(this.openContextMenu, "Opening context menu with args:", args);
 
-		// @ts-ignore
-		window.api.openContextMenu(args);
+		this._api.openContextMenu(args);
 	}
 
 	public static get isProduction(): boolean {
-		// @ts-ignore
-		return window.api.isProduction;
+		return this._api.isProduction;
 	}
 
 	public static isPathFile(path: string): boolean {
-		// @ts-ignore
-		return window.api.isPathFile(path);
+		// return this._api.isPathFile(path);
+		return false;
+	}
+
+	private static get _api() {
+		return (window as any).api as WindowApiBridge;
 	}
 }
+
+// Keep updated with:
+// - "~/app/windows/mainWindow/preload.ts"
+// - "~/app/windows/editButtonWindow/preload.ts"
+type WindowApiBridge = {
+	/*
+	 * MainWindowApiBridge
+	 */
+	openContextMenu: (args: any) => void;
+	// isPathFile: (args: string) => boolean;
+	isProduction: boolean;
+
+	/*
+	 * EditButtonWindowApiBridge
+	 */
+	// TODO
+};

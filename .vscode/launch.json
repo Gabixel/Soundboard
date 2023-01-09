@@ -8,9 +8,12 @@
 			"cwd": "${workspaceRoot}",
 			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
 			"windows": {
+				// "name": "Launch",
+				// "type": "node",
+				// "request": "launch",
 				"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
 			},
-			"program": "${workspaceRoot}/main.js"
+			"program": "${workspaceRoot}/app/main.js"
 		}
 	]
 }

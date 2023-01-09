@@ -8,11 +8,11 @@
 	"compilerOptions": {
 		// "composite": true,
 		"rootDir": ".",
-		// "outDir": "./js/",
+		"outDir": "../js/",
 		// "outFile": "./js/build.js",
 		"target": "ESNext",
+		"module": "AMD",
 		// "module": "CommonJS",
-		"sourceMap": true,
 		"lib": ["ES2015", "DOM"],
 		"moduleResolution": "node",
 		"baseUrl": ".",
@@ -37,13 +37,11 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"declaration": true,
+		"sourceMap": true,
+		
 		// "emitDeclarationOnly": true,
 		"allowJs": false
 	},
 
-	// "include": ["./ts/**/*.ts"],
-	"exclude": [
-		"node_modules/",	
-		"src/"
-	]
+	"references": []
 }

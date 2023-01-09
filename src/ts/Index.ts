@@ -31,11 +31,22 @@ function fixJQueryPassiveEvents() {
 	};
 }
 
+// On page load
+$(initMainWindow);
+
 async function initMainWindow() {
 	fixJQueryPassiveEvents();
 
-	window.addEventListener("dragover", (event) => event.preventDefault());
-	window.addEventListener("drop", (event) => event.preventDefault());
+	// Show application
+	$(document.body).find("#soundboard").attr("style", "opacity: 1");
+
+	// Try to fix a weird bug
+	window.addEventListener("dragover", (event) => event.preventDefault(), {
+		passive: true,
+	});
+	window.addEventListener("drop", (event) => event.preventDefault(), {
+		passive: true,
+	});
 
 	Grid.initGrid($("#buttons-grid"));
 

@@ -10,7 +10,7 @@ abstract class SoundButton extends Logger{
 
 	private static getRandomPath(): string {
 		return encodeURI(
-			"../../resources/sounds/" + this.paths[EMath.randomInt(0, this.paths.length)]
+			"../../../resources/sounds/" + this.paths[EMath.randomInt(0, this.paths.length)]
 		);
 	}
 
@@ -224,5 +224,5 @@ abstract class SoundButton extends Logger{
 		});
 	}
 
-	// Create a constructor and use it inside itself?
+	// TODO: Create a constructor and use it inside itself?
 }

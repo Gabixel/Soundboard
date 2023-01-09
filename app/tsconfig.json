@@ -1,0 +1,47 @@
+// Also check https://github.com/tsconfig/bases/blob/main/bases/node16.json
+
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "Node 16",
+	"compileOnSave": true,
+
+	"compilerOptions": {
+		// "composite": true,
+		"rootDir": ".",
+		// "outDir": "./js/",
+		// "outFile": "./js/build.js",
+		"target": "ESNext",
+		"module": "Node16",
+		// "module": "CommonJS",
+		"lib": ["ES2015", "DOM"],
+		"moduleResolution": "node",
+		"baseUrl": ".",
+
+		// Export
+		"preserveConstEnums": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"stripInternal": true,
+
+		// Intellisense
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"noImplicitThis": true,
+		// "noImplicitUseStrict": true,
+		"strictNullChecks": false,
+
+		"strict": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+
+		"declaration": false,
+		"sourceMap": false,
+
+		// "emitDeclarationOnly": true,
+		"allowSyntheticDefaultImports": true,
+		"allowJs": false
+	},
+	"references": []
+}
