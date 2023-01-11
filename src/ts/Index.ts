@@ -40,14 +40,6 @@ async function initMainWindow() {
 	// Show application
 	$(document.body).find("#soundboard").attr("style", "opacity: 1");
 
-	// Try to fix a weird bug
-	window.addEventListener("dragover", (event) => event.preventDefault(), {
-		passive: true,
-	});
-	window.addEventListener("drop", (event) => event.preventDefault(), {
-		passive: true,
-	});
-
 	Grid.initGrid($("#buttons-grid"));
 
 	initResizer(); // TODO: move to class
