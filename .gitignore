@@ -405,6 +405,7 @@ FodyWeavers.xsd
 
 # JavaScript generated files
 *.js
+!resources/**/*.js
 
 # JavaScript maps files
 *.js.map
