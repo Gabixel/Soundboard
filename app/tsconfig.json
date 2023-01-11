@@ -43,5 +43,6 @@
 		"allowSyntheticDefaultImports": true,
 		"allowJs": false
 	},
+	
 	"references": []
 }

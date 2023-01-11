@@ -1,9 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 import path from "path";
-const SOURCES_ROOT = "../../../src";
+const SOURCES_ROOT = "../../../src/"
 
-// Create API bridge
-exposeApiInMainWorld("api", {
+const api: MainWindowApiBridge = {
 	openContextMenu: (args) => ipcRenderer.send("open-context-menu", args),
 
 	// isPathFile: (args: string) => ipcRenderer.send("is-path-file", args),
@@ -13,13 +12,15 @@ exposeApiInMainWorld("api", {
 	// isPathFolderAsync: async (args) => ipcRenderer.send("open-context-menu", args),
 
 	isProduction: process.env.NODE_ENV === "production",
-});
+};
 
-function exposeApiInMainWorld(apiKey: string, api: MainWindowApiBridge) {
-	contextBridge.exposeInMainWorld(apiKey, api);
-}
+// Keep updated with "/src/ts/utility/SoundboardApi.ts"
+type MainWindowApiBridge = {
+	openContextMenu: (args: object) => void;
+	// isPathFile: (args: string) => boolean;
+	isProduction: boolean;
+};
 
-//#region Stylesheets
 const styles = [
 	"colors",
 	"base",
@@ -34,18 +35,6 @@ const styles = [
 	"volume_slider",
 ];
 
-function appendStyles(styles: string[]) {
-	styles.forEach((s) => {
-		const stylesheet = window.document.createElement("link");
-		stylesheet.type = "text/css";
-		stylesheet.rel = "stylesheet";
-		stylesheet.href = path.join(SOURCES_ROOT, "css", s + ".css");
-		window.document.head.appendChild(stylesheet);
-	});
-}
-//#endregion
-
-//#region Scripts
 const scripts = [
 	"utility/Logger",
 	"utility/ExtendedMath",
@@ -71,26 +60,32 @@ const scripts = [
 	"Index",
 ];
 
-function appendScripts(scripts: string[]) {
-	scripts.forEach((s) => {
-		const script = window.document.createElement("script");
-		script.async = false;
-		script.defer = true;
-		script.type = "text/javascript";
-		script.src = path.join(SOURCES_ROOT, "js", s + ".js");
-		window.document.head.appendChild(script);
-	});
-}
-//#endregion
+// Create API bridge
+contextBridge.exposeInMainWorld("api", api);
 
 window.onload = () => {
 	appendStyles(styles);
 	appendScripts(scripts);
 };
 
-// Keep updated with "/src/ts/utility/SoundboardApi.ts"
-type MainWindowApiBridge = {
-	openContextMenu: (args: any) => void;
-	// isPathFile: (args: string) => boolean;
-	isProduction: boolean;
-};
+function appendStyles(styles: string[]) {
+	styles.forEach((s) => {
+		const stylesheet = window.document.createElement("link");
+		stylesheet.type = "text/css";
+		stylesheet.rel = "stylesheet";
+		stylesheet.href = path.join(SOURCES_ROOT, "css", s + ".css");
+		window.document.head.appendChild(stylesheet);
+	});
+}
+
+function appendScripts(scripts: string[]) {
+	scripts.forEach((s) => {
+		const script = window.document.createElement("script");
+		script.async = false;
+		script.defer = true;
+		script.type = "text/javascript";
+		script.src = "";
+		script.src = path.join(SOURCES_ROOT, "js", s + ".js");
+		window.document.head.appendChild(script);
+	});
+}
