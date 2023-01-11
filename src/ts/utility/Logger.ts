@@ -1,6 +1,32 @@
 abstract class Logger {
 	private static chosenStyle: number = 1;
 
+	/** Debug-level logging (aka "Verbose") */
+	public static logDebug(
+		callerFunction: ((...any: any[]) => any) | string,
+		message: string,
+		...args: any[]
+	): void {
+		if (SoundboardApi.isProduction) {
+			return;
+		}
+
+		const callerClass = this.name;
+		let attributes: [string, string[]];
+
+		if (typeof callerFunction === "string") {
+			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
+		} else {
+			attributes = this.getStyledAttributes(
+				callerClass,
+				callerFunction?.name,
+				message
+			);
+		}
+
+		console.debug(attributes[0], ...attributes[1], ...args);
+	}
+
 	/** Info-level logging */
 	public static logInfo(
 		callerFunction: ((...any: any[]) => any) | string,
@@ -53,34 +79,8 @@ abstract class Logger {
 		console.error(attributes[0], ...attributes[1], ...args);
 	}
 
-	/** Debug-level logging */
-	public static logDebug(
-		callerFunction: ((...any: any[]) => any) | string,
-		message: string,
-		...args: any[]
-	): void {
-		if (SoundboardApi.isProduction) {
-			return;
-		}
-
-		const callerClass = this.name;
-		let attributes: [string, string[]];
-
-		if (typeof callerFunction === "string") {
-			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
-		} else {
-			attributes = this.getStyledAttributes(
-				callerClass,
-				callerFunction?.name,
-				message
-			);
-		}
-
-		console.debug(attributes[0], ...attributes[1], ...args);
-	}
-
 	private static getStyledAttributes(
-		callerClass: any,
+		callerClass: string,
 		callerFunction: string,
 		message: string
 	): [string, string[]] {

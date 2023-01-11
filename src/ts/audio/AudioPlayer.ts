@@ -168,7 +168,7 @@ abstract class AudioPlayer extends Logger {
 		if (this.canLogVolume) {
 			this.canLogVolume = false;
 
-			this.logInfo(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+			this.logDebug(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
 
 			setTimeout(() => {
 				this.canLogVolume = true;
