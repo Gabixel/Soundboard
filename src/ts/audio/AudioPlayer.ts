@@ -116,10 +116,9 @@ abstract class AudioPlayer extends Logger {
 
 		const group: AudioPoolGroup = {
 			main,
-			mainEnded: false,
 			playback,
-			playbackEnded: false,
-			forcedEnding: false,
+			ended: false,
+			forcedStop: false,
 		};
 
 		main.volume = playback.volume = this.volume;

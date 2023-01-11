@@ -84,10 +84,9 @@ type AudioGroup = {
 type AudioPoolGroup = {
 	// TODO: rename to multipoolgroup
 	main: AudioJS;
-	mainEnded: boolean;
 	playback: AudioJS;
-	playbackEnded: boolean;
-	forcedEnding: boolean;
+	ended: boolean;
+	forcedStop: boolean;
 };
 type SoundButtonData = {
 	/**

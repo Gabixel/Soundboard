@@ -7,6 +7,7 @@ class AudioPool extends Logger {
 		this.audioPool.push(group);
 
 		$(group.playback).one("ended", () => {
+			group.ended = true;
 			this.remove(group);
 			group = null;
 		});
@@ -23,7 +24,7 @@ class AudioPool extends Logger {
 
 	public async play(): Promise<void> {
 		this.audioPool.forEach(async (group) => {
-			if (group.forcedEnding) return;
+			if (group.forcedStop) return;
 
 			await group.main.play();
 			await group.playback.play();
@@ -32,7 +33,7 @@ class AudioPool extends Logger {
 
 	public pause(): void {
 		this.audioPool.forEach((group) => {
-			if (group.forcedEnding) return;
+			if (group.forcedStop) return;
 
 			group.main.pause();
 			group.playback.pause();
@@ -42,7 +43,7 @@ class AudioPool extends Logger {
 	public stop(): void {
 		AudioPool.logInfo(this.remove, "Forced pool stop");
 		this.audioPool.forEach((group) => {
-			group.forcedEnding = true;
+			group.forcedStop = true;
 
 			group.main.volume = group.playback.volume = 0;
 
@@ -53,7 +54,7 @@ class AudioPool extends Logger {
 
 	public set volume(value: number) {
 		this.audioPool.forEach((group) => {
-			if (group.forcedEnding) return;
+			if (group.forcedStop) return;
 
 			group.main.volume = group.playback.volume = value;
 		});
