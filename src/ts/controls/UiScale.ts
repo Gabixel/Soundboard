@@ -76,7 +76,7 @@ abstract class UiScale extends Logger {
 					},
 					325
 				);
-				this.logInfo(
+				this.logDebug(
 					"(ui scale slider click)",
 					"UI Scale changed:",
 					parseFloat($(e.target).val().toString())
