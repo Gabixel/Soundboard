@@ -5,6 +5,8 @@
 
 <hr/>
 
+Note: The following README content is old. It needs to be changed.
+
 The project uses [Electron](https://www.electronjs.org/) (which is based on [Node.js](https://nodejs.org/en/))
 
 Current way to debug the app (with each file compiled):
