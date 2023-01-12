@@ -1,6 +1,15 @@
 abstract class EMath {
+
 	public static clamp(value: number, min: number, max: number): number {
 		return Math.min(Math.max(value, min), max);
+	}
+
+	public static clampMin(value: number, min: number){
+		return Math.max(value, min);
+	}
+	
+	public static clampMax(value: number, max: number){
+		return Math.min(value, max);
 	}
 
 	/**

@@ -10,18 +10,18 @@ abstract class GridResizer {
 
 // TODO: move all to class //////////////////////////////////////////////////////
 
-let resizerStarted = false;
+let resizerInitialized = false;
 
 function initResizer() {
 	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
-	resizerStarted = true;
+	resizerInitialized = true;
 	updateGrid();
 }
 
 $("#grid-rows")
 	.on("change", (e) => {
 		updateRows(e);
-		if (resizerStarted) updateGrid();
+		if (resizerInitialized) updateGrid();
 	})
 	.on("wheel", (e) => {
 		if (e.ctrlKey) return;
@@ -36,7 +36,7 @@ $("#grid-rows")
 $("#grid-columns")
 	.on("change", (e) => {
 		updateColumns(e);
-		if (resizerStarted) updateGrid();
+		if (resizerInitialized) updateGrid();
 	})
 	.on("wheel", (e) => {
 		if (e.ctrlKey) return;
@@ -54,8 +54,22 @@ $("#clear-grid").on("click", () => {
 	updateGrid();
 });
 
-function updateRows(e: JQuery.ChangeEvent) {
-	const rows = parseInt($(e.target).val().toString());
+function clampGridSizeValue($e: JQuery.ChangeEvent): number {
+	const $target = $($e.target);
+	const value = parseInt($target.val().toString());
+
+	let max = parseFloat($target.attr("max").toString());
+	let min = parseFloat($target.attr("min").toString());
+
+	let clampedValue = EMath.clamp(value, min, max);
+
+	$target.val(clampedValue);
+
+	return clampedValue;
+}
+
+function updateRows($e: JQuery.ChangeEvent) {
+	const rows = clampGridSizeValue($e);
 
 	// $("#buttons-grid").css({
 	// 	gridTemplateRows: `repeat(${rows}, 1fr)`,
@@ -65,8 +79,8 @@ function updateRows(e: JQuery.ChangeEvent) {
 	Grid.setRows(rows);
 }
 
-function updateColumns(e: JQuery.ChangeEvent) {
-	const columns = parseInt($(e.target).val().toString());
+function updateColumns($e: JQuery.ChangeEvent) {
+	const columns = clampGridSizeValue($e);
 
 	// $("#buttons-grid").css({
 	// 	gridTemplateColumns: `repeat(${columns}, 1fr)`,
