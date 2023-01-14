@@ -1,6 +1,4 @@
 function fixJQueryPassiveEvents() {
-	console.log("test");
-
 	jQuery.event.special.touchstart = {
 		setup: function (_, ns, handle) {
 			//@ts-ignore
