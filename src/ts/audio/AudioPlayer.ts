@@ -116,12 +116,17 @@ abstract class AudioPlayer extends Logger {
 		mainAudio: AudioJS,
 		time: AudioTimings
 	): Promise<void> {
+		// Create multi audio pool group
 		const main = mainAudio;
 		const playback = mainAudio.cloneNode() as AudioJS;
-
 		const group: AudioPoolGroup = {
 			main,
 			playback,
+			$all: $(main).add($(playback)),
+			all: (func) => {
+				func(main);
+				func(playback);
+			},
 			ended: false,
 			forcedStop: false,
 		};

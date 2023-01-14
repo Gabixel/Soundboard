@@ -69,6 +69,7 @@ async function initMainWindow() {
 }
 
 //#region Types
+type AnyFunc<T> = (...any: any[]) => T;
 type AudioJS = HTMLAudioElement & {
 	setSinkId(deviceId: string): Promise<undefined>;
 	sinkId: string;
@@ -77,12 +78,16 @@ type AudioGroup = {
 	// TODO: rename to singlepoolgroup
 	main: AudioJS;
 	playback: AudioJS;
+	$all: JQuery<HTMLAudioElement>;
+	all: (func: (audio: AudioJS) => void) => void;
 	lastTrack: string;
 };
 type AudioPoolGroup = {
 	// TODO: rename to multipoolgroup
 	main: AudioJS;
 	playback: AudioJS;
+	$all: JQuery<HTMLAudioElement>;
+	all: (func: (audio: AudioJS) => void) => void;
 	ended: boolean;
 	forcedStop: boolean;
 };

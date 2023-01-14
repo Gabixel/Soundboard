@@ -1,18 +1,37 @@
 class AudioStoreManager extends Logger {
-	private singlePool: AudioGroup = {
-		main: new Audio() as AudioJS,
-		playback: new Audio() as AudioJS,
-		lastTrack: "",
-	};
+	private singlePool: AudioGroup;
 	private multiPool: AudioPool = new AudioPool();
 
 	private multiPoolLimit: number = 10;
 
 	constructor(volume: number = 0) {
 		super();
+
+		// Create main audio pool
+		let main = new Audio() as AudioJS;
+		let playback = new Audio() as AudioJS;
+		this.singlePool = {
+			main,
+			playback,
+			$all: $(main).add($(playback)),
+			all: (func) => {
+				func(main);
+				func(playback);
+			},
+			lastTrack: "",
+		};
+
+		// TODO: caching (somehow)?
+		// Set anonymous crossorigin for caching
+		// See: https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video/#:~:text=elements%20need%20to%20opt%20into%20CORS%20mode%20with%20the%20crossorigin%20attribute
+		// main.crossOrigin = playback.crossOrigin = "anonymous";
+
+		// Set to desired volume
+		// TODO: sum with overriding volume when it will be implemented
 		this.singlePool.main.volume = this.singlePool.playback.volume = volume;
-		$(this.singlePool.main)
-			.add(this.singlePool.playback)
+
+		// Add audio events
+		this.singlePool.$all
 			.on("canplay", (e) => {
 				AudioStoreManager.logInfo("[constructor]", "Audio can play");
 				this.playGroup(this.singlePool);
@@ -28,6 +47,7 @@ class AudioStoreManager extends Logger {
 	}
 
 	public updateAudioDevice(device: MediaDeviceInfo): void {
+		// TODO: add more logic and various guards (e.g. `main` and `playback` on same output)
 		this.singlePool.main.setSinkId(device.deviceId);
 	}
 
@@ -105,13 +125,8 @@ class AudioStoreManager extends Logger {
 		this.singlePool.main.pause();
 		this.singlePool.playback.pause();
 
+		this.stopSinglePoolAudio();
 		this.stopMultiPoolAudio();
-
-		$(this.singlePool.main).add($(this.singlePool.playback)).removeAttr("src");
-		this.singlePool.lastTrack = "";
-
-		this.singlePool.main.load();
-		this.singlePool.playback.load();
 	}
 
 	public get isPlaying(): boolean {
@@ -140,7 +155,22 @@ class AudioStoreManager extends Logger {
 		if (this.multiPool.hasAudio) this.multiPool.volume = value;
 	}
 
+	private stopSinglePoolAudio(): void {
+		try {
+			this.singlePool.$all.stop();
+		} catch (e) {
+			AudioStoreManager.logError(this.stopSinglePoolAudio, "", e);
+			return;
+		}
+
+		this.singlePool.lastTrack = "";
+	}
+
 	private stopMultiPoolAudio(): void {
-		if (this.multiPool.hasAudio) this.multiPool.stop();
+		if (!this.multiPool.hasAudio) {
+			return;
+		}
+
+		this.multiPool.stop();
 	}
 }

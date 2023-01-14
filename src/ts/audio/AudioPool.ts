@@ -7,14 +7,25 @@ class AudioPool extends Logger {
 		this.audioPool.push(group);
 
 		$(group.playback).one("ended", () => {
-			group.ended = true;
+			// Set the track as 'ended' only if it finished by itself
+			group.ended = !group.forcedStop;
+
 			this.remove(group);
+
 			group = null;
 		});
 	}
 
 	public remove(removingGroup: AudioPoolGroup): void {
 		const index = this.audioPool.indexOf(removingGroup);
+
+		if (index == -1) {
+			AudioPool.logError(
+				this.remove,
+				"Removing pool is already removed:",
+				removingGroup
+			);
+		}
 
 		// if (!removingGroup.forcedEnding)
 		AudioPool.logInfo(this.remove, "Removing pool:", removingGroup);
@@ -23,16 +34,21 @@ class AudioPool extends Logger {
 	}
 
 	public async play(): Promise<void> {
-		this.audioPool.forEach(async (group) => {
+		for (const group of this.audioPool) {
 			if (group.forcedStop) return;
 
 			await group.main.play();
 			await group.playback.play();
-		});
+		}
 	}
 
 	public pause(): void {
 		this.audioPool.forEach((group) => {
+			AudioPool.logDebug(
+				this.pause,
+				"Trying to pause " + this.audioPool.length + " audio group(s)\n"
+			);
+
 			if (group.forcedStop) return;
 
 			group.main.pause();
@@ -41,12 +57,14 @@ class AudioPool extends Logger {
 	}
 
 	public stop(): void {
-		AudioPool.logInfo(this.remove, "Forced pool stop");
+		AudioPool.logInfo(this.stop, "Forced multi pool stop");
+
 		this.audioPool.forEach((group) => {
+			if(group.forcedStop) return;
+
 			group.forcedStop = true;
 
-			group.main.volume = group.playback.volume = 0;
-
+			// Trigger `ended` event (from playback)
 			group.main.currentTime = group.main.duration;
 			group.playback.currentTime = group.playback.duration;
 		});

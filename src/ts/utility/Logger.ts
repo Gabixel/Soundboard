@@ -3,7 +3,7 @@ abstract class Logger {
 
 	/** Debug-level logging (aka "Verbose") */
 	public static logDebug(
-		callerFunction: ((...any: any[]) => any) | string,
+		callerFunction: AnyFunc<any> | string,
 		message: string,
 		...args: any[]
 	): void {
@@ -29,7 +29,7 @@ abstract class Logger {
 
 	/** Info-level logging */
 	public static logInfo(
-		callerFunction: ((...any: any[]) => any) | string,
+		callerFunction: AnyFunc<any> | string,
 		message: string,
 		...args: any[]
 	): void {
@@ -55,7 +55,7 @@ abstract class Logger {
 
 	/** Error-level logging */
 	public static logError(
-		callerFunction: ((...any: any[]) => any) | string,
+		callerFunction: AnyFunc<any> | string,
 		message: string,
 		...args: any[]
 	): void {
