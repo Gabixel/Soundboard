@@ -6,6 +6,8 @@ class AudioStoreManager extends Logger {
 	};
 	private multiPool: AudioPool = new AudioPool();
 
+	private multiPoolLimit: number = 10;
+
 	constructor(volume: number = 0) {
 		super();
 		this.singlePool.main.volume = this.singlePool.playback.volume = volume;
@@ -69,12 +71,6 @@ class AudioStoreManager extends Logger {
 	}
 
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {
-		// Limited sounds to prevent memory or human ear issues
-		if (this.multiPool.length > 50) {
-			AudioStoreManager.logInfo(this.addToMultiPool, "Pool limit exceeded.");
-			return;
-		}
-
 		AudioStoreManager.logInfo(
 			this.addToMultiPool,
 			"Adding new group to multi pool:",
@@ -123,6 +119,10 @@ class AudioStoreManager extends Logger {
 			this.singlePool.main.paused === false ||
 			(this.multiPool.hasAudio && this.multiPool.isPlaying)
 		);
+	}
+
+	public get isLimitReached(): boolean {
+		return this.multiPool.length > this.multiPoolLimit;
 	}
 
 	private playGroup(group: AudioGroup | AudioPoolGroup): void {

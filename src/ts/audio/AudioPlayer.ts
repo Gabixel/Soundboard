@@ -73,17 +73,22 @@ abstract class AudioPlayer extends Logger {
 
 		// TODO: clamp time? (e.g. -1000ms = 0ms)
 		
-		this.tryAddAudio(path, time, useMultiPool);
+		this.createAndPlayAudio(path, time, useMultiPool);
 	}
 
-	private static tryAddAudio(
+	private static createAndPlayAudio(
 		path: string,
 		time: AudioTimings,
 		useMultiPool: boolean
 	): void {
 		if (!useMultiPool) {
 			this.audioStore.addToSinglePool(path, time);
-			// this.audioStore.addToSinglePool(path, startTime, endTime, endType);
+			return;
+		}
+
+		// Limited sounds to prevent memory or human ear issues
+		if (this.audioStore.isLimitReached) {
+			this.logError(this.createAndPlayAudio, "Pool limit exceeded.");
 			return;
 		}
 
@@ -92,14 +97,14 @@ abstract class AudioPlayer extends Logger {
 		$(mainAudio)
 			.one("canplay", (e) => {
 				this.logInfo(
-					this.tryAddAudio,
+					this.createAndPlayAudio,
 					"Audio file created. Duration: " + e.target.duration + " seconds"
 				);
 				this.storeAudio(e.target as AudioJS, time);
 			})
 			.one("error", (e) => {
 				this.logError(
-					this.tryAddAudio,
+					this.createAndPlayAudio,
 					"Error loading audio\n",
 					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
 					e
