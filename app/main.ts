@@ -6,15 +6,11 @@ const Process = process;
 // to read: https://blog.stranianelli.com/electron-ipcmain-ipcrenderer-typescript-english/
 
 // TODO: Set app to production
-// TODO: is this really needed?
 // process.env.NODE_ENV = "production";
 
 // Set chromium environment language
 app.commandLine.appendSwitch("lang", "en-US");
 
-// TODO: app localization
-
-// TODO: use enum for OS?
 const isMac = Process.platform === "darwin";
 const isWindows = Process.platform === "win32";
 const isLinux = Process.platform === "linux";
@@ -26,8 +22,15 @@ const isProduction = Process.env.NODE_ENV === "production";
  */
 const windowRootPath = path.join(__dirname, "windows");
 
-let mainWindow: BrowserWindow; // The main soundboard
-let editButtonWindow: BrowserWindow; // The button editor
+/**
+ * The main soundboard window, with grid, toolbar and controls.
+ */
+let mainWindow: BrowserWindow;
+
+/**
+ * The edit window for any SoundButton.
+ */
+let editButtonWindow: BrowserWindow;
 
 const webPreferences = {
 	// preload: path.join(__dirname, "/preload.js"),
