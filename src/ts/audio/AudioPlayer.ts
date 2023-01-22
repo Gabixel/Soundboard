@@ -7,20 +7,20 @@ abstract class AudioPlayer extends Logger {
 
 	private static audioStore: AudioStoreManager = new AudioStoreManager();
 
-	private static audioDevicesInfo: MediaDeviceInfo[];
+	private static audioDevices: MediaDeviceInfo[];
 
 	public static async updateAudioDevicesList(): Promise<void> {
 		// Get audio output devices
 		const devices = await navigator.mediaDevices.enumerateDevices();
-		this.audioDevicesInfo = devices.filter(({ kind }) => kind === "audiooutput");
+		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 
 		// FIXME: Store preferred device
-		this.audioStore.updateAudioDevice(this.audioDevicesInfo[2]);
+		this.audioStore.updateAudioDevice(this.audioDevices[2]);
 
 		this.logInfo(
 			this.updateAudioDevicesList,
 			"Devices list updated!\n",
-			this.audioDevicesInfo
+			this.audioDevices
 		);
 	}
 
@@ -140,9 +140,9 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	private static async setSinkId(audio: AudioJS): Promise<void> {
-		if (!this.audioDevicesInfo) await this.updateAudioDevicesList();
+		if (!this.audioDevices) await this.updateAudioDevicesList();
 
-		await audio.setSinkId(this.audioDevicesInfo[2].deviceId);
+		await audio.setSinkId(this.audioDevices[2].deviceId);
 	}
 
 	public static async play(): Promise<void> {
