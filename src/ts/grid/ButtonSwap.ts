@@ -51,16 +51,13 @@ abstract class ButtonSwap extends Logger {
 
 			this.$currentTarget.addClass("dragging");
 
-			const rows = parseInt($("#grid-rows").val().toString());
-			const cols = parseInt($("#grid-columns").val().toString());
-
 			if (
-				rows > 7 &&
-				cols > 7 &&
-				($("#buttons-grid .soundbutton").length > 49 || this.isIndexChanged)
+				Grid.rows >= 7 &&
+				Grid.cols >= 7 &&
+				(Grid.buttonCount >= 49 || this.isIndexChanged)
 			) {
 				const draggedButtonIndex = parseInt(this.$currentTarget.css("--index"));
-				this.setOpacityDelay(cols, draggedButtonIndex);
+				this.setOpacityDelay(Grid.cols, draggedButtonIndex);
 			}
 
 			Grid.$grid.addClass("has-dragging-child");
@@ -131,7 +128,7 @@ abstract class ButtonSwap extends Logger {
 
 				$dropTarget?.removeClass("drop-destination");
 				this.clearOpacityDelay();
-				$("#buttons-grid .soundbutton.hovered").removeClass("hovered");
+				Grid.$buttons.find(".hovered").removeClass("hovered");
 
 				this.isStyleStarted = false;
 				this.$currentTarget = null;
@@ -178,7 +175,7 @@ abstract class ButtonSwap extends Logger {
 	}
 
 	private static clearOpacityDelay(): void {
-		$("#buttons-grid .soundbutton").css("--opacity-delay", "");
+		Grid.$buttons.css("--opacity-delay", "");
 	}
 
 	private static onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
