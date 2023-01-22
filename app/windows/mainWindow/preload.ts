@@ -40,6 +40,10 @@ const scripts = [
 	"utility/ExtendedMath",
 	"utility/EventFunctions",
 	"utility/SoundBoardApi",
+	"utility/Interface",
+
+	"controls/Presets_Panel",
+	"controls/UiScale",
 
 	"grid/Grid",
 	"grid/GridResizer",
@@ -51,9 +55,6 @@ const scripts = [
 	"audio/AudioStoreManager",
 	"audio/AudioPlayer",
 	"audio/Audio",
-
-	"controls/Presets_Panel",
-	"controls/UiScale",
 
 	"ToolbarManager",
 

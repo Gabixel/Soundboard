@@ -1,211 +1,229 @@
-// TODO: class for this
+abstract class ButtonSwap extends Logger {
+	private static isPreparingDrag = false;
+	private static isDragging = false;
 
-let preparingDrag = false;
-let isDragging = false;
+	private static dragStartCoords = { x: 0, y: 0 };
 
-let dragStartCoords = { x: 0, y: 0 };
-let $lastTarget: JQuery<HTMLElement> | null = null;
-let $dragTarget: JQuery<HTMLElement> | null = null;
-let indexChanged = false;
-let isStyled = false;
+	private static $lastTarget: JQuery<HTMLElement> = null;
+	private static $currentTarget: JQuery<HTMLElement> = null;
 
-let dragFunction = mouseDrag_1;
+	private static isIndexChanged = false;
+	private static isStyleStarted = false;
 
-// TODO: Remove event listeners on mouseup and reassign them on mousedown.
-// This should alleviate performance issues during window resizing.
+	private static dragFunction: (e: JQuery.MouseMoveEvent) => void = null;
 
-// Cannot use "Grid.$grid" for now
-$("#buttons-grid").on("mousemove", (e) => {
-	if (e.which != 1) return; // If not left mouse button
+	public static initialize(): void {
+		this.initMouseDown();
+		this.initDocumentEvents();
+		this.setMouseDrag_1();
 
-	dragFunction(e);
-});
+		this.logInfo(this.initialize, "Initialized!");
+	}
 
-$(document)
-	.on("mousedown", ".soundbutton", (e) => {
-		// e.preventDefault(); // Seems to break the arrows inside the number inputs.
-		e.stopPropagation();
-		if (e.which != 1) return;
+	private static mouseDrag_1 = (e: JQuery.MouseMoveEvent): void => {
+		if (!this.isPreparingDrag) return;
 
-		// Set the new drag target
-		$dragTarget = $(e.target);
+		// Small delay to prevent the mouse to start dragging instantly
+		let delay = 0;
+		if (!this.isDragging)
+			delay = Math.sqrt(
+				Math.pow(e.pageX - this.dragStartCoords.x, 2) +
+					Math.pow(e.pageY - this.dragStartCoords.y, 2)
+			);
 
-		// This is needed when trying to apply the opacity delay animation.
-		indexChanged =
-			$lastTarget == null ||
-			$lastTarget.css("--index") !== $dragTarget.css("--index"); // Checks if the index is the same as the last one
+		if (delay <= 10) return;
 
-		// Overwrite the last target
-		$lastTarget = $dragTarget;
+		this.isDragging = true;
+		this.setMouseDrag_2();
+	};
 
-		// Set the drag start coordinates
-		dragStartCoords = { x: e.pageX, y: e.pageY };
+	private static mouseDrag_2 = (e: JQuery.MouseMoveEvent): void => {
+		if (!this.isDragging) return;
 
-		// Prepare the drag
-		preparingDrag = true;
-	})
-	.on("mouseup", (e) => {
-		// e.preventDefault(); // Seems to break the arrows inside the number inputs.
-		e.stopPropagation();
-		isDragging = preparingDrag = false;
+		let sliderValue = UiScale.getSliderValue();
+		let movX = (e.pageX - this.dragStartCoords.x) / sliderValue;
+		let movY = (e.pageY - this.dragStartCoords.y) / sliderValue;
 
-		const $dropTarget = getElementFromPoint(e.pageX, e.pageY);
+		this.$currentTarget.css("transform", `translate(${movX}px, ${movY}px)`);
 
-		if (
-			$dragTarget != null &&
-			$dropTarget != null &&
-			$dragTarget.css("--index") != $dropTarget.css("--index")
-		) {
-			swapButtons($dragTarget, $dropTarget);
+		if (!this.isStyleStarted) {
+			this.isStyleStarted = true;
+
+			this.$currentTarget.addClass("dragging");
+
+			const rows = parseInt($("#grid-rows").val().toString());
+			const cols = parseInt($("#grid-columns").val().toString());
+
+			if (
+				rows > 7 &&
+				cols > 7 &&
+				($("#buttons-grid .soundbutton").length > 49 || this.isIndexChanged)
+			) {
+				const draggedButtonIndex = parseInt(this.$currentTarget.css("--index"));
+				this.setOpacityDelay(cols, draggedButtonIndex);
+			}
+
+			Grid.$grid.addClass("has-dragging-child");
 		}
+	};
 
-		// Remove properties to last target
-		if ($dragTarget != null && isStyled) {
-			$dragTarget.removeClass("dragging");
-			Grid.$grid.removeClass("has-dragging-child");
-			$dragTarget.css("transform", "");
-		}
+	private static setMouseDrag_1(): void {
+		this.dragFunction = this.mouseDrag_1;
+	}
+	private static setMouseDrag_2(): void {
+		this.dragFunction = this.mouseDrag_2;
+	}
 
-		$dropTarget?.removeClass("drop-destination");
-		clearOpacityDelay();
-		$("#buttons-grid .soundbutton.hovered").removeClass("hovered");
-		isStyled = false;
-		$dragTarget = null;
-		dragFunction = mouseDrag_1;
-	})
-	.on("mouseenter", ".soundbutton", (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-		onSoundButtonMouseEnter(e);
-	})
-	.on("mouseleave", ".soundbutton", (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-		onSoundButtonMouseLeave(e);
-	});
+	private static initMouseDown(): void {
+		Grid.$grid.on("mousemove", (e) => {
+			// 1 is left mouse button
+			if ((e.keyCode || e.which) !== 1) return;
 
-function mouseDrag_1(e: JQuery.MouseMoveEvent): void {
-	// if ($("#buttons-grid").hasClass("filtering")) return; // TODO: wtf doesn't work.
-	if (!preparingDrag) return;
+			this.dragFunction(e);
+		});
+	}
 
-	// Small delay to prevent the mouse to start dragging instantly
-	let d = 0;
-	if (!isDragging)
-		d = Math.sqrt(
-			Math.pow(e.pageX - dragStartCoords.x, 2) +
-				Math.pow(e.pageY - dragStartCoords.y, 2)
+	private static initDocumentEvents() {
+		$(document)
+			.on("mousedown", ".soundbutton", (e) => {
+				// e.preventDefault(); // Seems to break the arrows inside the number inputs.
+				e.stopPropagation();
+				if ((e.keyCode || e.which) !== 1) return;
+
+				// Set the new drag target
+				this.$currentTarget = $(e.target);
+
+				// This is needed when trying to apply the opacity delay animation.
+				this.isIndexChanged =
+					this.$lastTarget == null ||
+					this.$lastTarget.css("--index") !== this.$currentTarget.css("--index"); // Checks if the index is the same as the last one
+
+				// Overwrite the last target
+				this.$lastTarget = this.$currentTarget;
+
+				// Set the drag start coordinates
+				this.dragStartCoords = { x: e.pageX, y: e.pageY };
+
+				// Prepare the drag
+				this.isPreparingDrag = true;
+			})
+			.on("mouseup", (e) => {
+				// e.preventDefault(); // Seems to break the arrows inside the number inputs.
+				e.stopPropagation();
+				this.isDragging = this.isPreparingDrag = false;
+
+				const $dropTarget = this.getButtonFromPoint(e.pageX, e.pageY);
+
+				if (
+					this.$currentTarget != null &&
+					$dropTarget != null &&
+					this.$currentTarget.css("--index") != $dropTarget.css("--index")
+				) {
+					this.swapButtons(this.$currentTarget, $dropTarget);
+				}
+
+				// Remove properties to last target
+				if (this.$currentTarget != null && this.isStyleStarted) {
+					this.$currentTarget.removeClass("dragging");
+					Grid.$grid.removeClass("has-dragging-child");
+					this.$currentTarget.css("transform", "");
+				}
+
+				$dropTarget?.removeClass("drop-destination");
+				this.clearOpacityDelay();
+				$("#buttons-grid .soundbutton.hovered").removeClass("hovered");
+
+				this.isStyleStarted = false;
+				this.$currentTarget = null;
+				this.setMouseDrag_1();
+			})
+			.on("mouseenter", ".soundbutton", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				this.onSoundButtonMouseEnter(e);
+			})
+			.on("mouseleave", ".soundbutton", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				this.onSoundButtonMouseLeave(e);
+			});
+	}
+
+	private static setOpacityDelay(
+		cols: number,
+		draggedButtonIndex: number
+	): void {
+		const multiplier = 0.05;
+		const sumOffset = 2;
+
+		// Delay effect for the buttons around the dragged one
+		Grid.$buttons
+			.filter((_i, el) => {
+				return !$(el).hasClass("dragging") /* && !$(el).hasClass("hidden")*/;
+			})
+			.each((_i, el) => {
+				const $el = $(el);
+
+				const index = parseInt($el.css("--index"));
+				const row = Math.floor(index / cols);
+				const col = index % cols;
+
+				const x = Math.abs(row - Math.floor(draggedButtonIndex / cols));
+				const y = Math.abs(col - (draggedButtonIndex % cols));
+				const sum = x + y + sumOffset;
+				const distance = (sum * multiplier) / 1.5;
+
+				$el.css("--opacity-delay", distance + "s");
+			});
+	}
+
+	private static clearOpacityDelay(): void {
+		$("#buttons-grid .soundbutton").css("--opacity-delay", "");
+	}
+
+	private static onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
+		if (!this.isDragging) return;
+
+		$(e.target).addClass("drop-destination").addClass("hovered");
+	}
+
+	private static onSoundButtonMouseLeave(e: JQuery.MouseLeaveEvent): void {
+		if (!this.isDragging) return;
+
+		$(e.target).removeClass("drop-destination");
+	}
+
+	private static getButtonFromPoint(x: number, y: number): JQuery<HTMLElement> {
+		const $target = $(Interface.elementFromPoint(x, y));
+
+		if ($target.hasClass("soundbutton")) return $target as JQuery<HTMLElement>;
+		else return null;
+	}
+
+	private static swapButtons(
+		$drag: JQuery<HTMLElement>,
+		$drop: JQuery<HTMLElement>
+	): void {
+		const dropTargetIndex = parseInt($drop.css("--index"));
+		const lastTargetIndex = parseInt($drag.css("--index"));
+
+		$drop.attr("id", "sound_btn_" + lastTargetIndex);
+		$drag.attr("id", "sound_btn_" + dropTargetIndex);
+
+		$drop.attr("tabindex", lastTargetIndex);
+		$drag.attr("tabindex", dropTargetIndex);
+
+		$drop.css("--index", lastTargetIndex.toString());
+		$drag.css("--index", dropTargetIndex.toString());
+
+		Logger.logDebug(
+			this.swapButtons,
+			`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
+				.children(".button-theme")
+				.text()}"`
 		);
-
-	if (d <= 10) return;
-
-	isDragging = true;
-	dragFunction = mouseDrag_2;
-}
-
-function mouseDrag_2(e: JQuery.MouseMoveEvent): void {
-	if (!isDragging) return;
-
-	// TODO: get the ui scale from a future class
-	$dragTarget.css(
-		"transform",
-		`translate(${
-			(e.pageX - dragStartCoords.x) /
-			parseFloat($("#ui-scale-slider").val().toString())
-		}px, ${
-			(e.pageY - dragStartCoords.y) /
-			parseFloat($("#ui-scale-slider").val().toString())
-		}px)`
-	);
-
-	if (!isStyled) {
-		isStyled = true;
-
-		$dragTarget.addClass("dragging");
-
-		const rows = parseInt($("#grid-rows").val().toString());
-		const cols = parseInt($("#grid-columns").val().toString());
-
-		if (
-			rows > 7 &&
-			cols > 7 &&
-			($("#buttons-grid .soundbutton").length > 49 || indexChanged)
-		) {
-			const draggedButtonIndex = parseInt($dragTarget.css("--index"));
-			setOpacityDelay(cols, draggedButtonIndex);
-		}
-
-		Grid.$grid.addClass("has-dragging-child");
 	}
 }
 
-function setOpacityDelay(cols: number, draggedButtonIndex: number): void {
-	const multiplier = 0.05;
-	const sumOffset = 2;
-
-	// Delay effect for the buttons around the dragged one
-	$("#buttons-grid .soundbutton")
-		.filter((_i, el) => {
-			return !$(el).hasClass("dragging") /* && !$(el).hasClass("hidden")*/;
-		})
-		.each((_i, el) => {
-			const $el = $(el);
-
-			const index = parseInt($el.css("--index"));
-			const row = Math.floor(index / cols);
-			const col = index % cols;
-
-			const x = Math.abs(row - Math.floor(draggedButtonIndex / cols));
-			const y = Math.abs(col - (draggedButtonIndex % cols));
-			const sum = x + y + sumOffset;
-			const distance = (sum * multiplier) / 1.5;
-
-			$el.css("--opacity-delay", distance + "s");
-		});
-}
-
-function clearOpacityDelay(): void {
-	$("#buttons-grid .soundbutton").css("--opacity-delay", "");
-}
-
-function onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
-	if (!isDragging) return;
-
-	$(e.target).addClass("drop-destination").addClass("hovered");
-}
-
-function onSoundButtonMouseLeave(e: JQuery.MouseLeaveEvent): void {
-	if (!isDragging) return;
-
-	$(e.target).removeClass("drop-destination");
-}
-
-function getElementFromPoint(x: number, y: number): JQuery<HTMLElement> | null {
-	const $target = $(document.elementFromPoint(x, y));
-
-	if ($target.hasClass("soundbutton")) return $target as JQuery<HTMLElement>;
-	else return null;
-}
-
-function swapButtons(
-	$drag: JQuery<HTMLElement>,
-	$drop: JQuery<HTMLElement>
-): void {
-	const dropTargetIndex = parseInt($drop.css("--index"));
-	const lastTargetIndex = parseInt($drag.css("--index"));
-
-	$drop.attr("id", "sound_btn_" + lastTargetIndex);
-	$drag.attr("id", "sound_btn_" + dropTargetIndex);
-
-	$drop.attr("tabindex", lastTargetIndex);
-	$drag.attr("tabindex", dropTargetIndex);
-
-	$drop.css("--index", lastTargetIndex.toString());
-	$drag.css("--index", dropTargetIndex.toString());
-
-	Logger.logDebug(
-		swapButtons,
-		`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
-			.children(".button-theme")
-			.text()}"`
-	);
-}
+// TODO: Remove event listeners on mouseup and reassign them on mousedown.
+// This should alleviate performance issues during window resizing.

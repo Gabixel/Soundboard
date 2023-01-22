@@ -38,25 +38,35 @@ async function initMainWindow() {
 	// Show application
 	$(document.body).find("#soundboard").attr("style", "opacity: 1");
 
+	// Reference grid
 	Grid.initGrid($("#buttons-grid"));
 
+	// Grid resizer
 	initResizer(); // TODO: move to class
 
+	ButtonSwap.initialize();
+
+	// Audio output
 	await AudioPlayer.updateAudioDevicesList();
 
 	// TODO: Extract audio from video file? (probably not necessary)
 	// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
 
-	AudioPlayer.setVolumeSlider($("#volume-slider")); // Initializes volume in the audio player
+	// Initialize volume in the audio player
+	AudioPlayer.setVolumeSlider($("#volume-slider"));
 
-	SoundButton.setGrid(Grid.$grid);
+	// Initialize sound button generator
+	SoundButton.initialize(Grid.$grid);
 
+	// Set UI scale elements
 	UiScale.setControls(
 		$("#ui-scale-slider"),
 		$("#ui-scale-lock"),
 		$("#ui-scale-reset")
 	);
 
+	// Setup context menu
+	// TODO: class?
 	$(document).on("contextmenu", (e) => {
 		SoundboardApi.openContextMenu();
 	});

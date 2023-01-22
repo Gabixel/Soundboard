@@ -10,6 +10,7 @@ abstract class SoundButton extends Logger{
 
 	private static getRandomPath(): string {
 		return encodeURI(
+			// TODO: rename to "res"?
 			"../../../resources/sounds/" + this.paths[EMath.randomInt(0, this.paths.length)]
 		);
 	}
@@ -162,10 +163,12 @@ abstract class SoundButton extends Logger{
 		}
 	}
 
-	public static setGrid(grid: JQuery<HTMLElement>): void {
+	public static initialize(grid: JQuery<HTMLElement>): void {
 		this.$grid = grid;
 		this.initClick();
 		this.initContextMenu();
+
+		this.logInfo(this.initialize, "Initialized!");
 	}
 
 	private static initContextMenu() {

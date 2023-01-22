@@ -21,6 +21,10 @@ abstract class UiScale extends Logger {
 		this.setReset($reset);
 	}
 
+	public static getSliderValue(): number {
+		return parseFloat(this.$slider.val() as string);
+	}
+
 	private static setLock($lock: JQuery<HTMLElement>): void {
 		this.$lock = $lock;
 		this.initLock();
@@ -84,16 +88,12 @@ abstract class UiScale extends Logger {
 			});
 	}
 
-	private static setSliderPrevValue(): void {
-		this.$slider.attr("data-prev-value", this.$slider.val().toString());
-	}
-
 	private static getSliderPrevValue(): number {
 		return parseFloat(this.$slider.attr("data-prev-value").toString());
 	}
 
-	private static getSliderValue(): number {
-		return parseFloat(this.$slider.val().toString());
+	private static setSliderPrevValue(): void {
+		this.$slider.attr("data-prev-value", this.$slider.val().toString());
 	}
 
 	private static initLock() {
