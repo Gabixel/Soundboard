@@ -14,7 +14,18 @@ abstract class AudioPlayer extends Logger {
 		const devices = await navigator.mediaDevices.enumerateDevices();
 		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 
+		this.audioDevices.forEach((device, i) => {
+			$("#audio-output-select").append(
+				$("<option>", {
+					value: i,
+					text: i + 1 + " - " + device.label,
+				})
+			);
+		});
+
 		// FIXME: Store preferred device
+		// this is all temporarily just for visuals
+		$("#audio-output-select>option:eq(2)").prop("selected", true);
 		this.audioStore.updateAudioDevice(this.audioDevices[2]);
 
 		this.logInfo(
@@ -50,7 +61,9 @@ abstract class AudioPlayer extends Logger {
 				if (e.ctrlKey) return;
 				// e.preventDefault();
 				e.stopImmediatePropagation();
-				EventFunctions.updateInputValueFromWheel(e, this.$volumeSlider, 50, ["input"]);
+				EventFunctions.updateInputValueFromWheel(e, this.$volumeSlider, 50, [
+					"input",
+				]);
 			});
 	}
 
@@ -72,7 +85,7 @@ abstract class AudioPlayer extends Logger {
 		);
 
 		// TODO: clamp time? (e.g. -1000ms = 0ms)
-		
+
 		this.createAndPlayAudio(path, time, useMultiPool);
 	}
 
@@ -177,7 +190,12 @@ abstract class AudioPlayer extends Logger {
 		if (this.canLogVolume) {
 			this.canLogVolume = false;
 
-			this.logDebug(this.updateVolume, "Volume:", Math.round(this._volume * 100), "%");
+			this.logDebug(
+				this.updateVolume,
+				"Volume:",
+				Math.round(this._volume * 100),
+				"%"
+			);
 
 			setTimeout(() => {
 				this.canLogVolume = true;
