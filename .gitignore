@@ -400,12 +400,13 @@ FodyWeavers.xsd
 # Environment variables (using `dotenv`)
 .env
 
-# CSS files
-*.css
+# CSS generated files
+src/css/
 
 # JavaScript generated files
-*.js
-!resources/**/*.js
+src/js/
+app/main.js
+app/**/preload.js
 
 # JavaScript maps files
 *.js.map

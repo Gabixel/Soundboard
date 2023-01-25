@@ -7,11 +7,15 @@
 	"license": "MIT",
 	"main": "main.js",
 	"scripts": {
-		"start": "electron .",
+		"debug": "electron .",
 
 		"tsc-all": "concurrently \"npm:tsc-app\" \"npm:tsc-src\"",
 		"tsc-app": "cd ./app && tsc -b -w",
-		"tsc-src": "cd ./src/ts && tsc -b -w"
+		"tsc-src": "cd ./src/ts && tsc -b -w",
+		
+		"start": "electron-forge start",
+		"package": "electron-forge package",
+		"make": "electron-forge make"
 	},
 	"keywords": [
 		"soundboard",
@@ -25,13 +29,18 @@
 	"dependencies": {
 		"discord-rpc": "^4.0.1",
 		"dotenv": "^16.0.1",
-		"electron": "^19.0.6",
+		"electron-squirrel-startup": "^1.0.0",
 		"jquery": "^3.6.0",
 		"npm": "^8.11.0"
 	},
 	"devDependencies": {
 		"@electron-forge/cli": "^6.0.4",
+		"@electron-forge/maker-deb": "^6.0.4",
+		"@electron-forge/maker-rpm": "^6.0.4",
+		"@electron-forge/maker-squirrel": "^6.0.4",
+		"@electron-forge/maker-zip": "^6.0.4",
 		"@types/jquery": "^3.5.14",
-		"concurrently": "^7.6.0"
+		"concurrently": "^7.6.0",
+		"electron": "^19.1.9"
 	}
 }
