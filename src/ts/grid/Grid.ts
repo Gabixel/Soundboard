@@ -81,7 +81,6 @@ abstract class Grid extends Logger {
 		this._isFiltering = value;
 	}
 
-	// TODO: store buttons in an array
 	public static getButtonAtIndex(index: number): HTMLElement {
 		if (this._$grid?.[0] == null) {
 			throw new Error("Grid is not initialized");
