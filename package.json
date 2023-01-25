@@ -8,14 +8,19 @@
 	"main": "main.js",
 	"scripts": {
 		"start": "electron .",
+
 		"tsc-all": "concurrently \"npm:tsc-app\" \"npm:tsc-src\"",
 		"tsc-app": "cd ./app && tsc -b -w",
 		"tsc-src": "cd ./src/ts && tsc -b -w"
 	},
 	"keywords": [
 		"soundboard",
+		"audio-player",
 		"audio",
-		"voice"
+		"voice",
+		"player",
+		"track",
+		"sound"
 	],
 	"dependencies": {
 		"discord-rpc": "^4.0.1",
@@ -25,8 +30,8 @@
 		"npm": "^8.11.0"
 	},
 	"devDependencies": {
+		"@electron-forge/cli": "^6.0.4",
 		"@types/jquery": "^3.5.14",
 		"concurrently": "^7.6.0"
-	},
-	"optionalDependencies": {}
+	}
 }
