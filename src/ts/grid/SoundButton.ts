@@ -1,4 +1,4 @@
-abstract class SoundButton extends Logger{
+abstract class SoundButton extends Logger {
 	private static paths: string[] = [
 		"Bad to the bone.mp3",
 		// "Polygon Dust.mp3",
@@ -8,26 +8,30 @@ abstract class SoundButton extends Logger{
 
 	private static dropEffect: "none" | "copy" | "link" | "move" = "none";
 
-	private static getRandomPath(): string {
-		return encodeURI(
-			// TODO: rename to "res"?
-			"../../../resources/sounds/" + this.paths[EMath.randomInt(0, this.paths.length)]
+	private static getRandomAudio(): string {
+		let path = SoundboardApi.joinPaths(
+			SoundboardApi.resolveAppPath("../../../resources/sounds"),
+			this.paths[EMath.randomInt(0, this.paths.length)]
 		);
+
+		return StringUtilities.encodeFilePath(path);
 	}
 
 	public static generateRandom(index: number): HTMLElement {
-		let [h, s, l] = [
+		/*let [h, s, l] = [
 			EMath.randomInt(0, 361),
 			EMath.randomInt(0, 100),
 			EMath.randomInt(30, 100),
-		];
+		];*/
+
+		let [h, s, l] = [0, 0, 80];
 
 		let data: SoundButtonData = {
 			title: (index + 1).toString(),
 			color: { h, s, l },
 			image: "",
 			tags: [""],
-			path: this.getRandomPath(),
+			path: this.getRandomAudio(),
 			time: {
 				start: 0, //20500,//19300,//62265, // TODO
 				end: 0,
@@ -79,12 +83,13 @@ abstract class SoundButton extends Logger{
 	private static addDragAndDrop($button: JQuery<HTMLElement>): void {
 		$button
 			.on("dragenter", (e: JQuery.DragEnterEvent) => {
+				this.logDebug(this.addDragAndDrop, "'dragenter' triggered");
+
 				e.stopPropagation();
 				e.preventDefault();
 				e.originalEvent.dataTransfer.dropEffect = this.dropEffect;
 
 				$button.addClass("file-dragover");
-				this.logInfo(this.applyInitialData, "'dragenter' triggered");
 			})
 			.on("dragover", (e: JQuery.DragOverEvent) => {
 				e.preventDefault();
@@ -93,8 +98,9 @@ abstract class SoundButton extends Logger{
 
 				// $button.addClass("file-dragover");
 			})
+			// TODO: https://www.electronjs.org/docs/latest/tutorial/native-file-drag-drop
 			.on("drop", (e: JQuery.DropEvent) => {
-				this.logInfo(this.applyInitialData, "'drop' triggered");
+				this.logDebug(this.addDragAndDrop, "'drop' triggered");
 
 				const notSuccesful =
 					!e.originalEvent.dataTransfer ||
@@ -109,18 +115,16 @@ abstract class SoundButton extends Logger{
 
 				$button.removeClass("file-dragover");
 
-				const file = e.originalEvent.dataTransfer.files[0];
+				const file = e.originalEvent.dataTransfer.files[0] as ElectronFile;
 
-				// @ts-ignore
 				const path: string = file.path;
 
-				// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters.
-				const encodedPath = encodeURIComponent(path.replace(/\\/g, "/"))
-					.replace(/(%2F)+/g, "/") // Replace slashes
-					.replace(/(%3A)+/g, ":"); // Replace colons
+				const encodedPath = StringUtilities.encodeFilePath(path);
+
+				console.log(encodedPath);
 
 				this.logInfo(
-					this.applyInitialData,
+					this.addDragAndDrop,
 					"Audio drop successful.\n" +
 						"• Files: %O\n" +
 						"\t---------\n" +
@@ -135,17 +139,17 @@ abstract class SoundButton extends Logger{
 
 				// SoundboardApi.isPathFile(path); // TODO
 
-				// @ts-ignore
 				$button.attr("data-path", encodedPath);
-				$button.children(".button-theme").text(file.name); // of course, this is temporary
+				$button.children(".button-theme").text(file.name); // TODO: of course, this is temporary
 			})
 			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
+				this.logDebug(this.addDragAndDrop, "'dragleave' triggered");
+
 				e.preventDefault();
 				e.stopPropagation();
 
 				// $button.on("dragover");
 				$button.removeClass("file-dragover");
-				this.logInfo(this.applyInitialData, "'dragleave' triggered");
 			});
 	}
 
