@@ -1,30 +1,42 @@
 function fixJQueryPassiveEvents() {
 	jQuery.event.special.touchstart = {
 		setup: function (_, ns, handle) {
-			//@ts-ignore
-			this.addEventListener("touchstart", handle, {
-				passive: !ns.includes("noPreventDefault"),
-			});
+			this.addEventListener(
+				"touchstart",
+				handle as object as EventListenerOrEventListenerObject,
+				{
+					passive: !ns.includes("noPreventDefault"),
+				}
+			);
 		},
 	};
 	jQuery.event.special.touchmove = {
 		setup: function (_, ns, handle) {
-			//@ts-ignore
-			this.addEventListener("touchmove", handle, {
-				passive: !ns.includes("noPreventDefault"),
-			});
+			this.addEventListener(
+				"touchmove",
+				handle as object as EventListenerOrEventListenerObject,
+				{
+					passive: !ns.includes("noPreventDefault"),
+				}
+			);
 		},
 	};
 	jQuery.event.special.wheel = {
 		setup: function (_, ns, handle) {
-			//@ts-ignore
-			this.addEventListener("wheel", handle, { passive: true });
+			this.addEventListener(
+				"wheel",
+				handle as object as EventListenerOrEventListenerObject,
+				{ passive: true }
+			);
 		},
 	};
 	jQuery.event.special.mousewheel = {
 		setup: function (_, ns, handle) {
-			//@ts-ignore
-			this.addEventListener("mousewheel", handle, { passive: true });
+			this.addEventListener(
+				"mousewheel",
+				handle as object as EventListenerOrEventListenerObject,
+				{ passive: true }
+			);
 		},
 	};
 }
