@@ -1,6 +1,6 @@
 abstract class ButtonSwap extends Logger {
 	private static isPreparingDrag = false;
-	private static isDragging = false;
+	private static _isDragging = false;
 
 	private static dragStartCoords = { x: 0, y: 0 };
 
@@ -9,6 +9,8 @@ abstract class ButtonSwap extends Logger {
 
 	private static isIndexChanged = false;
 	private static isStyleStarted = false;
+
+	public static get isDragging(): boolean { return this._isDragging; }
 
 	private static dragFunction: (e: JQuery.MouseMoveEvent) => void = null;
 
@@ -25,7 +27,7 @@ abstract class ButtonSwap extends Logger {
 
 		// Small delay to prevent the mouse to start dragging instantly
 		let delay = 0;
-		if (!this.isDragging)
+		if (!this._isDragging)
 			delay = Math.sqrt(
 				Math.pow(e.pageX - this.dragStartCoords.x, 2) +
 					Math.pow(e.pageY - this.dragStartCoords.y, 2)
@@ -33,12 +35,12 @@ abstract class ButtonSwap extends Logger {
 
 		if (delay <= 10) return;
 
-		this.isDragging = true;
+		this._isDragging = true;
 		this.setMouseDrag_2();
 	};
 
 	private static mouseDrag_2 = (e: JQuery.MouseMoveEvent): void => {
-		if (!this.isDragging) return;
+		if (!this._isDragging) return;
 
 		let sliderValue = UiScale.getSliderValue();
 		let movX = (e.pageX - this.dragStartCoords.x) / sliderValue;
@@ -107,7 +109,7 @@ abstract class ButtonSwap extends Logger {
 			.on("mouseup", (e) => {
 				// e.preventDefault(); // Seems to break the arrows inside the number inputs.
 				e.stopPropagation();
-				this.isDragging = this.isPreparingDrag = false;
+				this._isDragging = this.isPreparingDrag = false;
 
 				const $dropTarget = this.getButtonFromPoint(e.pageX, e.pageY);
 
@@ -179,13 +181,13 @@ abstract class ButtonSwap extends Logger {
 	}
 
 	private static onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
-		if (!this.isDragging) return;
+		if (!this._isDragging) return;
 
 		$(e.target).addClass("drop-destination").addClass("hovered");
 	}
 
 	private static onSoundButtonMouseLeave(e: JQuery.MouseLeaveEvent): void {
-		if (!this.isDragging) return;
+		if (!this._isDragging) return;
 
 		$(e.target).removeClass("drop-destination");
 	}

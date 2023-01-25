@@ -39,6 +39,8 @@ abstract class UiScale extends Logger {
 		$(document).on("wheel", (e) => {
 			if (!e.ctrlKey || !this.canChangeValue) return;
 
+			if (ButtonSwap.isDragging) return;
+
 			const value = EventFunctions.getUpdatedValueFromWheel(
 				e,
 				parseFloat($(document.body).css("zoom").toString()),
