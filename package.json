@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"description": "A soundboard for your friends!",
 	"productName": "Soundboard",
-	"main": "main.js",
 	"author": "Gabixel",
 	"license": "MIT",
+	"main": "main.js",
 	"scripts": {
 		"start": "electron .",
 		"tsc-all": "concurrently \"npm:tsc-app\" \"npm:tsc-src\"",
@@ -27,5 +27,6 @@
 	"devDependencies": {
 		"@types/jquery": "^3.5.14",
 		"concurrently": "^7.6.0"
-	}
+	},
+	"optionalDependencies": {}
 }
