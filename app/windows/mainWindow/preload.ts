@@ -1,9 +1,9 @@
 import { contextBridge, ipcRenderer } from "electron";
 import path from "path";
-const SOURCES_ROOT = "../../../src/"
+const SOURCES_ROOT = "../../../src";
 
 const api: MainWindowApiBridge = {
-	openContextMenu: (args) => ipcRenderer.send("open-context-menu", args),
+	openContextMenu: (args: object): void => ipcRenderer.send("open-context-menu", args),
 
 	// isPathFile: (args: string) => ipcRenderer.send("is-path-file", args),
 	// isPathFileAsync: async (args) => ipcRenderer.send("is-path-file-async", args),
@@ -12,6 +12,10 @@ const api: MainWindowApiBridge = {
 	// isPathFolderAsync: async (args) => ipcRenderer.send("open-context-menu", args),
 
 	isProduction: process.env.NODE_ENV === "production",
+
+	resolveAppPath: (...paths: string[]): string => path.resolve(__dirname, ...paths),
+
+	joinPaths: (...paths: string[]): string => path.join(...paths),
 };
 
 // Keep updated with "/src/ts/utility/SoundboardApi.ts"
@@ -19,6 +23,8 @@ type MainWindowApiBridge = {
 	openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
 	isProduction: boolean;
+	resolveAppPath: (...path: string[]) => string;
+	joinPaths: (...paths: string[]) => string;
 };
 
 const styles = [
@@ -41,15 +47,16 @@ const scripts = [
 	"utility/EventFunctions",
 	"utility/SoundBoardApi",
 	"utility/Interface",
-
-	"controls/Presets_Panel",
-	"controls/UiScale",
+	"utility/StringUtilities",
 
 	"grid/Grid",
 	"grid/GridResizer",
 	"grid/ButtonSwap",
 	"grid/ButtonFilter",
 	"grid/SoundButton",
+
+	"controls/Presets_Panel",
+	"controls/UiScale",
 
 	"audio/AudioPool",
 	"audio/AudioStoreManager",
