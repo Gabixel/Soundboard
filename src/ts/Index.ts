@@ -33,8 +33,12 @@ function fixJQueryPassiveEvents() {
 $(initMainWindow);
 
 async function initMainWindow() {
-	fixJQueryPassiveEvents();
+	// Some info for debug
+	console.debug(navigator.userAgent);
+	console.debug(navigator.language);
+	console.debug(navigator.languages);
 
+	fixJQueryPassiveEvents();
 
 	// Reference grid
 	Grid.initGrid($("#buttons-grid"));
