@@ -17,11 +17,12 @@
 	"dependencies": {
 		"discord-rpc": "^4.0.1",
 		"dotenv": "^16.0.1",
-		"electron": "^19.0.6",
+		"electron": "^22.0.3",
 		"jquery": "^3.6.0",
 		"npm": "^8.11.0"
 	},
 	"devDependencies": {
-		"@types/jquery": "^3.5.14"
+		"@types/jquery": "^3.5.14",
+		"concurrently": "^7.6.0"
 	}
 }
