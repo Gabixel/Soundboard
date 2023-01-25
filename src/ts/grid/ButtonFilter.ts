@@ -19,6 +19,7 @@ abstract class ButtonFilter {
 }
 
 // TODO: filter when a function for updating a button is implemented.
+// FIXME: filter after clearing grid
 
 // Trigger the filter input when the text changes
 $("#buttons-filter-input").on("input", (e) => {
