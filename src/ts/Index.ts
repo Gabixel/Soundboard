@@ -35,8 +35,6 @@ $(initMainWindow);
 async function initMainWindow() {
 	fixJQueryPassiveEvents();
 
-	// Show application
-	$(document.body).find("#soundboard").attr("style", "opacity: 1");
 
 	// Reference grid
 	Grid.initGrid($("#buttons-grid"));
@@ -76,6 +74,9 @@ async function initMainWindow() {
 		e.originalEvent.dataTransfer.dropEffect = "none";
 		return false;
 	});
+
+	// Show application
+	$(document.body).find("#soundboard").attr("style", "opacity: 1");
 }
 
 //#region Types
