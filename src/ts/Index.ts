@@ -172,4 +172,8 @@ type AudioTimings = {
 	 */
 	condition: "at" | "after";
 };
+type ElectronFile = File & {
+	path: string;
+	name: string;
+};
 //#endregion
