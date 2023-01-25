@@ -166,7 +166,7 @@ abstract class Logger {
 
 		// Not empty/null string
 		if (callerFunction) {
-			callerFunctionRendered = `%c → %c${callerFunction}`;
+			callerFunctionRendered = `%c ⨠ %c${callerFunction}`;
 			callerFunctionProperties = [headerMiddleEffect, headerMiddleEffect];
 		}
 
