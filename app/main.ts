@@ -282,7 +282,7 @@ app.setAboutPanelOptions({
 	applicationName: "Soundboard",
 	applicationVersion: "Version 1.0",
 	copyright: "Copyright (c) 2022 Gabixel",
-	version: "Version 1.0",
+	version: "1.0",
 	credits: undefined,
 	authors: ["Gabixel"],
 	website: undefined,
