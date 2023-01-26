@@ -133,7 +133,6 @@ abstract class SoundButton extends Logger {
 						"• First file path (encoded for browser): %O",
 					e.originalEvent.dataTransfer.files,
 					e.originalEvent.dataTransfer.files[0],
-					// @ts-ignore
 					encodedPath
 				);
 
