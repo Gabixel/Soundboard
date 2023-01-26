@@ -5,7 +5,7 @@
 	"productName": "Soundboard",
 	"author": "Gabixel",
 	"license": "MIT",
-	"main": "main.js",
+	"main": "./app/main.js",
 	"scripts": {
 		"debug": "electron .",
 
