@@ -416,3 +416,6 @@ tsconfig.tsbuildinfo
 
 # TypeScript generated files
 *.d.ts
+
+# Electron Forge output
+out/
