@@ -215,7 +215,7 @@ abstract class ButtonSwap extends Logger {
 		$drop.css("--index", lastTargetIndex.toString());
 		$drag.css("--index", dropTargetIndex.toString());
 
-		Logger.logDebug(
+		this.logDebug(
 			this.swapButtons,
 			`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
 				.children(".button-theme")
