@@ -280,6 +280,7 @@ function initIpc() {
 }
 
 // Listen for app to be ready
+// TODO: (Squirrel packaging) https://www.electronforge.io/import-existing-project#adding-squirrel.windows-boilerplate
 app.whenReady().then(() => {
 	let screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
 	let screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
