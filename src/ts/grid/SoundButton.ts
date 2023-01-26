@@ -181,10 +181,8 @@ abstract class SoundButton extends Logger {
 
 			let $target = $(e.target);
 
-			let args = {
+			let args: ContextMenuArgs = {
 				type: "soundbutton",
-				x: e.clientX.toString(),
-				y: e.clientY.toString(),
 				buttonData: {
 					title: $target.children(".button-theme").text(),
 					color: {

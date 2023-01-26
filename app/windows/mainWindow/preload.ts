@@ -3,7 +3,8 @@ import path from "path";
 const SOURCES_ROOT = "../../../src";
 
 const api: MainWindowApiBridge = {
-	openContextMenu: (args: object): void => ipcRenderer.send("open-context-menu", args),
+	openContextMenu: (args: any): void =>
+		ipcRenderer.send("open-context-menu", args),
 
 	// isPathFile: (args: string) => ipcRenderer.send("is-path-file", args),
 	// isPathFileAsync: async (args) => ipcRenderer.send("is-path-file-async", args),
@@ -13,14 +14,15 @@ const api: MainWindowApiBridge = {
 
 	isProduction: process.env.NODE_ENV === "production",
 
-	resolveAppPath: (...paths: string[]): string => path.resolve(__dirname, ...paths),
+	resolveAppPath: (...paths: string[]): string =>
+		path.resolve(__dirname, ...paths),
 
 	joinPaths: (...paths: string[]): string => path.join(...paths),
 };
 
-// Keep updated with "/src/ts/utility/SoundboardApi.ts"
+// Keep updated with "~/src/ts/utility/SoundboardApi.ts"
 type MainWindowApiBridge = {
-	openContextMenu: (args: object) => void;
+	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
 	isProduction: boolean;
 	resolveAppPath: (...path: string[]) => string;

@@ -6,8 +6,13 @@ abstract class SoundboardApi extends Logger {
 	public static resolveAppPath(...path: string[]): string {
 		return this._api.resolveAppPath(...path);
 	}
-	public static openContextMenu(args: object = null): void {
-		this.logInfo(this.openContextMenu, "Opening context menu with args:", args);
+
+	public static openContextMenu(args: ContextMenuArgs = null): void {
+		this.logInfo(
+			this.openContextMenu,
+			`Opening context menu with ${args != null ? Object.keys(args).length : 0} extra args:`,
+			args
+		);
 
 		this._api.openContextMenu(args);
 	}
@@ -26,16 +31,18 @@ abstract class SoundboardApi extends Logger {
 	}
 }
 
+//#region Types
 // Keep updated with:
 // - "~/app/windows/mainWindow/preload.ts"
 // - "~/app/windows/editButtonWindow/preload.ts"
 type WindowApiBridge = {
+	isProduction: boolean;
+
 	/*
 	 * MainWindowApiBridge
 	 */
-	isProduction: boolean;
 	resolveAppPath: (...path: string[]) => string;
-	openContextMenu: (args: any) => void;
+	openContextMenu: (args: ContextMenuArgs) => void;
 	isPathFile: (args: string) => boolean;
 	joinPaths: (...paths: string[]) => string;
 
@@ -44,3 +51,14 @@ type WindowApiBridge = {
 	 */
 	// TODO
 };
+
+// Keep updated with:
+// - "~/app/windows/main.ts"
+type ContextMenuArgs =
+	| null
+	| (
+			| { type: "soundbutton"; buttonData: SoundButtonData }
+			| { type: "test1"; coolThing: number }
+			| { type: "test999"; a: 1; b: 2 }
+	  );
+//#endregion

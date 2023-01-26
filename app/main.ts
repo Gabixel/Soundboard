@@ -1,4 +1,12 @@
-import { app, systemPreferences, screen, ipcMain } from "electron";
+import {
+	app,
+	systemPreferences,
+	ipcMain,
+	session,
+	screen,
+	shell,
+	dialog,
+} from "electron";
 import { BrowserWindow, Menu, MenuItem } from "electron";
 import path from "path";
 import fileSystem from "fs/promises";
@@ -172,7 +180,11 @@ function createEditButtonWindow(
 	);
 }
 
-function showContextMenu(extraElements: MenuItem, x: number, y: number) {
+function showContextMenu(
+	x: number,
+	y: number,
+	extraMenuItems: MenuItem[] = []
+) {
 	const menu = Menu.buildFromTemplate([
 		/*{
 				label: "Help",
@@ -194,22 +206,38 @@ function showContextMenu(extraElements: MenuItem, x: number, y: number) {
 		},
 	]);
 
-	if (extraElements != null) {
-		menu.insert(0, extraElements);
+	// Add exra items (if present)
+	if (extraMenuItems != null && extraMenuItems.length > 0) {
+		extraMenuItems.forEach((item, index) => {
+			menu.insert(index, item);
+		});
 	}
 
 	// TODO: ??
 	menu.popup({
 		window: mainWindow,
-		x: x,
-		y: y,
+		// x: x,
+		// y: y,
 	});
+}
+
+// TODO: Different OS variants(?)
+async function openFileInExplorer(path: string) {
+	await fileSystem.access(path).then(
+		() => {
+			// Success
+			console.log(`Path: "${path}"`);
+			shell.showItemInFolder(path);
+		},
+		(error) => {
+			console.log(error);
+		}
+	);
 }
 
 function initIpc() {
 	ipcMain
-		// TODO: IPC typing or add create a type for 'args'
-		.on("open-context-menu", (e, args) => {
+		.on("open-context-menu", (_e, args: ContextMenuArgs) => {
 			// console.log(event);
 			// console.log(event.sender);
 			// console.log(args);
@@ -217,28 +245,36 @@ function initIpc() {
 			const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
 			const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
-			let extraMenu;
+			let extraMenuItems: MenuItem[] = [];
 
 			if (args != null) {
 				switch (args.type) {
 					case "soundbutton":
-						extraMenu = new MenuItem({
-							label: "Edit",
-							click: () => {
-								createEditButtonWindow(
-									args.buttonData,
-									primaryScreenWidth,
-									primaryScreenHeight
-								);
-							},
-						});
+						extraMenuItems.push(
+							new MenuItem({
+								label: "Edit",
+								click: () => {
+									createEditButtonWindow(
+										args.buttonData,
+										primaryScreenWidth,
+										primaryScreenHeight
+									);
+								},
+							}),
+							new MenuItem({
+								label: "Open in file explorer",
+								click: () => {
+									openFileInExplorer(decodeURIComponent(args.buttonData.path));
+								},
+							})
+						);
 				}
 			}
 
 			// showContextMenu(extraMenu, e.x, e.y);
-			showContextMenu(extraMenu, null, null);
+			showContextMenu(null, null, extraMenuItems);
 		})
-		.on("is-path-file", async (e, args) => {
+		.on("is-path-file", async (_e, args) => {
 			console.log(await fileSystem.lstat(args));
 		});
 }
@@ -289,4 +325,14 @@ app.setAboutPanelOptions({
 	iconPath: undefined,
 });
 
+//#endregion
+
+//#region Types
+type ContextMenuArgs =
+	| null
+	| (
+			| { type: "soundbutton"; buttonData: any }
+			| { type: "test1"; coolThing: number }
+			| { type: "test999"; a: 1; b: 2 }
+	  );
 //#endregion
