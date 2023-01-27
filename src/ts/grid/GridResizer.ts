@@ -40,7 +40,7 @@ $("#grid-columns")
 	})
 	.on("wheel", (e) => {
 		if (e.ctrlKey) return;
-		// e.preventDefault();
+		e.preventDefault();
 		e.stopImmediatePropagation();
 		EventFunctions.updateInputValueFromWheel(e);
 	});
