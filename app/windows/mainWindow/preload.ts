@@ -48,7 +48,7 @@ const scripts = [
 	"utility/ExtendedMath",
 	"utility/EventFunctions",
 	"utility/SoundBoardApi",
-	"utility/Interface",
+	"utility/UserInterface",
 	"utility/StringUtilities",
 
 	"grid/Grid",

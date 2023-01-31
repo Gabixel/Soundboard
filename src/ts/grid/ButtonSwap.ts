@@ -193,7 +193,7 @@ abstract class ButtonSwap extends Logger {
 	}
 
 	private static getButtonFromPoint(x: number, y: number): JQuery<HTMLElement> {
-		const $target = $(Interface.elementFromPoint(x, y));
+		const $target = $(UserInterface.elementFromPoint(x, y));
 
 		if ($target.hasClass("soundbutton")) return $target as JQuery<HTMLElement>;
 		else return null;
