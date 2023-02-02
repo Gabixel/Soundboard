@@ -49,6 +49,7 @@
 			"preLaunchTask": "npm: tsc-all" // compile TypeScript
 		},
 		{
+			// This is internally used for debugging TypeScript if launched with Main process (see "Electron (All)" compound)
 			"name": "Electron (Renderer) [Chrome]",
 			"request": "attach",
 			"type": "chrome",
