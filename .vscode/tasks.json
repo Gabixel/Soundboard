@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "tsc-all",
+			"problemMatcher": ["$tsc"],
+			"label": "npm: tsc-all",
+			"detail": "concurrently \"npm:tsc-app\" \"npm:tsc-src\"",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false,
+				"close": true,
+			}
+		}
+	]
+}
