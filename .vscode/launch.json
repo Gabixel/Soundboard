@@ -5,14 +5,20 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Electron Main (no compile)",
+			"name": "Electron (Main)",
 			"type": "node",
 			"request": "launch",
 			"skipFiles": ["<node_internals>/**"],
 
 			"cwd": "${workspaceRoot}",
-			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
+			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+			"runtimeArgs": [
+				"--remote-debugging-port=9223" //open debugging port for renderer process
+			],
 			"program": "${workspaceRoot}/app/main.js",
+			"args": ["."],
+
+			"outputCapture": "console",
 
 			"sourceMaps": true,
 
@@ -20,21 +26,44 @@
 			"internalConsoleOptions": "openOnSessionStart"
 		},
 		{
-			"name": "Electron Main",
+			"name": "Electron (Main) [pre-compile]",
 			"type": "node",
 			"request": "launch",
 			"skipFiles": ["<node_internals>/**"],
 
 			"cwd": "${workspaceRoot}",
-			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
+			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+			"runtimeArgs": [
+				"--remote-debugging-port=9223" //open debugging port for renderer process
+			],
 			"program": "${workspaceRoot}/app/main.js",
+			"args": ["."],
+
+			"outputCapture": "console",
 
 			"sourceMaps": true,
 
 			"console": "internalConsole",
 			"internalConsoleOptions": "openOnSessionStart",
 
-			"preLaunchTask": "npm: tsc-all"
+			"preLaunchTask": "npm: tsc-all" // compile TypeScript
+		},
+		{
+			"name": "Electron (Renderer) [Chrome]",
+			"request": "attach",
+			"type": "chrome",
+			"port": 9223,
+			"webRoot": "${workspaceFolder}",
+			"timeout": 10000
+		}
+	],
+	"compounds": [
+		{
+			"name": "Electron (All)",
+			"configurations": [
+				"Electron (Main)",
+				"Electron (Renderer) [Chrome]"
+			]
 		}
 	]
 }
