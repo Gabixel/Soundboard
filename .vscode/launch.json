@@ -5,6 +5,21 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Electron Main (no compile)",
+			"type": "node",
+			"request": "launch",
+			"skipFiles": ["<node_internals>/**"],
+
+			"cwd": "${workspaceRoot}",
+			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
+			"program": "${workspaceRoot}/app/main.js",
+
+			"sourceMaps": true,
+
+			"console": "internalConsole",
+			"internalConsoleOptions": "openOnSessionStart"
+		},
+		{
 			"name": "Electron Main",
 			"type": "node",
 			"request": "launch",
@@ -20,21 +35,6 @@
 			"internalConsoleOptions": "openOnSessionStart",
 
 			"preLaunchTask": "npm: tsc-all"
-		},
-		{
-			"name": "Electron Main (no compile)",
-			"type": "node",
-			"request": "launch",
-			"skipFiles": ["<node_internals>/**"],
-
-			"cwd": "${workspaceRoot}",
-			"runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd",
-			"program": "${workspaceRoot}/app/main.js",
-
-			"sourceMaps": true,
-
-			"console": "internalConsole",
-			"internalConsoleOptions": "openOnSessionStart"
 		}
 	]
 }
