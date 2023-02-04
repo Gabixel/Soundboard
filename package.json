@@ -9,9 +9,13 @@
 	"scripts": {
 		"debug": "electron .",
 
+		"tsc-all-w": "concurrently \"npm:tsc-app-w\" \"npm:tsc-src-w\"",
+		"tsc-app-w": "cd ./app && tsc -b -w",
+		"tsc-src-w": "cd ./src/ts && tsc -b -w",
+
 		"tsc-all": "concurrently \"npm:tsc-app\" \"npm:tsc-src\"",
-		"tsc-app": "cd ./app && tsc -b -w",
-		"tsc-src": "cd ./src/ts && tsc -b -w",
+		"tsc-app": "cd ./app && tsc -b",
+		"tsc-src": "cd ./src/ts && tsc -b",
 
 		"start": "electron-forge start",
 		"package": "electron-forge package",
