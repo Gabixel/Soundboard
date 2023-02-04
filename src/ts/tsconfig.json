@@ -37,10 +37,11 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"noUnusedParameters": true,
+		"pretty": true,
 
 		"declaration": true,
 		"sourceMap": true,
-		
+
 		// "emitDeclarationOnly": true,
 		"allowJs": false
 	},

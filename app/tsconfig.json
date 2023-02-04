@@ -37,6 +37,7 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"noUnusedParameters": true,
+		"pretty": true,
 
 		"declaration": false,
 		"sourceMap": false,
