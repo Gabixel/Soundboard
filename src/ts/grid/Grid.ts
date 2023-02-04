@@ -105,19 +105,4 @@ abstract class Grid extends Logger {
 		if ($btn.length > 0) return $btn[0];
 		else return null;
 	}
-
-	public static getEmptyIndexes(): number[] {
-		const indexes: number[] = [] as number[];
-
-		for (let i = 0; i < this.gridSize; i++) {
-			if (this.isCellEmpty(i)) indexes.push(i);
-		}
-
-		return indexes;
-	}
-
-	public static isCellEmpty(index: number): boolean {
-		console.log(this.$buttons.css("--index"));
-		return true;
-	}
 }
