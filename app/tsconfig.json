@@ -12,9 +12,9 @@
 		// "outFile": "./js/build.js",
 		"target": "ESNext",
 		"module": "Node16",
+		"moduleResolution": "node",
 		// "module": "CommonJS",
 		"lib": ["ES2015", "DOM"],
-		"moduleResolution": "node",
 		"baseUrl": ".",
 
 		// Export

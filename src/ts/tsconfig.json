@@ -11,10 +11,10 @@
 		"outDir": "../js/",
 		// "outFile": "./js/build.js",
 		"target": "ESNext",
-		"module": "AMD",
+		"module": "ESNext",
+		"moduleResolution": "classic",
 		// "module": "CommonJS",
 		"lib": ["ES2015", "DOM"],
-		"moduleResolution": "node",
 		"baseUrl": ".",
 
 		// Export
