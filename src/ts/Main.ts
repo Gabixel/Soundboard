@@ -63,12 +63,12 @@ abstract class Main extends Logger {
 
 function fixJQueryPassiveEvents() {
 	jQuery.event.special.touchstart = {
-		setup: function (_, ns, handle) {
+		setup: function (_data, namespace, handle) {
 			this.addEventListener(
 				"touchstart",
 				handle as object as EventListenerOrEventListenerObject,
 				{
-					passive: !ns.includes("noPreventDefault"),
+					passive: !namespace.includes("noPreventDefault"),
 				}
 			);
 		},
