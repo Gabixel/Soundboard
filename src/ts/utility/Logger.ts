@@ -110,7 +110,7 @@ abstract class Logger {
 		if (callerClass) {
 			callerClassRendered = `%c${callerClass}`;
 			callerClassProperties.push(
-				`color: ${this.getHslFromString(callerClass, 70)};
+				`color: ${StringUtilities.getHsl(callerClass, 70)};
 				${boldEffect};
 				${shadowEffect}`
 			);
@@ -123,7 +123,7 @@ abstract class Logger {
 		if (callerFunction) {
 			callerFunctionRendered = `%c${callerFunction}`;
 			callerFunctionProperties.push(
-				`color: ${this.getHslFromString(callerFunction, 70)};
+				`color: ${StringUtilities.getHsl(callerFunction, 70)};
 				${boldEffect};
 				${shadowEffect}`
 			);
@@ -147,8 +147,8 @@ abstract class Logger {
 		message: string
 	): [string, string[]] {
 		const colorName = callerFunction ?? callerClass ?? "???";
-		const bgColor = this.getHslFromString(colorName, 20);
-		const fgColor = this.getHslFromString(colorName, 90);
+		const bgColor = StringUtilities.getHsl(colorName, 20);
+		const fgColor = StringUtilities.getHsl(colorName, 90);
 		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
@@ -180,35 +180,5 @@ abstract class Logger {
 				"color: inherit",
 			],
 		];
-	}
-
-	private static getHslFromString(str: string, lightness: number) {
-		return `hsl(${this.getHueFromString(str)}, 100%, ${lightness}%)`;
-	}
-
-	private static getHueFromString(str: string) {
-		let hash = this.getHashFromString(str);
-
-		const result = hash % 360;
-		if (result < 0) return result + 360;
-		else return result;
-	}
-
-	/**
-	 * Converts a string to an hash code.
-	 *
-	 * See {@link https://stackoverflow.com/a/7616484/16804863}.
-	 */
-	private static getHashFromString(str: string) {
-		let hash = 0;
-		if (str.length === 0) return hash;
-
-		for (let i = 0; i < str.length; i++) {
-			const char = str.charCodeAt(i);
-			hash = (hash << 5) - hash + char;
-			hash |= 0; // Convert to 32bit integer
-		}
-
-		return hash;
 	}
 }
