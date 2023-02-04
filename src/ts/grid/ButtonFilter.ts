@@ -22,7 +22,7 @@ abstract class ButtonFilter {
 // FIXME: filter after clearing grid
 
 // Trigger the filter input when the text changes
-$("#buttons-filter-input").on("input", (e) => {
+$("#buttons-filter-input").on("input", () => {
 	ButtonFilter.updateFilter();
 	globallyUpdateFilter();
 });
@@ -33,7 +33,7 @@ $("#clear-filter").on("click", () => {
 
 $(
 	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-index-offset-select, #buttons-filter-tags, #buttons-filter-path"
-).on("change", (e) => {
+).on("change", () => {
 	if (!ButtonFilter.isFiltering) return;
 
 	$("#buttons-filter-input").trigger("input");
@@ -46,8 +46,8 @@ function globallyUpdateFilter(): void {
 		return;
 	}
 
-	$("#buttons-grid .soundbutton").each((index, button) => {
-		filterButton($(button));
+	$("#buttons-grid .soundbutton").each((_i, btn) => {
+		filterButton($(btn));
 	});
 
 	const filteredButtons = $("#buttons-grid .soundbutton.filtered").length;
@@ -96,11 +96,13 @@ function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
 
 // Removes the "filtered" class from all buttons
 function clearFilter() {
-	$("#buttons-grid .soundbutton.filtered").each(showButton);
+	$("#buttons-grid .soundbutton.filtered").each((_i: number, btn: HTMLElement) =>
+		showButton(btn)
+	);
 	Grid.$grid.removeClass("filtering");
 }
 
-function showButton(index: number, button: HTMLElement) {
+function showButton(button: HTMLElement) {
 	$(button).removeClass("filtered");
 }
 

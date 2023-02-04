@@ -36,6 +36,8 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 
+		"noUnusedParameters": true,
+
 		"declaration": false,
 		"sourceMap": false,
 

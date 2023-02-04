@@ -106,7 +106,7 @@ function updateVisibleButtons(): void {
 				const bIndex = parseInt($(b).css("--index").toString());
 				return aIndex - bIndex;
 			})
-	).each((i: number, e: HTMLElement) => {
+	).each((_i: number, e: HTMLElement) => {
 		const index = parseInt($(e).css("--index").toString());
 
 		if (index >= Grid.size) {

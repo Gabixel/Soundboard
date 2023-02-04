@@ -181,8 +181,8 @@ function createEditButtonWindow(
 }
 
 function showContextMenu(
-	x: number,
-	y: number,
+	_x: number,
+	_y: number,
 	extraMenuItems: MenuItem[] = []
 ) {
 	const menu = Menu.buildFromTemplate([

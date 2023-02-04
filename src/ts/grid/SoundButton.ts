@@ -153,7 +153,7 @@ abstract class SoundButton extends Logger {
 	}
 
 	public static updateData(
-		$button: JQuery<HTMLElement>,
+		_$button: JQuery<HTMLElement>, // TODO:
 		data: SoundButtonData
 	): void {
 		const keys = Object.keys(data);

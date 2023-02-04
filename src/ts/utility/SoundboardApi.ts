@@ -17,7 +17,8 @@ abstract class SoundboardApi extends Logger {
 		this._api.openContextMenu(args);
 	}
 
-	public static isPathFile(path: string): boolean {
+	// TODO:
+	public static isPathFile(_path: string): boolean {
 		// return this._api.isPathFile(path);
 		return false;
 	}

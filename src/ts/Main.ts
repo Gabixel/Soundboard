@@ -46,7 +46,7 @@ abstract class Main extends Logger {
 
 		// Setup context menu
 		// TODO: class?
-		$(document).on("contextmenu", (e) => {
+		$(document).on("contextmenu", () => {
 			SoundboardApi.openContextMenu();
 		});
 
@@ -74,18 +74,18 @@ function fixJQueryPassiveEvents() {
 		},
 	};
 	jQuery.event.special.touchmove = {
-		setup: function (_, ns, handle) {
+		setup: function (_data, namespace, handle) {
 			this.addEventListener(
 				"touchmove",
 				handle as object as EventListenerOrEventListenerObject,
 				{
-					passive: !ns.includes("noPreventDefault"),
+					passive: !namespace.includes("noPreventDefault"),
 				}
 			);
 		},
 	};
 	jQuery.event.special.wheel = {
-		setup: function (_, ns, handle) {
+		setup: function (_data, _namespace, handle) {
 			this.addEventListener(
 				"wheel",
 				handle as object as EventListenerOrEventListenerObject,
@@ -94,7 +94,7 @@ function fixJQueryPassiveEvents() {
 		},
 	};
 	jQuery.event.special.mousewheel = {
-		setup: function (_, ns, handle) {
+		setup: function (_data, _namespace, handle) {
 			this.addEventListener(
 				"mousewheel",
 				handle as object as EventListenerOrEventListenerObject,

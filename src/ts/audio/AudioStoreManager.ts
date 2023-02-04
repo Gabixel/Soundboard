@@ -32,7 +32,7 @@ class AudioStoreManager extends Logger {
 
 		// Add audio events
 		this.singlePool.$all
-			.on("canplay", (e) => {
+			.on("canplay", () => {
 				AudioStoreManager.logInfo("[constructor]", "Audio can play");
 				this.playGroup(this.singlePool);
 			})
