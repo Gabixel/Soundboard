@@ -2,13 +2,20 @@
 
 html,
 body,
-body * {
-	font-family: 'Comfortaa';
+body *:not([class^="fa"]),
+body *:not([class^="fa"])::before,
+body *:not([class^="fa"])::after {
+	font-family: "Comfortaa";
 }
 
-body, body * {
+body,
+body *,
+body *::before,
+body *::after {
 	font-size: 14px;
 	text-rendering: optimizeLegibility;
+	image-rendering: crisp-edges;
+	shape-rendering: geometricPrecision;
 }
 
 p {
