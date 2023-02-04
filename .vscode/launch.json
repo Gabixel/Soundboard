@@ -50,7 +50,7 @@
 		},
 		{
 			// This is internally used for debugging TypeScript if launched with Main process (see "Electron (All)" compound)
-			"name": "Electron (Renderer) [Chrome]",
+			"name": "Electron (Renderer)",
 			"request": "attach",
 			"type": "chrome",
 			"port": 9223,
@@ -66,7 +66,7 @@
 			"name": "Electron (All)",
 			"configurations": [
 				"Electron (Main)",
-				"Electron (Renderer) [Chrome]"
+				"Electron (Renderer)"
 			]
 		}
 	]
