@@ -10,7 +10,9 @@ abstract class SoundboardApi extends Logger {
 	public static openContextMenu(args: ContextMenuArgs = null): void {
 		this.logDebug(
 			this.openContextMenu,
-			`Opening context menu with ${args != null ? Object.keys(args).length : 0} extra args:`,
+			`Opening context menu with ${
+				args != null ? Object.keys(args).length : 0
+			} extra args:`,
 			args
 		);
 
@@ -27,8 +29,8 @@ abstract class SoundboardApi extends Logger {
 		return this._api.joinPaths(...paths);
 	}
 
-	private static get _api() {
-		return (window as any).api as WindowApiBridge;
+	private static get _api(): WindowApiBridge {
+		return window.api;
 	}
 }
 
