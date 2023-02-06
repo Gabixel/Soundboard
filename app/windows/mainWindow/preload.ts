@@ -45,6 +45,7 @@ const styles = [
 
 const scripts = [
 	"utility/Logger",
+	"utility/JQueryFixes",
 	"utility/ExtendedMath",
 	"utility/EventFunctions",
 	"utility/SoundBoardApi",
