@@ -408,14 +408,11 @@ src/js/
 app/main.js
 app/**/preload.js
 
-# JavaScript maps files
-*.js.map
+# JavaScript + .d.ts + .map output files
+src/js
 
 # TSConfig
 tsconfig.tsbuildinfo
-
-# TypeScript generated files
-*.d.ts
 
 # Electron Forge output
 out/
