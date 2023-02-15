@@ -1,8 +1,6 @@
 abstract class SoundButton extends Logger {
 	private static paths: string[] = [
-		"Bad to the bone.mp3",
-		// "Polygon Dust.mp3",
-		// "He's a Pirate.mp3",
+		"Clown Horn.mp3"
 	];
 	private static $grid: JQuery<HTMLElement>;
 
