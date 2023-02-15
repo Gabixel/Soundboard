@@ -43,7 +43,6 @@
 		"sourceMap": false,
 
 		// "emitDeclarationOnly": true,
-		"allowSyntheticDefaultImports": true,
 		"allowJs": false
 	},
 	
