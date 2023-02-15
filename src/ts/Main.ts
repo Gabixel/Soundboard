@@ -23,6 +23,7 @@ abstract class Main extends Logger {
 		// Grid resizer
 		initResizer(); // TODO: move to class
 
+		// Button swap
 		ButtonSwap.initialize();
 
 		// Audio output

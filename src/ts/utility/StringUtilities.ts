@@ -6,11 +6,17 @@ abstract class StringUtilities {
 			.replace(/%3A/g, ":"); // Decode colons
 	}
 
-	public static getHsl(str: string, lightness: number) {
+	public static getHsl(str: string, lightness: number): string {
 		return `hsl(${this.getHue(str)}, 100%, ${lightness}%)`;
 	}
 
-	public static getHue(str: string) {
+	/**
+	 * Returns the hue value for a given string.
+	 * This can be used for HSL colors.
+	 * @param str The string to convert.
+	 * @returns The hue value.
+	 */
+	public static getHue(str: string): number {
 		let hash = this.getHash(str);
 
 		const result = hash % 360;
@@ -20,8 +26,9 @@ abstract class StringUtilities {
 
 	/**
 	 * Converts a string to an hash code.
-	 *
-	 * See {@link https://stackoverflow.com/a/7616484/16804863}.
+	 * @see {@link https://stackoverflow.com/a/7616484/16804863}
+	 * @param str The string to convert
+	 * @returns The hash code
 	 */
 	public static getHash(str: string) {
 		let hash = 0;

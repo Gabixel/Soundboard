@@ -27,20 +27,15 @@ const isProduction = Process.env.NODE_ENV === "production";
 
 /**
  * Root path for any app window.
+ * 
+ * **Note: `__dirname` already points to the `/app` folder.**
  */
-const windowRootPath = path.join(__dirname, "windows");
+const appWindowRootPath = path.join(__dirname, "windows");
 
 /**
- * The main soundboard window, with grid, toolbar and controls.
+ * Basic web preferences (which can be used for any window).
  */
-let mainWindow: BrowserWindow;
-
-/**
- * The edit window for any SoundButton.
- */
-let editButtonWindow: BrowserWindow;
-
-const webPreferences = {
+const webPreferences: Electron.WebPreferences = {
 	// preload: path.join(__dirname, "/preload.js"),
 	preload: "/preload.js",
 
@@ -50,23 +45,34 @@ const webPreferences = {
 
 	contextIsolation: true,
 	nodeIntegration: false,
+
+	// FIXME: Can probably be removed as TS no longer recognizes this
+	// @ts-ignore
 	enableRemoteModule: false, // https://stackoverflow.com/a/59888788/16804863
 
 	experimentalFeatures: false,
+
+	navigateOnDragDrop: false,
 };
 
-// Main windows
-const mainWindowPath = path.join(windowRootPath, "mainWindow");
+/**
+ * The main soundboard window, with grid, toolbar and controls.
+ */
+let mainWindow: BrowserWindow;
+
+const mainWindowPath = path.join(appWindowRootPath, "mainWindow");
 let mainWindowPreferences = { ...webPreferences };
 mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
 
-// Edit button window
-const editButtonWindowPath = path.join(windowRootPath, "editButtonWindow");
+/**
+ * The soundbutton editor window.
+ */
+let editButtonWindow: BrowserWindow;
+
+const editButtonWindowPath = path.join(appWindowRootPath, "editButtonWindow");
 let editButtonWindowPreferences = { ...webPreferences };
 editButtonWindowPreferences.preload = path.join(
-	__dirname,
-	"windows",
-	"editButtonWindow",
+	editButtonWindowPath,
 	"preload.js"
 );
 
