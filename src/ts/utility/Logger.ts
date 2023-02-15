@@ -1,5 +1,5 @@
 abstract class Logger {
-	private static chosenStyle: number = 1;
+	private static chosenStyle: number = 2;
 
 	/** Debug-level logging (aka "Verbose") */
 	public static logDebug(
@@ -89,8 +89,11 @@ abstract class Logger {
 				return this.getStyle_0(callerClass, callerFunction, message);
 
 			case 1:
-			default:
 				return this.getStyle_1(callerClass, callerFunction, message);
+
+			case 2:
+			default:
+				return this.getStyle_2(callerClass, callerFunction, message);
 		}
 	}
 
@@ -173,6 +176,73 @@ abstract class Logger {
 		return [
 			`%c ${callerClassRendered}${callerFunctionRendered}%c %c ` + message,
 			[
+				headerStartEffect,
+				...callerClassProperties,
+				...callerFunctionProperties,
+				headerEndEffect,
+				"color: inherit",
+			],
+		];
+	}
+
+	private static getStyle_2(
+		callerClass: any,
+		callerFunction: string,
+		message: string
+	): [string, string[]] {
+		const colorName = callerFunction ?? callerClass ?? "???";
+		const bgColor = StringUtilities.getHsl(colorName, 20);
+		const fgColor = StringUtilities.getHsl(colorName, 90);
+		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
+		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
+		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
+
+		// Caller class style
+		let callerClassRendered = "%c...";
+		let callerClassProperties: string[] = [headerMiddleEffect];
+		if (callerClass) {
+			callerClassRendered = `%c${callerClass}`;
+		}
+
+		// Caller function style
+		let callerFunctionRendered = "";
+		let callerFunctionProperties: string[] = [];
+		if (callerFunction) {
+			callerFunctionRendered = `%c ⨠ %c${callerFunction}`;
+			callerFunctionProperties = [headerMiddleEffect, headerMiddleEffect];
+		}
+
+		// Get UTC version of current timestamp
+		const date = StringUtilities.UTCDate(new Date());
+
+		// Display the time in a better way
+		// TODO: improve/compact implementation
+		// Year
+		let displayTime = date.getFullYear().toString();
+		displayTime += "/";
+		// Month
+		displayTime += date.getMonth().toString().padStart(2, "0");
+		displayTime += "/";
+		// Day
+		displayTime += date.getDay().toString().padStart(2, "0");
+		displayTime += " ";
+		// Hours
+		displayTime += date.getHours().toString().padStart(2, "0");
+		// Minutes
+		displayTime += ":" + date.getMinutes().toString().padStart(2, "0");
+		// Seconds
+		displayTime += ":" + date.getSeconds().toString().padStart(2, "0");
+
+		return [
+			`%c %c${displayTime}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`,
+			[
+				// Display time
+				headerStartEffect,
+				headerMiddleEffect,
+				headerEndEffect,
+				"color: inherit",
+
+				// Caller function & class
 				headerStartEffect,
 				...callerClassProperties,
 				...callerFunctionProperties,

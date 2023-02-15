@@ -13,6 +13,7 @@ abstract class StringUtilities {
 	/**
 	 * Returns the hue value for a given string.
 	 * This can be used for HSL colors.
+	 * 
 	 * @param str The string to convert.
 	 * @returns The hue value.
 	 */
@@ -26,6 +27,7 @@ abstract class StringUtilities {
 
 	/**
 	 * Converts a string to an hash code.
+	 * 
 	 * @see {@link https://stackoverflow.com/a/7616484/16804863}
 	 * @param str The string to convert
 	 * @returns The hash code
@@ -41,5 +43,15 @@ abstract class StringUtilities {
 		}
 
 		return hash;
+	}
+
+	/**
+	 * Returns the date without timezone offset.
+	 * 
+	 * @see {@link https://stackoverflow.com/a/39209842}
+	 */
+	public static UTCDate(date: Date): Date {
+		const offset = date.getTimezoneOffset() * 60000;
+		return new Date(date.getTime() - offset);
 	}
 }

@@ -1,5 +1,8 @@
 abstract class Main extends Logger {
 	public static async initMainWindow() {
+		// Uncaught exceptions handling
+		this.initUncaughtExceptionsHandler();
+
 		// Some info for debug
 		this.logInfo(
 			this.initMainWindow,
@@ -15,6 +18,8 @@ abstract class Main extends Logger {
 			navigator
 		);
 
+		// Fix JQuery passive events (?)
+		// TODO: improve / check what it actually does
 		JQueryFixes.fixPassiveEvents();
 
 		// Reference grid
@@ -32,8 +37,11 @@ abstract class Main extends Logger {
 		// TODO: Extract audio from video file? (probably not necessary)
 		// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
 
-		// Initialize volume in the audio player
-		AudioPlayer.setVolumeSlider($("#volume-slider"));
+		// Initialize volume in the audio player and the play/stop buttons
+		AudioPlayer.setVolumeSlider($("#volume-slider")).setAudioButtons(
+			$("#play-toggle-audio-button"),
+			$("#stop-audio-button")
+		);
 
 		// Initialize sound button generator
 		SoundButton.initialize(Grid.$grid);
@@ -59,6 +67,37 @@ abstract class Main extends Logger {
 
 		// Show application
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
+	}
+
+	private static initUncaughtExceptionsHandler() {
+		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event
+		window.onerror = (
+			event: Event | string,
+			source?: string,
+			lineNo?: number,
+			colNo?: number,
+			error?: Error
+		): void => {
+			// Operate only on js files
+			if (!source.endsWith(".js")) {
+				return;
+			}
+			
+			if (typeof AudioPlayer !== "undefined") {
+				AudioPlayer.stop();
+			}
+
+			this.logError(
+				window.onerror, // Not really used to display the method name, but because it luckily makes a red color when converted to HSL from string.
+				"An unexpected error has occurred.\n",
+				event,
+				"\n",
+				`Source: ${source}\n`,
+				`At line ${lineNo}, column ${colNo}\n`,
+				`Type: ${error.name}\n`,
+				`Message: "${error.message}"`
+			);
+		};
 	}
 }
 
