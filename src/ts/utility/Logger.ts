@@ -10,21 +10,9 @@ abstract class Logger {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
+		let info = this.getInfo(callerFunction, message);
 
-		const callerClass = this.name;
-		let attributes: [string, string[]];
-
-		if (typeof callerFunction === "string") {
-			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
-		} else {
-			attributes = this.getStyledAttributes(
-				callerClass,
-				callerFunction?.name,
-				message
-			);
-		}
-
-		console.debug(attributes[0], ...attributes[1], ...args);
+		console.debug(info.attributes[0], ...info.attributes[1], ...args);
 	}
 
 	/** Info-level logging */
@@ -36,21 +24,24 @@ abstract class Logger {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
+		let info = this.getInfo(callerFunction, message);
 
-		const callerClass = this?.name;
-		let attributes: [string, string[]];
+		console.info(info.attributes[0], ...info.attributes[1], ...args);
+	}
 
-		if (typeof callerFunction === "string") {
-			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
-		} else {
-			attributes = this.getStyledAttributes(
-				callerClass,
-				callerFunction?.name,
-				message
-			);
+	/** Warning-level logging */
+	public static logWarn(
+		callerFunction: AnyFunc<any> | string,
+		message: string,
+		...args: any[]
+	): void {
+		if (SoundboardApi.isProduction) {
+			return;
 		}
 
-		console.info(attributes[0], ...attributes[1], ...args);
+		let info = this.getInfo(callerFunction, message);
+
+		console.warn(info.attributes[0], ...info.attributes[1], ...args);
 	}
 
 	/** Error-level logging */
@@ -63,6 +54,18 @@ abstract class Logger {
 			return;
 		}
 
+		let info = this.getInfo(callerFunction, message);
+
+		console.error(info.attributes[0], ...info.attributes[1], ...args);
+	}
+
+	private static getInfo(
+		callerFunction: AnyFunc<any> | string,
+		message: string
+	): {
+		callerClass: string;
+		attributes: [string, string[]];
+	} {
 		const callerClass = this.name;
 		let attributes: [string, string[]];
 
@@ -76,7 +79,10 @@ abstract class Logger {
 			);
 		}
 
-		console.error(attributes[0], ...attributes[1], ...args);
+		return {
+			callerClass,
+			attributes,
+		};
 	}
 
 	private static getStyledAttributes(

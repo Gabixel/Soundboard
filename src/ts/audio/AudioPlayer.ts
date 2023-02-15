@@ -161,7 +161,7 @@ abstract class AudioPlayer extends Logger {
 
 		// Limited sounds to prevent memory or human ear issues
 		if (this._audioStore.isLimitReached) {
-			this.logError(this.createAndPlayAudio, "Pool limit exceeded.");
+			this.logWarn(this.createAndPlayAudio, "Pool limit exceeded.");
 			return;
 		}
 
