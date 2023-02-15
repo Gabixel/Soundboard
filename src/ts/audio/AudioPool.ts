@@ -6,7 +6,7 @@ class AudioPool extends Logger {
 
 		this.audioPool.push(group);
 
-		$(group.playback).one("ended", () => {
+		$(group.main).one("ended", () => {
 			// Set the track as 'ended' only if it finished by itself
 			group.ended = !group.forcedStop;
 

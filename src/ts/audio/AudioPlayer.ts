@@ -1,20 +1,25 @@
 abstract class AudioPlayer extends Logger {
 	private static _volume: number = 0;
-	private static $volumeSlider: JQuery<HTMLElement>;
-	private static maxSliderValue = 1000;
+	private static _$volumeSlider: JQuery<HTMLElement>;
+	private static _maxSliderValue = 1000;
 
-	private static canLogVolume: boolean = true;
+	private static _audioStore: AudioStoreManager = new AudioStoreManager();
 
-	private static audioStore: AudioStoreManager = new AudioStoreManager();
+	private static _audioDevices: MediaDeviceInfo[];
 
-	private static audioDevices: MediaDeviceInfo[];
+	private static _$playToggleButton: JQuery<HTMLElement>;
+	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
+	private static _playToggleButtonIconInterval: NodeJS.Timer;
+	private static _playToggleButtonIconSemaphoreLocked: boolean;
+
+	private static _$stopButton: JQuery<HTMLElement>;
 
 	public static async updateAudioDevicesList(): Promise<void> {
 		// Get audio output devices
 		const devices = await navigator.mediaDevices.enumerateDevices();
-		this.audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
+		this._audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
 
-		this.audioDevices.forEach((device, i) => {
+		this._audioDevices.forEach((device, i) => {
 			$("#audio-output-select").append(
 				$("<option>", {
 					value: i,
@@ -26,25 +31,80 @@ abstract class AudioPlayer extends Logger {
 		// FIXME: Store preferred device
 		// this is all temporarily just for visuals
 		$("#audio-output-select>option:eq(2)").prop("selected", true);
-		this.audioStore.updateAudioDevice(this.audioDevices[2]);
+		this._audioStore.updateAudioDevice(this._audioDevices[2]);
 
 		this.logInfo(
 			this.updateAudioDevicesList,
 			"Devices list updated!\n",
-			this.audioDevices
+			this._audioDevices
 		);
 	}
 
-	public static setVolumeSlider($slider: JQuery<HTMLElement>): void {
+	public static setAudioButtons(
+		$playToggleButton: JQuery<HTMLElement>,
+		$stopButton: JQuery<HTMLElement>
+	): typeof AudioPlayer {
+		// Icon inside the play toggle button
+		this._$playToggleButtonIcon = $playToggleButton.find("i.fa-play");
+
+		// Play toggle button
+		this._$playToggleButton = $playToggleButton
+			// On play toggle click
+			.on("click", () => {
+				if (this._audioStore.isPlaying) {
+					AudioPlayer.pause();
+				} else {
+					AudioPlayer.play();
+				}
+			});
+
+		// Play toggle button icon updater
+		// FIXME: Use an array / a semaphore system to check when to change the icon instead of an interval
+		let iconUpdater = setInterval(() => {
+			if (this._playToggleButtonIconSemaphoreLocked) {
+				return;
+			}
+
+			this.updatePlayToggleButton();
+		}, 10);
+		Main.addInterval(iconUpdater);
+		this._playToggleButtonIconInterval = iconUpdater;
+
+		// Stop button
+		this._$stopButton = $stopButton.on("click", () => {
+			this.logInfo(this.setAudioButtons, "Stop audio button clicked");
+			AudioPlayer.stop();
+		});
+
+		return this;
+	}
+
+	private static updatePlayToggleButton() {
+		this._playToggleButtonIconSemaphoreLocked = true;
+
+		let isPlaying = this._audioStore.isPlaying;
+
+		this._$playToggleButtonIcon
+			.toggleClass("fa-pause", isPlaying)
+			.toggleClass("fa-play", !isPlaying);
+
+		this._playToggleButtonIconSemaphoreLocked = false;
+	}
+
+	public static setVolumeSlider(
+		$slider: JQuery<HTMLElement>
+	): typeof AudioPlayer {
 		this.logInfo(this.setVolumeSlider, "Slider set!\n", $slider);
-		this.$volumeSlider = $slider;
-		this.maxSliderValue = parseInt(this.$volumeSlider.attr("max"));
+		this._$volumeSlider = $slider;
+		this._maxSliderValue = parseInt(this._$volumeSlider.attr("max"));
 		this.updateVolume();
 		this.initSlider();
+
+		return this;
 	}
 
 	private static initSlider(): void {
-		this.$volumeSlider
+		this._$volumeSlider
 			// On input changes
 			.on("input", () => {
 				this.updateVolume();
@@ -54,14 +114,14 @@ abstract class AudioPlayer extends Logger {
 		// })
 
 		// Update volume slider on scroll (only when control is not active)
-		this.$volumeSlider
+		this._$volumeSlider
 			.parent()
 			// On scroll wheel
 			.on("wheel", { passive: true }, (e) => {
 				if (e.ctrlKey) return;
 				// e.preventDefault();
 				e.stopImmediatePropagation();
-				EventFunctions.updateInputValueFromWheel(e, this.$volumeSlider, 50, [
+				EventFunctions.updateInputValueFromWheel(e, this._$volumeSlider, 50, [
 					"input",
 				]);
 			});
@@ -95,12 +155,12 @@ abstract class AudioPlayer extends Logger {
 		useMultiPool: boolean
 	): void {
 		if (!useMultiPool) {
-			this.audioStore.addToSinglePool(path, time);
+			this._audioStore.addToSinglePool(path, time);
 			return;
 		}
 
 		// Limited sounds to prevent memory or human ear issues
-		if (this.audioStore.isLimitReached) {
+		if (this._audioStore.isLimitReached) {
 			this.logError(this.createAndPlayAudio, "Pool limit exceeded.");
 			return;
 		}
@@ -113,7 +173,7 @@ abstract class AudioPlayer extends Logger {
 					this.createAndPlayAudio,
 					"Audio file created. Duration: " + e.target.duration + " seconds"
 				);
-				this.storeAudio(e.target as AudioJS, time);
+				this.storeAudio(e.target, time);
 			})
 			.one("error", (e) => {
 				this.logError(
@@ -149,29 +209,29 @@ abstract class AudioPlayer extends Logger {
 
 		await this.setSinkId(main);
 
-		this.audioStore.addToMultiPool(group);
+		this._audioStore.addToMultiPool(group);
 	}
 
 	private static async setSinkId(audio: AudioJS): Promise<void> {
-		if (!this.audioDevices) await this.updateAudioDevicesList();
+		if (!this._audioDevices) await this.updateAudioDevicesList();
 
-		await audio.setSinkId(this.audioDevices[2].deviceId);
+		await audio.setSinkId(this._audioDevices[2].deviceId);
 	}
 
 	public static async play(): Promise<void> {
-		await this.audioStore.play();
+		await this._audioStore.play();
 	}
 
 	public static pause(): void {
-		this.audioStore.pause();
+		this._audioStore.pause();
 	}
 
 	public static stop(): void {
-		this.audioStore.stop();
+		this._audioStore.stop();
 	}
 
 	public static get isPlaying(): boolean {
-		return this.audioStore.isPlaying;
+		return this._audioStore.isPlaying;
 	}
 
 	public static get volume(): number {
@@ -179,31 +239,18 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	private static updateVolume(): void {
-		let value = (this.$volumeSlider.val() as number) / this.maxSliderValue;
+		let value = (this._$volumeSlider.val() as number) / this._maxSliderValue;
 
 		value = EMath.getExponentialValue(value, 4);
 
 		this._volume = value;
 		this.updateExistingVolumes();
 
-		// Log after some time to avoid spamming
-		if (this.canLogVolume) {
-			this.canLogVolume = false;
-
-			this.logDebug(
-				this.updateVolume,
-				"Volume:",
-				Math.round(this._volume * 100),
-				"%"
-			);
-
-			setTimeout(() => {
-				this.canLogVolume = true;
-			}, 500);
-		}
+		// Log new volume
+		this.logDebug(this.updateVolume, "Volume:", value);
 	}
 
 	private static updateExistingVolumes(): void {
-		this.audioStore.setVolume(this._volume);
+		this._audioStore.setVolume(this._volume);
 	}
 }

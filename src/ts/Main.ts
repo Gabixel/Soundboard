@@ -1,4 +1,9 @@
 abstract class Main extends Logger {
+	public static RESOURCES_PATH: string = "../../../resources/";
+
+	// TODO: create a specific object to store intervals(?)
+	private static _intervals: NodeJS.Timer[] = [];
+
 	public static async initMainWindow() {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();
@@ -69,6 +74,14 @@ abstract class Main extends Logger {
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
 
+	public static addInterval(interval: NodeJS.Timer): void {
+		this._intervals.push(interval);
+	}
+
+	private static clearIntervals() {
+		this._intervals.forEach((interval) => clearInterval(interval));
+	}
+
 	private static initUncaughtExceptionsHandler() {
 		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event
 		window.onerror = (
@@ -86,6 +99,8 @@ abstract class Main extends Logger {
 			if (typeof AudioPlayer !== "undefined") {
 				AudioPlayer.stop();
 			}
+
+			this.clearIntervals();
 
 			this.logError(
 				window.onerror, // Not really used to display the method name, but because it luckily makes a red color when converted to HSL from string.

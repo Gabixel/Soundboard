@@ -8,7 +8,7 @@ abstract class SoundButton extends Logger {
 
 	private static getRandomAudio(): string {
 		let path = SoundboardApi.joinPaths(
-			SoundboardApi.resolveAppPath("../../../resources/sounds"),
+			SoundboardApi.resolveAppPath(Main.RESOURCES_PATH, "sounds"),
 			this.paths[EMath.randomInt(0, this.paths.length)]
 		);
 
