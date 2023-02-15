@@ -181,7 +181,7 @@ abstract class AudioPlayer extends Logger {
 	private static updateVolume(): void {
 		let value = (this.$volumeSlider.val() as number) / this.maxSliderValue;
 
-		value = EMath.getExponentialValue(value);
+		value = EMath.getExponentialValue(value, 4);
 
 		this._volume = value;
 		this.updateExistingVolumes();

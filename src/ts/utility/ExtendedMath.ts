@@ -126,11 +126,13 @@ abstract class EMath {
 
 	public static getExponentialValue(
 		initialValue: number,
+		decimalPoints : number = 2,
 		base: number = 50
 	): number {
-		// Return an exponential version of the value
+		// Return an exponential version of the value.
+		// `parseFloat` is used because `toFixed` converts the number to a string.
 		return parseFloat(
-			((Math.pow(base, initialValue) - 1) / (base - 1)).toFixed(2)
+			((Math.pow(base, initialValue) - 1) / (base - 1)).toFixed(decimalPoints)
 		);
 	}
 
