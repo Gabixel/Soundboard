@@ -64,7 +64,6 @@ const scripts = [
 	"audio/AudioPool",
 	"audio/AudioStoreManager",
 	"audio/AudioPlayer",
-	"audio/Audio",
 
 	"ToolbarManager",
 
