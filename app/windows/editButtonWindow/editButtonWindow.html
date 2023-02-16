@@ -7,11 +7,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 	<meta http-equiv="Content-Security-Policy"
-		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
+		content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
 	<meta http-equiv="X-Content-Security-Policy"
-		content="default-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'">
-	<script defer type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
-	<script defer src="../../js/build.js" onload=""></script><!-- TODO: initEditButtonWindow(PARAMS?) -->
+		content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
 </head>
 
 <body>
@@ -21,6 +19,8 @@
 		<label for="path-selector">Button path: </label><input type="file" name="" id="path-selector">
 		<input type="submit" value="submit">
 	</form>
+	<!-- TODO: initEditButtonWindow(PARAMS?) -->
+	<script defer type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>
