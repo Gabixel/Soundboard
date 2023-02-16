@@ -138,6 +138,9 @@ abstract class SoundButton extends Logger {
 
 				$button.attr("data-path", encodedPath);
 				$button.children(".button-theme").text(file.name); // TODO: of course, this is temporary
+				console.log("setting hue")
+				$button.css("--hue", StringUtilities.getHue(file.name).toString());
+				$button.css("--saturation", "100%");
 			})
 			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
 				this.logDebug(this.addDragAndDrop, "'dragleave' triggered");
