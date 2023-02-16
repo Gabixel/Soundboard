@@ -27,7 +27,7 @@ const isProduction = Process.env.NODE_ENV === "production";
 
 /**
  * Root path for any app window.
- * 
+ *
  * **Note: `__dirname` already points to the `/app` folder.**
  */
 const appWindowRootPath = path.join(__dirname, "windows");
