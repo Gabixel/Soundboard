@@ -1,4 +1,4 @@
-abstract class ButtonFilter {
+abstract class ButtonFilter extends Logger {
 	private static _filter: string[] = [];
 
 	public static get filter(): string[] {
@@ -9,111 +9,141 @@ abstract class ButtonFilter {
 		return this._filter.length > 0;
 	}
 
-	public static updateFilter(): void {
-		const f = $("#buttons-filter-input").val().toString().split(" ");
-		this._filter = f.filter((text) => text.length > 0);
+	private static get $filteredButtons(): JQuery<HTMLElement> {
+		return Grid.$buttons.filter(".filtered");
+	}
+
+	// TODO: trigger filter when a function for updating a button is implemented.
+	// FIXME: trigger filter after clearing grid
+	// FIXME: trigger filter after swapping buttons
+
+	public static initialize(
+		$filterInput: JQuery<HTMLInputElement>,
+		$filterClearButton: JQuery<HTMLButtonElement>
+	): void {
+		// Trigger the filter input when the text changes
+		$filterInput.on("input", () => {
+			this.updateFilter();
+		});
+
+		// Clear filter
+		$filterClearButton.on("click", () => {
+			$filterInput.val("").trigger("input");
+		});
+
+		// TODO: make conditions dynamically changable
+		$(
+			"#filter-buttons-text, #filter-buttons-index, #filter-buttons-index-offset-select, #filter-buttons-tags, #filter-buttons-path"
+		).on("change", () => {
+			if (!this.isFiltering) return;
+
+			$filterInput.trigger("input");
+		});
+
+		this.logInfo(this.initialize, "Initialized!");
+	}
+
+	public static filterButton($button: JQuery<HTMLElement>) {
+		const shouldHideButton = this.shouldHide($button);
+
+		if (shouldHideButton) {
+			$button.removeClass("filtered").addClass("filtered");
+		} else {
+			// TODO: not sure if this is necessary
+			$button.addClass("filtered");
+			$button[0].offsetHeight;
+
+			$button.removeClass("filtered");
+		}
+	}
+
+	private static updateFilter(): void {
+		// Split by spaces
+		const filterInput: string[] = $("#filter-buttons-input")
+			.val()
+			.toString()
+			.split(" ");
+
+		// Remove empty filters
+		this._filter = filterInput.filter((text) => text.length > 0);
+
+		// TODO: add filter for case-sensitive comparison
+		// Make filters lowercased
 		this._filter.forEach((text, i) => {
 			this._filter[i] = text.toLowerCase();
 		});
-	}
-}
 
-// TODO: filter when a function for updating a button is implemented.
-// FIXME: filter after clearing grid
-
-// Trigger the filter input when the text changes
-$("#buttons-filter-input").on("input", () => {
-	ButtonFilter.updateFilter();
-	globallyUpdateFilter();
-});
-
-$("#clear-filter").on("click", () => {
-	$("#buttons-filter-input").val("").trigger("input");
-});
-
-$(
-	"#buttons-filter-text, #buttons-filter-index, #buttons-filter-index-offset-select, #buttons-filter-tags, #buttons-filter-path"
-).on("change", () => {
-	if (!ButtonFilter.isFiltering) return;
-
-	$("#buttons-filter-input").trigger("input");
-});
-
-function globallyUpdateFilter(): void {
-	if (!ButtonFilter.isFiltering) {
-		Logger.logInfo(globallyUpdateFilter, "Cleared filter.");
-		clearFilter();
-		return;
+		this.visuallyUpdateFilter();
 	}
 
-	$("#buttons-grid .soundbutton").each((_i, btn) => {
-		filterButton($(btn));
-	});
+	private static visuallyUpdateFilter(): void {
+		if (!this.isFiltering) {
+			this.logInfo(this.visuallyUpdateFilter, "Cleared filter.");
+			this.clearFilter();
+			return;
+		}
 
-	const filteredButtons = $("#buttons-grid .soundbutton.filtered").length;
+		Grid.$buttons.each((_i, btn) => {
+			this.filterButton($(btn));
+		});
 
-	const offset = $("#buttons-filter-index-offset-select option:selected").val();
+		const filteredButtonsLength = this.$filteredButtons.length;
 
-	const conditions = [
-		$("#buttons-filter-text").is(":checked") ? "text" : "",
-		$("#buttons-filter-index").is(":checked") ? `index (offset: ${offset})` : "",
-		$("#buttons-filter-tags").is(":checked") ? "tags" : "",
-		$("#buttons-filter-path").is(":checked") ? "path" : "",
-	].filter((f) => f.length > 0);
+		const offset = $("#filter-buttons-index-offset-select option:selected").val();
 
-	Logger.logInfo(
-		globallyUpdateFilter,
-		"Filtered " + filteredButtons + " buttons.",
-		"\nFilter:",
-		ButtonFilter.filter,
-		`\nConditions (${conditions.length}):`,
-		conditions.length > 0 ? conditions.join(", ") : "none"
-	);
+		const conditions = [
+			$("#filter-buttons-text").is(":checked") ? "text" : "",
+			$("#filter-buttons-index").is(":checked") ? `index (offset: ${offset})` : "",
+			$("#filter-buttons-tags").is(":checked") ? "tags" : "",
+			$("#filter-buttons-path").is(":checked") ? "path" : "",
+		].filter((f) => f.length > 0);
 
-	Grid.$grid.toggleClass("filtering", filteredButtons > 0);
-}
+		this.logInfo(
+			this.visuallyUpdateFilter,
+			"Filtered " + filteredButtonsLength + " buttons.",
+			"\nFilter:",
+			this.filter,
+			`\nConditions (${conditions.length}):`,
+			conditions.length > 0 ? conditions.join(", ") : "none"
+		);
 
-function filterButton($button: JQuery<HTMLElement>) {
-	const shouldHideButton = shouldHide($button);
-
-	if (shouldHideButton) $button.removeClass("filtered").addClass("filtered");
-	else {
-		$button.addClass("filtered");
-		$button[0].offsetHeight;
-		$button.removeClass("filtered");
+		Grid.$grid.toggleClass("filtering", filteredButtonsLength > 0);
 	}
-}
 
-function shouldHide($button: JQuery<HTMLElement>): boolean {
-	return !ButtonFilter.filter.some((f) => {
-		return isMatch($button, f);
-	});
-}
+	private static shouldHide($button: JQuery<HTMLElement>): boolean {
+		return !this.filter.some((f) => {
+			return this.isMatch($button, f);
+		});
+	}
 
-function isMatch($button: JQuery<HTMLElement>, f: string): boolean {
-	return showConditions.some((match) => match($button, f));
-}
+	private static isMatch($button: JQuery<HTMLElement>, f: string): boolean {
+		return this.conditions.some((match) => match($button, f));
+	}
 
-// Removes the "filtered" class from all buttons
-function clearFilter() {
-	$("#buttons-grid .soundbutton.filtered").each((_i: number, btn: HTMLElement) =>
-		showButton(btn)
-	);
-	Grid.$grid.removeClass("filtering");
-}
+	/**
+	 * Removes the "filtered" class from all buttons.
+	 */
+	private static clearFilter() {
+		this.$filteredButtons.each((_i: number, btn: HTMLElement) =>
+			this.showButton(btn)
+		);
+		Grid.$grid.removeClass("filtering");
+	}
 
-function showButton(button: HTMLElement) {
-	$(button).removeClass("filtered");
-}
+	private static showButton(button: HTMLElement) {
+		$(button).removeClass("filtered");
+	}
 
-const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
-	[
+	private static conditions: ((
+		$button: JQuery<HTMLElement>,
+		f: string
+	) => boolean)[] = [
 		// Text
 		($button: JQuery<HTMLElement>, f: string): boolean => {
 			const text = $button.children(".button-theme").text();
 
 			return (
-				$("#buttons-filter-text").is(":checked") &&
+				$("#filter-buttons-text").is(":checked") &&
 				text != null &&
 				text.toLowerCase().includes(f)
 			);
@@ -122,11 +152,11 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 		($button: JQuery<HTMLElement>, f: string): boolean => {
 			const index = parseInt($button.css("--index"));
 			const offset = parseInt(
-				$("#buttons-filter-index-offset-select option:selected").val().toString()
+				$("#filter-buttons-index-offset-select option:selected").val().toString()
 			);
 
 			return (
-				$("#buttons-filter-index").is(":checked") && index + offset === parseInt(f)
+				$("#filter-buttons-index").is(":checked") && index + offset === parseInt(f)
 			);
 		},
 		// Tags
@@ -137,7 +167,7 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 				.filter((tag) => tag.length > 0);
 
 			return (
-				$("#buttons-filter-tags").is(":checked") &&
+				$("#filter-buttons-tags").is(":checked") &&
 				tags != null &&
 				tags.some((tag) => tag.toLowerCase().includes(f))
 			);
@@ -147,9 +177,10 @@ const showConditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
 			const path = $button.attr("data-path");
 
 			return (
-				$("#buttons-filter-path").is(":checked") &&
+				$("#filter-buttons-path").is(":checked") &&
 				path != null &&
 				decodeURI(path).toLowerCase().includes(f)
 			);
 		},
 	];
+}

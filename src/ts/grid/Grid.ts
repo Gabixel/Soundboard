@@ -52,23 +52,19 @@ abstract class Grid extends Logger {
 
 	public static initGrid($container: JQuery<HTMLElement>): void {
 		this._$grid = $container;
+		this.logInfo(this.initGrid, "Initialized!");
 	}
 
 	public static setRows(newValue: number): void {
 		this._gridRows = newValue;
-		this.updateSize();
+
+		this.logDebug(this.setRows, `Row size changed (${this._gridRows})`);
 	}
 
 	public static setColumns(newValue: number): void {
 		this._gridCols = newValue;
-		this.updateSize();
-	}
 
-	private static updateSize(): void {
-		this.logDebug(
-			this.updateSize,
-			`Grid size updated (${this._gridRows} × ${this._gridCols})`
-		);
+		this.logDebug(this.setColumns, `Column size changed (${this._gridCols})`);
 	}
 
 	public static resetSoundButtonCount(): void {

@@ -51,6 +51,11 @@ abstract class Main extends Logger {
 		// Initialize sound button generator
 		SoundButton.initialize(Grid.$grid);
 
+		ButtonFilter.initialize(
+			$("#filter-buttons-input"),
+			$("#clear-filter-button")
+		);
+
 		// Set UI scale elements
 		UiScale.setControls(
 			$("#ui-scale-slider"),
@@ -96,14 +101,14 @@ abstract class Main extends Logger {
 				return;
 			}
 			
-			if (typeof AudioPlayer !== "undefined") {
+			if (typeof AudioPlayer != "undefined") {
 				AudioPlayer.stop();
 			}
 
 			this.clearIntervals();
 
 			this.logError(
-				window.onerror, // Not really used to display the method name, but because it luckily makes a red color when converted to HSL from string.
+				null,
 				"An unexpected error has occurred.\n",
 				event,
 				"\n",
