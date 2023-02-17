@@ -1,7 +1,7 @@
 abstract class EventFunctions {
 	public static updateInputValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,
-		targetInput: JQuery<HTMLElement> | null = null,
+		$targetInput: JQuery<HTMLInputElement> = null,
 		stepValue: number = 1,
 		postTriggers: string[] = ["change"]
 	): void {
@@ -9,7 +9,7 @@ abstract class EventFunctions {
 			return;
 		}
 
-		let $target = $(targetInput ?? e.target);
+		let $target: JQuery<HTMLInputElement> = $targetInput ?? $(e.target);
 
 		let delta = this.getDeltaY(e);
 		let currentValue = parseFloat($target.val().toString());
