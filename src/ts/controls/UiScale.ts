@@ -1,37 +1,37 @@
 abstract class UiScale extends Logger {
-	private static $slider: JQuery<HTMLElement>;
-	private static $lock: JQuery<HTMLElement>;
-	private static $reset: JQuery<HTMLElement>;
+	private static $scaleInput: JQuery<HTMLInputElement>;
+	private static $lockCheckbox: JQuery<HTMLInputElement>;
+	private static $resetButton: JQuery<HTMLButtonElement>;
 	private static min: number;
 	private static max: number;
 
 	public static setControls(
-		$slider: JQuery<HTMLElement>,
-		$lock: JQuery<HTMLElement>,
-		$reset: JQuery<HTMLElement>
+		$scaleInput: JQuery<HTMLInputElement>,
+		$lockCheckbox: JQuery<HTMLInputElement>,
+		$resetButton: JQuery<HTMLButtonElement>
 	): void {
-		this.$slider = $slider;
-		this.min = parseFloat(this.$slider.attr("min"));
-		this.max = parseFloat(this.$slider.attr("max"));
+		this.$scaleInput = $scaleInput;
+		this.min = parseFloat(this.$scaleInput.attr("min"));
+		this.max = parseFloat(this.$scaleInput.attr("max"));
 
 		this.initSlider();
 		this.initSliderWheelShortcut();
 
-		this.setLock($lock);
-		this.setReset($reset);
+		this.setLock($lockCheckbox);
+		this.setReset($resetButton);
 	}
 
 	public static getSliderValue(): number {
-		return parseFloat(this.$slider.val() as string);
+		return parseFloat(this.$scaleInput.val() as string);
 	}
 
-	private static setLock($lock: JQuery<HTMLElement>): void {
-		this.$lock = $lock;
+	private static setLock($lock: JQuery<HTMLInputElement>): void {
+		this.$lockCheckbox = $lock;
 		this.initLock();
 	}
 
-	private static setReset($reset: JQuery<HTMLElement>): void {
-		this.$reset = $reset;
+	private static setReset($reset: JQuery<HTMLButtonElement>): void {
+		this.$resetButton = $reset;
 		this.initReset();
 	}
 
@@ -44,7 +44,7 @@ abstract class UiScale extends Logger {
 			const value = EventFunctions.getUpdatedValueFromWheel(
 				e,
 				parseFloat($(document.body).css("zoom").toString()),
-				parseFloat(this.$slider.attr("step")),
+				parseFloat(this.$scaleInput.attr("step")),
 				[this.min, this.max]
 			);
 
@@ -57,7 +57,7 @@ abstract class UiScale extends Logger {
 	private static initSlider(): void {
 		this.setSliderPrevValue();
 
-		this.$slider
+		this.$scaleInput
 			// .on("keydown", (e) => {
 			// 	$(e.target).attr("step", "0.2");
 			// })
@@ -91,36 +91,38 @@ abstract class UiScale extends Logger {
 	}
 
 	private static getSliderPrevValue(): number {
-		return parseFloat(this.$slider.attr("data-prev-value").toString());
+		return parseFloat(this.$scaleInput.attr("data-prev-value").toString());
 	}
 
 	private static setSliderPrevValue(): void {
-		this.$slider.attr("data-prev-value", this.$slider.val().toString());
+		this.$scaleInput.attr("data-prev-value", this.$scaleInput.val().toString());
 	}
 
 	private static initLock() {
-		this.$lock.on("change", (e: JQuery.ChangeEvent) => {
+		this.$lockCheckbox.on("change", (e: JQuery.ChangeEvent) => {
 			const checked = e.target.checked;
-			this.$slider.prop("disabled", checked);
-			this.$reset.prop("disabled", checked);
+			this.$scaleInput.prop("disabled", checked);
+			this.$resetButton.prop("disabled", checked);
 			const lock = $(
 				`<i class="fa-solid fa-lock${!checked ? "-open" : ""}"></i>`
 			)[0];
-			$(`label[for="${this.$lock.attr("id")}"]`).html(lock);
+			$(`label[for="${this.$lockCheckbox.attr("id")}"]`).html(lock);
 		});
 	}
 
 	private static initReset(): void {
-		this.$reset.on("click", () => {
-			this.$slider.val(this.$slider.attr("--data-default")).trigger("click");
+		this.$resetButton.on("click", () => {
+			this.$scaleInput
+				.val(this.$scaleInput.attr("--data-default"))
+				.trigger("click");
 		});
 	}
 
 	private static get canChangeValue(): boolean {
-		return !this.$lock.prop("checked");
+		return !this.$lockCheckbox.prop("checked");
 	}
 
 	private static setSliderValue(value: number): void {
-		this.$slider.val(EMath.clamp(value, this.min, this.max).toString());
+		this.$scaleInput.val(EMath.clamp(value, this.min, this.max).toString());
 	}
 }

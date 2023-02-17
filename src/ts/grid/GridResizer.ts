@@ -15,9 +15,9 @@ abstract class GridResizer {
 	 * @param $clearButton
 	 */
 	public static initialize(
-		$rowsInput: JQuery<HTMLElement>,
-		$columnsInput: JQuery<HTMLElement>,
-		$clearButton: JQuery<HTMLElement>
+		$rowsInput: JQuery<HTMLInputElement>,
+		$columnsInput: JQuery<HTMLInputElement>,
+		$clearButton: JQuery<HTMLInputElement>
 	): void {
 		// Initialize grid
 		this.updateAxis($rowsInput, "row");
@@ -62,7 +62,7 @@ abstract class GridResizer {
 		this.updateButtonFontSize();
 	}
 
-	private static updateAxis($e: JQuery<HTMLElement>, axis: "row" | "col") {
+	private static updateAxis($e: JQuery<HTMLInputElement>, axis: "row" | "col") {
 		const axisSize = this.clampGridSizeValue($e);
 
 		switch (axis) {
@@ -85,7 +85,7 @@ abstract class GridResizer {
 		}
 	}
 
-	private static clampGridSizeValue($e: JQuery<HTMLElement>): number {
+	private static clampGridSizeValue($e: JQuery<HTMLInputElement>): number {
 		const $target = $e;
 		const value = parseInt($target.val().toString());
 
@@ -108,7 +108,7 @@ abstract class GridResizer {
 				return aIndex - bIndex;
 			});
 
-		$(sortedButtons).each((_i: number, e: HTMLElement) => {
+		$(sortedButtons).each((_i: number, e: HTMLElement): void => {
 			const index = parseInt($(e).css("--index").toString());
 
 			if (index >= Grid.size) {
@@ -127,7 +127,11 @@ abstract class GridResizer {
 		for (let i = 0; i < emptyCells; i++) {
 			const $button = $(SoundButton.generateRandom(Grid.size + i - emptyCells));
 
-			if (ButtonFilter.isFiltering) filterButton($button);
+			// TODO: Not sure if it's better triggering the filter instead of this.
+			// In that case, all existing buttons will light again (thanks to the animation).
+			if (ButtonFilter.isFiltering) {
+				ButtonFilter.filterButton($button);
+			}
 
 			Grid.$grid.append($button[0]);
 
@@ -137,18 +141,16 @@ abstract class GridResizer {
 
 	// TODO: update on window resize and on ui scale change
 	private static updateButtonFontSize(): void {
-		const $el = $($("#buttons-grid .soundbutton")[0]);
+		const $el = $(Grid.getButtonAtIndex(0));
 
 		const minFontSize = 10; /*parseInt($(document.body).css("font-size").toString());*/
 		const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
 
-		let size =
-			(Math.min($el.innerHeight(), $el.innerWidth()) -
-				parseFloat($el.css("padding-top")) * 2) /
-			2;
+		const minButtonSize = Math.min($el.innerHeight(), $el.innerWidth());
+		let finalSize = (minButtonSize - parseFloat($el.css("padding-top")) * 2) / 2;
 
-		size = EMath.clamp(size, minFontSize, maxFontSize);
+		finalSize = EMath.clamp(finalSize, minFontSize, maxFontSize);
 
-		Grid.$grid.css("--button-font-size", size + "px");
+		Grid.$grid.css("--button-font-size", finalSize + "px");
 	}
 }

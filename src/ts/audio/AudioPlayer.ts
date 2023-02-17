@@ -1,6 +1,6 @@
 abstract class AudioPlayer extends Logger {
 	private static _volume: number = 0;
-	private static _$volumeSlider: JQuery<HTMLElement>;
+	private static _$volumeSlider: JQuery<HTMLInputElement>;
 	private static _maxSliderValue = 1000;
 
 	private static _audioStore: AudioStoreManager = new AudioStoreManager();
@@ -10,8 +10,6 @@ abstract class AudioPlayer extends Logger {
 	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
 	private static _playToggleButtonIconInterval: NodeJS.Timer;
 	private static _playToggleButtonIconIntervalLocked: boolean;
-
-	private static _$stopButton: JQuery<HTMLElement>;
 
 	public static async updateAudioDevicesList(): Promise<void> {
 		// Get audio output devices
@@ -40,13 +38,13 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	public static setAudioButtons(
-		$playToggleButton: JQuery<HTMLElement>,
-		$stopButton: JQuery<HTMLElement>
+		$playToggleButton: JQuery<HTMLButtonElement>,
+		$stopButton: JQuery<HTMLButtonElement>
 	): typeof AudioPlayer {
 		// Icon inside the play toggle button
 		this._$playToggleButtonIcon = $playToggleButton.children("i.fa-play");
 
-		// Play toggle button
+		// Buttons events
 		$playToggleButton
 			// On play toggle click
 			.on("click", () => {
@@ -56,6 +54,10 @@ abstract class AudioPlayer extends Logger {
 					AudioPlayer.play();
 				}
 			});
+		$stopButton.on("click", () => {
+			this.logInfo(this.setAudioButtons, "Stop audio button clicked");
+			AudioPlayer.stop();
+		});
 
 		// Play toggle button icon updater
 		// FIXME: Use an array / a semaphore system to check when to change the icon instead of an interval
@@ -68,12 +70,6 @@ abstract class AudioPlayer extends Logger {
 		}, 10);
 		Main.addInterval(iconUpdater);
 		this._playToggleButtonIconInterval = iconUpdater;
-
-		// Stop button
-		this._$stopButton = $stopButton.on("click", () => {
-			this.logInfo(this.setAudioButtons, "Stop audio button clicked");
-			AudioPlayer.stop();
-		});
 
 		return this;
 	}
@@ -91,7 +87,7 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	public static setVolumeSlider(
-		$slider: JQuery<HTMLElement>
+		$slider: JQuery<HTMLInputElement>
 	): typeof AudioPlayer {
 		this.logInfo(this.setVolumeSlider, "Slider set!\n", $slider);
 		this._$volumeSlider = $slider;
