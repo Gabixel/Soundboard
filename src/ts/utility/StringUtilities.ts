@@ -67,4 +67,8 @@ abstract class StringUtilities {
 		const offset = date.getTimezoneOffset() * 60000;
 		return new Date(date.getTime() - offset);
 	}
+
+	public static isDefined(obj: any): boolean {
+		return obj != null;
+	}
 }
