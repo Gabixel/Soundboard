@@ -31,7 +31,7 @@ abstract class Main extends Logger {
 		Grid.initGrid($("#buttons-grid"));
 
 		// Grid resizer
-		initResizer(); // TODO: move to class
+		GridResizer.initialize($("#grid-rows"), $("#grid-columns"), $("#clear-grid"));
 
 		// Button swap
 		ButtonSwap.initialize();

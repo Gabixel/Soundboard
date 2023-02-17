@@ -1,151 +1,143 @@
 abstract class GridResizer {
-	private static _grid: Grid;
+	// TODO: Dependency Injection
+	// private static _grid: Grid;
+	private static resizerInitialized = false;
 
-	public static setGrid(grid: Grid): void {
-		this._grid = grid;
+	// public static setGrid(grid: Grid): void {
+	// 	this._grid = grid;
+	// }
+
+	public static initialize(
+		$rowsInput: JQuery<HTMLElement>,
+		$columnsInput: JQuery<HTMLElement>,
+		$clearButton: JQuery<HTMLElement>
+	): void {
+		$rowsInput
+			.on("change", (e) => {
+				this.updateRows(e);
+				if (this.resizerInitialized) this.updateGrid();
+			})
+			.on("wheel", (e) => {
+				if (e.ctrlKey) return;
+				// e.preventDefault();
+				e.stopImmediatePropagation();
+				EventFunctions.updateInputValueFromWheel(e);
+			});
+
+		$columnsInput
+			.on("change", (e) => {
+				this.updateColumns(e);
+				if (this.resizerInitialized) this.updateGrid();
+			})
+			.on("wheel", (e) => {
+				if (e.ctrlKey) return;
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				EventFunctions.updateInputValueFromWheel(e);
+			});
+
+		$clearButton.on("click", () => {
+			Grid.$grid.empty();
+			Grid.resetSoundButtonCount();
+			this.updateGrid();
+		});
+
+		this.initResizer();
 	}
 
-	private static setupResizeEvents(): void {}
-}
+	private static initResizer() {
+		$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
+		this.resizerInitialized = true;
+		this.updateGrid();
+	}
 
-// TODO: move all to class //////////////////////////////////////////////////////
+	private static updateGrid() {
+		this.fillEmptyCells();
 
-let resizerInitialized = false;
+		this.updateVisibleButtons();
+		this.updateButtonFontSize();
+	}
 
-function initResizer() {
-	$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
-	resizerInitialized = true;
-	updateGrid();
-}
+	private static clampGridSizeValue($e: JQuery.ChangeEvent): number {
+		const $target = $($e.target);
+		const value = parseInt($target.val().toString());
 
-$("#grid-rows")
-	.on("change", (e) => {
-		updateRows(e);
-		if (resizerInitialized) updateGrid();
-	})
-	.on("wheel", (e) => {
-		if (e.ctrlKey) return;
-		// e.preventDefault();
-		e.stopImmediatePropagation();
-		EventFunctions.updateInputValueFromWheel(e);
-	});
-// .on("mouseup", (e) => {
-// 	e.stopPropagation();
-// });
+		let max = parseFloat($target.attr("max").toString());
+		let min = parseFloat($target.attr("min").toString());
 
-$("#grid-columns")
-	.on("change", (e) => {
-		updateColumns(e);
-		if (resizerInitialized) updateGrid();
-	})
-	.on("wheel", (e) => {
-		if (e.ctrlKey) return;
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		EventFunctions.updateInputValueFromWheel(e);
-	});
-// .on("mouseup", (e) => {
-// 	e.stopPropagation();
-// });
+		let clampedValue = EMath.clamp(value, min, max);
 
-$("#clear-grid").on("click", () => {
-	Grid.$grid.empty();
-	Grid.resetSoundButtonCount();
-	updateGrid();
-});
+		$target.val(clampedValue);
 
-function clampGridSizeValue($e: JQuery.ChangeEvent): number {
-	const $target = $($e.target);
-	const value = parseInt($target.val().toString());
+		return clampedValue;
+	}
 
-	let max = parseFloat($target.attr("max").toString());
-	let min = parseFloat($target.attr("min").toString());
+	private static updateRows($e: JQuery.ChangeEvent) {
+		const rows = this.clampGridSizeValue($e);
 
-	let clampedValue = EMath.clamp(value, min, max);
+		Grid.$grid.css("--rows", rows);
 
-	$target.val(clampedValue);
+		Grid.setRows(rows);
+	}
 
-	return clampedValue;
-}
+	private static updateColumns($e: JQuery.ChangeEvent) {
+		const columns = this.clampGridSizeValue($e);
 
-function updateRows($e: JQuery.ChangeEvent) {
-	const rows = clampGridSizeValue($e);
+		Grid.$grid.css("--columns", columns);
 
-	// $("#buttons-grid").css({
-	// 	gridTemplateRows: `repeat(${rows}, 1fr)`,
-	// });
-	Grid.$grid.css("--rows", rows);
+		Grid.setColumns(columns);
+	}
 
-	Grid.setRows(rows);
-}
-
-function updateColumns($e: JQuery.ChangeEvent) {
-	const columns = clampGridSizeValue($e);
-
-	// $("#buttons-grid").css({
-	// 	gridTemplateColumns: `repeat(${columns}, 1fr)`,
-	// });
-	Grid.$grid.css("--columns", columns);
-
-	Grid.setColumns(columns);
-}
-
-function updateGrid() {
-	fillEmptyCells();
-
-	updateVisibleButtons();
-	updateButtonFontSize();
-}
-
-function updateVisibleButtons(): void {
-	$(
-		$("#buttons-grid .soundbutton")
+	private static updateVisibleButtons(): void {
+		let sortedButtons = Grid.$buttons
 			.toArray()
 			.sort(function (a: HTMLElement, b: HTMLElement): number {
 				const aIndex = parseInt($(a).css("--index").toString());
 				const bIndex = parseInt($(b).css("--index").toString());
 				return aIndex - bIndex;
-			})
-	).each((_i: number, e: HTMLElement) => {
-		const index = parseInt($(e).css("--index").toString());
+			});
 
-		if (index >= Grid.size) {
-			$(e).addClass("hidden");
-		} else {
-			$(e).removeClass("hidden");
-		}
-	});
-}
+		$(sortedButtons).each((_i: number, e: HTMLElement) => {
+			const index = parseInt($(e).css("--index").toString());
 
-function fillEmptyCells(): void {
-	if (!Grid.isGridIncomplete) return;
-
-	const emptyCells = Grid.size - Grid.buttonCount;
-
-	for (let i = 0; i < emptyCells; i++) {
-		const $button = $(SoundButton.generateRandom(Grid.size + i - emptyCells));
-
-		if (ButtonFilter.isFiltering) filterButton($button);
-
-		Grid.$grid.append($button[0]);
-
-		Grid.increaseSoundButtonCount();
+			if (index >= Grid.size) {
+				$(e).addClass("hidden");
+			} else {
+				$(e).removeClass("hidden");
+			}
+		});
 	}
-}
 
-// TODO: update on window resize and on ui scale change
-function updateButtonFontSize(): void {
-	const $el = $($("#buttons-grid .soundbutton")[0]);
+	private static fillEmptyCells(): void {
+		if (!Grid.isGridIncomplete) return;
 
-	const minFontSize = 10; /*parseInt($(document.body).css("font-size").toString());*/
-	const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
+		const emptyCells = Grid.size - Grid.buttonCount;
 
-	let size =
-		(Math.min($el.innerHeight(), $el.innerWidth()) -
-			parseFloat($el.css("padding-top")) * 2) /
-		2;
+		for (let i = 0; i < emptyCells; i++) {
+			const $button = $(SoundButton.generateRandom(Grid.size + i - emptyCells));
 
-	size = EMath.clamp(size, minFontSize, maxFontSize);
+			if (ButtonFilter.isFiltering) filterButton($button);
 
-	Grid.$grid.css("--button-font-size", size + "px");
+			Grid.$grid.append($button[0]);
+
+			Grid.increaseSoundButtonCount();
+		}
+	}
+
+	// TODO: update on window resize and on ui scale change
+	private static updateButtonFontSize(): void {
+		const $el = $($("#buttons-grid .soundbutton")[0]);
+
+		const minFontSize = 10; /*parseInt($(document.body).css("font-size").toString());*/
+		const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
+
+		let size =
+			(Math.min($el.innerHeight(), $el.innerWidth()) -
+				parseFloat($el.css("padding-top")) * 2) /
+			2;
+
+		size = EMath.clamp(size, minFontSize, maxFontSize);
+
+		Grid.$grid.css("--button-font-size", size + "px");
+	}
 }
