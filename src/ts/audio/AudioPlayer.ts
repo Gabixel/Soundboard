@@ -7,10 +7,9 @@ abstract class AudioPlayer extends Logger {
 
 	private static _audioDevices: MediaDeviceInfo[];
 
-	private static _$playToggleButton: JQuery<HTMLElement>;
 	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
 	private static _playToggleButtonIconInterval: NodeJS.Timer;
-	private static _playToggleButtonIconSemaphoreLocked: boolean;
+	private static _playToggleButtonIconIntervalLocked: boolean;
 
 	private static _$stopButton: JQuery<HTMLElement>;
 
@@ -45,10 +44,10 @@ abstract class AudioPlayer extends Logger {
 		$stopButton: JQuery<HTMLElement>
 	): typeof AudioPlayer {
 		// Icon inside the play toggle button
-		this._$playToggleButtonIcon = $playToggleButton.find("i.fa-play");
+		this._$playToggleButtonIcon = $playToggleButton.children("i.fa-play");
 
 		// Play toggle button
-		this._$playToggleButton = $playToggleButton
+		$playToggleButton
 			// On play toggle click
 			.on("click", () => {
 				if (this._audioStore.isPlaying) {
@@ -61,7 +60,7 @@ abstract class AudioPlayer extends Logger {
 		// Play toggle button icon updater
 		// FIXME: Use an array / a semaphore system to check when to change the icon instead of an interval
 		let iconUpdater = setInterval(() => {
-			if (this._playToggleButtonIconSemaphoreLocked) {
+			if (this._playToggleButtonIconIntervalLocked) {
 				return;
 			}
 
@@ -80,7 +79,7 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	private static updatePlayToggleButton() {
-		this._playToggleButtonIconSemaphoreLocked = true;
+		this._playToggleButtonIconIntervalLocked = true;
 
 		let isPlaying = this._audioStore.isPlaying;
 
@@ -88,7 +87,7 @@ abstract class AudioPlayer extends Logger {
 			.toggleClass("fa-pause", isPlaying)
 			.toggleClass("fa-play", !isPlaying);
 
-		this._playToggleButtonIconSemaphoreLocked = false;
+		this._playToggleButtonIconIntervalLocked = false;
 	}
 
 	public static setVolumeSlider(
