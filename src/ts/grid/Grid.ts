@@ -1,7 +1,6 @@
 abstract class Grid extends Logger {
-	private static gridRows: number = 0;
-	private static gridCols: number = 0;
-	private static gridSize: number = 0;
+	private static _gridRows: number = 0;
+	private static _gridCols: number = 0;
 
 	private static _$grid: JQuery<HTMLElement>;
 
@@ -19,15 +18,15 @@ abstract class Grid extends Logger {
 	}
 
 	public static get rows(): number {
-		return this.gridRows;
+		return this._gridRows;
 	}
 
 	public static get cols(): number {
-		return this.gridCols;
+		return this._gridCols;
 	}
 
 	public static get size(): number {
-		return this.gridSize;
+		return this._gridRows * this._gridCols;
 	}
 
 	public static get buttonCount(): number {
@@ -56,17 +55,20 @@ abstract class Grid extends Logger {
 	}
 
 	public static setRows(newValue: number): void {
-		this.gridRows = newValue;
+		this._gridRows = newValue;
 		this.updateSize();
 	}
 
 	public static setColumns(newValue: number): void {
-		this.gridCols = newValue;
+		this._gridCols = newValue;
 		this.updateSize();
 	}
 
 	private static updateSize(): void {
-		this.gridSize = this.gridRows * this.gridCols;
+		this.logDebug(
+			this.updateSize,
+			`Grid size updated (${this._gridRows} × ${this._gridCols})`
+		);
 	}
 
 	public static resetSoundButtonCount(): void {
@@ -86,12 +88,14 @@ abstract class Grid extends Logger {
 			throw new Error("Grid is not initialized");
 		}
 
-		if (index >= this.gridSize) {
+		const size = this.size;
+
+		if (index >= size) {
 			this.logError(
 				this.getButtonAtIndex,
-				`Index '${index}' is out of bounds. Current max index: (${
-					this.gridSize
-				} - 1 = ${this.gridSize - 1})`
+				`Index '${index}' is out of bounds. Current max index: (${size} - 1 = ${
+					size - 1
+				})`
 			);
 
 			return null;

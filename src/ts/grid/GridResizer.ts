@@ -7,15 +7,28 @@ abstract class GridResizer {
 	// 	this._grid = grid;
 	// }
 
+	/**
+	 * Initializes events for the grid resize logic.
+	 *
+	 * @param $rowsInput
+	 * @param $columnsInput
+	 * @param $clearButton
+	 */
 	public static initialize(
 		$rowsInput: JQuery<HTMLElement>,
 		$columnsInput: JQuery<HTMLElement>,
 		$clearButton: JQuery<HTMLElement>
 	): void {
+		// Initialize grid
+		this.updateAxis($rowsInput, "row");
+		this.updateAxis($columnsInput, "col");
+		this.updateGrid();
+
+		// Initialize events
 		$rowsInput
 			.on("change", (e) => {
-				this.updateRows(e);
-				if (this.resizerInitialized) this.updateGrid();
+				this.updateAxis($(e.target), "row");
+				this.updateGrid();
 			})
 			.on("wheel", (e) => {
 				if (e.ctrlKey) return;
@@ -23,43 +36,57 @@ abstract class GridResizer {
 				e.stopImmediatePropagation();
 				EventFunctions.updateInputValueFromWheel(e);
 			});
-
 		$columnsInput
 			.on("change", (e) => {
-				this.updateColumns(e);
-				if (this.resizerInitialized) this.updateGrid();
+				this.updateAxis($(e.target), "col");
+				this.updateGrid();
 			})
 			.on("wheel", (e) => {
 				if (e.ctrlKey) return;
-				e.preventDefault();
+				// e.preventDefault();
 				e.stopImmediatePropagation();
 				EventFunctions.updateInputValueFromWheel(e);
 			});
-
 		$clearButton.on("click", () => {
 			Grid.$grid.empty();
 			Grid.resetSoundButtonCount();
 			this.updateGrid();
 		});
-
-		this.initResizer();
-	}
-
-	private static initResizer() {
-		$("#grid-rows, #grid-columns").trigger("change"); // Initializes grid
-		this.resizerInitialized = true;
-		this.updateGrid();
 	}
 
 	private static updateGrid() {
 		this.fillEmptyCells();
 
 		this.updateVisibleButtons();
+
 		this.updateButtonFontSize();
 	}
 
-	private static clampGridSizeValue($e: JQuery.ChangeEvent): number {
-		const $target = $($e.target);
+	private static updateAxis($e: JQuery<HTMLElement>, axis: "row" | "col") {
+		const axisSize = this.clampGridSizeValue($e);
+
+		switch (axis) {
+			case "row":
+				if (Grid.rows == axisSize) {
+					return;
+				}
+
+				Grid.$grid.css("--rows", axisSize);
+				Grid.setRows(axisSize);
+				break;
+			case "col":
+				if (Grid.cols == axisSize) {
+					return;
+				}
+
+				Grid.$grid.css("--columns", axisSize);
+				Grid.setColumns(axisSize);
+				break;
+		}
+	}
+
+	private static clampGridSizeValue($e: JQuery<HTMLElement>): number {
+		const $target = $e;
 		const value = parseInt($target.val().toString());
 
 		let max = parseFloat($target.attr("max").toString());
@@ -70,22 +97,6 @@ abstract class GridResizer {
 		$target.val(clampedValue);
 
 		return clampedValue;
-	}
-
-	private static updateRows($e: JQuery.ChangeEvent) {
-		const rows = this.clampGridSizeValue($e);
-
-		Grid.$grid.css("--rows", rows);
-
-		Grid.setRows(rows);
-	}
-
-	private static updateColumns($e: JQuery.ChangeEvent) {
-		const columns = this.clampGridSizeValue($e);
-
-		Grid.$grid.css("--columns", columns);
-
-		Grid.setColumns(columns);
 	}
 
 	private static updateVisibleButtons(): void {
