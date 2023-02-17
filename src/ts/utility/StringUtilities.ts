@@ -6,28 +6,41 @@ abstract class StringUtilities {
 			.replace(/%3A/g, ":"); // Decode colons
 	}
 
-	public static getHsl(str: string, lightness: number): string {
-		return `hsl(${this.getHue(str)}, 100%, ${lightness}%)`;
+	/**
+	 * Returns as `hsl()` function as a string.
+	 *
+	 * @param str The string that will be converted to a hue value
+	 * @param saturation The saturation level
+	 * @param lightness The lightness level
+	 * @returns
+	 */
+	public static getHSL(
+		str: string,
+		saturation: number = 100,
+		lightness: number = 50
+	): string {
+		return `hsl(${this.getHue(str)}, ${saturation}%, ${lightness}%)`;
 	}
 
 	/**
 	 * Returns the hue value for a given string.
 	 * This can be used for HSL colors.
-	 * 
+	 *
 	 * @param str The string to convert.
 	 * @returns The hue value.
 	 */
 	public static getHue(str: string): number {
-		let hash = this.getHash(str);
+		const hash = this.getHash(str);
 
+		// Result will always be between -360 and 360 with the remainder operator
 		const result = hash % 360;
-		if (result < 0) return result + 360;
-		else return result;
+
+		return result < 0 ? result + 360 : result;
 	}
 
 	/**
 	 * Converts a string to an hash code.
-	 * 
+	 *
 	 * @see {@link https://stackoverflow.com/a/7616484/16804863}
 	 * @param str The string to convert
 	 * @returns The hash code
@@ -47,7 +60,7 @@ abstract class StringUtilities {
 
 	/**
 	 * Returns the date without timezone offset.
-	 * 
+	 *
 	 * @see {@link https://stackoverflow.com/a/39209842}
 	 */
 	public static UTCDate(date: Date): Date {

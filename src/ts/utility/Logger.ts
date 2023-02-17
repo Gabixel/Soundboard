@@ -119,7 +119,7 @@ abstract class Logger {
 		if (callerClass) {
 			callerClassRendered = `%c${callerClass}`;
 			callerClassProperties.push(
-				`color: ${StringUtilities.getHsl(callerClass, 70)};
+				`color: ${StringUtilities.getHSL(callerClass, 100, 70)};
 				${boldEffect};
 				${shadowEffect}`
 			);
@@ -132,7 +132,7 @@ abstract class Logger {
 		if (callerFunction) {
 			callerFunctionRendered = `%c${callerFunction}`;
 			callerFunctionProperties.push(
-				`color: ${StringUtilities.getHsl(callerFunction, 70)};
+				`color: ${StringUtilities.getHSL(callerFunction, 100, 70)};
 				${boldEffect};
 				${shadowEffect}`
 			);
@@ -156,8 +156,8 @@ abstract class Logger {
 		message: string
 	): [string, string[]] {
 		const colorName = callerFunction ?? callerClass ?? "???";
-		const bgColor = StringUtilities.getHsl(colorName, 20);
-		const fgColor = StringUtilities.getHsl(colorName, 90);
+		const bgColor = StringUtilities.getHSL(colorName, 100, 20);
+		const fgColor = StringUtilities.getHSL(colorName, 100, 90);
 		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
@@ -196,9 +196,20 @@ abstract class Logger {
 		callerFunction: string,
 		message: string
 	): [string, string[]] {
-		const colorName = callerFunction ?? callerClass ?? "???";
-		const bgColor = StringUtilities.getHsl(colorName, 20);
-		const fgColor = StringUtilities.getHsl(colorName, 90);
+		let textForColor: string = "???";
+
+		// "ClassName"
+		if (StringUtilities.isDefined(callerClass)) {
+			textForColor = callerClass;
+		}
+
+		// "ClassName:FunctionName"
+		if (StringUtilities.isDefined(callerFunction)) {
+			textForColor += ":" + callerFunction;
+		}
+
+		const bgColor = StringUtilities.getHSL(textForColor, 100, 20);
+		const fgColor = StringUtilities.getHSL(textForColor, 100, 90);
 		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
