@@ -7,7 +7,7 @@ abstract class Main extends Logger {
 	public static async initMainWindow() {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();
-
+		
 		// Some info for debug
 		this.logInfo(
 			this.initMainWindow,

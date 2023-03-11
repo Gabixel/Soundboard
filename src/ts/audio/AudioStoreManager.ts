@@ -52,6 +52,7 @@ class AudioStoreManager extends Logger {
 	}
 
 	public addToSinglePool(path: string, time: AudioTimings): void {
+		// The intended use is to interrupt all audio in the multi pool when starting the main one
 		this.stopMultiPoolAudio();
 
 		// If the path is different from the previous one
@@ -83,11 +84,12 @@ class AudioStoreManager extends Logger {
 			this.singlePool.playback.load();
 		}
 
-		const timeInSeconds = time.start === 0 ? time.start : time.start / 1000;
+		const timeInSeconds = time.start / 1000;
 
 		this.singlePool.main.currentTime = this.singlePool.playback.currentTime =
 			timeInSeconds;
 		// TODO: notify if the start time is longer than the actual duration of the track
+		// TODO: end time
 	}
 
 	public addToMultiPool(audioGroup: AudioPoolGroup): void {
