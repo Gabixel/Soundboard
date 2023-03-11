@@ -20,7 +20,7 @@ class AudioPool extends Logger {
 		const index = this.audioPool.indexOf(removingGroup);
 
 		if (index == -1) {
-			AudioPool.logError(
+			AudioPool.logWarn(
 				this.remove,
 				"Removing pool is already removed:",
 				removingGroup
