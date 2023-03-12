@@ -1,8 +1,10 @@
 class AudioStoreManager extends Logger {
-	private singlePool: AudioGroup;
-	private multiPool: AudioPool = new AudioPool();
+	private _singlePool: AudioGroup;
+	private _multiPool: AudioPool = new AudioPool();
 
-	private multiPoolLimit: number = 10;
+	private _multiPoolLimit: number = 10;
+
+	private _currentDeviceId: string = "";
 
 	constructor(volume: number = 0) {
 		super();
@@ -10,7 +12,7 @@ class AudioStoreManager extends Logger {
 		// Create main audio pool
 		let main = new Audio();
 		let playback = new Audio();
-		this.singlePool = {
+		this._singlePool = {
 			main,
 			playback,
 			$all: $(main).add($(playback)),
@@ -28,13 +30,13 @@ class AudioStoreManager extends Logger {
 
 		// Set to desired volume
 		// TODO: sum with overriding volume when it will be implemented
-		this.singlePool.main.volume = this.singlePool.playback.volume = volume;
+		this._singlePool.main.volume = this._singlePool.playback.volume = volume;
 
 		// Add audio events
-		this.singlePool.$all
+		this._singlePool.$all
 			.on("canplay", () => {
 				AudioStoreManager.logInfo("[constructor]", "Audio can play");
-				this.playGroup(this.singlePool);
+				this.playGroup(this._singlePool);
 			})
 			.on("error", (e) => {
 				AudioStoreManager.logError(
@@ -46,9 +48,10 @@ class AudioStoreManager extends Logger {
 			});
 	}
 
-	public updateAudioDevice(device: MediaDeviceInfo): void {
+	public async updateAudioDevice(device: MediaDeviceInfo): Promise<void> {
 		// TODO: add more logic and various guards (e.g. `main` and `playback` on same output)
-		this.singlePool.main.setSinkId(device.deviceId);
+		await this._singlePool.main.setSinkId(device.deviceId);
+		this._currentDeviceId = device.deviceId;
 	}
 
 	public addToSinglePool(path: string, time: AudioTimings): void {
@@ -56,13 +59,13 @@ class AudioStoreManager extends Logger {
 		this.stopMultiPoolAudio();
 
 		// If the path is different from the previous one
-		if (this.singlePool.lastTrack !== path) {
+		if (this._singlePool.lastTrack !== path) {
 			AudioStoreManager.logInfo(
 				this.addToSinglePool,
 				"New path different from previous one.\n%s",
 				`• Last track path: "%c%s%c"\n%s`,
 				"color: #03fc98;",
-				this.singlePool.lastTrack,
+				this._singlePool.lastTrack,
 				"",
 				`• New track path: "%c%s%c"`,
 				"color: #03fc98;",
@@ -70,8 +73,8 @@ class AudioStoreManager extends Logger {
 				""
 			);
 
-			this.singlePool.lastTrack = path;
-			this.singlePool.main.src = this.singlePool.playback.src = path;
+			this._singlePool.lastTrack = path;
+			this._singlePool.main.src = this._singlePool.playback.src = path;
 			AudioStoreManager.logInfo(
 				this.addToSinglePool,
 				`Setting new path: "%c%s%c"`,
@@ -80,13 +83,13 @@ class AudioStoreManager extends Logger {
 				""
 			);
 
-			this.singlePool.main.load();
-			this.singlePool.playback.load();
+			this._singlePool.main.load();
+			this._singlePool.playback.load();
 		}
 
 		const timeInSeconds = time.start / 1000;
 
-		this.singlePool.main.currentTime = this.singlePool.playback.currentTime =
+		this._singlePool.main.currentTime = this._singlePool.playback.currentTime =
 			timeInSeconds;
 		// TODO: notify if the start time is longer than the actual duration of the track
 		// TODO: end time
@@ -99,33 +102,33 @@ class AudioStoreManager extends Logger {
 			audioGroup
 		);
 
-		this.multiPool.add(audioGroup);
+		this._multiPool.add(audioGroup);
 
 		this.playGroup(audioGroup);
 	}
 
 	public async play(): Promise<void> {
 		if (
-			this.singlePool.lastTrack != "" /* &&
+			this._singlePool.lastTrack != "" /* &&
 			this.singlePool.main.currentTime != this.singlePool.main.duration*/ // This is a nice feature
 		) {
-			await this.singlePool.main.play();
-			await this.singlePool.playback.play();
+			await this._singlePool.main.play();
+			await this._singlePool.playback.play();
 		}
 
-		if (this.multiPool.hasAudio) await this.multiPool.play();
+		if (this._multiPool.hasAudio) await this._multiPool.play();
 	}
 
 	public pause(): void {
-		this.singlePool.main.pause();
-		this.singlePool.playback.pause();
+		this._singlePool.main.pause();
+		this._singlePool.playback.pause();
 
-		if (this.multiPool.hasAudio) this.multiPool.pause();
+		if (this._multiPool.hasAudio) this._multiPool.pause();
 	}
 
 	public stop(): void {
-		this.singlePool.main.pause();
-		this.singlePool.playback.pause();
+		this._singlePool.main.pause();
+		this._singlePool.playback.pause();
 
 		this.stopSinglePoolAudio();
 		this.stopMultiPoolAudio();
@@ -133,13 +136,13 @@ class AudioStoreManager extends Logger {
 
 	public get isPlaying(): boolean {
 		return (
-			this.singlePool.main.paused === false ||
-			(this.multiPool.hasAudio && this.multiPool.isPlaying)
+			this._singlePool.main.paused === false ||
+			(this._multiPool.hasAudio && this._multiPool.isPlaying)
 		);
 	}
 
 	public get isLimitReached(): boolean {
-		return this.multiPool.length > this.multiPoolLimit;
+		return this._multiPool.length > this._multiPoolLimit;
 	}
 
 	private playGroup(group: AudioGroup | AudioPoolGroup): void {
@@ -152,27 +155,27 @@ class AudioStoreManager extends Logger {
 	}
 
 	public setVolume(value: number): void {
-		this.singlePool.main.volume = this.singlePool.playback.volume = value;
+		this._singlePool.main.volume = this._singlePool.playback.volume = value;
 
-		if (this.multiPool.hasAudio) this.multiPool.volume = value;
+		if (this._multiPool.hasAudio) this._multiPool.volume = value;
 	}
 
 	private stopSinglePoolAudio(): void {
 		try {
-			this.singlePool.$all.stop();
+			this._singlePool.$all.stop();
 		} catch (e) {
 			AudioStoreManager.logError(this.stopSinglePoolAudio, "", e);
 			return;
 		}
 
-		this.singlePool.lastTrack = "";
+		this._singlePool.lastTrack = "";
 	}
 
 	private stopMultiPoolAudio(): void {
-		if (!this.multiPool.hasAudio) {
+		if (!this._multiPool.hasAudio) {
 			return;
 		}
 
-		this.multiPool.stop();
+		this._multiPool.stop();
 	}
 }

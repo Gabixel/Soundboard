@@ -23,18 +23,21 @@ abstract class AudioPlayer extends Logger {
 		this.refreshAudioDevicesDropdown();
 
 		this._$audioDevicesSelect.on("change", () => {
-			// const audioIndex = this._$audioDevicesSelect.prop("selectedIndex") as number;
-			// this.updateAudioDevice(audioIndex);
-			console.log(
-				"AUDIO DEVICE DROPDOWN TRIGGERED CHANGE - ID: " +
-					this._$audioDevicesSelect.val() +
-					" - label: " +
-					this._$audioDevicesSelect.children("option:selected").text()
+			let audioIndex = +this._$audioDevicesSelect.val();
+
+			this.logDebug(
+				"(audio device dropdown change)",
+				"Dropdown triggered change\n",
+				`ID: ${audioIndex}\n`,
+				`Option label: '${this._$audioDevicesSelect.children("option:selected").text()}'`
 			);
+
+			// const audioIndex = this._$audioDevicesSelect.prop("selectedIndex") as number;
+			this.updateAudioDevice(audioIndex);
 		});
 
 		// FIXME: Remove this hardcoded thing
-		// Temporarily hardcode "Virtual Audio Cable" output as default for main output
+		// Temporarily hardcoded "Virtual Audio Cable" output as default for main output
 		this.hardCodeVirtualAudioCableAsDefault();
 
 		// Update audio devices dropdown and array on device change event
@@ -98,6 +101,7 @@ abstract class AudioPlayer extends Logger {
 				"selected",
 				true
 			);
+			this._$audioDevicesSelect.trigger("change");
 		}
 	}
 
@@ -108,19 +112,18 @@ abstract class AudioPlayer extends Logger {
 				this._audioStore.updateAudioDevice(device);
 
 				this.logInfo(
-					"(audio device dropdown change)",
-					`Audio device changed to ${device}`
+					this.updateAudioDevice,
+					"Audio device changed to ",
+					device
 				);
-			} else {
-				if (StringUtilities.isDefined(this._audioDevices[device])) {
-					// If the device index is valud
-					this._audioStore.updateAudioDevice(this._audioDevices[device]);
+			} else if (StringUtilities.isDefined(this._audioDevices[device])) {
+				this._audioStore.updateAudioDevice(this._audioDevices[device]);
 
-					this.logInfo(
-						"(audio device dropdown change)",
-						`Audio device changed to id ${device} (${this._audioDevices[device]})`
-					);
-				}
+				this.logInfo(
+					this.updateAudioDevice,
+					"Audio device changed to:",
+					this._audioDevices[device]
+				);
 			}
 		}
 
