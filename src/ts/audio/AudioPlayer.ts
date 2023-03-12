@@ -250,13 +250,11 @@ abstract class AudioPlayer extends Logger {
 		value = EMath.getExponentialValue(value, 4);
 
 		this._volume = value;
-		this.updateExistingVolumes();
+
+		// Update existing audio volume
+		this._audioStore.setVolume(this._volume);
 
 		// Log new volume
 		this.logDebug(this.updateVolume, "Volume:", value);
-	}
-
-	private static updateExistingVolumes(): void {
-		this._audioStore.setVolume(this._volume);
 	}
 }
