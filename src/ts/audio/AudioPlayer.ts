@@ -37,6 +37,13 @@ abstract class AudioPlayer extends Logger {
 		// Temporarily hardcode "Virtual Audio Cable" output as default for main output
 		this.hardCodeVirtualAudioCableAsDefault();
 
+		// Update audio devices dropdown and array on device change event
+		navigator.mediaDevices.ondevicechange = (_e) => {
+			// TODO: update output and try keeping the previous one
+			// also, check if the audio changed came from audio output or not
+			console.log("DEVICE CHANGE EVENT ", _e);
+		};
+
 		this._audioDevicesInitialized = true;
 
 		this.logInfo(
