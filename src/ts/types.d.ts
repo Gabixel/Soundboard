@@ -7,8 +7,17 @@ type AudioJS = HTMLAudioElement & {
 
 type AudioGroup = {
 	// TODO: rename to singlepoolgroup
+
+	/**
+	 * The main audio instance (possibly sent to a virtual channel).
+	 */
 	main: AudioJS;
+
+	/**
+	 * The playback instance (heard from the host machine).
+	 */
 	playback: AudioJS;
+
 	$all: JQuery<HTMLAudioElement>;
 	all: (func: (audio: AudioJS) => void) => void;
 	lastTrack: string;
@@ -16,8 +25,16 @@ type AudioGroup = {
 
 type AudioPoolGroup = {
 	// TODO: rename to multipoolgroup
+	/**
+	 * The main audio instance (possibly sent to a virtual channel)
+	 */
 	main: AudioJS;
+
+	/**
+	 * The playback instance (heard from the host machine).
+	 */
 	playback: AudioJS;
+
 	$all: JQuery<HTMLAudioElement>;
 	all: (func: (audio: AudioJS) => void) => void;
 	ended: boolean;
@@ -26,7 +43,7 @@ type AudioPoolGroup = {
 
 type SoundButtonData = {
 	/**
-	 * The (unrendered) text
+	 * The unrendered text
 	 */
 	title?: string;
 	/**
@@ -85,4 +102,3 @@ type ElectronFile = File & {
 	path: string;
 	name: string;
 };
-
