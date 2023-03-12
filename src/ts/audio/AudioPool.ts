@@ -27,7 +27,6 @@ class AudioPool extends Logger {
 			);
 		}
 
-		// if (!removingGroup.forcedEnding)
 		AudioPool.logInfo(this.remove, "Removing pool:", removingGroup);
 
 		this.audioPool.splice(index, 1);
