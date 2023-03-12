@@ -11,7 +11,6 @@ import { BrowserWindow, Menu, MenuItem } from "electron";
 import path from "path";
 import fileSystem from "fs/promises";
 const Process = process;
-// to read: https://blog.stranianelli.com/electron-ipcmain-ipcrenderer-typescript-english/
 
 // TODO: Set app to production
 // process.env.NODE_ENV = "production";
