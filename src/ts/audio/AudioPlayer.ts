@@ -6,6 +6,7 @@ abstract class AudioPlayer extends Logger {
 	private static _audioStore: AudioStoreManager = new AudioStoreManager();
 
 	private static _audioDevices: MediaDeviceInfo[];
+	private static _audioDevicesInitialized: boolean = false;
 
 	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
 	private static _playToggleButtonIconInterval: NodeJS.Timer;
@@ -29,6 +30,8 @@ abstract class AudioPlayer extends Logger {
 		// this is all temporarily just for visuals
 		$("#audio-output-select>option:eq(2)").prop("selected", true);
 		this._audioStore.updateAudioDevice(this._audioDevices[2]);
+
+		this._audioDevicesInitialized = true;
 
 		this.logInfo(
 			this.updateAudioDevicesList,
@@ -208,9 +211,17 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	private static async setSinkId(audio: AudioJS): Promise<void> {
-		if (!this._audioDevices) await this.updateAudioDevicesList();
-
-		await audio.setSinkId(this._audioDevices[2].deviceId);
+		if (this._audioDevicesInitialized) {
+			// If the OS has at least one audio device
+			if (this._audioDevices.length > 0) {
+				// TODO: choose audio device output (for main and playback)
+				await audio.setSinkId(this._audioDevices[2].deviceId);
+			} else {
+				this.logWarn(this.setSinkId, "No audio device available for output");
+			}
+		} else {
+			this.logError(this.setSinkId, "Audio devices list is not initialized");
+		}
 	}
 
 	public static async play(): Promise<void> {
