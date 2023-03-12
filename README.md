@@ -17,6 +17,11 @@ To start debugging the app:
   - Go on each `.less` file and do <kbd>CTRL</kbd> + <kbd>S</kbd> to generate the `.css` format
 - If you use [VSCode](https://code.visualstudio.com/), you can use the debug shortcut (by default, on Windows it sould be <kbd>F5</kbd>).<br />
   There are different debugging options available here. You can check them in the [launch.json](./.vscode/launch.json) file and in VSCode.
-- If you use the terminal, you can run `npm run debug`.
+- You can simply run the app by typing `npm run debug`.
 
-<!-- TODO: add forced TS compilation -->
+<!-- TODO: add explanation for forced TS compilation (i.e. "--force") -->
+
+## Notes:
+- There's an issue with antiviruses when the app tries to list the OS audio devices, probably because the logic attempts to filter out anything that is not output at the beginning. As a result, there's the risk that the app gets flagged for trying to access other types (like microphones and webcams). Here's the example on my end:
+  
+  ![avast one](https://user-images.githubusercontent.com/43073074/224540986-0cfaa501-bcf2-4a44-9505-21c21e71b398.png)
