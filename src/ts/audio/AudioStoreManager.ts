@@ -8,8 +8,8 @@ class AudioStoreManager extends Logger {
 		super();
 
 		// Create main audio pool
-		let main = new Audio() as AudioJS;
-		let playback = new Audio() as AudioJS;
+		let main = new Audio();
+		let playback = new Audio();
 		this.singlePool = {
 			main,
 			playback,

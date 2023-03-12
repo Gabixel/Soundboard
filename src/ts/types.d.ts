@@ -1,25 +1,20 @@
 type AnyFunc<T> = (...any: any[]) => T;
 
-type AudioJS = HTMLAudioElement & {
-	setSinkId(deviceId: string): Promise<undefined>;
-	sinkId: string;
-};
-
 type AudioGroup = {
 	// TODO: rename to singlepoolgroup
 
 	/**
 	 * The main audio instance (possibly sent to a virtual channel).
 	 */
-	main: AudioJS;
+	main: HTMLAudioElement;
 
 	/**
 	 * The playback instance (heard from the host machine).
 	 */
-	playback: AudioJS;
+	playback: HTMLAudioElement;
 
 	$all: JQuery<HTMLAudioElement>;
-	all: (func: (audio: AudioJS) => void) => void;
+	all: (func: (audio: HTMLAudioElement) => void) => void;
 	lastTrack: string;
 };
 
@@ -28,15 +23,15 @@ type AudioPoolGroup = {
 	/**
 	 * The main audio instance (possibly sent to a virtual channel)
 	 */
-	main: AudioJS;
+	main: HTMLAudioElement;
 
 	/**
 	 * The playback instance (heard from the host machine).
 	 */
-	playback: AudioJS;
+	playback: HTMLAudioElement;
 
 	$all: JQuery<HTMLAudioElement>;
-	all: (func: (audio: AudioJS) => void) => void;
+	all: (func: (audio: HTMLAudioElement) => void) => void;
 	ended: boolean;
 	forcedStop: boolean;
 };

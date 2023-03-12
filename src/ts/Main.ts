@@ -37,7 +37,7 @@ abstract class Main extends Logger {
 		ButtonSwap.initialize();
 
 		// Audio output
-		await AudioPlayer.updateAudioDevicesList();
+		await AudioPlayer.initializeAudioDevices();
 
 		// TODO: Extract audio from video file? (probably not necessary)
 		// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file

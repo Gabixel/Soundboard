@@ -5,6 +5,7 @@ abstract class AudioPlayer extends Logger {
 
 	private static _audioStore: AudioStoreManager = new AudioStoreManager();
 
+	private static _$audioDevicesSelect: JQuery<HTMLInputElement>;
 	private static _audioDevices: MediaDeviceInfo[];
 	private static _audioDevicesInitialized: boolean = false;
 
@@ -12,32 +13,111 @@ abstract class AudioPlayer extends Logger {
 	private static _playToggleButtonIconInterval: NodeJS.Timer;
 	private static _playToggleButtonIconIntervalLocked: boolean;
 
-	public static async updateAudioDevicesList(): Promise<void> {
-		// Get audio output devices
-		const devices = await navigator.mediaDevices.enumerateDevices();
-		this._audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
+	public static async initializeAudioDevices(): Promise<void> {
+		this._$audioDevicesSelect = $("#audio-output-select");
 
-		this._audioDevices.forEach((device, i) => {
-			$("#audio-output-select").append(
-				$("<option>", {
-					value: i,
-					text: i + 1 + " - " + device.label,
-				})
+		// Fill device array
+		await this.refreshAudioDevicesArray();
+
+		// Fill dropdown list
+		this.refreshAudioDevicesDropdown();
+
+		this._$audioDevicesSelect.on("change", () => {
+			// const audioIndex = this._$audioDevicesSelect.prop("selectedIndex") as number;
+			// this.updateAudioDevice(audioIndex);
+			console.log(
+				"AUDIO DEVICE DROPDOWN TRIGGERED CHANGE - ID: " +
+					this._$audioDevicesSelect.val() +
+					" - label: " +
+					this._$audioDevicesSelect.children("option:selected").text()
 			);
 		});
 
-		// FIXME: Store preferred device
-		// this is all temporarily just for visuals
-		$("#audio-output-select>option:eq(2)").prop("selected", true);
-		this._audioStore.updateAudioDevice(this._audioDevices[2]);
+		// FIXME: Remove this hardcoded thing
+		// Temporarily hardcode "Virtual Audio Cable" output as default for main output
+		this.hardCodeVirtualAudioCableAsDefault();
 
 		this._audioDevicesInitialized = true;
 
 		this.logInfo(
-			this.updateAudioDevicesList,
-			"Devices list updated!\n",
+			this.initializeAudioDevices,
+			"Devices initialized!\n",
 			this._audioDevices
 		);
+	}
+
+	private static refreshAudioDevicesDropdown(): void {
+		this._$audioDevicesSelect.empty();
+
+		// Append audio devices to dropdown (if the OS has at least one)
+		if (this._audioDevices.length > 0) {
+			this._audioDevices.forEach((device, i) => {
+				this._$audioDevicesSelect.append(
+					$("<option>", {
+						value: i,
+						text: device.label,
+					})
+				);
+			});
+		} else {
+			this._$audioDevicesSelect.append(
+				$("<option>", {
+					value: -1,
+					text: "(None)",
+				})
+			);
+		}
+	}
+
+	private static async refreshAudioDevicesArray(): Promise<void> {
+		// Get audio output devices
+		const devices = await navigator.mediaDevices.enumerateDevices();
+		this._audioDevices = devices.filter(({ kind }) => kind === "audiooutput");
+	}
+
+	private static hardCodeVirtualAudioCableAsDefault(): void {
+		let virtualAudioCableIndex = -1;
+
+		if (
+			this._audioDevices.some((e, i) => {
+				if (e.label === "Virtual Audio Cable (VB-Audio Virtual Cable)") {
+					virtualAudioCableIndex = i;
+					return true;
+				}
+				return false;
+			})
+		) {
+			$(`#audio-output-select>option:eq(${virtualAudioCableIndex})`).prop(
+				"selected",
+				true
+			);
+		}
+	}
+
+	private static updateAudioDevice(device: number | MediaDeviceInfo): void {
+		// If the OS has at least one output
+		if (this._audioDevices.length > 0) {
+			if (typeof device != "number") {
+				this._audioStore.updateAudioDevice(device);
+
+				this.logInfo(
+					"(audio device dropdown change)",
+					`Audio device changed to ${device}`
+				);
+			} else {
+				if (StringUtilities.isDefined(this._audioDevices[device])) {
+					// If the device index is valud
+					this._audioStore.updateAudioDevice(this._audioDevices[device]);
+
+					this.logInfo(
+						"(audio device dropdown change)",
+						`Audio device changed to id ${device} (${this._audioDevices[device]})`
+					);
+				}
+			}
+		}
+
+		// TODO: add `else`s
 	}
 
 	public static setAudioButtons(
@@ -163,7 +243,7 @@ abstract class AudioPlayer extends Logger {
 			return;
 		}
 
-		let mainAudio = new Audio(path) as AudioJS;
+		let mainAudio = new Audio(path);
 
 		$(mainAudio)
 			.one("canplay", (e) => {
@@ -184,12 +264,12 @@ abstract class AudioPlayer extends Logger {
 	}
 
 	private static async storeAudio(
-		mainAudio: AudioJS,
+		mainAudio: HTMLAudioElement,
 		time: AudioTimings
 	): Promise<void> {
 		// Create multi audio pool group
 		const main = mainAudio;
-		const playback = mainAudio.cloneNode() as AudioJS;
+		const playback = mainAudio.cloneNode() as HTMLAudioElement;
 		const group: AudioPoolGroup = {
 			main,
 			playback,
@@ -210,7 +290,7 @@ abstract class AudioPlayer extends Logger {
 		this._audioStore.addToMultiPool(group);
 	}
 
-	private static async setSinkId(audio: AudioJS): Promise<void> {
+	private static async setSinkId(audio: HTMLAudioElement): Promise<void> {
 		if (this._audioDevicesInitialized) {
 			// If the OS has at least one audio device
 			if (this._audioDevices.length > 0) {
