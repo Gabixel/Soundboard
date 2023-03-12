@@ -35,14 +35,17 @@ abstract class SoundboardApi extends Logger {
 }
 
 //#region Types
-// Keep updated with:
-// - "~/app/windows/mainWindow/preload.ts"
-// - "~/app/windows/editButtonWindow/preload.ts"
+// Keep updated:
+// - "~/app/windows/mainWindow/preload.ts" - MainWindow
+// - "~/app/windows/editButtonWindow/preload.ts" - EditButtonWindow
 type WindowApiBridge = {
+	/*
+	 * Global
+	 */
 	isProduction: boolean;
 
 	/*
-	 * MainWindowApiBridge
+	 * MainWindow
 	 */
 	resolveAppPath: (...path: string[]) => string;
 	openContextMenu: (args: ContextMenuArgs) => void;
@@ -50,9 +53,9 @@ type WindowApiBridge = {
 	joinPaths: (...paths: string[]) => string;
 
 	/*
-	 * EditButtonWindowApiBridge
+	 * EditButtonWindow
 	 */
-	// TODO
+	// nothing, for now
 };
 
 // Keep updated with:

@@ -7,9 +7,18 @@ const api: EditButtonWindowApiBridge = {
 };
 
 type EditButtonWindowApiBridge = {
+	/*
+	 * Global
+	 */
+
+	isProduction: boolean;
+
+	/*
+	 * EditButtonWindow
+	 */
+
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
-	isProduction: boolean;
 };
 
 const styles = ["colors", "base", "base_restyling", "editButtonWindow"];
