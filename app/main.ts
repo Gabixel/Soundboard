@@ -11,7 +11,6 @@ import { BrowserWindow, Menu, MenuItem } from "electron";
 import path from "path";
 import fileSystem from "fs/promises";
 const Process = process;
-// to read: https://blog.stranianelli.com/electron-ipcmain-ipcrenderer-typescript-english/
 
 // TODO: Set app to production
 // process.env.NODE_ENV = "production";
@@ -50,9 +49,12 @@ const webPreferences: Electron.WebPreferences = {
 	// @ts-ignore
 	enableRemoteModule: false, // https://stackoverflow.com/a/59888788/16804863
 
+	// https://www.electronjs.org/docs/latest/tutorial/security#9-do-not-enable-experimental-features
 	experimentalFeatures: false,
 
 	navigateOnDragDrop: false,
+
+	webviewTag: false,
 };
 
 /**
@@ -89,13 +91,16 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	mainWindow = new BrowserWindow({
 		title: "Soundboard",
 
+		useContentSize: true,
+
 		width,
 		height,
 
-		useContentSize: true,
-
 		minWidth: 534,
 		minHeight: 400,
+
+		frame: true,
+		transparent: false,
 
 		autoHideMenuBar: !isProduction,
 
@@ -148,16 +153,19 @@ function createEditButtonWindow(
 	editButtonWindow = new BrowserWindow({
 		title,
 
+		useContentSize: true,
+
 		width,
 		height,
-
-		useContentSize: true,
 
 		minWidth: width,
 		minHeight: height,
 
 		maxWidth: width * 2,
 		maxHeight: height * 2, // TODO: unsure if max size is nice
+
+		frame: true,
+		transparent: false,
 
 		x: screenBounds.x + (screenBounds.width - width) / 2,
 		y: screenBounds.y + (screenBounds.height - height) / 2,
