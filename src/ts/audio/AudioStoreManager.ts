@@ -4,10 +4,10 @@ class AudioStoreManager extends Logger {
 
 	private _multiPoolLimit: number = 10;
 
-	private _currentDeviceId: string;
-	public get currentDeviceId(): string {
-		return this._currentDeviceId;
-	}
+	// private _currentDeviceId: string;
+	// public get currentDeviceId(): string {
+	// 	return this._currentDeviceId;
+	// }
 
 	constructor(volume: number = 0) {
 		super();
@@ -57,12 +57,12 @@ class AudioStoreManager extends Logger {
 	public async setAudioDevice(device: MediaDeviceInfo): Promise<void> {
 		await this._singlePool.main
 			.setSinkId(device.deviceId)
-			.then(() => {
-				// Store new device id
-				this._currentDeviceId = device.deviceId;
+			// .then(() => {
+			// 	// Store new device id
+			// 	// this._currentDeviceId = device.deviceId;
 				
-				// TODO: handle in case of same deviceId/groupId/label for both main and playback
-			})
+			// 	// TODO: handle in case of same deviceId/groupId/label for both main and playback
+			// })
 			.catch((e) => {
 				AudioStoreManager.logError(
 					this.setAudioDevice,
