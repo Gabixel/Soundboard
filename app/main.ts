@@ -300,8 +300,10 @@ app.whenReady().then(() => {
 	let screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
 	let screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
-	// // Remove default menu
-	// if (isProduction) Menu.setApplicationMenu(null);
+	// Remove default menu
+	if (isProduction) {
+		Menu.setApplicationMenu(null);
+	}
 
 	createMainWindow(screenWidth, screenHeight);
 
