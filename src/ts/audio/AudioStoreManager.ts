@@ -4,7 +4,10 @@ class AudioStoreManager extends Logger {
 
 	private _multiPoolLimit: number = 10;
 
-	private _currentDeviceId: string = "";
+	private _currentDeviceId: string;
+	public get currentDeviceId(): string {
+		return this._currentDeviceId;
+	}
 
 	constructor(volume: number = 0) {
 		super();
@@ -32,6 +35,9 @@ class AudioStoreManager extends Logger {
 		// TODO: sum with overriding volume when it will be implemented
 		this._singlePool.main.volume = this._singlePool.playback.volume = volume;
 
+		// Use "default" device id for playback
+		this._singlePool.playback.setSinkId("default");
+
 		// Add audio events
 		this._singlePool.$all
 			.on("canplay", () => {
@@ -48,10 +54,20 @@ class AudioStoreManager extends Logger {
 			});
 	}
 
-	public async updateAudioDevice(device: MediaDeviceInfo): Promise<void> {
-		// TODO: add more logic and various guards (e.g. `main` and `playback` on same output)
-		await this._singlePool.main.setSinkId(device.deviceId);
-		this._currentDeviceId = device.deviceId;
+	public async setAudioDevice(device: MediaDeviceInfo): Promise<void> {
+		await this._singlePool.main
+			.setSinkId(device.deviceId)
+			.then(() => {
+				this._currentDeviceId = device.deviceId;
+			})
+			.catch((e) => {
+				AudioStoreManager.logError(
+					this.setAudioDevice,
+					`Error while setting audio device '${device?.label}'`,
+					"\n",
+					e
+				);
+			});
 	}
 
 	public addToSinglePool(path: string, time: AudioTimings): void {

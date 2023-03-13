@@ -7,6 +7,9 @@ abstract class AudioPlayer extends Logger {
 
 	private static _$audioDevicesSelect: JQuery<HTMLInputElement>;
 	private static _audioDevices: MediaDeviceInfo[];
+	public static get audioDevices(): MediaDeviceInfo[] {
+		return this._audioDevices;
+	}
 	private static _audioDevicesInitialized: boolean = false;
 
 	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
@@ -27,13 +30,13 @@ abstract class AudioPlayer extends Logger {
 
 			this.logDebug(
 				"(audio device dropdown change)",
-				"Dropdown triggered change\n",
+				"Main output dropdown triggered change\n",
 				`ID: ${audioIndex}\n`,
 				`Option label: '${this._$audioDevicesSelect.children("option:selected").text()}'`
 			);
 
 			// const audioIndex = this._$audioDevicesSelect.prop("selectedIndex") as number;
-			this.updateAudioDevice(audioIndex);
+			this.setAudioDevice(audioIndex);
 		});
 
 		// FIXME: Remove this hardcoded thing
@@ -105,28 +108,27 @@ abstract class AudioPlayer extends Logger {
 		}
 	}
 
-	private static updateAudioDevice(device: number | MediaDeviceInfo): void {
+	private static setAudioDevice(device: number | MediaDeviceInfo): void {
 		// If the OS has at least one output
 		if (this._audioDevices.length > 0) {
 			if (typeof device != "number") {
-				this._audioStore.updateAudioDevice(device);
+				this._audioStore.setAudioDevice(device);
 
 				this.logInfo(
-					this.updateAudioDevice,
-					"Audio device changed to ",
+					this.setAudioDevice,
+					`Audio device changed to '${device.label}'\n`,
 					device
 				);
-			} else if (StringUtilities.isDefined(this._audioDevices[device])) {
-				this._audioStore.updateAudioDevice(this._audioDevices[device]);
+			} else if (device >= 0 && StringUtilities.isDefined(this._audioDevices[device])) {
+				this._audioStore.setAudioDevice(this._audioDevices[device]);
 
 				this.logInfo(
-					this.updateAudioDevice,
-					"Audio device changed to:",
+					this.setAudioDevice,
+					`Audio device changed to '${this._audioDevices[device].label}'\n`,
 					this._audioDevices[device]
 				);
 			}
 		}
-
 		// TODO: add `else`s
 	}
 
