@@ -7,7 +7,7 @@ abstract class Main extends Logger {
 	public static async initMainWindow() {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();
-		
+
 		// Some info for debug
 		this.logInfo(
 			this.initMainWindow,
@@ -96,11 +96,10 @@ abstract class Main extends Logger {
 			colNo?: number,
 			error?: Error
 		): void => {
-			// Operate only on js files
-			if (!source.endsWith(".js")) {
+			if (!validExtension(source)) {
 				return;
 			}
-			
+
 			if (typeof AudioPlayer != "undefined") {
 				AudioPlayer.stop();
 			}
@@ -118,6 +117,22 @@ abstract class Main extends Logger {
 				`Message: "${error.message}"`
 			);
 		};
+
+		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event
+		window.onunhandledrejection = (event) => {
+			// Don't print default error
+			event.preventDefault();
+
+			this.logError(
+				null,
+				"An unexpected (in promise) error has occurred.\n",
+				event,
+			)
+		};
+
+		function validExtension(source: string): boolean {
+			return ["js", "ts"].some((extension) => source.endsWith("." + extension));
+		}
 	}
 }
 
