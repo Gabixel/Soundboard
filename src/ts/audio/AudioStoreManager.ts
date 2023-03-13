@@ -74,7 +74,7 @@ class AudioStoreManager extends Logger {
 	}
 
 	public addToSinglePool(path: string, time: AudioTimings): void {
-		// The intended use is to interrupt all audio in the multi pool when starting the main one
+		// The intended use is to interrupt all audio in the multi pool when starting the single group
 		this.stopMultiPoolAudio();
 
 		// If the path is different from the previous one
@@ -135,7 +135,9 @@ class AudioStoreManager extends Logger {
 			await this._singlePool.playback.play();
 		}
 
-		if (this._multiPool.hasAudio) await this._multiPool.play();
+		if (this._multiPool.hasAudio) {
+			await this._multiPool.play();
+		}
 	}
 
 	public pause(): void {
@@ -165,12 +167,8 @@ class AudioStoreManager extends Logger {
 	}
 
 	private playGroup(group: AudioGroup | AudioPoolGroup): void {
-		// try {
 		group.main.play();
 		group.playback.play();
-		// } catch (e) {
-		// 	AudioStoreManager.error(this.playGroup, e); // TODO
-		// }
 	}
 
 	public setVolume(value: number): void {
