@@ -120,6 +120,7 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	if (!isProduction) {
 		mainWindow.webContents.openDevTools({
 			mode: "detach",
+			activate: true,
 		});
 	}
 }
