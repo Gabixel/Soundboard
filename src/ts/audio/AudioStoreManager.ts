@@ -9,7 +9,7 @@ class AudioStoreManager extends Logger {
 	// 	return this._currentDeviceId;
 	// }
 
-	constructor(volume: number = 0) {
+	constructor(singlePoolVolume: number = 0) {
 		super();
 
 		// Create main audio pool
@@ -33,7 +33,8 @@ class AudioStoreManager extends Logger {
 
 		// Set to desired volume
 		// TODO: sum with overriding volume when it will be implemented
-		this._singlePool.main.volume = this._singlePool.playback.volume = volume;
+		this._singlePool.main.volume = this._singlePool.playback.volume =
+			singlePoolVolume;
 
 		// Use "default" device id for playback
 		this._singlePool.playback.setSinkId("default");
@@ -60,7 +61,7 @@ class AudioStoreManager extends Logger {
 			// .then(() => {
 			// 	// Store new device id
 			// 	// this._currentDeviceId = device.deviceId;
-				
+
 			// 	// TODO: handle in case of same deviceId/groupId/label for both main and playback
 			// })
 			.catch((e) => {
@@ -171,9 +172,11 @@ class AudioStoreManager extends Logger {
 		group.playback.play();
 	}
 
-	public setVolume(value: number): void {
+	public setSinglePoolVolume(value: number): void {
 		this._singlePool.main.volume = this._singlePool.playback.volume = value;
+	}
 
+	public setMultiPoolVolume(value: number): void {
 		if (this._multiPool.hasAudio) this._multiPool.volume = value;
 	}
 

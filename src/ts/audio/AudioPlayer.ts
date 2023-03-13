@@ -1,7 +1,6 @@
 abstract class AudioPlayer extends Logger {
-	private static _volume: number = 0;
-	private static _$volumeSlider: JQuery<HTMLInputElement>;
-	private static _maxSliderValue = 1000;
+	private static _singlePoolVolumeSlider: VolumeSlider;
+	private static _multiPoolVolumeSlider: VolumeSlider;
 
 	private static _audioStore: AudioStoreManager = new AudioStoreManager();
 
@@ -10,6 +9,7 @@ abstract class AudioPlayer extends Logger {
 	public static get audioDevices(): MediaDeviceInfo[] {
 		return this._audioDevices;
 	}
+	private static _currentAudioDevice: MediaDeviceInfo;
 	private static _audioDevicesInitialized: boolean = false;
 
 	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
@@ -19,11 +19,8 @@ abstract class AudioPlayer extends Logger {
 	public static async initializeAudioDevices(): Promise<void> {
 		this._$audioDevicesSelect = $("#audio-output-select");
 
-		// Fill device array
-		await this.refreshAudioDevicesArray();
-
-		// Fill dropdown list
-		this.refreshAudioDevicesDropdown();
+		// Fill device array and dropdown, and set audio device
+		await this.refreshAudioDevices();
 
 		this._$audioDevicesSelect.on("change", () => {
 			let audioIndex = +this._$audioDevicesSelect.val();
@@ -32,7 +29,9 @@ abstract class AudioPlayer extends Logger {
 				"(audio device dropdown change)",
 				"Main output dropdown triggered change\n",
 				`ID: ${audioIndex}\n`,
-				`Option label: '${this._$audioDevicesSelect.children("option:selected").text()}'`
+				`Option label: '${this._$audioDevicesSelect
+					.children("option:selected")
+					.text()}'`
 			);
 
 			// const audioIndex = this._$audioDevicesSelect.prop("selectedIndex") as number;
@@ -44,7 +43,11 @@ abstract class AudioPlayer extends Logger {
 		this.hardCodeVirtualAudioCableAsDefault();
 
 		// Update audio devices dropdown and array on device change event
-		navigator.mediaDevices.ondevicechange = (_e) => {
+		navigator.mediaDevices.ondevicechange = async (_e) => {
+			await this.refreshAudioDevices();
+
+			this.hardCodeVirtualAudioCableAsDefault();
+
 			// TODO: update output and try keeping the previous one
 			// also, check if the audio changed came from audio output or not
 			console.log("DEVICE CHANGE EVENT ", _e);
@@ -57,6 +60,14 @@ abstract class AudioPlayer extends Logger {
 			"Devices initialized!\n",
 			this._audioDevices
 		);
+	}
+
+	/**
+	 * Refreshes devices array and dropdown
+	 */
+	private static async refreshAudioDevices(): Promise<void> {
+		await this.refreshAudioDevicesArray();
+		this.refreshAudioDevicesDropdown();
 	}
 
 	private static refreshAudioDevicesDropdown(): void {
@@ -113,14 +124,19 @@ abstract class AudioPlayer extends Logger {
 		if (this._audioDevices.length > 0) {
 			if (typeof device != "number") {
 				this._audioStore.setAudioDevice(device);
+				this._currentAudioDevice = device;
 
 				this.logInfo(
 					this.setAudioDevice,
 					`Audio device changed to '${device.label}'\n`,
 					device
 				);
-			} else if (device >= 0 && StringUtilities.isDefined(this._audioDevices[device])) {
+			} else if (
+				device >= 0 &&
+				StringUtilities.isDefined(this._audioDevices[device])
+			) {
 				this._audioStore.setAudioDevice(this._audioDevices[device]);
+				this._currentAudioDevice = this._audioDevices[device];
 
 				this.logInfo(
 					this.setAudioDevice,
@@ -181,40 +197,59 @@ abstract class AudioPlayer extends Logger {
 		this._playToggleButtonIconIntervalLocked = false;
 	}
 
-	public static setVolumeSlider(
-		$slider: JQuery<HTMLInputElement>
+	public static initVolumeSliders(
+		$singlePoolSlider: JQuery<HTMLInputElement>,
+		$multiPoolSlider: JQuery<HTMLInputElement>
 	): typeof AudioPlayer {
-		this.logInfo(this.setVolumeSlider, "Slider set!\n", $slider);
-		this._$volumeSlider = $slider;
-		this._maxSliderValue = parseInt(this._$volumeSlider.attr("max"));
-		this.updateVolume();
-		this.initSlider();
+		const decimals = 4;
+		const exponentialBase = 100;
+
+		this._singlePoolVolumeSlider = new VolumeSlider(
+			$singlePoolSlider,
+			() => {
+				// Update existing audio volume
+				this._audioStore.setSinglePoolVolume(this._singlePoolVolumeSlider.value);
+
+				// Log new volume
+				this.logDebug(
+					"(single pool volume slider change)",
+					"Volume:",
+					this._singlePoolVolumeSlider.value
+				);
+			},
+			decimals,
+			exponentialBase
+		);
+
+		this._multiPoolVolumeSlider = new VolumeSlider(
+			$multiPoolSlider,
+			() => {
+				// Update existing audio volume
+				this._audioStore.setMultiPoolVolume(this._multiPoolVolumeSlider.value);
+
+				// Log new volume
+				this.logDebug(
+					"(multi pool volume slider change)",
+					"Volume:",
+					this._multiPoolVolumeSlider.value
+				);
+			},
+			decimals,
+			exponentialBase
+		);
+
+		this._singlePoolVolumeSlider.$slider.trigger("input");
+		this._multiPoolVolumeSlider.$slider.trigger("input");
+
+		this.logInfo(
+			this.initVolumeSliders,
+			"Sliders set!\n",
+			$singlePoolSlider,
+			"\n",
+			$multiPoolSlider
+		);
 
 		return this;
-	}
-
-	private static initSlider(): void {
-		this._$volumeSlider
-			// On input changes
-			.on("input", () => {
-				this.updateVolume();
-			});
-		// .on("blur", (e) => {
-		// 	this.$volumeSlider.trigger("input");
-		// })
-
-		// Update volume slider on scroll (only when control is not active)
-		this._$volumeSlider
-			.parent()
-			// On scroll wheel
-			.on("wheel", { passive: true }, (e) => {
-				if (e.ctrlKey) return;
-				// e.preventDefault();
-				e.stopImmediatePropagation();
-				EventFunctions.updateInputValueFromWheel(e, this._$volumeSlider, 50, [
-					"input",
-				]);
-			});
 	}
 
 	public static addAudio(
@@ -294,26 +329,12 @@ abstract class AudioPlayer extends Logger {
 			forcedStop: false,
 		};
 
-		main.volume = playback.volume = this.volume;
+		main.volume = playback.volume = this._multiPoolVolumeSlider.value;
 		main.currentTime = playback.currentTime = time.start / 1000;
 
-		await this.setSinkId(main);
+		main.setSinkId(this._currentAudioDevice.deviceId);
 
 		this._audioStore.addToMultiPool(group);
-	}
-
-	private static async setSinkId(audio: HTMLAudioElement): Promise<void> {
-		if (this._audioDevicesInitialized) {
-			// If the OS has at least one audio device
-			if (this._audioDevices.length > 0) {
-				// TODO: choose audio device output (for main and playback)
-				await audio.setSinkId(this._audioDevices[2].deviceId);
-			} else {
-				this.logWarn(this.setSinkId, "No audio device available for output");
-			}
-		} else {
-			this.logError(this.setSinkId, "Audio devices list is not initialized");
-		}
 	}
 
 	public static async play(): Promise<void> {
@@ -330,23 +351,5 @@ abstract class AudioPlayer extends Logger {
 
 	public static get isPlaying(): boolean {
 		return this._audioStore.isPlaying;
-	}
-
-	public static get volume(): number {
-		return this._volume;
-	}
-
-	private static updateVolume(): void {
-		let value = (this._$volumeSlider.val() as number) / this._maxSliderValue;
-
-		value = EMath.getExponentialValue(value, 4);
-
-		this._volume = value;
-
-		// Update existing audio volume
-		this._audioStore.setVolume(this._volume);
-
-		// Log new volume
-		this.logDebug(this.updateVolume, "Volume:", value);
 	}
 }

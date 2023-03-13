@@ -65,9 +65,12 @@
 						<input type="number" id="grid-columns" min="1" max="10" step="1" value="8">
 					</div>
 					<div id="volume-slider-container">
-						<label for="volume-slider">Volume:</label>
-						<input type="range" id="volume-slider" min="0" max="1000" step="10" value="370"
-							style="accent-color: #ccc;">
+						<label for="volume-slider-primary">Primary volume:</label>
+						<input type="range" id="volume-slider-primary" min="0" max="1000" step="10" value="150"
+							class="volume-slider" style="accent-color: #ccc;">
+						<label for="volume-slider-secondary" style="margin-left: 1ch;">Secondary volume:</label>
+						<input type="range" id="volume-slider-secondary" min="0" max="1000" step="10" value="150"
+							class="volume-slider" style="accent-color: #ccc;">
 					</div>
 					<div style="display: inline-flex; align-items: center; justify-content: flex-start;">
 						<label for="ui-scale-slider">UI Scale:</label>

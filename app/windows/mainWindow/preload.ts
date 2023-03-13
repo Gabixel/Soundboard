@@ -67,7 +67,8 @@ const scripts = [
 	"grid/ButtonFilter",
 	"grid/SoundButton",
 
-	"controls/Presets_Panel",
+	"controls/VolumeSlider",
+	"controls/PresetsPanel",
 	"controls/UiScale",
 
 	"audio/AudioPool",

@@ -43,10 +43,10 @@ abstract class Main extends Logger {
 		// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
 
 		// Initialize volume in the audio player and the play/stop buttons
-		AudioPlayer.setVolumeSlider($("#volume-slider")).setAudioButtons(
-			$("#play-toggle-audio-button"),
-			$("#stop-audio-button")
-		);
+		AudioPlayer.initVolumeSliders(
+			$("#volume-slider-primary"),
+			$("#volume-slider-secondary")
+		).setAudioButtons($("#play-toggle-audio-button"), $("#stop-audio-button"));
 
 		// Initialize sound button generator
 		SoundButton.initialize(Grid.$grid);
@@ -126,8 +126,9 @@ abstract class Main extends Logger {
 			this.logError(
 				null,
 				"An unexpected (in promise) error has occurred.\n",
-				event,
-			)
+				`'${event.reason}'\n`,
+				event
+			);
 		};
 
 		function validExtension(source: string): boolean {
