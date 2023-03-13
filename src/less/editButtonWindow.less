@@ -7,4 +7,34 @@ body {
 	color: var(--window-fg);
 
 	padding: 10px; // .625em
+
+	transition-property: background-color;
+	transition-duration: 0.25s;
+	transition-timing-function: linear;
+
+	#soundbutton-editor {
+		.fill-size();
+
+		transition-property: opacity;
+		transition-duration: 0.25s;
+		transition-timing-function: ease-out;
+
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		align-items: flex-start;
+
+		form#metadata {
+			flex-grow: 1;
+			flex-shrink: 0;
+			flex-basis: 0;
+		}
+
+		#soundbutton-preview {
+			flex-grow: 1;
+			flex-shrink: 0;
+			flex-basis: 0;
+		}
+	}
 }

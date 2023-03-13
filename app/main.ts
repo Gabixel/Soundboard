@@ -135,11 +135,9 @@ function createEditButtonWindow(
 
 	let name = buttonData.title;
 
-	let title;
+	let title = "Edit button";
 	if (name != null) {
-		title = `Edit "${name}" button`;
-	} else {
-		title = "Edit button";
+		title += ` "${name}"`;
 	}
 
 	let width = 400;
