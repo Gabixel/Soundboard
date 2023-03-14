@@ -14,6 +14,17 @@
 		&.hidden {
 			display: none;
 		}
+
+		&:focus-visible {
+			.base-transition(0s);
+			box-shadow: 0 0 0 2px var(--buttons-grid-bg),
+				0 0 0 4px var(--button-background-hsl);
+		}
+
+		&:focus-visible:active {
+			box-shadow: 0 0 0 2px var(--buttons-grid-bg),
+				0 0 0 4px var(--button-background-hover-hsl);
+		}
 	}
 
 	&.filtering .soundbutton {
@@ -125,8 +136,8 @@
 	}
 }
 
-.base-transition(@outline-time: 0s) {
-	transition: box-shadow 0.2s, outline @outline-time;
+.base-transition(@shadow-time: 0.2s, @outline-time: 0s) {
+	transition: box-shadow @shadow-time, outline @outline-time;
 }
 
 .theme-transition() {
