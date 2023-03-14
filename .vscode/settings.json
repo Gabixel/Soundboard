@@ -6,5 +6,5 @@
 	"files.exclude": {
 		"**/node_modules": true
 	},
-	"terminal.integrated.cwd": "${fileDirname}"
+	"terminal.integrated.cwd": "${workspaceFolder}"
 }
