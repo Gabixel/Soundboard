@@ -1,10 +1,27 @@
-abstract class SoundButton extends Logger {
-	private static _randomPaths: string[] = [
-		"Clown Horn.mp3"
-	];
-	private static _$grid: JQuery<HTMLElement>;
+/**
+ * Sound buttons management
+ */
+class SoundButtonManager extends Logger {
+	private static DEFAULT_METADATA: SoundButtonData = {
+		title: "DEFAULT TITLE TEST",
+		color: { h: 0, s: 0, l: 80 },
+		image: null,
+		tags: [],
+		path: null,
+		time: {
+			start: 0,
+			end: 0,
+			condition: "after",
+		},
+	};
 
-	private static getRandomAudio(): string {
+	private _randomPaths: string[] = ["Clown Horn.mp3"];
+	private _$grid: JQuery<HTMLElement>;
+
+	/**
+	 * Returns a random audio file from a set of hardcoded paths (for testing purposes)
+	 */
+	private getRandomAudio(): string {
 		let path = SoundboardApi.joinPaths(
 			SoundboardApi.resolveAppPath(Main.RESOURCES_PATH, "sounds"),
 			this._randomPaths[EMath.randomInt(0, this._randomPaths.length)]
@@ -13,43 +30,50 @@ abstract class SoundButton extends Logger {
 		return StringUtilities.encodeFilePath(path);
 	}
 
-	public static generateRandom(index: number): HTMLElement {
+	// TODO: remove random gen
+	constructor($grid: JQuery<HTMLElement>) {
+		super();
+
+		this._$grid = $grid;
+
+		SoundButtonManager.logInfo(null, "Initialized!");
+	}
+
+	public generateButton(
+		data: null | SoundButtonData = null,
+		index: null | number = null
+	): HTMLElement {
+		if (!StringUtilities.isDefined(data)) {
+			data = SoundButtonManager.DEFAULT_METADATA;
+		}
+
+		return SoundButtonManager.createWithData(data, index);
+	}
+
+	public generateRandomButton(index: null | number = null): HTMLElement {
 		let [h, s, l] = [
 			EMath.randomInt(0, 361),
 			EMath.randomInt(0, 100),
 			EMath.randomInt(30, 100),
 		];
 
-		// let [h, s, l] = [0, 0, 80];
-
 		let data: SoundButtonData = {
-			title: (index + 1).toString(),
+			title: isNaN(index)
+				? SoundButtonManager.DEFAULT_METADATA.title
+				: (index + 1).toString(),
 			color: { h, s, l },
-			image: "",
-			tags: [""],
+			image: SoundButtonManager.DEFAULT_METADATA.image,
+			tags: SoundButtonManager.DEFAULT_METADATA.tags,
 			path: this.getRandomAudio(),
-			time: {
-				start: 0,
-				end: 0,
-				condition: "after",
-			},
+			time: SoundButtonManager.DEFAULT_METADATA.time,
 		};
 
-		return SoundButton.createWithData(data, index);
-	}
-
-	private _metadata: SoundButtonData;
-
-	// TODO: remove random gen
-	constructor() {
-		super();
-
-		
+		return SoundButtonManager.createWithData(data, index);
 	}
 
 	public static createWithData(
 		data: SoundButtonData,
-		index: number
+		index: null | number
 	): HTMLElement {
 		const $button = $(`<button type="button" class="soundbutton"></button>`);
 		$button.append(`<div class="button-theme">${data.title}</div>`);
@@ -62,7 +86,7 @@ abstract class SoundButton extends Logger {
 	private static applyInitialData(
 		$button: JQuery<HTMLElement>,
 		data: SoundButtonData,
-		index: number
+		index: null | number
 	): void {
 		$button
 			// Identifier
@@ -72,7 +96,7 @@ abstract class SoundButton extends Logger {
 			.attr("tabindex", index + 1)
 
 			// CSS flex index
-			.css("--index", index)
+			.css("--index", index.toString())
 
 			// Customisation
 			// TODO: apply color
@@ -89,14 +113,12 @@ abstract class SoundButton extends Logger {
 			.css("--hue", data.color.h.toString())
 			.css("--saturation", data.color.s.toString() + "%")
 			.css("--lightness", data.color.l.toString() + "%");
-
-		this.addDragAndDrop($button);
 	}
 
-	private static addDragAndDrop($button: JQuery<HTMLElement>): void {
+	public setupDragAndDrop($button: JQuery<HTMLElement>): void {
 		$button
 			.on("dragenter", (e: JQuery.DragEnterEvent) => {
-				this.logDebug(this.addDragAndDrop, "'dragenter' triggered");
+				SoundButtonManager.logDebug(this.setupDragAndDrop, "'dragenter' triggered");
 
 				e.stopPropagation();
 				e.preventDefault();
@@ -111,7 +133,7 @@ abstract class SoundButton extends Logger {
 			})
 			// TODO: https://www.electronjs.org/docs/latest/tutorial/native-file-drag-drop
 			.on("drop", (e: JQuery.DropEvent) => {
-				this.logDebug(this.addDragAndDrop, "'drop' triggered");
+				SoundButtonManager.logDebug(this.setupDragAndDrop, "'drop' triggered");
 
 				const notSuccesful =
 					!e.originalEvent.dataTransfer ||
@@ -134,8 +156,8 @@ abstract class SoundButton extends Logger {
 
 				console.log(encodedPath);
 
-				this.logInfo(
-					this.addDragAndDrop,
+				SoundButtonManager.logInfo(
+					this.setupDragAndDrop,
 					"Audio drop successful.\n" +
 						"• Files: %O\n" +
 						"\t---------\n" +
@@ -151,12 +173,12 @@ abstract class SoundButton extends Logger {
 
 				$button.attr("data-path", encodedPath);
 				$button.children(".button-theme").text(file.name); // TODO: of course, this is temporary
-				console.log("setting hue")
+				console.log("setting hue");
 				$button.css("--hue", StringUtilities.getHue(file.name).toString());
 				$button.css("--saturation", "100%");
 			})
 			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
-				this.logDebug(this.addDragAndDrop, "'dragleave' triggered");
+				SoundButtonManager.logDebug(this.setupDragAndDrop, "'dragleave' triggered");
 
 				e.preventDefault();
 				e.stopPropagation();
@@ -166,7 +188,7 @@ abstract class SoundButton extends Logger {
 			});
 	}
 
-	public static updateData(
+	public updateData(
 		_$button: JQuery<HTMLElement>, // TODO:
 		data: SoundButtonData
 	): void {
@@ -180,15 +202,42 @@ abstract class SoundButton extends Logger {
 		}
 	}
 
-	public static initialize($grid: JQuery<HTMLElement>): void {
-		this._$grid = $grid;
-		this.initClick();
-		this.initContextMenu();
+	public setupClick(): this {
+		if (!StringUtilities.isDefined(this._$grid)) {
+			return this;
+		}
 
-		this.logInfo(this.initialize, "Initialized!");
+		this._$grid.on("click", ".soundbutton", (e) => {
+			SoundButtonManager.logInfo(
+				this.setupClick,
+				`SoundButton "%s" clicked`,
+				$(e.target).children(".button-theme").text()
+			);
+
+			const $button = $(e.target);
+
+			const path = $button.attr("data-path");
+
+			const time: AudioTimings = {
+				start: parseInt($button.attr("data-start-time")),
+				end: parseInt($button.attr("data-end-time")),
+				condition: $button.attr("data-end-type") as "at" | "after",
+			};
+
+			const useMultiPool = e.shiftKey; // If the shift key is pressed, use the multi-pool
+
+			// TODO: inject player
+			AudioPlayer.addAudio(path, time, useMultiPool);
+		});
+
+		return this;
 	}
 
-	private static initContextMenu() {
+	public setupContextMenu(): this {
+		if (!StringUtilities.isDefined(this._$grid)) {
+			return this;
+		}
+
 		this._$grid.on("contextmenu", ".soundbutton", (e) => {
 			e.stopPropagation(); // To prevent the document's trigger
 			// TODO: convert to async call
@@ -216,31 +265,21 @@ abstract class SoundButton extends Logger {
 
 			SoundboardApi.openContextMenu(args);
 		});
+
+		return this;
 	}
 
-	private static initClick(): void {
-		this._$grid.on("click", ".soundbutton", (e) => {
-			this.logInfo(
-				this.initClick,
-				`SoundButton "%s" clicked`,
-				$(e.target).children(".button-theme").text()
-			);
+	// TODO: update buttons
+	private updateMetadata(data: SoundButtonData): SoundButtonData {
+		const defaultData = SoundButtonManager.DEFAULT_METADATA;
 
-			const $button = $(e.target);
-
-			const path = $button.attr("data-path");
-
-			const time: AudioTimings = {
-				start: parseInt($button.attr("data-start-time")),
-				end: parseInt($button.attr("data-end-time")),
-				condition: $button.attr("data-end-type") as "at" | "after",
-			};
-
-			const useMultiPool = e.shiftKey; // If the shift key is pressed, use the multi-pool
-
-			AudioPlayer.addAudio(path, time, useMultiPool);
-		});
+		return {
+			title: data.title ?? defaultData.title,
+			color: data.color ?? defaultData.color,
+			image: data.image ?? defaultData.image,
+			path: data.path ?? defaultData.path,
+			tags: data.tags ?? defaultData.tags,
+			time: data.time ?? defaultData.time,
+		};
 	}
-
-	// TODO: Create a constructor and use it inside itself?
 }

@@ -1,26 +1,38 @@
-abstract class ButtonFilter extends Logger {
-	private static _filter: string[] = [];
+/**
+ * Filterer for sound buttons inside a grid
+ */
+class ButtonFilterer extends Logger {
+	private _gridManager: GridManager;
 
-	public static get filter(): string[] {
+	private _filter: string[] = [];
+	public get filter(): string[] {
 		return this._filter;
 	}
 
-	public static get isFiltering(): boolean {
+	public get isFiltering(): boolean {
 		return this._filter.length > 0;
 	}
 
-	private static get $filteredButtons(): JQuery<HTMLElement> {
-		return Grid.$buttons.filter(".filtered");
+	private get $filteredButtons(): JQuery<HTMLElement> {
+		return this._gridManager.$buttons.filter(".filtered");
 	}
 
 	// TODO: trigger filter when a function for updating a button is implemented.
 	// FIXME: trigger filter after clearing grid
 	// FIXME: trigger filter after swapping buttons
 
-	public static initialize(
+	constructor(gridManager: GridManager) {
+		super();
+
+		this._gridManager = gridManager;
+
+		ButtonFilterer.logInfo(null, "Initialized!");
+	}
+
+	public setupInputs(
 		$filterInput: JQuery<HTMLInputElement>,
 		$filterClearButton: JQuery<HTMLButtonElement>
-	): void {
+	): this {
 		// Trigger the filter input when the text changes
 		$filterInput.on("input", () => {
 			this.updateFilter();
@@ -40,10 +52,10 @@ abstract class ButtonFilter extends Logger {
 			$filterInput.trigger("input");
 		});
 
-		this.logInfo(this.initialize, "Initialized!");
+		return this;
 	}
 
-	public static filterButton($button: JQuery<HTMLElement>) {
+	public filterButton($button: JQuery<HTMLElement>) {
 		const shouldHideButton = this.shouldHide($button);
 
 		if (shouldHideButton) {
@@ -57,7 +69,7 @@ abstract class ButtonFilter extends Logger {
 		}
 	}
 
-	private static updateFilter(): void {
+	private updateFilter(): void {
 		// Split by spaces
 		const filterInput: string[] = $("#filter-buttons-input")
 			.val()
@@ -76,14 +88,14 @@ abstract class ButtonFilter extends Logger {
 		this.visuallyUpdateFilter();
 	}
 
-	private static visuallyUpdateFilter(): void {
+	private visuallyUpdateFilter(): void {
 		if (!this.isFiltering) {
-			this.logInfo(this.visuallyUpdateFilter, "Cleared filter.");
+			ButtonFilterer.logInfo(this.visuallyUpdateFilter, "Cleared filter.");
 			this.clearFilter();
 			return;
 		}
 
-		Grid.$buttons.each((_i, btn) => {
+		this._gridManager.$buttons.each((_i, btn) => {
 			this.filterButton($(btn));
 		});
 
@@ -98,7 +110,7 @@ abstract class ButtonFilter extends Logger {
 			$("#filter-buttons-path").is(":checked") ? "path" : "",
 		].filter((f) => f.length > 0);
 
-		this.logInfo(
+		ButtonFilterer.logInfo(
 			this.visuallyUpdateFilter,
 			"Filtered " + filteredButtonsLength + " buttons.",
 			"\nFilter:",
@@ -107,80 +119,78 @@ abstract class ButtonFilter extends Logger {
 			conditions.length > 0 ? conditions.join(", ") : "none"
 		);
 
-		Grid.$grid.toggleClass("filtering", filteredButtonsLength > 0);
+		this._gridManager.$grid.toggleClass("filtering", filteredButtonsLength > 0);
 	}
 
-	private static shouldHide($button: JQuery<HTMLElement>): boolean {
+	private shouldHide($button: JQuery<HTMLElement>): boolean {
 		return !this.filter.some((f) => {
 			return this.isMatch($button, f);
 		});
 	}
 
-	private static isMatch($button: JQuery<HTMLElement>, f: string): boolean {
+	private isMatch($button: JQuery<HTMLElement>, f: string): boolean {
 		return this.conditions.some((match) => match($button, f));
 	}
 
 	/**
 	 * Removes the "filtered" class from all buttons.
 	 */
-	private static clearFilter() {
+	private clearFilter() {
 		this.$filteredButtons.each((_i: number, btn: HTMLElement) =>
 			this.showButton(btn)
 		);
-		Grid.$grid.removeClass("filtering");
+		this._gridManager.$grid.removeClass("filtering");
 	}
 
-	private static showButton(button: HTMLElement) {
+	private showButton(button: HTMLElement) {
 		$(button).removeClass("filtered");
 	}
 
-	private static conditions: ((
-		$button: JQuery<HTMLElement>,
-		f: string
-	) => boolean)[] = [
-		// Text
-		($button: JQuery<HTMLElement>, f: string): boolean => {
-			const text = $button.children(".button-theme").text();
+	private conditions: (($button: JQuery<HTMLElement>, f: string) => boolean)[] =
+		[
+			// Text
+			($button: JQuery<HTMLElement>, f: string): boolean => {
+				const text = $button.children(".button-theme").text();
 
-			return (
-				$("#filter-buttons-text").is(":checked") &&
-				text != null &&
-				text.toLowerCase().includes(f)
-			);
-		},
-		// CSS Index
-		($button: JQuery<HTMLElement>, f: string): boolean => {
-			const index = parseInt($button.css("--index"));
-			const offset = parseInt(
-				$("#filter-buttons-index-offset-select option:selected").val().toString()
-			);
+				return (
+					$("#filter-buttons-text").is(":checked") &&
+					text != null &&
+					text.toLowerCase().includes(f)
+				);
+			},
+			// CSS Index
+			($button: JQuery<HTMLElement>, f: string): boolean => {
+				const index = parseInt($button.css("--index"));
+				const offset = parseInt(
+					$("#filter-buttons-index-offset-select option:selected").val().toString()
+				);
 
-			return (
-				$("#filter-buttons-index").is(":checked") && index + offset === parseInt(f)
-			);
-		},
-		// Tags
-		($button: JQuery<HTMLElement>, f: string): boolean => {
-			const tags = $button
-				.attr("data-tags")
-				?.split(" ")
-				.filter((tag) => tag.length > 0);
+				return (
+					$("#filter-buttons-index").is(":checked") && index + offset === parseInt(f)
+				);
+			},
+			// Tags
+			($button: JQuery<HTMLElement>, f: string): boolean => {
+				const tags = $button
+					.attr("data-tags")
+					?.split(" ")
+					.filter((tag) => tag.length > 0);
 
-			return (
-				$("#filter-buttons-tags").is(":checked") &&
-				tags != null &&
-				tags.some((tag) => tag.toLowerCase().includes(f))
-			);
-		},
-		// Path
-		($button: JQuery<HTMLElement>, f: string): boolean => {
-			const path = $button.attr("data-path");
+				return (
+					$("#filter-buttons-tags").is(":checked") &&
+					tags != null &&
+					tags.some((tag) => tag.toLowerCase().includes(f))
+				);
+			},
+			// Path
+			($button: JQuery<HTMLElement>, f: string): boolean => {
+				const path = $button.attr("data-path");
 
-			return (
-				$("#filter-buttons-path").is(":checked") &&
-				path != null &&
-				decodeURI(path).toLowerCase().includes(f)
-			);
-		},
-	];
+				return (
+					$("#filter-buttons-path").is(":checked") &&
+					path != null &&
+					decodeURI(path).toLowerCase().includes(f)
+				);
+			},
+		];
 }

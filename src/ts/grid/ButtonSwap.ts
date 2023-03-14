@@ -1,28 +1,36 @@
-abstract class ButtonSwap extends Logger {
-	private static isPreparingDrag = false;
-	private static _isDragging = false;
+class ButtonSwap extends Logger {
+	private _gridManager: GridManager;
 
-	private static dragStartCoords = { x: 0, y: 0 };
+	private isPreparingDrag = false;
+	private _isDragging = false;
 
-	private static $lastTarget: JQuery<HTMLElement> = null;
-	private static $currentTarget: JQuery<HTMLElement> = null;
+	private dragStartCoords = { x: 0, y: 0 };
 
-	private static isIndexChanged = false;
-	private static isStyleStarted = false;
+	private $lastTarget: JQuery<HTMLElement> = null;
+	private $currentTarget: JQuery<HTMLElement> = null;
 
-	public static get isDragging(): boolean { return this._isDragging; }
+	private isIndexChanged = false;
+	private isStyleStarted = false;
 
-	private static dragFunction: (e: JQuery.MouseMoveEvent) => void = null;
+	public get isDragging(): boolean {
+		return this._isDragging;
+	}
 
-	public static initialize(): void {
+	private dragFunction: (e: JQuery.MouseMoveEvent) => void = null;
+
+	constructor(gridManager: GridManager) {
+		super();
+
+		this._gridManager = gridManager;
+
 		this.initMouseDown();
 		this.initDocumentEvents();
 		this.setMouseDrag_1();
 
-		this.logInfo(this.initialize, "Initialized!");
+		ButtonSwap.logInfo(null, "Initialized!");
 	}
 
-	private static mouseDrag_1 = (e: JQuery.MouseMoveEvent): void => {
+	private mouseDrag_1 = (e: JQuery.MouseMoveEvent): void => {
 		if (!this.isPreparingDrag) return;
 
 		// Small delay to prevent the mouse to start dragging instantly
@@ -39,7 +47,7 @@ abstract class ButtonSwap extends Logger {
 		this.setMouseDrag_2();
 	};
 
-	private static mouseDrag_2 = (e: JQuery.MouseMoveEvent): void => {
+	private mouseDrag_2 = (e: JQuery.MouseMoveEvent): void => {
 		if (!this._isDragging) return;
 
 		let sliderValue = UiScale.getSliderValue();
@@ -54,27 +62,27 @@ abstract class ButtonSwap extends Logger {
 			this.$currentTarget.addClass("dragging");
 
 			if (
-				Grid.rows >= 7 &&
-				Grid.cols >= 7 &&
-				(Grid.buttonCount >= 49 || this.isIndexChanged)
+				this._gridManager.rows >= 7 &&
+				this._gridManager.cols >= 7 &&
+				(this._gridManager.buttonCount >= 49 || this.isIndexChanged)
 			) {
 				const draggedButtonIndex = parseInt(this.$currentTarget.css("--index"));
-				this.setOpacityDelay(Grid.cols, draggedButtonIndex);
+				this.setOpacityDelay(this._gridManager.cols, draggedButtonIndex);
 			}
 
-			Grid.$grid.addClass("has-dragging-child");
+			this._gridManager.$grid.addClass("has-dragging-child");
 		}
 	};
 
-	private static setMouseDrag_1(): void {
+	private setMouseDrag_1(): void {
 		this.dragFunction = this.mouseDrag_1;
 	}
-	private static setMouseDrag_2(): void {
+	private setMouseDrag_2(): void {
 		this.dragFunction = this.mouseDrag_2;
 	}
 
-	private static initMouseDown(): void {
-		Grid.$grid.on("mousemove", (e) => {
+	private initMouseDown(): void {
+		this._gridManager.$grid.on("mousemove", (e) => {
 			// 1 is left mouse button
 			if ((e.keyCode || e.which) !== 1) return;
 
@@ -82,7 +90,7 @@ abstract class ButtonSwap extends Logger {
 		});
 	}
 
-	private static initDocumentEvents() {
+	private initDocumentEvents() {
 		$(document)
 			.on("mousedown", ".soundbutton", (e) => {
 				// e.preventDefault(); // Seems to break the arrows inside the number inputs.
@@ -111,26 +119,26 @@ abstract class ButtonSwap extends Logger {
 				e.stopPropagation();
 				this._isDragging = this.isPreparingDrag = false;
 
-				const $dropTarget = this.getButtonFromPoint(e.pageX, e.pageY);
+				const $dropTarget = ButtonSwap.getButtonFromPoint(e.pageX, e.pageY);
 
 				if (
 					this.$currentTarget != null &&
 					$dropTarget != null &&
 					this.$currentTarget.css("--index") != $dropTarget.css("--index")
 				) {
-					this.swapButtons(this.$currentTarget, $dropTarget);
+					ButtonSwap.swapButtons(this.$currentTarget, $dropTarget);
 				}
 
 				// Remove properties to last target
 				if (this.$currentTarget != null && this.isStyleStarted) {
 					this.$currentTarget.removeClass("dragging");
-					Grid.$grid.removeClass("has-dragging-child");
+					this._gridManager.$grid.removeClass("has-dragging-child");
 					this.$currentTarget.css("transform", "");
 				}
 
 				$dropTarget?.removeClass("drop-destination");
 				this.clearOpacityDelay();
-				Grid.$buttons.find(".hovered").removeClass("hovered");
+				this._gridManager.$buttons.find(".hovered").removeClass("hovered");
 
 				this.isStyleStarted = false;
 				this.$currentTarget = null;
@@ -148,15 +156,12 @@ abstract class ButtonSwap extends Logger {
 			});
 	}
 
-	private static setOpacityDelay(
-		cols: number,
-		draggedButtonIndex: number
-	): void {
+	private setOpacityDelay(cols: number, draggedButtonIndex: number): void {
 		const multiplier = 0.05;
 		const sumOffset = 2;
 
 		// Delay effect for the buttons around the dragged one
-		Grid.$buttons
+		this._gridManager.$buttons
 			.filter((_i, el) => {
 				return !$(el).hasClass("dragging") /* && !$(el).hasClass("hidden")*/;
 			})
@@ -176,27 +181,20 @@ abstract class ButtonSwap extends Logger {
 			});
 	}
 
-	private static clearOpacityDelay(): void {
-		Grid.$buttons.css("--opacity-delay", "");
+	private clearOpacityDelay(): void {
+		this._gridManager.$buttons.css("--opacity-delay", "");
 	}
 
-	private static onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
+	private onSoundButtonMouseEnter(e: JQuery.MouseEnterEvent): void {
 		if (!this._isDragging) return;
 
 		$(e.target).addClass("drop-destination").addClass("hovered");
 	}
 
-	private static onSoundButtonMouseLeave(e: JQuery.MouseLeaveEvent): void {
+	private onSoundButtonMouseLeave(e: JQuery.MouseLeaveEvent): void {
 		if (!this._isDragging) return;
 
 		$(e.target).removeClass("drop-destination");
-	}
-
-	private static getButtonFromPoint(x: number, y: number): JQuery<HTMLElement> {
-		const $target = $(UserInterface.elementFromPoint(x, y));
-
-		if ($target.hasClass("soundbutton")) return $target as JQuery<HTMLElement>;
-		else return null;
 	}
 
 	private static swapButtons(
@@ -205,6 +203,8 @@ abstract class ButtonSwap extends Logger {
 	): void {
 		const dropTargetIndex = parseInt($drop.css("--index"));
 		const lastTargetIndex = parseInt($drag.css("--index"));
+
+		// TODO: move to a function inside SoundButtonManager
 
 		$drop.attr("id", "sound_btn_" + lastTargetIndex);
 		$drag.attr("id", "sound_btn_" + dropTargetIndex);
@@ -221,6 +221,13 @@ abstract class ButtonSwap extends Logger {
 				.children(".button-theme")
 				.text()}"`
 		);
+	}
+
+	private static getButtonFromPoint(x: number, y: number): JQuery<HTMLElement> {
+		const $target = $(UserInterface.elementFromPoint(x, y));
+
+		if ($target.hasClass("soundbutton")) return $target as JQuery<HTMLElement>;
+		else return null;
 	}
 }
 

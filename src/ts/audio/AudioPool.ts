@@ -1,3 +1,6 @@
+/**
+ * Pool for a `main` and a `playback` audio
+ */
 class AudioPool extends Logger {
 	private audioPool: AudioPoolGroup[] = [];
 

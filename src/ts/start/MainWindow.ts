@@ -1,15 +1,36 @@
 abstract class MainWindow extends Main {
+	private static _gridManager: GridManager;
+	private static _soundButtonManager: SoundButtonManager;
+	private static _gridResizer: GridResizer;
+	private static _buttonSwap: ButtonSwap;
+	private static _buttonFilterer: ButtonFilterer;
+
 	public static async initWindow() {
 		super.init();
 
-		// Reference grid
-		Grid.initGrid($("#buttons-grid"));
+		// Grid manager
+		this._gridManager = new GridManager($("#buttons-grid"));
 
-		// Grid resizer
-		GridResizer.initialize($("#grid-rows"), $("#grid-columns"), $("#clear-grid"));
+		// Soundbutton manager
+		this._soundButtonManager = new SoundButtonManager(this._gridManager.$grid)
+			.setupClick()
+			.setupContextMenu();
+
+		// Button filterer
+		this._buttonFilterer = new ButtonFilterer(this._gridManager).setupInputs(
+			$("#filter-buttons-input"),
+			$("#clear-filter-button")
+		);
+
+		// Grid resize manager
+		this._gridResizer = new GridResizer(
+			this._gridManager,
+			this._soundButtonManager,
+			this._buttonFilterer
+		).setInputs($("#grid-rows"), $("#grid-columns"), $("#clear-grid"));
 
 		// Button swap
-		ButtonSwap.initialize();
+		this._buttonSwap = new ButtonSwap(this._gridManager);
 
 		// Audio output
 		await AudioPlayer.initializeAudioDevices();
@@ -22,14 +43,6 @@ abstract class MainWindow extends Main {
 			$("#volume-slider-primary"),
 			$("#volume-slider-secondary")
 		).setAudioButtons($("#play-toggle-audio-button"), $("#stop-audio-button"));
-
-		// Initialize sound button generator
-		SoundButton.initialize(Grid.$grid);
-
-		ButtonFilter.initialize(
-			$("#filter-buttons-input"),
-			$("#clear-filter-button")
-		);
 
 		// Set UI scale elements
 		UiScale.setControls(

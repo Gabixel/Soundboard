@@ -38,7 +38,7 @@ const scripts = [
 	"utility/SoundboardApi",
 	"utility/StringUtilities",
 
-	"grid/SoundButton",
+	"grid/SoundButtonManager",
 
 	"editor/FormSubmitter",
 

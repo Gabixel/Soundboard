@@ -42,22 +42,9 @@ type SoundButtonData = {
 	 */
 	title?: string;
 	/**
-	 * The color (fallback if image fails)
+	 * The color (fallback if image is failing/missing)
 	 */
-	color?: {
-		/**
-		 * Hue
-		 */
-		h: number;
-		/**
-		 * Saturation
-		 */
-		s: number;
-		/**
-		 * Lightness
-		 */
-		l: number;
-	};
+	color?: Color.HSL;
 
 	/**
 	 * The background image
@@ -97,3 +84,20 @@ type ElectronFile = File & {
 	path: string;
 	name: string;
 };
+
+namespace Color {
+	type HSL = {
+		/**
+		 * Hue
+		 */
+		h: number;
+		/**
+		 * Saturation
+		 */
+		s: number;
+		/**
+		 * Lightness
+		 */
+		l: number;
+	};
+}

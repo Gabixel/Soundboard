@@ -1,24 +1,31 @@
-abstract class GridResizer {
-	// TODO: Dependency Injection
-	// private static _grid: Grid;
-	private static resizerInitialized = false;
+/**
+ * Resize (rescale) logic for the {@link GridManager}
+ */
+class GridResizer {
+	private _gridManager: GridManager;
+	private _buttonFilterer: ButtonFilterer;
+	private _soundButtonManager: SoundButtonManager;
 
-	// public static setGrid(grid: Grid): void {
-	// 	this._grid = grid;
-	// }
+	private resizerInitialized: boolean = false;
+
+	constructor(
+		gridManager: GridManager,
+		soundButtonManager: SoundButtonManager,
+		buttonFilterer: ButtonFilterer
+	) {
+		this._gridManager = gridManager;
+		this._buttonFilterer = buttonFilterer;
+		this._soundButtonManager = soundButtonManager;
+	}
 
 	/**
-	 * Initializes events for the grid resize logic.
-	 *
-	 * @param $rowsInput
-	 * @param $columnsInput
-	 * @param $clearButton
+	 * Initializes events for the grid resize logic
 	 */
-	public static initialize(
+	public setInputs(
 		$rowsInput: JQuery<HTMLInputElement>,
 		$columnsInput: JQuery<HTMLInputElement>,
 		$clearButton: JQuery<HTMLInputElement>
-	): void {
+	): this {
 		// Initialize grid
 		this.updateAxis($rowsInput, "row");
 		this.updateAxis($columnsInput, "col");
@@ -48,13 +55,15 @@ abstract class GridResizer {
 				EventFunctions.updateInputValueFromWheel(e);
 			});
 		$clearButton.on("click", () => {
-			Grid.$grid.empty();
-			Grid.resetSoundButtonCount();
+			this._gridManager.$grid.empty();
+			this._gridManager.resetSoundButtonCount();
 			this.updateGrid();
 		});
+
+		return this;
 	}
 
-	private static updateGrid() {
+	private updateGrid() {
 		this.fillEmptyCells();
 
 		this.updateVisibleButtons();
@@ -62,30 +71,30 @@ abstract class GridResizer {
 		this.updateButtonFontSize();
 	}
 
-	private static updateAxis($e: JQuery<HTMLInputElement>, axis: "row" | "col") {
+	private updateAxis($e: JQuery<HTMLInputElement>, axis: "row" | "col") {
 		const axisSize = this.clampGridSizeValue($e);
 
 		switch (axis) {
 			case "row":
-				if (Grid.rows == axisSize) {
+				if (this._gridManager.rows == axisSize) {
 					return;
 				}
 
-				Grid.$grid.css("--rows", axisSize);
-				Grid.setRows(axisSize);
+				this._gridManager.$grid.css("--rows", axisSize);
+				this._gridManager.setRows(axisSize);
 				break;
 			case "col":
-				if (Grid.cols == axisSize) {
+				if (this._gridManager.cols == axisSize) {
 					return;
 				}
 
-				Grid.$grid.css("--columns", axisSize);
-				Grid.setColumns(axisSize);
+				this._gridManager.$grid.css("--columns", axisSize);
+				this._gridManager.setColumns(axisSize);
 				break;
 		}
 	}
 
-	private static clampGridSizeValue($e: JQuery<HTMLInputElement>): number {
+	private clampGridSizeValue($e: JQuery<HTMLInputElement>): number {
 		const $target = $e;
 		const value = parseInt($target.val().toString());
 
@@ -99,8 +108,8 @@ abstract class GridResizer {
 		return clampedValue;
 	}
 
-	private static updateVisibleButtons(): void {
-		let sortedButtons = Grid.$buttons
+	private updateVisibleButtons(): void {
+		let sortedButtons = this._gridManager.$buttons
 			.toArray()
 			.sort(function (a: HTMLElement, b: HTMLElement): number {
 				const aIndex = parseInt($(a).css("--index").toString());
@@ -111,7 +120,7 @@ abstract class GridResizer {
 		$(sortedButtons).each((_i: number, e: HTMLElement): void => {
 			const index = parseInt($(e).css("--index").toString());
 
-			if (index >= Grid.size) {
+			if (index >= this._gridManager.size) {
 				$(e).addClass("hidden");
 			} else {
 				$(e).removeClass("hidden");
@@ -119,29 +128,38 @@ abstract class GridResizer {
 		});
 	}
 
-	private static fillEmptyCells(): void {
-		if (!Grid.isGridIncomplete) return;
+	private fillEmptyCells(): void {
+		if (!this._gridManager.isGridIncomplete) return;
 
-		const emptyCells = Grid.size - Grid.buttonCount;
+		const emptyCells = this._gridManager.size - this._gridManager.buttonCount;
 
 		for (let i = 0; i < emptyCells; i++) {
-			const $button = $(SoundButton.generateRandom(Grid.size + i - emptyCells));
+			const $button = $(
+				SoundboardApi.isProduction
+					? this._soundButtonManager.generateButton(
+							null,
+							this._gridManager.size + i - emptyCells
+					  )
+					: this._soundButtonManager.generateRandomButton(
+							this._gridManager.size + i - emptyCells
+					  )
+			);
 
 			// TODO: Not sure if it's better triggering the filter instead of this.
 			// In that case, all existing buttons will light again (thanks to the animation).
-			if (ButtonFilter.isFiltering) {
-				ButtonFilter.filterButton($button);
+			if (this._buttonFilterer.isFiltering) {
+				this._buttonFilterer.filterButton($button);
 			}
 
-			Grid.$grid.append($button[0]);
+			this._gridManager.$grid.append($button[0]);
 
-			Grid.increaseSoundButtonCount();
+			this._gridManager.increaseSoundButtonCount();
 		}
 	}
 
 	// TODO: update on window resize and on ui scale change
-	private static updateButtonFontSize(): void {
-		const $el = $(Grid.getButtonAtIndex(0));
+	private updateButtonFontSize(): void {
+		const $el = $(this._gridManager.getButtonAtIndex(0));
 
 		const minFontSize = 10; /*parseInt($(document.body).css("font-size").toString());*/
 		const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
@@ -151,6 +169,6 @@ abstract class GridResizer {
 
 		finalSize = EMath.clamp(finalSize, minFontSize, maxFontSize);
 
-		Grid.$grid.css("--button-font-size", finalSize + "px");
+		this._gridManager.$grid.css("--button-font-size", finalSize + "px");
 	}
 }
