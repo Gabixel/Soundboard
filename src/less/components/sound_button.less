@@ -5,28 +5,28 @@
 
 // TODO: https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/
 
-#buttons-grid {
-	.soundbutton {
-		// Base restyle
-		.style();
+.soundbutton {
+	// Base restyle
+	.style();
 
-		// Hidden
-		&.hidden {
-			display: none;
-		}
-
-		&:focus-visible {
-			.base-transition(0s);
-			box-shadow: 0 0 0 2px var(--buttons-grid-bg),
-				0 0 0 4px var(--button-background-hsl);
-		}
-
-		&:focus-visible:active {
-			box-shadow: 0 0 0 2px var(--buttons-grid-bg),
-				0 0 0 4px var(--button-background-hover-hsl);
-		}
+	// Hidden
+	&.hidden {
+		display: none;
 	}
 
+	&:focus-visible {
+		.base-transition(0s);
+		box-shadow: 0 0 0 2px var(--buttons-grid-bg),
+			0 0 0 4px var(--button-background-hsl);
+	}
+
+	&:focus-visible:active {
+		box-shadow: 0 0 0 2px var(--buttons-grid-bg),
+			0 0 0 4px var(--button-background-hover-hsl);
+	}
+}
+
+#buttons-grid {
 	&.filtering .soundbutton {
 		&.filtered .button-theme {
 			opacity: 0.15;

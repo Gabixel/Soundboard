@@ -4,13 +4,17 @@ abstract class Main extends Logger {
 	// TODO: create a specific object to store intervals(?)
 	private static _intervals: NodeJS.Timer[] = [];
 
-	public static async initMainWindow() {
+	public static addInterval(interval: NodeJS.Timer): void {
+		this._intervals.push(interval);
+	}
+
+	protected static async init(): Promise<void> {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();
 
 		// Some info for debug
 		this.logInfo(
-			this.initMainWindow,
+			this.init,
 			"\nUserAgent:",
 			navigator.userAgent,
 			"\nMain language:",
@@ -26,64 +30,9 @@ abstract class Main extends Logger {
 		// Fix JQuery passive events (?)
 		// TODO: improve / check what it actually does
 		JQueryFixes.fixPassiveEvents();
-
-		// Reference grid
-		Grid.initGrid($("#buttons-grid"));
-
-		// Grid resizer
-		GridResizer.initialize($("#grid-rows"), $("#grid-columns"), $("#clear-grid"));
-
-		// Button swap
-		ButtonSwap.initialize();
-
-		// Audio output
-		await AudioPlayer.initializeAudioDevices();
-
-		// TODO: Extract audio from video file? (probably not necessary)
-		// https://stackoverflow.com/questions/49140159/extracting-audio-from-a-video-file
-
-		// Initialize volume in the audio player and the play/stop buttons
-		AudioPlayer.initVolumeSliders(
-			$("#volume-slider-primary"),
-			$("#volume-slider-secondary")
-		).setAudioButtons($("#play-toggle-audio-button"), $("#stop-audio-button"));
-
-		// Initialize sound button generator
-		SoundButton.initialize(Grid.$grid);
-
-		ButtonFilter.initialize(
-			$("#filter-buttons-input"),
-			$("#clear-filter-button")
-		);
-
-		// Set UI scale elements
-		UiScale.setControls(
-			$("#ui-scale-slider"),
-			$("#ui-scale-lock"),
-			$("#ui-scale-reset")
-		);
-
-		// Setup context menu
-		// TODO: class?
-		$(document).on("contextmenu", () => {
-			SoundboardApi.openContextMenu();
-		});
-
-		$(window).on("dragover", (e) => {
-			e.preventDefault();
-			e.originalEvent.dataTransfer.dropEffect = "none";
-			return false;
-		});
-
-		// Show application
-		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
 
-	public static addInterval(interval: NodeJS.Timer): void {
-		this._intervals.push(interval);
-	}
-
-	private static clearIntervals() {
+	protected static clearIntervals() {
 		this._intervals.forEach((interval) => clearInterval(interval));
 	}
 
@@ -136,8 +85,3 @@ abstract class Main extends Logger {
 		}
 	}
 }
-
-// On page load
-$(() => {
-	Main.initMainWindow();
-});

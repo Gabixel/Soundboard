@@ -21,16 +21,29 @@ type EditButtonWindowApiBridge = {
 	// isPathFile: (args: string) => boolean;
 };
 
-const styles = ["colors", "base", "base_restyling", "editButtonWindow"];
+const styles = [
+	"colors",
+	"base",
+	"base_restyling",
+
+	"editButtonWindow",
+
+	"buttons_grid",
+	"sound_button",
+];
 
 const scripts = [
 	"utility/Logger",
+	"utility/JQueryFixes",
 	"utility/SoundboardApi",
+	"utility/StringUtilities",
+
+	"grid/SoundButton",
 
 	"editor/FormSubmitter",
-	"editor/ButtonEditor",
 
-	"editor/ButtonEditor",
+	"start/Main",
+	"start/EditButtonWindow",
 ];
 
 // Create API bridge

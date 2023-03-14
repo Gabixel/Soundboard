@@ -135,11 +135,9 @@ function createEditButtonWindow(
 
 	let name = buttonData.title;
 
-	let title;
+	let title = "Edit button";
 	if (name != null) {
-		title = `Edit "${name}" button`;
-	} else {
-		title = "Edit button";
+		title += ` "${name}"`;
 	}
 
 	let width = 400;
@@ -300,8 +298,10 @@ app.whenReady().then(() => {
 	let screenWidth = screen.getPrimaryDisplay().workAreaSize.width;
 	let screenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
-	// // Remove default menu
-	// if (isProduction) Menu.setApplicationMenu(null);
+	// Remove default menu
+	if (isProduction) {
+		Menu.setApplicationMenu(null);
+	}
 
 	createMainWindow(screenWidth, screenHeight);
 

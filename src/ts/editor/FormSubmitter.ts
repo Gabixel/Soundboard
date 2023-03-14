@@ -1,15 +1,19 @@
-abstract class FormSubmitter extends Logger {
-	private static $form: JQuery<HTMLElement>;
+class FormSubmitter extends Logger {
+	private _$form: JQuery<HTMLFormElement>;
 
-	public static initForm($form: JQuery<HTMLElement>): void {
-		this.$form = $form;
+	constructor($form: JQuery<HTMLFormElement>) {
+		super();
+
+		this._$form = $form;
+
 		this.setupFormSubmitEvent();
 	}
 
-	private static setupFormSubmitEvent() {
-		this.$form.on('submit', (e) => {
+	private setupFormSubmitEvent() {
+		this._$form.on("submit", (e) => {
 			e.preventDefault();
-			this.logInfo(this.setupFormSubmitEvent, "Form submitted.");
+
+			FormSubmitter.logInfo(this.setupFormSubmitEvent, "Form submitted.");
 		});
 	}
 }

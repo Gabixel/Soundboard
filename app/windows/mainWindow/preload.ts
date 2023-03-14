@@ -77,7 +77,8 @@ const scripts = [
 
 	"ToolbarManager",
 
-	"Main",
+	"start/Main",
+	"start/MainWindow",
 ];
 
 // Create API bridge

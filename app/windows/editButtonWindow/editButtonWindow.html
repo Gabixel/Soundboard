@@ -13,14 +13,20 @@
 </head>
 
 <body style="background-color: var(--window-bg, #000);">
-	<form action="#" id="button-editor">
-		<!-- TODO: real-time button visualization (on a sidebar?) -->
-		<input type="text" placeholder="Button text">
-		<label for="path-selector">Button path: </label><input type="file" name="" id="path-selector">
-		<input type="submit" value="submit">
-	</form>
-	<!-- TODO: initEditButtonWindow(PARAMS?) -->
-	<script defer type="text/javascript" src="../../resources/scripts/jquery-3.6.0.min.js"></script>
+	<div id="soundbutton-editor" style="opacity: 0;">
+		<div id="soundbutton-preview"></div>
+		<form action="#" id="metadata-editor">
+			<!-- TODO: real-time button visualization (on a sidebar?) -->
+			<label for="button-path">Button text:</label>
+			<input type="text" placeholder="Bruh sound effect">
+			<br />
+			<label for="button-path">Button file path:</label>
+			<input type="file" id="button-path">
+			<br />
+		</form>
+		<input type="submit" value="submit" id="editor-submit" form="metadata-editor">
+	</div>
+	<script defer type="text/javascript" src="../../../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>
