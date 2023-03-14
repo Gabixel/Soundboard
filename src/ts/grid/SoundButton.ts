@@ -4,8 +4,6 @@ abstract class SoundButton extends Logger {
 	];
 	private static $grid: JQuery<HTMLElement>;
 
-	private static dropEffect: "none" | "copy" | "link" | "move" = "none";
-
 	private static getRandomAudio(): string {
 		let path = SoundboardApi.joinPaths(
 			SoundboardApi.resolveAppPath(Main.RESOURCES_PATH, "sounds"),
@@ -85,7 +83,7 @@ abstract class SoundButton extends Logger {
 
 				e.stopPropagation();
 				e.preventDefault();
-				e.originalEvent.dataTransfer.dropEffect = this.dropEffect;
+				e.originalEvent.dataTransfer.dropEffect = "link";
 
 				$button.addClass("file-dragover");
 			})
