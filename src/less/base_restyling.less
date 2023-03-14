@@ -42,7 +42,10 @@ input {
 // If we want to overwrite this, we need more specificity
 // (e.g. "button.coolbutton" instead of ".coolbutton")
 input,
+input::-webkit-file-upload-button,
+input::file-selector-button,
 button {
+	outline: none;
 	background-color: #fff;
 	color: #000;
 	border: none;

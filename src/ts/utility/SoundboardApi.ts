@@ -55,7 +55,8 @@ type WindowApiBridge = {
 	/*
 	 * EditButtonWindow
 	 */
-	// nothing, for now
+	// TODO:
+	// editButton: (buttonData: SoundButtonData) => void;
 };
 
 // Keep updated with:

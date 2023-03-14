@@ -1,8 +1,12 @@
 abstract class EditButtonWindow extends Main {
+	private static _formSubmitter: FormSubmitter;
+
 	public static async initWindow() {
 		super.init();
 
-		console.log("test"); 
+		this._formSubmitter = new FormSubmitter($("#metadata-editor"));
+
+
 		// Show window content
 		$(document.body).find("#soundbutton-editor").attr("style", "opacity: 1");
 	}
@@ -28,11 +32,3 @@ $(() => {
 // 		this.$form = $form;
 // 		this.setupFormSubmitEvent();
 // 	}
-
-// 	private static setupFormSubmitEvent() {
-// 		this.$form.on("submit", (e) => {
-// 			e.preventDefault();
-// 			this.logInfo(this.setupFormSubmitEvent, "Form submitted.");
-// 		});
-// 	}
-// }

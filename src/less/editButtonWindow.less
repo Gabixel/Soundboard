@@ -18,22 +18,65 @@ body {
 		transition-duration: 0.25s;
 		transition-timing-function: ease-out;
 
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		justify-content: flex-start;
-		align-items: flex-start;
+		// display: flex;
+		// flex-direction: row;
+		// flex-wrap: nowrap;
+		// justify-content: flex-start;
+		// align-items: flex-start;
 
-		form#metadata {
-			flex-grow: 1;
-			flex-shrink: 0;
-			flex-basis: 0;
+		display: grid;
+		grid-template-rows: 1fr 2fr 2ch;
+		grid-template-columns: 100%;
+
+		input#button-path {
+			width: 100px;
+			word-wrap: normal;
+			word-break: normal;
+			text-overflow: clip;
+			white-space: nowrap;
 		}
 
+		input#button-path::before {
+			content: "asdasd";
+			position: relative;
+			opacity: 1;
+		}
+		input#button-path:not(::before) {
+			display: none;
+		}
+
+		input#button-path::file-selector-button,
+		input#button-path::-webkit-file-upload-button {
+			width: 50%;
+			height: 100%;
+			background-color: red;
+			font-weight: bold;
+
+			display: none;
+		}
+
+		// button, input[type="submit"], input[type="button"] {
+		// 	width: 10px;
+		// }
+
 		#soundbutton-preview {
-			flex-grow: 1;
-			flex-shrink: 0;
-			flex-basis: 0;
+			grid-row: 1 / 2;
+		}
+
+		form#metadata-editor {
+			display: block;
+
+			grid-row: 2 / 3;
+
+			input[type="file"] {
+				// display: none;
+				// width: 40px;
+			}
+		}
+
+		#editor-submit {
+			// display: none;
+			grid-row: 3 / 4;
 		}
 	}
 }
