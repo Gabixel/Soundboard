@@ -31,7 +31,7 @@ abstract class SoundButton extends Logger {
 			tags: [""],
 			path: this.getRandomAudio(),
 			time: {
-				start: 0, //20500,//19300,//62265, // TODO
+				start: 0,
 				end: 0,
 				condition: "after",
 			},
