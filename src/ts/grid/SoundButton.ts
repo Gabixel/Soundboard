@@ -1,26 +1,26 @@
 abstract class SoundButton extends Logger {
-	private static paths: string[] = [
+	private static _randomPaths: string[] = [
 		"Clown Horn.mp3"
 	];
-	private static $grid: JQuery<HTMLElement>;
+	private static _$grid: JQuery<HTMLElement>;
 
 	private static getRandomAudio(): string {
 		let path = SoundboardApi.joinPaths(
 			SoundboardApi.resolveAppPath(Main.RESOURCES_PATH, "sounds"),
-			this.paths[EMath.randomInt(0, this.paths.length)]
+			this._randomPaths[EMath.randomInt(0, this._randomPaths.length)]
 		);
 
 		return StringUtilities.encodeFilePath(path);
 	}
 
 	public static generateRandom(index: number): HTMLElement {
-		/*let [h, s, l] = [
+		let [h, s, l] = [
 			EMath.randomInt(0, 361),
 			EMath.randomInt(0, 100),
 			EMath.randomInt(30, 100),
-		];*/
+		];
 
-		let [h, s, l] = [0, 0, 80];
+		// let [h, s, l] = [0, 0, 80];
 
 		let data: SoundButtonData = {
 			title: (index + 1).toString(),
@@ -36,6 +36,15 @@ abstract class SoundButton extends Logger {
 		};
 
 		return SoundButton.createWithData(data, index);
+	}
+
+	private _metadata: SoundButtonData;
+
+	// TODO: remove random gen
+	constructor() {
+		super();
+
+		
 	}
 
 	public static createWithData(
@@ -56,19 +65,27 @@ abstract class SoundButton extends Logger {
 		index: number
 	): void {
 		$button
+			// Identifier
 			.attr("id", "sound_btn_" + index)
-			.attr("tabindex", index + 1)
-			.css("--index", index.toString())
 
+			// Tab index
+			.attr("tabindex", index + 1)
+
+			// CSS flex index
+			.css("--index", index)
+
+			// Customisation
 			// TODO: apply color
 			// TODO: apply image
 			.attr("data-path", data.path)
 			.attr("data-tags", data.tags.join(","))
 
+			// Timings
 			.attr("data-start-time", data.time.start)
 			.attr("data-end-time", data.time.end)
 			.attr("data-end-type", data.time.condition)
 
+			// Color
 			.css("--hue", data.color.h.toString())
 			.css("--saturation", data.color.s.toString() + "%")
 			.css("--lightness", data.color.l.toString() + "%");
@@ -91,8 +108,6 @@ abstract class SoundButton extends Logger {
 				e.preventDefault();
 				e.stopPropagation();
 				e.originalEvent.dataTransfer.dropEffect = "link";
-
-				// $button.addClass("file-dragover");
 			})
 			// TODO: https://www.electronjs.org/docs/latest/tutorial/native-file-drag-drop
 			.on("drop", (e: JQuery.DropEvent) => {
@@ -165,8 +180,8 @@ abstract class SoundButton extends Logger {
 		}
 	}
 
-	public static initialize(grid: JQuery<HTMLElement>): void {
-		this.$grid = grid;
+	public static initialize($grid: JQuery<HTMLElement>): void {
+		this._$grid = $grid;
 		this.initClick();
 		this.initContextMenu();
 
@@ -174,7 +189,7 @@ abstract class SoundButton extends Logger {
 	}
 
 	private static initContextMenu() {
-		this.$grid.on("contextmenu", ".soundbutton", (e) => {
+		this._$grid.on("contextmenu", ".soundbutton", (e) => {
 			e.stopPropagation(); // To prevent the document's trigger
 			// TODO: convert to async call
 
@@ -204,7 +219,7 @@ abstract class SoundButton extends Logger {
 	}
 
 	private static initClick(): void {
-		this.$grid.on("click", ".soundbutton", (e) => {
+		this._$grid.on("click", ".soundbutton", (e) => {
 			this.logInfo(
 				this.initClick,
 				`SoundButton "%s" clicked`,
