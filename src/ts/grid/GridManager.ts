@@ -51,19 +51,22 @@ class GridManager extends Logger {
 		super();
 
 		this._$grid = $grid;
-		GridManager.logInfo(null, "Initialized!");
+		GridManager.logDebug(null, "Initialized!");
 	}
 
 	public setRows(newValue: number): void {
 		this._gridRows = newValue;
 
-		GridManager.logDebug(this.setRows, `Row size changed (${this._gridRows})`);
+		GridManager.logInfo(this.setRows, `Row size changed (${this._gridRows})`);
 	}
 
 	public setColumns(newValue: number): void {
 		this._gridCols = newValue;
 
-		GridManager.logDebug(this.setColumns, `Column size changed (${this._gridCols})`);
+		GridManager.logInfo(
+			this.setColumns,
+			`Column size changed (${this._gridCols})`
+		);
 	}
 
 	public resetSoundButtonCount(): void {

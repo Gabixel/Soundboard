@@ -26,7 +26,7 @@ class ButtonFilterer extends Logger {
 
 		this._gridManager = gridManager;
 
-		ButtonFilterer.logInfo(null, "Initialized!");
+		ButtonFilterer.logDebug(null, "Initialized!");
 	}
 
 	public setupInputs(

@@ -27,7 +27,7 @@ class ButtonSwap extends Logger {
 		this.initDocumentEvents();
 		this.setMouseDrag_1();
 
-		ButtonSwap.logInfo(null, "Initialized!");
+		ButtonSwap.logDebug(null, "Initialized!");
 	}
 
 	private mouseDrag_1 = (e: JQuery.MouseMoveEvent): void => {

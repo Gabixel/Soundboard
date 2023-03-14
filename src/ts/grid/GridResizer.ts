@@ -1,7 +1,7 @@
 /**
  * Resize (rescale) logic for the {@link GridManager}
  */
-class GridResizer {
+class GridResizer extends Logger {
 	private _gridManager: GridManager;
 	private _buttonFilterer: ButtonFilterer;
 	private _soundButtonManager: SoundButtonManager;
@@ -13,9 +13,13 @@ class GridResizer {
 		soundButtonManager: SoundButtonManager,
 		buttonFilterer: ButtonFilterer
 	) {
+		super();
+		
 		this._gridManager = gridManager;
 		this._buttonFilterer = buttonFilterer;
 		this._soundButtonManager = soundButtonManager;
+		
+		GridResizer.logDebug(null, "Initialized!");
 	}
 
 	/**

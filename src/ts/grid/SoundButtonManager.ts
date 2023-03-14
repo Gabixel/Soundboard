@@ -36,7 +36,7 @@ class SoundButtonManager extends Logger {
 
 		this._$grid = $grid;
 
-		SoundButtonManager.logInfo(null, "Initialized!");
+		SoundButtonManager.logDebug(null, "Initialized!");
 	}
 
 	public generateButton(
