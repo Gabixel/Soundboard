@@ -39,7 +39,7 @@ abstract class UiScale extends Logger {
 		$(document).on("wheel", (e) => {
 			if (!e.ctrlKey || !this.canChangeValue) return;
 
-			if (ButtonSwap.isDragging) return;
+			// TODO: make class non-abstract, pass ButtonSwap anche check here if it's dragging. If it's true, return.
 
 			const value = EventFunctions.getUpdatedValueFromWheel(
 				e,
