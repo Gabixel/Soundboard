@@ -21,5 +21,11 @@ class EditorForm extends Logger {
 
 			EditorForm.logInfo("Submit button", "Form submitted");
 		});
+
+		// TODO: file picker handler
+	}
+
+	private initialInputFill() {
+		
 	}
 }

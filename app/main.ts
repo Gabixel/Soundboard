@@ -125,9 +125,8 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	}
 }
 
-// TODO: remove 'any'
 function createEditButtonWindow(
-	buttonData: any,
+	buttonData: SoundButtonData,
 	screenWidth: number,
 	screenHeight: number
 ) {
@@ -171,6 +170,7 @@ function createEditButtonWindow(
 
 		autoHideMenuBar: !isProduction,
 		maximizable: false,
+		minimizable: false,
 
 		parent: mainWindow,
 		modal: true,

@@ -36,6 +36,14 @@ type AudioPoolGroup = {
 	forcedStop: boolean;
 };
 
+type ElectronFile = File & {
+	path: string;
+	name: string;
+};
+
+/**
+ * Sound button metadata
+ */
 type SoundButtonData = {
 	/**
 	 * The unrendered text
@@ -64,6 +72,9 @@ type SoundButtonData = {
 	path?: string;
 };
 
+/**
+ * Timings settings for the {@link SoundButtonData}
+ */
 type AudioTimings = {
 	/**
 	 * Start time (in milliseconds)
@@ -78,11 +89,6 @@ type AudioTimings = {
 	 * Ending condition
 	 */
 	condition: "at" | "after";
-};
-
-type ElectronFile = File & {
-	path: string;
-	name: string;
 };
 
 namespace Color {
