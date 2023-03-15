@@ -1,10 +1,10 @@
 abstract class EditButtonWindow extends Main {
-	private static _formSubmitter: FormSubmitter;
+	private static _formSubmitter: EditorForm;
 
 	public static async initWindow() {
 		super.init();
 
-		this._formSubmitter = new FormSubmitter($("#metadata-editor"));
+		this._formSubmitter = new EditorForm($("#metadata-editor"));
 
 
 		// Show window content

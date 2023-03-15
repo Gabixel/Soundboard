@@ -16,15 +16,16 @@
 	<div id="soundbutton-editor" style="opacity: 0;">
 		<div id="soundbutton-preview"></div>
 		<form action="#" id="metadata-editor">
-			<!-- TODO: real-time button visualization (on a sidebar?) -->
-			<label for="button-path">Button text:</label>
-			<input type="text" placeholder="Bruh sound effect">
+			<label for="button-text">Text:</label>
+			<input type="text" id="button-text" placeholder="Bruh sound effect">
 			<br />
-			<label for="button-path">Button file path:</label>
-			<input type="file" id="button-path">
+			<label for="button-path-txt">File path:</label>
+			<input type="text" id="button-path-txt" placeholder="/your/path">
+			<button type="button" id="button-path-btn"><label for="button-path-file">Browse</label></button>
+			<input type="file" id="button-path-file">
 			<br />
 		</form>
-		<input type="submit" value="submit" id="editor-submit" form="metadata-editor">
+		<input type="button" value="submit" id="editor-submit" form="metadata-editor">
 	</div>
 	<script defer type="text/javascript" src="../../../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>

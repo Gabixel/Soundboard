@@ -40,7 +40,7 @@ const scripts = [
 
 	"grid/SoundButtonManager",
 
-	"editor/FormSubmitter",
+	"editor/EditorForm",
 
 	"start/Main",
 	"start/EditButtonWindow",
