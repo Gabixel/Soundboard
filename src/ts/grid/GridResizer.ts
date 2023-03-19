@@ -14,11 +14,11 @@ class GridResizer extends Logger {
 		buttonFilterer: ButtonFilterer
 	) {
 		super();
-		
+
 		this._gridManager = gridManager;
 		this._buttonFilterer = buttonFilterer;
 		this._soundButtonManager = soundButtonManager;
-		
+
 		GridResizer.logDebug(null, "Initialized!");
 	}
 
@@ -141,6 +141,7 @@ class GridResizer extends Logger {
 			const $button = $(
 				SoundboardApi.isProduction
 					? this._soundButtonManager.generateButton(
+							// Generate all button of the same color on production
 							null,
 							this._gridManager.size + i - emptyCells
 					  )
@@ -148,6 +149,8 @@ class GridResizer extends Logger {
 							this._gridManager.size + i - emptyCells
 					  )
 			);
+
+			this._soundButtonManager.setupDragAndDrop($button);
 
 			// TODO: Not sure if it's better triggering the filter instead of this.
 			// In that case, all existing buttons will light again (thanks to the animation).
