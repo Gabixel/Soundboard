@@ -1,4 +1,5 @@
 abstract class SoundboardApi extends Logger {
+	/* Global */
 	public static get isProduction(): boolean {
 		return window.api.isProduction;
 	}
@@ -7,6 +8,7 @@ abstract class SoundboardApi extends Logger {
 		return window.api.resolveAppPath(...path);
 	}
 
+	/* MainWindow */
 	public static openContextMenu(args: ContextMenuArgs = null): void {
 		this.logDebug(
 			this.openContextMenu,
@@ -29,9 +31,7 @@ abstract class SoundboardApi extends Logger {
 		return window.api.joinPaths(...paths);
 	}
 
-	/**
-	 * EditButton Window
-	 */
+	/* EditButtonWindow */
 	public static getButtonData(
 		callback: (buttonData: SoundButtonData) => void
 	): void {
@@ -44,23 +44,16 @@ abstract class SoundboardApi extends Logger {
 // - "~/app/windows/mainWindow/preload.ts"
 // - "~/app/windows/editButtonWindow/preload.ts"
 type WindowApiBridge = {
-	/*
-	 * Global
-	 */
+	/* Global */
 	isProduction: boolean;
-
-	/*
-	 * MainWindow
-	 */
 	resolveAppPath: (...path: string[]) => string;
+
+	/* MainWindow */
 	openContextMenu: (args: ContextMenuArgs) => void;
 	isPathFile: (args: string) => boolean;
 	joinPaths: (...paths: string[]) => string;
 
-	/*
-	 * EditButtonWindow
-	 */
-	// TODO: don't wait for main, ask him for data
+	/* EditButtonWindow */
 	getButtonData: (
 		callback: (buttonData: SoundButtonData) => void
 	) => void;

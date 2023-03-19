@@ -3,12 +3,16 @@ import path from "path";
 const SOURCES_ROOT = "../../../src";
 
 const api: EditButtonWindowApiBridge = {
+	/* Global */
 	isProduction: process.env.NODE_ENV === "production",
-	getButtonData: (
-		callback: (
-			buttonData: SoundButtonData
-		) => void
-	) => {
+	/**
+	 * Starts the desired path from the application directory.
+	 */
+	resolveAppPath: (...paths: string[]): string =>
+		path.resolve(__dirname, ...paths),
+
+	/* EditButtonWindow */
+	getButtonData: (callback: (buttonData: SoundButtonData) => void) => {
 		ipcRenderer.once("editor-return-buttondata", (_e, arg: SoundButtonData) => {
 			callback(arg);
 		});
@@ -25,20 +29,15 @@ ipcRenderer.on(
 );
 
 type EditButtonWindowApiBridge = {
-	/*
-	 * Global
-	 */
-
+	/* Global */
 	isProduction: boolean;
-
-	/*
-	 * EditButtonWindow
+	/**
+	 * Starts the desired path from the application directory.
 	 */
-	getButtonData: (
-		callback: (
-			buttonData: SoundButtonData
-		) => void
-	) => void;
+	resolveAppPath: (...path: string[]) => string;
+
+	/* EditButtonWindow */
+	getButtonData: (callback: (buttonData: SoundButtonData) => void) => void;
 };
 
 const styles = [
