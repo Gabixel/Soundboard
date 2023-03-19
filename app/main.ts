@@ -63,8 +63,10 @@ const webPreferences: Electron.WebPreferences = {
 let mainWindow: BrowserWindow;
 
 const mainWindowPath = path.join(appWindowRootPath, "mainWindow");
-let mainWindowPreferences = { ...webPreferences };
-mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
+let mainWindowPreferences: Electron.WebPreferences = {
+	...webPreferences,
+	preload: path.join(mainWindowPath, "preload.js"),
+};
 
 /**
  * The soundbutton editor window.
@@ -72,11 +74,10 @@ mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
 let editButtonWindow: BrowserWindow;
 
 const editButtonWindowPath = path.join(appWindowRootPath, "editButtonWindow");
-let editButtonWindowPreferences = { ...webPreferences };
-editButtonWindowPreferences.preload = path.join(
-	editButtonWindowPath,
-	"preload.js"
-);
+let editButtonWindowPreferences: Electron.WebPreferences = {
+	...webPreferences,
+	preload: path.join(editButtonWindowPath, "preload.js"),
+};
 
 //#region Init app
 function createMainWindow(screenWidth: number, screenHeight: number) {
@@ -181,11 +182,23 @@ function createEditButtonWindow(
 		webPreferences: editButtonWindowPreferences,
 	});
 
+	let assignButtonData = function (
+		event: Electron.IpcMainEvent,
+		..._args: any[]
+	): void {
+		event.reply("editor-return-buttondata", buttonData);
+	};
+
 	editButtonWindow.once("ready-to-show", () => {
+		ipcMain.on("editor-request-buttondata", assignButtonData);
+
 		editButtonWindow.show();
 	});
 
 	editButtonWindow.once("close", () => {
+		// Remove the request (just in case it didn't go well)
+		ipcMain.removeListener("editor-request-buttondata", assignButtonData);
+
 		editButtonWindow = null;
 	});
 
@@ -193,6 +206,13 @@ function createEditButtonWindow(
 	editButtonWindow.loadFile(
 		path.join(editButtonWindowPath, "editButtonWindow.html")
 	);
+
+	if (!isProduction) {
+		editButtonWindow.webContents.openDevTools({
+			mode: "detach",
+			activate: true,
+		});
+	}
 }
 
 function showContextMenu(

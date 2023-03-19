@@ -1,13 +1,20 @@
 abstract class EditButtonWindow extends Main {
-	private static _formSubmitter: EditorForm;
+	private static _editorForm: EditorForm;
 
 	public static async initWindow() {
 		super.init();
 
-		this._formSubmitter = new EditorForm($("#metadata-editor"));
+		this._editorForm = new EditorForm($("#metadata-editor"));
 
+		SoundboardApi.getButtonData((buttonData) => {
+			console.log("Testing data", buttonData);
 
-		// Show window content
+			// Show window content
+			this.showWindowContent();
+		});
+	}
+
+	private static showWindowContent() {
 		$(document.body).find("#soundbutton-editor").attr("style", "opacity: 1");
 	}
 }
@@ -16,7 +23,6 @@ abstract class EditButtonWindow extends Main {
 $(() => {
 	EditButtonWindow.initWindow();
 });
-
 
 // initButtonEditor();
 

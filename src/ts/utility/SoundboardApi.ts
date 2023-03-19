@@ -1,10 +1,10 @@
 abstract class SoundboardApi extends Logger {
 	public static get isProduction(): boolean {
-		return this._api.isProduction;
+		return window.api.isProduction;
 	}
 
 	public static resolveAppPath(...path: string[]): string {
-		return this._api.resolveAppPath(...path);
+		return window.api.resolveAppPath(...path);
 	}
 
 	public static openContextMenu(args: ContextMenuArgs = null): void {
@@ -16,28 +16,33 @@ abstract class SoundboardApi extends Logger {
 			args
 		);
 
-		this._api.openContextMenu(args);
+		window.api.openContextMenu(args);
 	}
 
 	// TODO:
 	public static isPathFile(_path: string): boolean {
-		// return this._api.isPathFile(path);
+		// return window.api.isPathFile(path);
 		return false;
 	}
 
 	public static joinPaths(...paths: string[]): string {
-		return this._api.joinPaths(...paths);
+		return window.api.joinPaths(...paths);
 	}
 
-	private static get _api(): WindowApiBridge {
-		return window.api;
+	/**
+	 * EditButton Window
+	 */
+	public static getButtonData(
+		callback: (buttonData: SoundButtonData) => void
+	): void {
+		window.api.getButtonData(callback);
 	}
 }
 
 //#region Types
 // Keep updated:
-// - "~/app/windows/mainWindow/preload.ts" - MainWindow
-// - "~/app/windows/editButtonWindow/preload.ts" - EditButtonWindow
+// - "~/app/windows/mainWindow/preload.ts"
+// - "~/app/windows/editButtonWindow/preload.ts"
 type WindowApiBridge = {
 	/*
 	 * Global
@@ -55,6 +60,10 @@ type WindowApiBridge = {
 	/*
 	 * EditButtonWindow
 	 */
+	// TODO: don't wait for main, ask him for data
+	getButtonData: (
+		callback: (buttonData: SoundButtonData) => void
+	) => void;
 	// TODO:
 	// editButton: (buttonData: SoundButtonData) => void;
 };

@@ -4,7 +4,25 @@ const SOURCES_ROOT = "../../../src";
 
 const api: EditButtonWindowApiBridge = {
 	isProduction: process.env.NODE_ENV === "production",
+	getButtonData: (
+		callback: (
+			buttonData: SoundButtonData
+		) => void
+	) => {
+		ipcRenderer.once("editor-return-buttondata", (_e, arg: SoundButtonData) => {
+			callback(arg);
+		});
+
+		ipcRenderer.send("editor-request-buttondata");
+	},
 };
+
+ipcRenderer.on(
+	"editor-get-buttondata",
+	(_event, buttonData: SoundButtonData) => {
+		console.log(buttonData);
+	}
+);
 
 type EditButtonWindowApiBridge = {
 	/*
@@ -16,9 +34,11 @@ type EditButtonWindowApiBridge = {
 	/*
 	 * EditButtonWindow
 	 */
-
-	// openContextMenu: (args: object) => void;
-	// isPathFile: (args: string) => boolean;
+	getButtonData: (
+		callback: (
+			buttonData: SoundButtonData
+		) => void
+	) => void;
 };
 
 const styles = [
