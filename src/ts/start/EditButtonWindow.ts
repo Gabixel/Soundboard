@@ -4,10 +4,10 @@ abstract class EditButtonWindow extends Main {
 	public static async initWindow() {
 		super.init();
 
-		this._editorForm = new EditorForm($("#metadata-editor"));
-
 		SoundboardApi.getButtonData((buttonData) => {
 			console.log("Testing data", buttonData);
+
+			this._editorForm = new EditorForm($("#metadata-editor"), buttonData);
 
 			// Show window content
 			this.showWindowContent();
