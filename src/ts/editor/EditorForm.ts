@@ -1,5 +1,6 @@
 class EditorForm extends Logger {
 	private _$form: JQuery<HTMLFormElement>;
+	private _buttonData: SoundButtonData;
 
 	constructor($form: JQuery<HTMLFormElement>, buttonData: SoundButtonData) {
 		super();
@@ -14,18 +15,28 @@ class EditorForm extends Logger {
 	// TODO: custom event that fires when any thing gets changed in the form, so that a possible injected sound button previewer can check for it
 	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
 
-	/*
-	Inputs are:
-	- #button-text - Button title
-	- #button-path-txt - Button path as text
-	*/
 	private fillInputs(buttonData: SoundButtonData) {
+		this._buttonData = buttonData;
 		// TODO: can probably rename all inputs with a prefix and use .map() to the data object instead
 
-		// FIXME: windows popup seems to focus this input on launch. not sure if it's because of the devtool
-		$("#button-text").val(buttonData.title);
-		$("#button-path-txt").val(decodeURIComponent(buttonData.path));
+		// this._buttonData.map
+		const prefix = "#button-data-";
 
+		// FIXME: windows popup seems to focus this input on launch. not sure if it's because of the devtool
+		$()
+			.add($(`${prefix}title`).val(buttonData.title))
+			.add(
+				$(`${prefix}color`).val(
+					"#" +
+						StringUtilities.HSLToHex(
+							buttonData.color.h,
+							buttonData.color.s,
+							buttonData.color.l
+						)
+				)
+			)
+			.add($(`${prefix}path`).val(decodeURIComponent(buttonData.path)));
+		// .add($(``));
 		// $("#editor-submit").focus();
 	}
 
@@ -53,5 +64,9 @@ class EditorForm extends Logger {
 
 			EditorForm.logInfo("Submit button", "Form submitted");
 		});
+	}
+
+	private updateProperty(property: SoundButtonProperties, data: any) {
+		this._buttonData[property] = data;
 	}
 }

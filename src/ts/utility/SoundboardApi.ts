@@ -58,7 +58,7 @@ type WindowApiBridge = {
 		callback: (buttonData: SoundButtonData) => void
 	) => void;
 	// TODO:
-	// editButton: (buttonData: SoundButtonData) => void;
+	// setButtonData: (buttonData: SoundButtonData) => void;
 };
 
 // Keep updated with:

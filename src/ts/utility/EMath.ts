@@ -1,14 +1,16 @@
+/**
+ * Extended Math
+ */
 abstract class EMath {
-
 	public static clamp(value: number, min: number, max: number): number {
 		return Math.min(Math.max(value, min), max);
 	}
 
-	public static clampMin(value: number, min: number){
+	public static clampMin(value: number, min: number) {
 		return Math.max(value, min);
 	}
-	
-	public static clampMax(value: number, max: number){
+
+	public static clampMax(value: number, max: number) {
 		return Math.min(value, max);
 	}
 
@@ -32,7 +34,7 @@ abstract class EMath {
 	 * @param b	The blue color value
 	 * @returns The HSL representation
 	 */
-	public static rgbToHsl(r: number, g: number, b: number): number[] {
+	public static RGBToHSL(r: number, g: number, b: number): number[] {
 		// Make r, g, and b fractions of 1
 		r /= 255;
 		g /= 255;
@@ -80,7 +82,11 @@ abstract class EMath {
 	 * @param l The lightness
 	 * @returns The RGB representation
 	 */
-	public static hslToRgb(h: number, s: number, l: number): number[] {
+	public static HSLToRGB(
+		h: number,
+		s: number,
+		l: number
+	): [number, number, number] {
 		// Must be fractions of 1
 		s /= 100;
 		l /= 100;
@@ -124,9 +130,14 @@ abstract class EMath {
 		return [r, g, b];
 	}
 
+	public static componentToHex(c: number) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+
 	public static getExponentialValue(
 		initialValue: number,
-		decimalPoints : number = 2,
+		decimalPoints: number = 2,
 		base: number = 50
 	): number {
 		// Return an exponential version of the value.

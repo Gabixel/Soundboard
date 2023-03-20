@@ -70,6 +70,22 @@ abstract class StringUtilities {
 	}
 
 	/**
+	 * Returns a string representation of the RGB color (without hash symbol).
+	 */
+	public static RGBToHex(r: number, g: number, b: number): string {
+		return (
+			EMath.componentToHex(r) + EMath.componentToHex(g) + EMath.componentToHex(b)
+		);
+	}
+
+	/**
+	 * Returns a string representation of the RGB color (without hash symbol).
+	 */
+	public static HSLToHex(h: number, s: number, l: number): string {
+		return StringUtilities.RGBToHex(...EMath.HSLToRGB(h, s, l));
+	}
+
+	/**
 	 * Returns the date without timezone offset.
 	 *
 	 * @see {@link https://stackoverflow.com/a/39209842}

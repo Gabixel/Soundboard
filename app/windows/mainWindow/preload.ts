@@ -56,7 +56,7 @@ const styles = [
 const scripts = [
 	"utility/Logger",
 	"utility/JQueryFixes",
-	"utility/ExtendedMath",
+	"utility/EMath",
 	"utility/EventFunctions",
 	"utility/SoundBoardApi",
 	"utility/UserInterface",

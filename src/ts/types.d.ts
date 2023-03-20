@@ -71,6 +71,13 @@ type SoundButtonData = {
 	 */
 	path?: string;
 };
+type SoundButtonProperties =
+	| "title"
+	| "color"
+	| "image"
+	| "tags"
+	| "time"
+	| "path";
 
 /**
  * Timings settings for the {@link SoundButtonData}

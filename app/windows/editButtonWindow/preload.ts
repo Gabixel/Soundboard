@@ -54,6 +54,7 @@ const styles = [
 const scripts = [
 	"utility/Logger",
 	"utility/JQueryFixes",
+	"utility/EMath",
 	"utility/SoundboardApi",
 	"utility/StringUtilities",
 
