@@ -1,4 +1,4 @@
-@import "utils/debug";
+// @import "utils/debug";
 @import "utils/functions";
 @import "utils/variables";
 
@@ -10,6 +10,30 @@ body {
 	transition-property: background-color;
 	transition-duration: 0.25s;
 	transition-timing-function: linear;
+
+	input[type="text"] {
+		background: transparent;
+		// padding-bottom: 4px;
+		border-bottom: 1px solid #fff;
+		color: #fff;
+
+		transition: background-color 0.2s, border-bottom-color 0.2s;
+		border-radius: 5px 5px 0 0;
+
+		&:focus-within {
+			background-color: rgb(0 143 179 / 0.1);
+			border-bottom-color: #008fb3;
+		}
+	}
+
+	input[type="text"], input[type="color"] {
+		background-color: rgb(255 255 255 / 0.1);
+	}
+
+	input[type="color"] {
+		border-radius: 5px;
+		overflow: hidden;
+	}
 
 	#soundbutton-editor {
 		.fill-size();
@@ -44,8 +68,9 @@ body {
 				justify-content: flex-start;
 				align-items: baseline;
 				padding: 5px;
-				flex-grow: 0;
 				gap: 1ch;
+				width: 100%;
+				flex-grow: 0;
 				// flex-basis: 1;
 			}
 
@@ -61,8 +86,11 @@ body {
 					// Remove webkit padding
 					border: 0;
 
-					padding: 4px;
+					// padding: 4px;
+					padding: 0;
 					min-height: 1rem;
+
+					box-shadow: 0 0 5px 0 var(--data-color);
 
 					// Color swatch container
 					&::-webkit-color-swatch-wrapper {

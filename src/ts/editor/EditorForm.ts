@@ -26,14 +26,25 @@ class EditorForm extends Logger {
 		$()
 			.add($(`${prefix}title`).val(buttonData.title))
 			.add(
-				$(`${prefix}color`).val(
-					"#" +
-						StringUtilities.HSLToHex(
-							buttonData.color.h,
-							buttonData.color.s,
-							buttonData.color.l
-						)
-				)
+				$(`${prefix}color`)
+					.val(
+						"#" +
+							StringUtilities.HSLToHex(
+								buttonData.color.h,
+								buttonData.color.s,
+								buttonData.color.l
+							)
+					)
+					.css(
+						"--data-color",
+						`hsl(${
+							buttonData.color.h.toString() +
+							"deg," +
+							buttonData.color.s.toString() +
+							"%," +
+							buttonData.color.l.toString() + "%"
+						})`
+					)
 			)
 			.add($(`${prefix}path`).val(decodeURIComponent(buttonData.path)));
 		// .add($(``));
