@@ -1,10 +1,21 @@
 abstract class StringUtilities {
+	/**
+	 * Encodes the passed path (i.e. adding percentages, etc.)
+	 */
 	public static encodeFilePath(path: string): string {
 		// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters.
 		return encodeURIComponent(path.replace(/\\/g, "/"))
 			.replace(/%2F/g, "\\") // Replace encoded slashes with backslashes
 			.replace(/%3A/g, ":"); // Decode colons
 	}
+
+	// TODO: not sure if it's necessary to use
+	// /**
+	//  * Decodes the passed path (i.e. removing percentages, etc.)
+	//  */
+	// public static decodeFilePath(path: string): string {
+	// 	return decodeURIComponent(path);
+	// }
 
 	/**
 	 * Returns as `hsl()` function as a string.

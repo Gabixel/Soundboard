@@ -11,6 +11,9 @@ class EditorForm extends Logger {
 		this.setupFormSubmitEvent();
 	}
 
+	// TODO: custom event that fires when any thing gets changed in the form, so that a possible injected sound button previewer can check for it
+	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
+
 	/*
 	Inputs are:
 	- #button-text - Button title
@@ -21,7 +24,7 @@ class EditorForm extends Logger {
 
 		// FIXME: windows popup seems to focus this input on launch. not sure if it's because of the devtool
 		$("#button-text").val(buttonData.title);
-		$("#button-path-txt").val(buttonData.path);
+		$("#button-path-txt").val(decodeURIComponent(buttonData.path));
 
 		// $("#editor-submit").focus();
 	}
@@ -31,7 +34,7 @@ class EditorForm extends Logger {
 		($("#button-path-file") as JQuery<HTMLInputElement>).on("change", (e) => {
 			e.preventDefault();
 			// TODO: check if valid?
-			// TODO: convert uri on the fly / check if it's malformed on submit and fix missing conversions (e.g. spaces)
+			// TODO: encode on submit
 			let path = (e.target.files[0] as ElectronFile).path;
 			console.log(path);
 			$("#button-path-txt").val(path);
