@@ -1,6 +1,7 @@
 class EditorForm extends Logger {
 	private _$form: JQuery<HTMLFormElement>;
 	private _buttonData: SoundButtonData;
+	private DATA_PREFIX: string = "#button-data-";
 
 	constructor($form: JQuery<HTMLFormElement>, buttonData: SoundButtonData) {
 		super();
@@ -17,16 +18,12 @@ class EditorForm extends Logger {
 
 	private fillInputs(buttonData: SoundButtonData) {
 		this._buttonData = buttonData;
-		// TODO: can probably rename all inputs with a prefix and use .map() to the data object instead
 
-		// this._buttonData.map
-		const prefix = "#button-data-";
-
-		// FIXME: windows popup seems to focus this input on launch. not sure if it's because of the devtool
+		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
 		$()
-			.add($(`${prefix}title`).val(buttonData.title))
+			.add($(`${this.DATA_PREFIX}title`).val(buttonData.title))
 			.add(
-				$(`${prefix}color`)
+				$(`${this.DATA_PREFIX}color`)
 					.val(
 						"#" +
 							StringUtilities.HSLToHex(
@@ -42,12 +39,16 @@ class EditorForm extends Logger {
 							"deg," +
 							buttonData.color.s.toString() +
 							"%," +
-							buttonData.color.l.toString() + "%"
+							buttonData.color.l.toString() +
+							"%"
 						})`
 					)
 			)
-			.add($(`${prefix}path`).val(decodeURIComponent(buttonData.path)));
-		// .add($(``));
+			.add(
+				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path))
+			)
+			// .add($(``));
+			.on("change", () => {});
 		// $("#editor-submit").focus();
 	}
 
