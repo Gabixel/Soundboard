@@ -5,7 +5,7 @@
 
 This is one of my first projects to be published on GitHub, so you can expect it to be less than perfect!
 
-At the moment I am not very active on this project, partly due to the implementation of Discord's built-in soundboard, but I would like to get back into it at some point (since Discord's built-in one is quite limited anyway).
+At the moment I am not very active on this project, partly due to the implementation of [Discord's built-in soundboard](https://support.discord.com/hc/en-us/articles/12612888127767-Soundboard-FAQ), but I would like to get back into it at some point (since Discord's built-in one is quite limited anyway).
 
 [Watch a simple preview here](https://www.youtube.com/watch?v=uimVPY7H3O8)
 
