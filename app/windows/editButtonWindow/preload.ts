@@ -90,7 +90,6 @@ function appendScripts(scripts: string[]) {
 		script.async = false;
 		script.defer = true;
 		script.type = "text/javascript";
-		script.src = "";
 		script.src = path.join(SOURCES_ROOT, "js", s + ".js");
 		window.document.head.appendChild(script);
 	});
