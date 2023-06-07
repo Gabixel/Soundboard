@@ -7,11 +7,19 @@ This is one of my first projects to be published on GitHub, so you can expect it
 
 At the moment I am not very active on this project, partly due to the implementation of [Discord's built-in soundboard](https://support.discord.com/hc/en-us/articles/12612888127767-Soundboard-FAQ), but I would like to get back into it at some point (since Discord's built-in one is quite limited anyway).
 
-[Watch a simple preview here](https://www.youtube.com/watch?v=uimVPY7H3O8)
+You can watch this small preview:
+
+https://github.com/Gabixel/Soundboard/assets/43073074/6e798cbc-766c-46fb-871f-51a9f39789ee
 
 <hr/>
 
-The project uses [Electron](https://www.electronjs.org/) as its core, [TypeScript](https://www.typescriptlang.org/) for JavaScript management and [LESS](https://lesscss.org/) for the CSS part (still not very great for my expectations).
+## How do I use a Soundboard?
+By default, you can only use your soundboard to send tracks on your desired **real** output. If you want to send some sounds to a microphone and use it for online meetings, you need to install a "virtual cable" (aka a _driver_). This cable is responsible for converting the audio output to a _virtual_ input device. A common driver is [VB-Cable](https://vb-audio.com/Cable/) (for Mac and Windows).
+
+Note that, for some reason, VB-Cable audio can sometimes be glitchy, with strange interference in the sound (and it only seems to happen with Discord, but I'm not sure). You can watch [this tutorial](https://youtu.be/Y9DLLxeY5vo) which explains some functional remedies to solve the problem (sometimes only temporarily). [I have written a script](https://github.com/users/Gabixel/projects/2/views/1?itemId=22765111&pane=issue) to make this step semi-automatic, but it still needs to be integrated into this soundboard and I would like to make it as automatic as possible.
+
+## Programming
+The project uses [Electron](https://www.electronjs.org/) as its core, [TypeScript](https://www.typescriptlang.org/) for JavaScript management and [LESS](https://lesscss.org/) for the CSS part (but still not very great for my expectations).
 
 ## Debug 'n Run
 To start debugging the app:
