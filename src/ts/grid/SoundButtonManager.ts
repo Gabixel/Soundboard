@@ -79,6 +79,7 @@ class SoundButtonManager extends Logger {
 		$button.append(`<div class="button-theme">${data.title}</div>`);
 
 		this.applyInitialData($button, data, index);
+		this.setupDragAndDrop($button);
 
 		return $button[0];
 	}
@@ -115,7 +116,7 @@ class SoundButtonManager extends Logger {
 			.css("--lightness", data.color.l.toString() + "%");
 	}
 
-	public setupDragAndDrop($button: JQuery<HTMLElement>): void {
+	public static setupDragAndDrop($button: JQuery<HTMLElement>): void {
 		$button
 			.on("dragenter", (e: JQuery.DragEnterEvent) => {
 				SoundButtonManager.logDebug(this.setupDragAndDrop, "'dragenter' triggered");
