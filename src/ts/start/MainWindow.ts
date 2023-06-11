@@ -6,7 +6,7 @@ abstract class MainWindow extends Main {
 	private static _buttonFilterer: ButtonFilterer;
 
 	public static async initWindow() {
-		super.init();
+		await super.init();
 
 		// Grid manager
 		this._gridManager = new GridManager($("#buttons-grid"));
@@ -23,7 +23,7 @@ abstract class MainWindow extends Main {
 		);
 
 		// Grid resize manager
-		this._gridResizer = new GridResizer(
+		this._gridResizer = await new GridResizer(
 			this._gridManager,
 			this._soundButtonManager,
 			this._buttonFilterer
@@ -62,13 +62,13 @@ abstract class MainWindow extends Main {
 			e.originalEvent.dataTransfer.dropEffect = "none";
 			return false;
 		});
-
-		// Show window content
-		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
 }
 
 // On page load
 $(() => {
-	MainWindow.initWindow();
+	MainWindow.initWindow().then(() => {
+		// Show window content
+		$(document.body).find("#soundboard").attr("style", "opacity: 1");
+	});
 });

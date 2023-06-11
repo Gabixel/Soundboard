@@ -7,6 +7,8 @@ class GridResizer extends Logger {
 	private _soundButtonManager: SoundButtonManager;
 
 	private resizerInitialized: boolean = false;
+	private resizingRow: boolean = false;
+	private resizingColumn: boolean = false;
 
 	constructor(
 		gridManager: GridManager,
@@ -14,61 +16,91 @@ class GridResizer extends Logger {
 		buttonFilterer: ButtonFilterer
 	) {
 		super();
-		
+
 		this._gridManager = gridManager;
 		this._buttonFilterer = buttonFilterer;
 		this._soundButtonManager = soundButtonManager;
-		
+
 		GridResizer.logDebug(null, "Initialized!");
 	}
 
 	/**
 	 * Initializes events for the grid resize logic
 	 */
-	public setInputs(
+	public async setInputs(
 		$rowsInput: JQuery<HTMLInputElement>,
 		$columnsInput: JQuery<HTMLInputElement>,
 		$clearButton: JQuery<HTMLInputElement>
-	): this {
+	): Promise<this> {
 		// Initialize grid
 		this.updateAxis($rowsInput, "row");
 		this.updateAxis($columnsInput, "col");
-		this.updateGrid();
+		await this.updateGrid();
 
 		// Initialize events
 		$rowsInput
-			.on("change", (e) => {
-				this.updateAxis($(e.target), "row");
-				this.updateGrid();
+			.on("change", async (e) => {
+				this.resizingRow = true;
+
+				try {
+					this.updateAxis($(e.target), "row");
+					await this.updateGrid();
+				} finally {
+					this.resizingRow = false;
+				}
 			})
-			.on("wheel", (e) => {
-				if (e.ctrlKey) return;
-				// e.preventDefault();
+			.on("wheel", async (e) => {
+				// Prevent base scrolling behavior (if chromium triggers it)
 				e.stopImmediatePropagation();
+
+				// UI Scale prevention
+				if (e.ctrlKey) return;
+
+				// Prevent racing conditions when resizing
+				if (this.resizingRow) return;
+
+				// Update input value
 				EventFunctions.updateInputValueFromWheel(e);
 			});
+
 		$columnsInput
-			.on("change", (e) => {
-				this.updateAxis($(e.target), "col");
-				this.updateGrid();
+			.on("change", async (e) => {
+				this.resizingColumn = true;
+
+				try {
+					this.updateAxis($(e.target), "col");
+					await this.updateGrid();
+				} finally {
+					this.resizingColumn = false;
+				}
 			})
 			.on("wheel", (e) => {
-				if (e.ctrlKey) return;
-				// e.preventDefault();
+				// Prevent base scrolling behavior (if chromium triggers it)
 				e.stopImmediatePropagation();
+
+				// UI Scale prevention
+				if (e.ctrlKey) return;
+
+				// Prevent racing conditions when resizing
+				if (this.resizingColumn) return;
+
+				// Update input value
 				EventFunctions.updateInputValueFromWheel(e);
 			});
-		$clearButton.on("click", () => {
+
+		$clearButton.on("click", async () => {
+			if (this.resizingRow || this.resizingColumn) return;
+
 			this._gridManager.$grid.empty();
 			this._gridManager.resetSoundButtonCount();
-			this.updateGrid();
+			await this.updateGrid();
 		});
 
 		return this;
 	}
 
-	private updateGrid() {
-		this.fillEmptyCells();
+	private async updateGrid(): Promise<void> {
+		await this.fillEmptyCells();
 
 		this.updateVisibleButtons();
 
@@ -132,7 +164,7 @@ class GridResizer extends Logger {
 		});
 	}
 
-	private fillEmptyCells(): void {
+	private async fillEmptyCells(): Promise<void> {
 		if (!this._gridManager.isGridIncomplete) return;
 
 		const emptyCells = this._gridManager.size - this._gridManager.buttonCount;
@@ -144,7 +176,7 @@ class GridResizer extends Logger {
 							null,
 							this._gridManager.size + i - emptyCells
 					  )
-					: this._soundButtonManager.generateRandomButton(
+					: await this._soundButtonManager.generateRandomButton(
 							this._gridManager.size + i - emptyCells
 					  )
 			);

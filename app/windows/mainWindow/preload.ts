@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from "electron";
-import path from "path";
 const SOURCES_ROOT = "../../../src";
 
 const api: MainWindowApiBridge = {
@@ -14,10 +13,10 @@ const api: MainWindowApiBridge = {
 	// isPathFolder: (args) => ipcRenderer.send("open-context-menu", args),
 	// isPathFolderAsync: async (args) => ipcRenderer.send("open-context-menu", args),
 
-	resolveAppPath: (...paths: string[]): string =>
-		path.resolve(__dirname, ...paths),
+	getAppPath: async (): Promise<string> => ipcRenderer.invoke("get-app-path"),
 
-	joinPaths: (...paths: string[]): string => path.join(...paths),
+	joinPaths: async (...paths: string[]): Promise<string> =>
+		ipcRenderer.invoke("join-paths", ...paths),
 };
 
 // Keep updated with "~/src/ts/utility/SoundboardApi.ts"
@@ -34,8 +33,8 @@ type MainWindowApiBridge = {
 
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
-	resolveAppPath: (...path: string[]) => string;
-	joinPaths: (...paths: string[]) => string;
+	getAppPath: () => Promise<string>;
+	joinPaths: (...paths: string[]) => Promise<string>;
 };
 
 const styles = [
@@ -81,6 +80,8 @@ const scripts = [
 	"start/MainWindow",
 ];
 
+//#region Assignment
+
 // Create API bridge
 contextBridge.exposeInMainWorld("api", api);
 
@@ -94,7 +95,8 @@ function appendStyles(styles: string[]) {
 		const stylesheet = window.document.createElement("link");
 		stylesheet.type = "text/css";
 		stylesheet.rel = "stylesheet";
-		stylesheet.href = path.join(SOURCES_ROOT, "css", s + ".css");
+		// Stylesheet path
+		stylesheet.href = SOURCES_ROOT + "/css/" + s + ".css";
 		window.document.head.appendChild(stylesheet);
 	});
 }
@@ -105,8 +107,10 @@ function appendScripts(scripts: string[]) {
 		script.async = false;
 		script.defer = true;
 		script.type = "text/javascript";
-		script.src = "";
-		script.src = path.join(SOURCES_ROOT, "js", s + ".js");
+		// Script path
+		script.src = SOURCES_ROOT + "/js/" + s + ".js";
 		window.document.head.appendChild(script);
 	});
 }
+
+//#endregion

@@ -1,6 +1,4 @@
 abstract class Main extends Logger {
-	public static RESOURCES_PATH: string = "../../../resources/";
-
 	// TODO: create a specific object to store intervals(?)
 	private static _intervals: NodeJS.Timer[] = [];
 
@@ -11,6 +9,8 @@ abstract class Main extends Logger {
 	protected static async init(): Promise<void> {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();
+
+		await SoundboardApi.path.initRoot();
 
 		// Some info for debug
 		this.logInfo(
