@@ -12,6 +12,15 @@ import path from "path";
 import fileSystem from "fs/promises";
 const Process = process;
 
+/*
+// To check if app is running with admistrator privileges
+// https://stackoverflow.com/a/37670360/16804863
+let exec = require("child_process").exec;
+exec("NET SESSION", function (_err: any, _so: any, se: any) {
+	console.log(se.length === 0 ? "admin" : "not admin");
+});
+*/
+
 // TODO: Set app to production
 // process.env.NODE_ENV = "production";
 
@@ -42,8 +51,11 @@ const webPreferences: Electron.WebPreferences = {
 
 	spellcheck: false,
 
+	// Context isolation
 	contextIsolation: true,
 	nodeIntegration: false,
+	nodeIntegrationInWorker: false,
+	nodeIntegrationInSubFrames: false,
 
 	// FIXME: Can probably be removed as TS no longer recognizes this
 	// @ts-ignore
@@ -53,6 +65,8 @@ const webPreferences: Electron.WebPreferences = {
 	experimentalFeatures: false,
 
 	navigateOnDragDrop: false,
+
+	// todo: autoplayPolicy, just in case
 
 	webviewTag: false,
 };
@@ -110,7 +124,6 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	});
 
 	mainWindow.once("ready-to-show", () => {
-		initIpc();
 		mainWindow.show();
 	});
 
@@ -248,50 +261,6 @@ async function openFileInExplorer(path: string) {
 	);
 }
 
-function initIpc() {
-	ipcMain
-		.on("open-context-menu", (_e, args: ContextMenuArgs) => {
-			// console.log(event);
-			// console.log(event.sender);
-			// console.log(args);
-
-			const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
-			const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
-
-			let extraMenuItems: MenuItem[] = [];
-
-			if (args != null) {
-				switch (args.type) {
-					case "soundbutton":
-						extraMenuItems.push(
-							new MenuItem({
-								label: "Edit",
-								click: () => {
-									createEditButtonWindow(
-										args.buttonData,
-										primaryScreenWidth,
-										primaryScreenHeight
-									);
-								},
-							}),
-							new MenuItem({
-								label: "Open in file explorer",
-								click: () => {
-									openFileInExplorer(decodeURIComponent(args.buttonData.path));
-								},
-							})
-						);
-				}
-			}
-
-			// showContextMenu(extraMenu, e.x, e.y);
-			showContextMenu(null, null, extraMenuItems);
-		})
-		.on("is-path-file", async (_e, args) => {
-			console.log(await fileSystem.lstat(args));
-		});
-}
-
 // Listen for app to be ready
 // TODO: (Squirrel packaging) https://www.electronforge.io/import-existing-project#adding-squirrel.windows-boilerplate
 app.whenReady().then(() => {
@@ -302,6 +271,8 @@ app.whenReady().then(() => {
 	if (isProduction) {
 		Menu.setApplicationMenu(null);
 	}
+
+	initIpc();
 
 	createMainWindow(screenWidth, screenHeight);
 
@@ -341,4 +312,59 @@ app.setAboutPanelOptions({
 	iconPath: undefined,
 });
 
+//#endregion
+
+//#region IPC
+function initIpc() {
+	ipcMain
+		.on("open-context-menu", (_e, args: ContextMenuArgs) => {
+			// console.log(event);
+			// console.log(event.sender);
+			// console.log(args);
+
+			const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+			const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+
+			let extraMenuItems: MenuItem[] = [];
+
+			if (args != null) {
+				switch (args.type) {
+					case "soundbutton":
+						extraMenuItems.push(
+							new MenuItem({
+								label: "Edit",
+								click: () => {
+									createEditButtonWindow(
+										args.buttonData,
+										primaryScreenWidth,
+										primaryScreenHeight
+									);
+								},
+							}),
+							new MenuItem({
+								label: "Open in file explorer",
+								click: () => {
+									openFileInExplorer(decodeURIComponent(args.buttonData.path));
+								},
+							})
+						);
+				}
+			}
+
+			// showContextMenu(extraMenu, e.x, e.y);
+			showContextMenu(null, null, extraMenuItems);
+		})
+		// TODO:
+		// .on("is-path-file", async (_e, args) => {
+		// 	console.log(await fileSystem.lstat(args));
+		// });
+
+		ipcMain.handle("get-app-path", (_e) => {
+			return path.join(__dirname, "../");
+		});
+
+		ipcMain.handle("join-paths", (_e, ...paths: string[]) => {
+			return path.join(...paths);
+		});
+}
 //#endregion

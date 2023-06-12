@@ -57,13 +57,13 @@ class GridManager extends Logger {
 	public setRows(newValue: number): void {
 		this._gridRows = newValue;
 
-		GridManager.logInfo(this.setRows, `Row size changed (${this._gridRows})`);
+		GridManager.logDebug(this.setRows, `Row size changed (${this._gridRows})`);
 	}
 
 	public setColumns(newValue: number): void {
 		this._gridCols = newValue;
 
-		GridManager.logInfo(
+		GridManager.logDebug(
 			this.setColumns,
 			`Column size changed (${this._gridCols})`
 		);

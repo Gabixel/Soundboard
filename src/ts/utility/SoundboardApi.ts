@@ -3,9 +3,22 @@ abstract class SoundboardApi extends Logger {
 		return this._api.isProduction;
 	}
 
-	public static resolveAppPath(...path: string[]): string {
-		return this._api.resolveAppPath(...path);
-	}
+	public static path = {
+		initRoot: async () => {
+			this.path.root = await this._api.getAppPath();
+			this.path.initRoot = null;
+			return this.path.root;
+		},
+		root: "", // Needs initialization at runtime with the above
+		resources: "/resources/",
+		sounds: "/resources/sounds/",
+	};
+
+	// TODO:
+	// public static isPathFile(_path: string): boolean {
+	// 	// return this._api.isPathFile(path);
+	// 	return false;
+	// }
 
 	public static openContextMenu(args: ContextMenuArgs = null): void {
 		this.logDebug(
@@ -19,13 +32,7 @@ abstract class SoundboardApi extends Logger {
 		this._api.openContextMenu(args);
 	}
 
-	// TODO:
-	public static isPathFile(_path: string): boolean {
-		// return this._api.isPathFile(path);
-		return false;
-	}
-
-	public static joinPaths(...paths: string[]): string {
+	public static async joinPaths(...paths: string[]): Promise<string> {
 		return this._api.joinPaths(...paths);
 	}
 
@@ -47,10 +54,10 @@ type WindowApiBridge = {
 	/*
 	 * MainWindow
 	 */
-	resolveAppPath: (...path: string[]) => string;
 	openContextMenu: (args: ContextMenuArgs) => void;
-	isPathFile: (args: string) => boolean;
-	joinPaths: (...paths: string[]) => string;
+	// isPathFile: (args: string) => boolean;
+	getAppPath: () => Promise<string>;
+	joinPaths: (...paths: string[]) => Promise<string>;
 
 	/*
 	 * EditButtonWindow
