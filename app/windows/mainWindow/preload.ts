@@ -2,15 +2,8 @@ import { contextBridge, ipcRenderer } from "electron";
 const SOURCES_ROOT = "../../../src";
 
 const api: MainWindowApiBridge = {
-	/* Global */
 	isProduction: process.env.NODE_ENV === "production",
-	/**
-	 * Starts the desired path from the application directory.
-	 */
-	resolveAppPath: (...paths: string[]): string =>
-		path.resolve(__dirname, ...paths),
 
-	/* MainWindow */
 	openContextMenu: (args: any): void =>
 		ipcRenderer.send("open-context-menu", args),
 
@@ -28,14 +21,16 @@ const api: MainWindowApiBridge = {
 
 // Keep updated with "~/src/ts/utility/SoundboardApi.ts"
 type MainWindowApiBridge = {
-	/* Global */
-	isProduction: boolean;
-	/**
-	 * Starts the desired path from the application directory.
+	/*
+	 * Global
 	 */
-	resolveAppPath: (...path: string[]) => string;
 
-	/* MainWindow */
+	isProduction: boolean;
+
+	/*
+	 * MainWindow
+	 */
+
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
 	getAppPath: () => Promise<string>;

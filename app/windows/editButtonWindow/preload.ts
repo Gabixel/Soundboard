@@ -1,16 +1,9 @@
-import { contextBridge } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
 const SOURCES_ROOT = "../../../src";
 
 const api: EditButtonWindowApiBridge = {
-	/* Global */
 	isProduction: process.env.NODE_ENV === "production",
-	/**
-	 * Starts the desired path from the application directory.
-	 */
-	resolveAppPath: (...paths: string[]): string =>
-		path.resolve(__dirname, ...paths),
 
-	/* EditButtonWindow */
 	getButtonData: (callback: (buttonData: SoundButtonData) => void) => {
 		ipcRenderer.once("editor-return-buttondata", (_e, arg: SoundButtonData) => {
 			callback(arg);
@@ -28,14 +21,16 @@ ipcRenderer.on(
 );
 
 type EditButtonWindowApiBridge = {
-	/* Global */
-	isProduction: boolean;
-	/**
-	 * Starts the desired path from the application directory.
+	/*
+	 * Global
 	 */
-	resolveAppPath: (...path: string[]) => string;
 
-	/* EditButtonWindow */
+	isProduction: boolean;
+
+	/*
+	 * EditButtonWindow
+	 */
+
 	getButtonData: (callback: (buttonData: SoundButtonData) => void) => void;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;

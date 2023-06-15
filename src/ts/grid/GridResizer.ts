@@ -198,8 +198,6 @@ class GridResizer extends Logger {
 					  )
 			);
 
-			this._soundButtonManager.setupDragAndDrop($button);
-
 			// TODO: Not sure if it's better triggering the filter instead of this.
 			// In that case, all existing buttons will light again (thanks to the animation).
 			if (this._buttonFilterer.isFiltering) {
