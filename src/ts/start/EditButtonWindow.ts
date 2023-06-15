@@ -14,14 +14,14 @@ abstract class EditButtonWindow extends Main {
 		});
 	}
 
-	private static showWindowContent() {
+	public static showWindowContent() {
 		$(document.body).find("#soundbutton-editor").attr("style", "opacity: 1");
 	}
 }
 
 // On page load
 $(() => {
-	EditButtonWindow.initWindow();
+	EditButtonWindow.initWindow().then(EditButtonWindow.showWindowContent);
 });
 
 // initButtonEditor();
