@@ -1,5 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
-import path from "path";
+import { contextBridge } from "electron";
 const SOURCES_ROOT = "../../../src";
 
 const api: EditButtonWindowApiBridge = {
@@ -38,6 +37,9 @@ type EditButtonWindowApiBridge = {
 
 	/* EditButtonWindow */
 	getButtonData: (callback: (buttonData: SoundButtonData) => void) => void;
+	// openContextMenu: (args: object) => void;
+	// isPathFile: (args: string) => boolean;
+	// TODO: editButton
 };
 
 const styles = [
@@ -66,6 +68,8 @@ const scripts = [
 	"start/EditButtonWindow",
 ];
 
+//#region Assignment
+
 // Create API bridge
 contextBridge.exposeInMainWorld("api", api);
 
@@ -79,7 +83,8 @@ function appendStyles(styles: string[]) {
 		const stylesheet = window.document.createElement("link");
 		stylesheet.type = "text/css";
 		stylesheet.rel = "stylesheet";
-		stylesheet.href = path.join(SOURCES_ROOT, "css", s + ".css");
+		// Stylesheet path
+		stylesheet.href = SOURCES_ROOT + "/css/" + s + ".css";
 		window.document.head.appendChild(stylesheet);
 	});
 }
@@ -90,7 +95,10 @@ function appendScripts(scripts: string[]) {
 		script.async = false;
 		script.defer = true;
 		script.type = "text/javascript";
-		script.src = path.join(SOURCES_ROOT, "js", s + ".js");
+		// Script path
+		script.src = SOURCES_ROOT + "/js/" + s + ".js";
 		window.document.head.appendChild(script);
 	});
 }
+
+//#endregion

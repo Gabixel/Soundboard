@@ -14,20 +14,21 @@ class SoundButtonManager extends Logger {
 			condition: "after",
 		},
 	};
-
+	// private _rootPath: string = "";
 	private _randomPaths: string[] = ["Clown Horn.mp3"];
 	private _$grid: JQuery<HTMLElement>;
 
 	/**
 	 * Returns a random audio file from a set of hardcoded paths (for testing purposes)
 	 */
-	private getRandomAudio(): string {
-		let path = SoundboardApi.joinPaths(
-			SoundboardApi.resolveAppPath(Main.RESOURCES_PATH, "sounds"),
-			this._randomPaths[EMath.randomInt(0, this._randomPaths.length)]
+	private async getRandomAudio(): Promise<string> {
+		return StringUtilities.encodeFilePath(
+			await SoundboardApi.joinPaths(
+				SoundboardApi.path.root,
+				SoundboardApi.path.sounds,
+				this._randomPaths[EMath.randomInt(0, this._randomPaths.length)]
+			)
 		);
-
-		return StringUtilities.encodeFilePath(path);
 	}
 
 	// TODO: remove random gen
@@ -50,7 +51,9 @@ class SoundButtonManager extends Logger {
 		return SoundButtonManager.createWithData(data, index);
 	}
 
-	public generateRandomButton(index: null | number = null): HTMLElement {
+	public async generateRandomButton(
+		index: null | number = null
+	): Promise<HTMLElement> {
 		let [h, s, l] = [
 			EMath.randomInt(0, 361),
 			EMath.randomInt(0, 100),
@@ -64,7 +67,7 @@ class SoundButtonManager extends Logger {
 			color: { h, s, l },
 			image: SoundButtonManager.DEFAULT_METADATA.image,
 			tags: SoundButtonManager.DEFAULT_METADATA.tags,
-			path: this.getRandomAudio(),
+			path: await this.getRandomAudio(),
 			time: SoundButtonManager.DEFAULT_METADATA.time,
 		};
 
@@ -79,6 +82,7 @@ class SoundButtonManager extends Logger {
 		$button.append(`<div class="button-theme">${data.title}</div>`);
 
 		this.applyInitialData($button, data, index);
+		this.setupDragAndDrop($button);
 
 		return $button[0];
 	}
@@ -129,7 +133,7 @@ class SoundButtonManager extends Logger {
 		}
 	}
 
-	public setupDragAndDrop($button: JQuery<HTMLElement>): void {
+	public static setupDragAndDrop($button: JQuery<HTMLElement>): void {
 		$button
 			.on("dragenter", (e: JQuery.DragEnterEvent) => {
 				SoundButtonManager.logDebug(this.setupDragAndDrop, "'dragenter' triggered");
