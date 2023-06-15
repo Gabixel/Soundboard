@@ -63,12 +63,13 @@ abstract class MainWindow extends Main {
 			return false;
 		});
 	}
+
+	public static showWindowContent(): void {
+		$(document.body).find("#soundboard").attr("style", "opacity: 1");
+	}
 }
 
 // On page load
 $(() => {
-	MainWindow.initWindow().then(() => {
-		// Show window content
-		$(document.body).find("#soundboard").attr("style", "opacity: 1");
-	});
+	MainWindow.initWindow().then(MainWindow.showWindowContent);
 });
