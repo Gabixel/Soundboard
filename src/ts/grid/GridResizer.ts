@@ -46,7 +46,7 @@ class GridResizer extends Logger {
 		// Initialize resize events
 		// Row number input
 		$rowsInput
-			.on("wheel", async (e) => {
+			.on("wheel", (e) => {
 				// Prevent base scrolling behavior (if chromium triggers it)
 				e.stopImmediatePropagation();
 
@@ -54,7 +54,7 @@ class GridResizer extends Logger {
 				if (e.ctrlKey) return;
 
 				// Prevent racing conditions when already resizing
-				if (this.resizingRow) return;
+				if (this.isResizing) return;
 
 				// Update input value
 				EventFunctions.updateInputValueFromWheel(e);
@@ -97,7 +97,7 @@ class GridResizer extends Logger {
 			});
 
 		// Reset grid input
-		$clearButton.on("click", async () => {
+		$clearButton.on("click", async (_e) => {
 			// Prevent racing conditions when already resizing
 			if (this.isResizing) return;
 
