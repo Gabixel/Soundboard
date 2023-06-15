@@ -1,5 +1,12 @@
 abstract class SoundboardApi extends Logger {
-	/* Global */
+	/*
+	 * Global
+	 */
+
+	private static get _api(): WindowApiBridge {
+		return window.api;
+	}
+
 	public static get isProduction(): boolean {
 		return this._api.isProduction;
 	}
@@ -21,7 +28,10 @@ abstract class SoundboardApi extends Logger {
 	// 	return false;
 	// }
 
-	/* MainWindow */
+	/*
+	 * MainWindow
+	 */
+
 	public static openContextMenu(args: ContextMenuArgs = null): void {
 		this.logDebug(
 			this.openContextMenu,
@@ -38,15 +48,14 @@ abstract class SoundboardApi extends Logger {
 		return this._api.joinPaths(...paths);
 	}
 
-	private static get _api(): WindowApiBridge {
-		return window.api;
-	}
+	/*
+	 * EditButtonWindow
+	 */
 
-	/* EditButtonWindow */
 	public static getButtonData(
 		callback: (buttonData: SoundButtonData) => void
 	): void {
-		window.api.getButtonData(callback);
+		this._api.getButtonData(callback);
 	}
 }
 
@@ -66,7 +75,9 @@ type WindowApiBridge = {
 	getAppPath: () => Promise<string>;
 	joinPaths: (...paths: string[]) => Promise<string>;
 
-	/* EditButtonWindow */
+	/*
+	 * EditButtonWindow
+	 */
 	getButtonData: (
 		callback: (buttonData: SoundButtonData) => void
 	) => void;

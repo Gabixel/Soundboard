@@ -26,6 +26,7 @@ type MainWindowApiBridge = {
 	 */
 
 	isProduction: boolean;
+	getAppPath: () => Promise<string>;
 
 	/*
 	 * MainWindow
@@ -33,7 +34,6 @@ type MainWindowApiBridge = {
 
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
-	getAppPath: () => Promise<string>;
 	joinPaths: (...paths: string[]) => Promise<string>;
 };
 

@@ -4,6 +4,8 @@ const SOURCES_ROOT = "../../../src";
 const api: EditButtonWindowApiBridge = {
 	isProduction: process.env.NODE_ENV === "production",
 
+	getAppPath: async (): Promise<string> => ipcRenderer.invoke("get-app-path"),
+
 	getButtonData: (callback: (buttonData: SoundButtonData) => void) => {
 		ipcRenderer.once("editor-return-buttondata", (_e, arg: SoundButtonData) => {
 			callback(arg);
@@ -26,6 +28,7 @@ type EditButtonWindowApiBridge = {
 	 */
 
 	isProduction: boolean;
+	getAppPath: () => Promise<string>;
 
 	/*
 	 * EditButtonWindow
