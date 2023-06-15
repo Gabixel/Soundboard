@@ -7,8 +7,14 @@ class GridResizer extends Logger {
 	private _soundButtonManager: SoundButtonManager;
 
 	private resizerInitialized: boolean = false;
+
+	// Semaphore for resize events
 	private resizingRow: boolean = false;
 	private resizingColumn: boolean = false;
+	private clearingGrid: boolean = false;
+	private get isResizing(): boolean {
+		return this.resizingRow || this.resizingColumn || this.clearingGrid;
+	}
 
 	constructor(
 		gridManager: GridManager,
@@ -37,18 +43,9 @@ class GridResizer extends Logger {
 		this.updateAxis($columnsInput, "col");
 		await this.updateGrid();
 
-		// Initialize events
+		// Initialize resize events
+		// Row number input
 		$rowsInput
-			.on("change", async (e) => {
-				this.resizingRow = true;
-
-				try {
-					this.updateAxis($(e.target), "row");
-					await this.updateGrid();
-				} finally {
-					this.resizingRow = false;
-				}
-			})
 			.on("wheel", async (e) => {
 				// Prevent base scrolling behavior (if chromium triggers it)
 				e.stopImmediatePropagation();
@@ -61,9 +58,33 @@ class GridResizer extends Logger {
 
 				// Update input value
 				EventFunctions.updateInputValueFromWheel(e);
+			})
+			.on("change", async (e) => {
+				this.resizingRow = true;
+
+				try {
+					this.updateAxis($(e.target), "row");
+					await this.updateGrid();
+				} finally {
+					this.resizingRow = false;
+				}
 			});
 
+		// Column number input
 		$columnsInput
+			.on("wheel", (e) => {
+				// Prevent base scrolling behavior (if chromium triggers it)
+				e.stopImmediatePropagation();
+
+				// UI Scale prevention
+				if (e.ctrlKey) return;
+
+				// Prevent racing conditions when resizing
+				if (this.isResizing) return;
+
+				// Update input value
+				EventFunctions.updateInputValueFromWheel(e);
+			})
 			.on("change", async (e) => {
 				this.resizingColumn = true;
 
@@ -73,27 +94,21 @@ class GridResizer extends Logger {
 				} finally {
 					this.resizingColumn = false;
 				}
-			})
-			.on("wheel", (e) => {
-				// Prevent base scrolling behavior (if chromium triggers it)
-				e.stopImmediatePropagation();
-
-				// UI Scale prevention
-				if (e.ctrlKey) return;
-
-				// Prevent racing conditions when resizing
-				if (this.resizingColumn) return;
-
-				// Update input value
-				EventFunctions.updateInputValueFromWheel(e);
 			});
 
+		// Reset grid input
 		$clearButton.on("click", async () => {
-			if (this.resizingRow || this.resizingColumn) return;
+			if (this.isResizing) return;
 
-			this._gridManager.$grid.empty();
-			this._gridManager.resetSoundButtonCount();
-			await this.updateGrid();
+			this.clearingGrid = true;
+
+			try {
+				this._gridManager.$grid.empty();
+				this._gridManager.resetSoundButtonCount();
+				await this.updateGrid();
+			} finally {
+				this.clearingGrid = false;
+			}
 		});
 
 		return this;
