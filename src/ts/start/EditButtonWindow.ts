@@ -2,7 +2,7 @@ abstract class EditButtonWindow extends Main {
 	private static _editorForm: EditorForm;
 
 	public static async initWindow() {
-		super.init();
+		await super.init();
 
 		SoundboardApi.getButtonData((buttonData) => {
 			console.log("Testing data", buttonData);
