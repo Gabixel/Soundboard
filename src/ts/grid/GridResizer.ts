@@ -53,7 +53,7 @@ class GridResizer extends Logger {
 				// UI Scale prevention
 				if (e.ctrlKey) return;
 
-				// Prevent racing conditions when resizing
+				// Prevent racing conditions when already resizing
 				if (this.resizingRow) return;
 
 				// Update input value
@@ -79,7 +79,7 @@ class GridResizer extends Logger {
 				// UI Scale prevention
 				if (e.ctrlKey) return;
 
-				// Prevent racing conditions when resizing
+				// Prevent racing conditions when already resizing
 				if (this.isResizing) return;
 
 				// Update input value
@@ -98,6 +98,7 @@ class GridResizer extends Logger {
 
 		// Reset grid input
 		$clearButton.on("click", async () => {
+			// Prevent racing conditions when already resizing
 			if (this.isResizing) return;
 
 			this.clearingGrid = true;
