@@ -195,25 +195,33 @@ function createEditButtonWindow(
 		webPreferences: editButtonWindowPreferences,
 	});
 
-	let assignButtonData = function (
-		event: Electron.IpcMainEvent,
-		..._args: any[]
-	): void {
-		event.reply("editor-return-buttondata", buttonData);
-	};
+	/* Editor API */
 
+	// let assignButtonDataEvent = function (
+	// 	event: Electron.IpcMainEvent,
+	// 	..._args: any[]
+	// ): void {
+	// 	event.reply("editor-return-buttondata", buttonData);
+	// };
+
+	// Opening window
 	editButtonWindow.once("ready-to-show", () => {
-		ipcMain.on("editor-request-buttondata", assignButtonData);
+		ipcMain.handleOnce("editor-request-buttondata", (_e, _args) => {
+			return buttonData;
+		});
 
 		editButtonWindow.show();
 	});
 
+	// CLosing window
 	editButtonWindow.once("close", () => {
-		// Remove the request (just in case it didn't go well)
-		ipcMain.removeListener("editor-request-buttondata", assignButtonData);
-
 		editButtonWindow = null;
+
+		// Remove the request (just in case it didn't go well)
+		ipcMain.removeHandler("editor-request-buttondata");
 	});
+
+	/* Final load */
 
 	// Load HTML into the window
 	editButtonWindow.loadFile(
@@ -334,59 +342,62 @@ app.setAboutPanelOptions({
 	iconPath: undefined,
 });
 
-//#endregion
+//#endregion Init App
 
-//#region IPC
+//#region API
+
+//#region Global API
 function initIpc() {
-	ipcMain
-		.on("open-context-menu", (_e, args: ContextMenuArgs) => {
-			// console.log(event);
-			// console.log(event.sender);
-			// console.log(args);
+	ipcMain.on("open-context-menu", (_e, args: ContextMenuArgs) => {
+		// console.log(event);
+		// console.log(event.sender);
+		// console.log(args);
 
-			const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
-			const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+		const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+		const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
-			let extraMenuItems: MenuItem[] = [];
+		let extraMenuItems: MenuItem[] = [];
 
-			if (args != null) {
-				switch (args.type) {
-					case "soundbutton":
-						extraMenuItems.push(
-							new MenuItem({
-								label: "Edit",
-								click: () => {
-									createEditButtonWindow(
-										args.buttonData,
-										primaryScreenWidth,
-										primaryScreenHeight
-									);
-								},
-							}),
-							new MenuItem({
-								label: "Open in file explorer",
-								click: () => {
-									openFileInExplorer(decodeURIComponent(args.buttonData.path));
-								},
-							})
-						);
-				}
+		if (args != null) {
+			switch (args.type) {
+				case "soundbutton":
+					extraMenuItems.push(
+						new MenuItem({
+							label: "Edit",
+							click: () => {
+								createEditButtonWindow(
+									args.buttonData,
+									primaryScreenWidth,
+									primaryScreenHeight
+								);
+							},
+						}),
+						new MenuItem({
+							label: "Open in file explorer",
+							click: () => {
+								openFileInExplorer(decodeURIComponent(args.buttonData.path));
+							},
+						})
+					);
 			}
+		}
 
-			// showContextMenu(extraMenu, e.x, e.y);
-			showContextMenu(null, null, extraMenuItems);
-		})
-		// TODO:
-		// .on("is-path-file", async (_e, args) => {
-		// 	console.log(await fileSystem.lstat(args));
-		// });
+		// showContextMenu(extraMenu, e.x, e.y);
+		showContextMenu(null, null, extraMenuItems);
+	});
+	// TODO:
+	// .on("is-path-file", async (_e, args) => {
+	// 	console.log(await fileSystem.lstat(args));
+	// });
 
-		ipcMain.handle("get-app-path", (_e) => {
-			return path.join(__dirname, "../");
-		});
+	ipcMain.handle("get-app-path", (_e) => {
+		return path.join(__dirname, "../");
+	});
 
-		ipcMain.handle("join-paths", (_e, ...paths: string[]) => {
-			return path.join(...paths);
-		});
+	ipcMain.handle("join-paths", (_e, ...paths: string[]) => {
+		return path.join(...paths);
+	});
 }
-//#endregion
+//#endregion Global API
+
+//#endregion API

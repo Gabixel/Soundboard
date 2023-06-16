@@ -52,10 +52,8 @@ abstract class SoundboardApi extends Logger {
 	 * EditButtonWindow
 	 */
 
-	public static getButtonData(
-		callback: (buttonData: SoundButtonData) => void
-	): void {
-		this._api.getButtonData(callback);
+	public static getButtonData(): Promise<SoundButtonData> {
+		return this._api.getButtonData();
 	}
 }
 
@@ -78,9 +76,7 @@ type WindowApiBridge = {
 	/*
 	 * EditButtonWindow
 	 */
-	getButtonData: (
-		callback: (buttonData: SoundButtonData) => void
-	) => void;
+	getButtonData: () => Promise<SoundButtonData>;
 	// TODO:
 	// setButtonData: (buttonData: SoundButtonData) => void;
 };

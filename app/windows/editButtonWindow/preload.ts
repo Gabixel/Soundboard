@@ -6,13 +6,8 @@ const api: EditButtonWindowApiBridge = {
 
 	getAppPath: async (): Promise<string> => ipcRenderer.invoke("get-app-path"),
 
-	getButtonData: (callback: (buttonData: SoundButtonData) => void) => {
-		ipcRenderer.once("editor-return-buttondata", (_e, arg: SoundButtonData) => {
-			callback(arg);
-		});
-
-		ipcRenderer.send("editor-request-buttondata");
-	},
+	getButtonData: async (): Promise<SoundButtonData> =>
+		ipcRenderer.invoke("editor-request-buttondata"),
 };
 
 ipcRenderer.on(
@@ -34,7 +29,7 @@ type EditButtonWindowApiBridge = {
 	 * EditButtonWindow
 	 */
 
-	getButtonData: (callback: (buttonData: SoundButtonData) => void) => void;
+	getButtonData: () => Promise<SoundButtonData>;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
 	// TODO: editButton

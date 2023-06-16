@@ -3,19 +3,18 @@ class EditorForm extends Logger {
 	private _buttonData: SoundButtonData;
 	private DATA_PREFIX: string = "#button-data-";
 
-	constructor($form: JQuery<HTMLFormElement>, buttonData: SoundButtonData) {
+	constructor($form: JQuery<HTMLFormElement>) {
 		super();
 
 		this._$form = $form;
 
-		this.fillInputs(buttonData);
 		this.setupInputsEvents();
 		this.setupFormSubmitEvent();
 	}
 
 	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
 
-	private fillInputs(buttonData: SoundButtonData) {
+	public fillInputs(buttonData: SoundButtonData): this {
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
@@ -48,6 +47,8 @@ class EditorForm extends Logger {
 			)
 			// .add($(``));
 		// $("#editor-submit").focus();
+
+		return this;
 	}
 
 	private setupInputsEvents() {

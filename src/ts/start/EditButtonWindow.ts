@@ -4,18 +4,18 @@ abstract class EditButtonWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		SoundboardApi.getButtonData((buttonData) => {
-			console.log("Testing data", buttonData);
+		let buttonDataRequest = SoundboardApi.getButtonData();
 
-			this._editorForm = new EditorForm($("#metadata-editor"), buttonData);
+		// Create editor and wait for buttonData retrieval
+		this._editorForm = new EditorForm($("#metadata-editor")).fillInputs(
+			await buttonDataRequest
+		);
 
-			// Show window content (only when data actually gets retrieved)
-			// TODO: give a different feedback to the user if the retrieval fails
-			this.showWindowContent();
-		});
+		console.log("Testing data", await buttonDataRequest);
 	}
 
-	private static showWindowContent() {
+	// TODO: include with future loader event
+	public static showWindowContent() {
 		// TODO: a fade-in here isn't actually needed, so it should be changed in the future
 		$(document.body).find("#soundbutton-editor").attr("style", "opacity: 1");
 	}
@@ -23,5 +23,6 @@ abstract class EditButtonWindow extends Main {
 
 // On page load
 $(() => {
-	EditButtonWindow.initWindow();
+	// TODO: give a different feedback to the user if the retrieval fails
+	EditButtonWindow.initWindow().then(EditButtonWindow.showWindowContent);
 });
