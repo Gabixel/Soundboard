@@ -3,7 +3,7 @@ interface Window {
 }
 
 interface HTMLAudioElement {
-	async setSinkId(deviceId: string): Promise<undefined>;
+	setSinkId(deviceId: string): Promise<undefined>;
 	sinkId: string;
 }
 
