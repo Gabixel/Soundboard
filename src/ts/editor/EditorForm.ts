@@ -59,7 +59,7 @@ class EditorForm extends Logger {
 			// TODO: encode on submit
 			let path = e.target.files[0].path;
 			console.log(path);
-			$("#button-path-txt").val(path);
+			$("#button-data-path").val(path);
 		});
 	}
 
