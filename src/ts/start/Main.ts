@@ -6,6 +6,8 @@ abstract class Main extends Logger {
 		this._intervals.push(interval);
 	}
 
+	// TODO: add a loader and pass the window container to it to integrate the fade-in animation with the loader stop event
+
 	protected static async init(): Promise<void> {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();

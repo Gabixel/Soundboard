@@ -9,32 +9,19 @@ abstract class EditButtonWindow extends Main {
 
 			this._editorForm = new EditorForm($("#metadata-editor"), buttonData);
 
-			// Show window content
+			// Show window content (only when data actually gets retrieved)
+			// TODO: give a different feedback to the user if the retrieval fails
 			this.showWindowContent();
 		});
 	}
 
-	public static showWindowContent() {
+	private static showWindowContent() {
+		// TODO: a fade-in here isn't actually needed, so it should be changed in the future
 		$(document.body).find("#soundbutton-editor").attr("style", "opacity: 1");
 	}
 }
 
 // On page load
 $(() => {
-	EditButtonWindow.initWindow().then(EditButtonWindow.showWindowContent);
+	EditButtonWindow.initWindow();
 });
-
-// initButtonEditor();
-
-// async function initButtonEditor() {
-// 	const form = $("#button-editor");
-// 	FormSubmitter.initForm(form);
-// }
-
-// abstract class FormSubmitter extends Logger {
-// 	private static $form: JQuery<HTMLElement>;
-
-// 	public static initForm($form: JQuery<HTMLElement>): void {
-// 		this.$form = $form;
-// 		this.setupFormSubmitEvent();
-// 	}

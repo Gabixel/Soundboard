@@ -13,7 +13,6 @@ class EditorForm extends Logger {
 		this.setupFormSubmitEvent();
 	}
 
-	// TODO: custom event that fires when any thing gets changed in the form, so that a possible injected sound button previewer can check for it
 	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
 
 	private fillInputs(buttonData: SoundButtonData) {
@@ -48,11 +47,12 @@ class EditorForm extends Logger {
 				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path))
 			)
 			// .add($(``));
-			.on("change", () => {});
 		// $("#editor-submit").focus();
 	}
 
 	private setupInputsEvents() {
+		// TODO: make every element call a function to update the preview
+
 		// File picker
 		($("#button-path-file") as JQuery<HTMLInputElement>).on("change", (e) => {
 			e.preventDefault();

@@ -64,6 +64,7 @@ abstract class MainWindow extends Main {
 		});
 	}
 
+	// TODO: include with future loader event
 	public static showWindowContent(): void {
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
