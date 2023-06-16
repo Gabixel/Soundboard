@@ -22,6 +22,7 @@ class EditorForm extends Logger {
 			.add($(`${this.DATA_PREFIX}title`).val(buttonData.title))
 			.add(
 				$(`${this.DATA_PREFIX}color`)
+					// Apply base color
 					.val(
 						"#" +
 							StringUtilities.HSLToHex(
@@ -30,6 +31,7 @@ class EditorForm extends Logger {
 								buttonData.color.l
 							)
 					)
+					// Apply base shadow color
 					.css(
 						"--data-color",
 						`hsl(${
@@ -41,6 +43,8 @@ class EditorForm extends Logger {
 							"%"
 						})`
 					)
+					// It's just a placeholder
+					.removeProp("value")
 			)
 			.add($(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path)));
 		// .add($(``));
@@ -51,6 +55,25 @@ class EditorForm extends Logger {
 
 	private setupInputsEvents() {
 		// TODO: make every element call a function to update the preview
+
+		($("#button-data-color") as JQuery<HTMLInputElement>)
+			// Constant color dragging
+			.on("input", (e) => {
+				// e.preventDefault();
+
+				// console.log();
+
+				$(e.target).css("--data-color", e.target.value);
+			})
+			// Final color
+			.on("change", (e) => {
+
+				let hsl = EMath.RGBToHSL(...EMath.HexToRGB(e.target.value));
+
+				this._buttonData.color.h = hsl[0];
+				this._buttonData.color.s = hsl[1];
+				this._buttonData.color.l = hsl[2];
+			});
 
 		// File picker
 		($("#button-path-file") as JQuery<HTMLInputElement>).on("change", (e) => {
@@ -71,8 +94,12 @@ class EditorForm extends Logger {
 		$("input#editor-submit").on("click", (_e) => {
 			// TODO: call api
 
-
-			EditorForm.logInfo("Submit button", "Form submitted\n", "Data:", this._buttonData);
+			EditorForm.logInfo(
+				"Submit button",
+				"Form submitted\n",
+				"Data:",
+				this._buttonData
+			);
 		});
 	}
 

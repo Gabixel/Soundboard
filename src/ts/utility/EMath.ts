@@ -34,7 +34,11 @@ abstract class EMath {
 	 * @param b	The blue color value
 	 * @returns The HSL representation
 	 */
-	public static RGBToHSL(r: number, g: number, b: number): number[] {
+	public static RGBToHSL(
+		r: number,
+		g: number,
+		b: number
+	): [number, number, number] {
 		// Make r, g, and b fractions of 1
 		r /= 255;
 		g /= 255;
@@ -128,6 +132,31 @@ abstract class EMath {
 		b = Math.round((b + m) * 255);
 
 		return [r, g, b];
+	}
+
+	/**
+	 * Returns a string representation of the RGB color (without hash symbol).
+	 * @author https://css-tricks.com/converting-color-spaces-in-javascript/
+	 */
+	public static HexToRGB(hex: string): [number, number, number] {
+		let r = "0",
+			g = "0",
+			b = "0";
+
+		// 3 digits
+		if (hex.length == 4) {
+			r = "0x" + hex[1] + hex[1];
+			g = "0x" + hex[2] + hex[2];
+			b = "0x" + hex[3] + hex[3];
+		}
+		// 6 digits
+		else if (hex.length == 7) {
+			r = "0x" + hex[1] + hex[2];
+			g = "0x" + hex[3] + hex[4];
+			b = "0x" + hex[5] + hex[6];
+		}
+
+		return [+r, +g, +b];
 	}
 
 	public static componentToHex(c: number) {
