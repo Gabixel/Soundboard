@@ -190,8 +190,6 @@ function createEditButtonWindow(
 		modal: true,
 		show: false,
 
-		alwaysOnTop: true,
-
 		webPreferences: editButtonWindowPreferences,
 	});
 
