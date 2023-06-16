@@ -11,7 +11,7 @@ abstract class EditButtonWindow extends Main {
 			await buttonDataRequest
 		);
 
-		console.log("Testing data", await buttonDataRequest);
+		console.log("Testing buttonData", await buttonDataRequest);
 	}
 
 	// TODO: include with future loader event

@@ -206,7 +206,9 @@ function createEditButtonWindow(
 
 	// Opening window
 	editButtonWindow.once("ready-to-show", () => {
-		ipcMain.handleOnce("editor-request-buttondata", (_e, _args) => {
+		// Note: do not use `handleOnce` since the editor page can be reloaded
+		// TODO: prevent CTRL-R ?
+		ipcMain.handle("editor-request-buttondata", (_e, _args) => {
 			return buttonData;
 		});
 
