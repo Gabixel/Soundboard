@@ -42,10 +42,8 @@ class EditorForm extends Logger {
 						})`
 					)
 			)
-			.add(
-				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path))
-			)
-			// .add($(``));
+			.add($(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path)));
+		// .add($(``));
 		// $("#editor-submit").focus();
 
 		return this;
@@ -59,23 +57,22 @@ class EditorForm extends Logger {
 			e.preventDefault();
 			// TODO: check if valid?
 			// TODO: encode on submit
-			let path = (e.target.files[0] as ElectronFile).path;
+			let path = e.target.files[0].path;
 			console.log(path);
 			$("#button-path-txt").val(path);
 		});
 	}
 
 	private setupFormSubmitEvent() {
-		// Prevent default submit feature (since even a text input can trigger this by pressing ENTER)
-		this._$form.on("submit", (e) => {
-			e.preventDefault();
-		});
+		// Prevent default submit feature (since even a text input can trigger this by pressing "enter" for example)
+		this._$form.on("submit", (e) => e.preventDefault());
 
-		// Use a specific button for submission
+		// Use a specific button for submit
 		$("input#editor-submit").on("click", (_e) => {
 			// TODO: call api
 
-			EditorForm.logInfo("Submit button", "Form submitted");
+
+			EditorForm.logInfo("Submit button", "Form submitted\n", "Data:", this._buttonData);
 		});
 	}
 

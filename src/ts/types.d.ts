@@ -36,11 +36,6 @@ type AudioPoolGroup = {
 	forcedStop: boolean;
 };
 
-type ElectronFile = File & {
-	path: string;
-	name: string;
-};
-
 /**
  * Sound button metadata
  */

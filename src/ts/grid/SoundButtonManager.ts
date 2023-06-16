@@ -166,7 +166,7 @@ class SoundButtonManager extends Logger {
 
 				$button.removeClass("file-dragover");
 
-				const file = e.originalEvent.dataTransfer.files[0] as ElectronFile;
+				const file = e.originalEvent.dataTransfer.files[0];
 
 				const path: string = file.path;
 
