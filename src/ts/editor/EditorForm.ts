@@ -59,20 +59,14 @@ class EditorForm extends Logger {
 		($("#button-data-color") as JQuery<HTMLInputElement>)
 			// Constant color dragging
 			.on("input", (e) => {
-				// e.preventDefault();
-
-				// console.log();
-
+				// Change shadow color
 				$(e.target).css("--data-color", e.target.value);
 			})
 			// Final color
 			.on("change", (e) => {
-
 				let hsl = EMath.RGBToHSL(...EMath.HexToRGB(e.target.value));
 
-				this._buttonData.color.h = hsl[0];
-				this._buttonData.color.s = hsl[1];
-				this._buttonData.color.l = hsl[2];
+				this._buttonData.color = { h: hsl[0], s: hsl[1], l: hsl[2] };
 			});
 
 		// File picker
