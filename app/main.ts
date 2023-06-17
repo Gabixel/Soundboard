@@ -214,11 +214,26 @@ function createEditButtonWindow(
 	});
 
 	// CLosing window
-	editButtonWindow.once("close", () => {
+	editButtonWindow.on("close", (_e) => {
+		// let testUnsavedChanges = dialog.showMessageBoxSync(editButtonWindow, {
+		// 	title: "Unsaved changes",
+		// 	message: "Are you sure you want to exit without saving?",
+		// 	type: "question",
+		// 	buttons: ["Yes", "No", "Save and exit"],
+		// });
+
+		// // todo: use a switch
+		// // Don't quit
+		// if (testUnsavedChanges == 1) {
+		// 	e.preventDefault();
+		// } // Exit
+		// else {
+		editButtonWindow.removeAllListeners();
 		editButtonWindow = null;
 
 		// Remove the request (just in case it didn't go well)
 		ipcMain.removeHandler("editor-request-buttondata");
+		// }
 	});
 
 	/* Final load */
