@@ -145,7 +145,7 @@ function createEditButtonWindow(
 	screenWidth: number,
 	screenHeight: number
 ) {
-	if (mainWindow == null) return;
+	if (mainWindow == null || editButtonWindow != null) return;
 
 	let name = buttonData.title;
 
@@ -234,10 +234,11 @@ function createEditButtonWindow(
 		// editButtonWindow.destroy();
 
 		editButtonWindow.removeAllListeners();
-		editButtonWindow = null;
 
 		ipcMain.removeHandler("editor-request-buttondata");
 		ipcMain.removeHandler("editor-update-buttondata");
+
+		editButtonWindow = null;
 		// }
 	});
 
