@@ -94,8 +94,13 @@ class EditorForm extends Logger {
 		});
 
 		($("#button-data-path") as JQuery<HTMLInputElement>).on("change", (e) => {
+			let path = e.target.value;
+
 			// Apply path data (from text input)
-			this.updateProperty("path", StringUtilities.encodeFilePath(e.target.value));
+			this.updateProperty(
+				"path",
+				path.length === 0 ? null : StringUtilities.encodeFilePath(path)
+			);
 		});
 	}
 
