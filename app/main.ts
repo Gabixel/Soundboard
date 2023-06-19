@@ -206,7 +206,6 @@ function createEditButtonWindow(
 
 		ipcMain.handleOnce("editor-update-buttondata", (_e, id, buttonData) => {
 			console.log("main received edit call");
-			
 
 			// Send updated button
 			mainWindow.webContents.send("buttondata-updated", id, buttonData);
@@ -232,6 +231,8 @@ function createEditButtonWindow(
 		// 	e.preventDefault();
 		// } // Exit
 		// else {
+		// editButtonWindow.destroy();
+
 		editButtonWindow.removeAllListeners();
 		editButtonWindow = null;
 
