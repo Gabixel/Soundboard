@@ -68,17 +68,28 @@ class EditorForm extends Logger {
 			.on("change", (e) => {
 				let hsl = EMath.RGBToHSL(...EMath.HexToRGB(e.target.value));
 
-				this._buttonData.color = { h: hsl[0], s: hsl[1], l: hsl[2] };
+				this.updateProperty("color", { h: hsl[0], s: hsl[1], l: hsl[2] });
 			});
 
 		// File picker
 		($("#button-path-file") as JQuery<HTMLInputElement>).on("change", (e) => {
+			// Don't store the file in the hidden file input
 			e.preventDefault();
+
 			// TODO: check if valid?
 			// TODO: encode on submit
 			let path = e.target.files[0].path;
+
 			console.log(path);
+
+			// Apply path data (from hidden file input)
 			$("#button-data-path").val(path);
+			this.updateProperty("path", StringUtilities.encodeFilePath(path));
+		});
+
+		($("#button-data-path") as JQuery<HTMLInputElement>).on("change", (e) => {
+			// Apply path data (from text input)
+			this.updateProperty("path", StringUtilities.encodeFilePath(e.target.value));
 		});
 	}
 
@@ -88,7 +99,10 @@ class EditorForm extends Logger {
 
 		// Use a specific button for submit
 		$("input#editor-submit").on("click", (_e) => {
-			SoundboardApi.EditButtonWindow.updateButtonData(this._buttonId, this._buttonData);
+			SoundboardApi.EditButtonWindow.updateButtonData(
+				this._buttonId,
+				this._buttonData
+			);
 
 			EditorForm.logInfo(
 				"Submit button",
@@ -99,7 +113,9 @@ class EditorForm extends Logger {
 		});
 	}
 
-	private updateProperty(property: SoundButtonProperties, data: any) {
-		this._buttonData[property] = data;
+	private updateProperty(key: SoundButtonProperties, data: any) {
+		if (key in this._buttonData) {
+			this._buttonData[key] = data;
+		}
 	}
 }
