@@ -14,7 +14,7 @@ class SoundButtonManager extends Logger {
 			condition: "after",
 		},
 	};
-	// private _rootPath: string = "";
+	
 	private _randomPaths: string[] = ["Clown Horn.mp3"];
 	private _$grid: JQuery<HTMLElement>;
 
