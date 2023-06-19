@@ -108,9 +108,6 @@ class SoundButtonManager extends Logger {
 	public static updateButton(id: string, buttonData: SoundButtonData): void {
 		const $button = $("#" + id);
 
-		console.log($button);
-		
-
 		// If the button doesn't exist
 		if ($button.length < 1) {
 			return;
