@@ -187,15 +187,15 @@ class GridResizer extends Logger {
 
 		for (let i = 0; i < emptyCells; i++) {
 			const $button = $(
-				SoundboardApi.isProduction
-					? this._soundButtonManager.generateButton(
-							// Generate all button of the same color on production
-							null,
-							this._gridManager.size + i - emptyCells
-					  )
-					: await this._soundButtonManager.generateRandomButton(
-							this._gridManager.size + i - emptyCells
-					  )
+				// SoundboardApi.isProduction
+				/*?*/ this._soundButtonManager.generateButton(
+					// Generate all button of the same color on production
+					null,
+					this._gridManager.size + i - emptyCells
+				)
+				// : await this._soundButtonManager.generateRandomButton(
+				// 		this._gridManager.size + i - emptyCells
+				//   )
 			);
 
 			// TODO: Not sure if it's better triggering the filter instead of this.

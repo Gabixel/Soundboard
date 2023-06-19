@@ -3,7 +3,7 @@
  */
 class SoundButtonManager extends Logger {
 	private static DEFAULT_METADATA: SoundButtonData = {
-		title: "DEFAULT TITLE TEST",
+		title: "-",
 		color: { h: 0, s: 0, l: 80 },
 		image: null,
 		tags: [],
@@ -205,7 +205,7 @@ class SoundButtonManager extends Logger {
 		this._$grid.on("click", ".soundbutton", (e) => {
 			SoundButtonManager.logInfo(
 				this.setupClick,
-				`SoundButton "%s" clicked`,
+				`Button "%s" clicked`,
 				$(e.target).children(".button-theme").text()
 			);
 
