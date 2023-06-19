@@ -64,8 +64,6 @@ abstract class MainWindow extends Main {
 		});
 
 		SoundboardApi.MainWindow.onButtonDataUpdate((id, buttonData) => {
-			console.log("arrived to main window class");
-			
 			SoundButtonManager.updateButton(id, buttonData);
 		});
 	}

@@ -29,8 +29,6 @@ const api: MainWindowApiBridge = {
 };
 
 ipcRenderer.on("buttondata-updated", (_e, id, buttonData) => {
-	console.log("received data update in mainwindow");
-	
 	buttonDataCallbacks.forEach((callback) => callback(id, buttonData));
 });
 
