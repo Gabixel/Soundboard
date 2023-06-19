@@ -11,6 +11,15 @@ abstract class EditButtonWindow extends Main {
 			(await buttonDataRequest).id,
 			(await buttonDataRequest).buttonData
 		);
+
+		// $(window).one("keydown", (e) => {
+		// 	if (e.key === "Escape") {
+		// TODO: close window by keypress (probably with an IPC call)
+		// note: the following code seems to break everything:
+		// it bypasses all events of the main process and just hides the window
+		// window.close();
+		// 	}
+		// });
 	}
 
 	// TODO: include with future loader event
