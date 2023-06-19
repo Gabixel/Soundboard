@@ -58,6 +58,11 @@ class EditorForm extends Logger {
 	private setupInputsEvents() {
 		// TODO: make every element call a function to update the preview
 
+		($("#button-data-title") as JQuery<HTMLInputElement>).on("change", (e) => {
+			// Apply title data
+			this.updateProperty("title", e.target.value);
+		});
+
 		($("#button-data-color") as JQuery<HTMLInputElement>)
 			// Constant color dragging
 			.on("input", (e) => {
@@ -68,6 +73,7 @@ class EditorForm extends Logger {
 			.on("change", (e) => {
 				let hsl = EMath.RGBToHSL(...EMath.HexToRGB(e.target.value));
 
+				// Apply color data
 				this.updateProperty("color", { h: hsl[0], s: hsl[1], l: hsl[2] });
 			});
 
