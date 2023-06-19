@@ -1,6 +1,11 @@
 import { contextBridge, ipcRenderer } from "electron";
 const SOURCES_ROOT = "../../../src";
 
+// Array of buttondata update callbacks
+let buttonDataCallbacks: {
+	(id: string, buttonData: SoundButtonData): void;
+}[] = [];
+
 const api: MainWindowApiBridge = {
 	isProduction: process.env.NODE_ENV === "production",
 
@@ -17,7 +22,17 @@ const api: MainWindowApiBridge = {
 
 	joinPaths: async (...paths: string[]): Promise<string> =>
 		ipcRenderer.invoke("join-paths", ...paths),
+
+	onButtonDataUpdate: (callback) => {
+		buttonDataCallbacks.push(callback);
+	},
 };
+
+ipcRenderer.on("buttondata-updated", (_e, id, buttonData) => {
+	console.log("received data update in mainwindow");
+	
+	buttonDataCallbacks.forEach((callback) => callback(id, buttonData));
+});
 
 // Keep updated with "~/src/ts/utility/SoundboardApi.ts"
 type MainWindowApiBridge = {
@@ -35,6 +50,7 @@ type MainWindowApiBridge = {
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
 	joinPaths: (...paths: string[]) => Promise<string>;
+	onButtonDataUpdate: (callback: (id: string, buttonData: SoundButtonData) => void) => void;
 };
 
 const styles = [

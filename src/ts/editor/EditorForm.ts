@@ -1,7 +1,8 @@
 class EditorForm extends Logger {
-	private _$form: JQuery<HTMLFormElement>;
-	private _buttonData: SoundButtonData;
 	private DATA_PREFIX: string = "#button-data-";
+	private _$form: JQuery<HTMLFormElement>;
+	private _buttonId: string;
+	private _buttonData: SoundButtonData;
 
 	constructor($form: JQuery<HTMLFormElement>) {
 		super();
@@ -14,7 +15,8 @@ class EditorForm extends Logger {
 
 	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
 
-	public fillInputs(buttonData: SoundButtonData): this {
+	public fillInputs(buttonId: string, buttonData: SoundButtonData): this {
+		this._buttonId = buttonId;
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
@@ -86,7 +88,7 @@ class EditorForm extends Logger {
 
 		// Use a specific button for submit
 		$("input#editor-submit").on("click", (_e) => {
-			// TODO: call api
+			SoundboardApi.EditButtonWindow.updateButtonData(this._buttonId, this._buttonData);
 
 			EditorForm.logInfo(
 				"Submit button",

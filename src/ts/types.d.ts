@@ -39,6 +39,7 @@ type AudioPoolGroup = {
 /**
  * Sound button metadata
  */
+// Keep updated with "~/src/ts/types.d.ts"
 type SoundButtonData = {
 	/**
 	 * The unrendered text
@@ -109,3 +110,13 @@ namespace Color {
 		l: number;
 	};
 }
+
+// Keep updated with:
+// - "~/app/types.d.ts"
+type ContextMenuArgs =
+	| null
+	| (
+			| { type: "soundbutton"; id: string; buttonData: SoundButtonData }
+			| { type: "test1"; coolThing: number }
+			| { type: "test999"; a: 1; b: 2 }
+	  );

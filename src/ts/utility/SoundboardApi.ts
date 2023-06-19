@@ -1,63 +1,69 @@
 abstract class SoundboardApi extends Logger {
-	/*
-	 * Global
-	 */
-
-	private static get _api(): WindowApiBridge {
-		return window.api;
-	}
-
 	public static get isProduction(): boolean {
 		return this._api.isProduction;
 	}
 
-	public static path = {
-		initRoot: async () => {
-			this.path.root = await this._api.getAppPath();
-			this.path.initRoot = null;
-			return this.path.root;
+	public static Global = {
+		path: {
+			initRoot: async () => {
+				this.Global.path.root = await this._api.getAppPath();
+				this.Global.path.initRoot = null;
+				return this.Global.path.root;
+			},
+			root: "", // Needs initialization at runtime with the above
+			resources: "/resources/",
+			sounds: "/resources/sounds/",
 		},
-		root: "", // Needs initialization at runtime with the above
-		resources: "/resources/",
-		sounds: "/resources/sounds/",
+
+		// TODO:
+		// public static isPathFile(_path: string): boolean {
+		// 	// return this._api.isPathFile(path);
+		// 	return false;
+		// }
 	};
 
-	// TODO:
-	// public static isPathFile(_path: string): boolean {
-	// 	// return this._api.isPathFile(path);
-	// 	return false;
-	// }
+	public static MainWindow = {
+		openContextMenu: (args: ContextMenuArgs = null): void => {
+			this.logDebug(
+				this.MainWindow.openContextMenu,
+				`Opening context menu with ${
+					args != null ? Object.keys(args).length : 0
+				} extra args:`,
+				args
+			);
 
-	/*
-	 * MainWindow
-	 */
+			this._api.openContextMenu(args);
+		},
 
-	public static openContextMenu(args: ContextMenuArgs = null): void {
-		this.logDebug(
-			this.openContextMenu,
-			`Opening context menu with ${
-				args != null ? Object.keys(args).length : 0
-			} extra args:`,
-			args
-		);
+		joinPaths: async (...paths: string[]): Promise<string> => {
+			return this._api.joinPaths(...paths);
+		},
 
-		window.api.openContextMenu(args);
-	}
+		onButtonDataUpdate: (
+			callback: (id: string, buttonData: SoundButtonData) => void
+		): void => {
+			this._api.onButtonDataUpdate(callback);
+		},
+	};
 
-	public static async joinPaths(...paths: string[]): Promise<string> {
-		return this._api.joinPaths(...paths);
-	}
+	public static EditButtonWindow = {
+		getButtonData: async (): Promise<{
+			id: string;
+			buttonData: SoundButtonData;
+		}> => {
+			return this._api.getButtonData();
+		},
 
-	/*
-	 * EditButtonWindow
-	 */
+		updateButtonData: async (id: string, buttonData: SoundButtonData): Promise<void> => {
+			return this._api.updateButtonData(id, buttonData);
+		},
+	};
 
-	public static getButtonData(): Promise<SoundButtonData> {
-		return this._api.getButtonData();
+	private static get _api(): WindowApiBridge {
+		return window.api;
 	}
 }
 
-//#region Types
 // Keep updated:
 // - "~/app/windows/mainWindow/preload.ts"
 // - "~/app/windows/editButtonWindow/preload.ts"
@@ -72,22 +78,18 @@ type WindowApiBridge = {
 	// isPathFile: (args: string) => boolean;
 	getAppPath: () => Promise<string>;
 	joinPaths: (...paths: string[]) => Promise<string>;
+	onButtonDataUpdate: (
+		callback: (id: string, buttonData: SoundButtonData) => void
+	) => void;
 
 	/*
 	 * EditButtonWindow
 	 */
-	getButtonData: () => Promise<SoundButtonData>;
+	getButtonData: () => Promise<{
+		id: string;
+		buttonData: SoundButtonData;
+	}>;
+	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
 	// TODO:
 	// setButtonData: (buttonData: SoundButtonData) => void;
 };
-
-// Keep updated with:
-// - "~/app/windows/main.ts"
-type ContextMenuArgs =
-	| null
-	| (
-			| { type: "soundbutton"; buttonData: SoundButtonData }
-			| { type: "test1"; coolThing: number }
-			| { type: "test999"; a: 1; b: 2 }
-	  );
-//#endregion

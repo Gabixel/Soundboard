@@ -23,9 +23,9 @@ class SoundButtonManager extends Logger {
 	 */
 	private async getRandomAudio(): Promise<string> {
 		return StringUtilities.encodeFilePath(
-			await SoundboardApi.joinPaths(
-				SoundboardApi.path.root,
-				SoundboardApi.path.sounds,
+			await SoundboardApi.MainWindow.joinPaths(
+				SoundboardApi.Global.path.root,
+				SoundboardApi.Global.path.sounds,
 				this._randomPaths[EMath.randomInt(0, this._randomPaths.length)]
 			)
 		);
@@ -79,7 +79,7 @@ class SoundButtonManager extends Logger {
 		index: null | number
 	): HTMLElement {
 		const $button = $(`<button type="button" class="soundbutton"></button>`);
-		$button.append(`<div class="button-theme">${data.title}</div>`);
+		$button.append(`<div class="button-theme"></div>`);
 
 		this.applyInitialData($button, data, index);
 		this.setupDragAndDrop($button);
@@ -89,7 +89,7 @@ class SoundButtonManager extends Logger {
 
 	private static applyInitialData(
 		$button: JQuery<HTMLElement>,
-		data: SoundButtonData,
+		buttonData: SoundButtonData,
 		index: null | number
 	): void {
 		$button
@@ -100,37 +100,25 @@ class SoundButtonManager extends Logger {
 			.attr("tabindex", index + 1)
 
 			// CSS flex index
-			.css("--index", index.toString())
+			.css("--index", index.toString());
 
-			// Customisation
-			// TODO: apply color
-			// TODO: apply image
-			.attr("data-path", data.path)
-			.attr("data-tags", data.tags.join(","))
-
-			// Timings
-			.attr("data-start-time", data.time.start)
-			.attr("data-end-time", data.time.end)
-			.attr("data-end-type", data.time.condition)
-
-			// Color
-			.css("--hue", data.color.h.toString())
-			.css("--saturation", data.color.s.toString() + "%")
-			.css("--lightness", data.color.l.toString() + "%");
+		this.applyButtonData($button, buttonData);
 	}
 
-	public updateData(
-		_$button: JQuery<HTMLElement>, // TODO:
-		data: SoundButtonData
-	): void {
-		const keys = Object.keys(data);
-		for (let i = 0; i < keys.length; i++) {
-			switch (keys[i]) {
-				case "title":
-					// TODO: change title
-					break;
-			}
+	public static updateButton(id: string, buttonData: SoundButtonData): void {
+		const $button = $("#" + id);
+
+		console.log($button);
+		
+
+		// If the button doesn't exist
+		if ($button.length < 1) {
+			return;
 		}
+
+		Logger.logInfo(SoundButtonManager.updateButton, "Applying button data:", buttonData);
+
+		this.applyButtonData($button, buttonData);
 	}
 
 	public static setupDragAndDrop($button: JQuery<HTMLElement>): void {
@@ -189,9 +177,14 @@ class SoundButtonManager extends Logger {
 
 				// SoundboardApi.isPathFile(path); // TODO
 
+				// TODO: use `updateButton` instead
+
 				$button.attr("data-path", encodedPath);
-				$button.children(".button-theme").text(file.name); // TODO: of course, this is temporary
-				console.log("setting hue");
+				// Set button text to the file name
+				// TODO: of course, this is temporary
+				$button.children(".button-theme").text(file.name);
+
+				// Set random hue for button (based on file name conversion)
 				$button.css("--hue", StringUtilities.getHue(file.name).toString());
 				$button.css("--saturation", "100%");
 			})
@@ -250,31 +243,17 @@ class SoundButtonManager extends Logger {
 
 			let args: ContextMenuArgs = {
 				type: "soundbutton",
-				buttonData: {
-					title: $target.children(".button-theme").text(),
-					color: {
-						h: parseInt($target.css("--hue")),
-						s: parseInt($target.css("--saturation")),
-						l: parseInt($target.css("--lightness")),
-					},
-					image: $target.attr("data-image"),
-					tags: $target
-						.attr("data-tags")
-						.split(" ")
-						.filter((tag) => tag.length > 0),
-					path: $target.attr("data-path"),
-					index: parseInt($target.css("--index")),
-				} as SoundButtonData,
+				id: $target.attr("id"),
+				buttonData: SoundButtonManager.getButtonData($target),
 			};
 
-			SoundboardApi.openContextMenu(args);
+			SoundboardApi.MainWindow.openContextMenu(args);
 		});
 
 		return this;
 	}
 
-	// TODO: update buttons
-	private updateMetadata(data: SoundButtonData): SoundButtonData {
+	private static sanitizeButtonData(data: SoundButtonData): SoundButtonData {
 		const defaultData = SoundButtonManager.DEFAULT_METADATA;
 
 		return {
@@ -284,6 +263,49 @@ class SoundButtonManager extends Logger {
 			path: data.path ?? defaultData.path,
 			tags: data.tags ?? defaultData.tags,
 			time: data.time ?? defaultData.time,
+		};
+	}
+
+	private static applyButtonData(
+		$button: JQuery<HTMLElement>,
+		buttonData: SoundButtonData
+	): void {
+		// Check for problems
+		buttonData = this.sanitizeButtonData(buttonData);
+
+		$button
+			// TODO: apply color
+			// TODO: apply image
+			.attr("data-path", buttonData.path)
+			.attr("data-tags", buttonData.tags.join(","))
+
+			// Timings
+			.attr("data-start-time", buttonData.time.start)
+			.attr("data-end-time", buttonData.time.end)
+			.attr("data-end-type", buttonData.time.condition)
+
+			// Color
+			.css("--hue", buttonData.color.h.toString())
+			.css("--saturation", buttonData.color.s.toString() + "%")
+			.css("--lightness", buttonData.color.l.toString() + "%");
+
+		$button.children(".button-theme").text(buttonData.title);
+	}
+
+	private static getButtonData($button: JQuery<HTMLElement>): SoundButtonData {
+		return {
+			title: $button.children(".button-theme").text(),
+			color: {
+				h: parseInt($button.css("--hue")),
+				s: parseInt($button.css("--saturation")),
+				l: parseInt($button.css("--lightness")),
+			},
+			image: $button.attr("data-image"),
+			tags: $button
+				.attr("data-tags")
+				.split(" ")
+				.filter((tag) => tag.length > 0),
+			path: $button.attr("data-path"),
 		};
 	}
 }

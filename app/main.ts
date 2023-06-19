@@ -140,6 +140,7 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 }
 
 function createEditButtonWindow(
+	id: string,
 	buttonData: SoundButtonData,
 	screenWidth: number,
 	screenHeight: number
@@ -195,19 +196,22 @@ function createEditButtonWindow(
 
 	/* Editor API */
 
-	// let assignButtonDataEvent = function (
-	// 	event: Electron.IpcMainEvent,
-	// 	..._args: any[]
-	// ): void {
-	// 	event.reply("editor-return-buttondata", buttonData);
-	// };
-
 	// Opening window
 	editButtonWindow.once("ready-to-show", () => {
 		// Note: do not use `handleOnce` since the editor page can be reloaded
 		// TODO: prevent CTRL-R ?
 		ipcMain.handle("editor-request-buttondata", (_e, _args) => {
-			return buttonData;
+			return { id, buttonData };
+		});
+
+		ipcMain.handleOnce("editor-update-buttondata", (_e, id, buttonData) => {
+			console.log("main received edit call");
+			
+
+			// Send updated button
+			mainWindow.webContents.send("buttondata-updated", id, buttonData);
+			// Close the window
+			editButtonWindow.close();
 		});
 
 		editButtonWindow.show();
@@ -231,8 +235,8 @@ function createEditButtonWindow(
 		editButtonWindow.removeAllListeners();
 		editButtonWindow = null;
 
-		// Remove the request (just in case it didn't go well)
 		ipcMain.removeHandler("editor-request-buttondata");
+		ipcMain.removeHandler("editor-update-buttondata");
 		// }
 	});
 
@@ -381,6 +385,7 @@ function initIpc() {
 							label: "Edit",
 							click: () => {
 								createEditButtonWindow(
+									args.id,
 									args.buttonData,
 									primaryScreenWidth,
 									primaryScreenHeight

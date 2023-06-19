@@ -4,14 +4,13 @@ abstract class EditButtonWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		let buttonDataRequest = SoundboardApi.getButtonData();
+		let buttonDataRequest = SoundboardApi.EditButtonWindow.getButtonData();
 
 		// Create editor and wait for buttonData retrieval
 		this._editorForm = new EditorForm($("#metadata-editor")).fillInputs(
-			await buttonDataRequest
+			(await buttonDataRequest).id,
+			(await buttonDataRequest).buttonData
 		);
-
-		console.log("Testing buttonData", await buttonDataRequest);
 	}
 
 	// TODO: include with future loader event

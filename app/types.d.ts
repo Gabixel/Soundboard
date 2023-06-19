@@ -1,7 +1,8 @@
+// Keep updated with "~/src/ts/types.d.ts"
 type ContextMenuArgs =
 	| null
 	| (
-			| { type: "soundbutton"; buttonData: SoundButtonData }
+			| { type: "soundbutton"; id: string; buttonData: SoundButtonData }
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );

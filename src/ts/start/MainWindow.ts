@@ -54,13 +54,19 @@ abstract class MainWindow extends Main {
 		// Setup context menu
 		// TODO: class?
 		$(document).on("contextmenu", () => {
-			SoundboardApi.openContextMenu();
+			SoundboardApi.MainWindow.openContextMenu();
 		});
 
 		$(window).on("dragover", (e) => {
 			e.preventDefault();
 			e.originalEvent.dataTransfer.dropEffect = "none";
 			return false;
+		});
+
+		SoundboardApi.MainWindow.onButtonDataUpdate((id, buttonData) => {
+			console.log("arrived to main window class");
+			
+			SoundButtonManager.updateButton(id, buttonData);
 		});
 	}
 

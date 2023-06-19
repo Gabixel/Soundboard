@@ -8,14 +8,10 @@ const api: EditButtonWindowApiBridge = {
 
 	getButtonData: async (): Promise<SoundButtonData> =>
 		ipcRenderer.invoke("editor-request-buttondata"),
-};
 
-ipcRenderer.on(
-	"editor-get-buttondata",
-	(_event, buttonData: SoundButtonData) => {
-		console.log(buttonData);
-	}
-);
+	updateButtonData: async (id, buttonData): Promise<void> =>
+		ipcRenderer.invoke("editor-update-buttondata", id, buttonData),
+};
 
 type EditButtonWindowApiBridge = {
 	/*
@@ -30,9 +26,13 @@ type EditButtonWindowApiBridge = {
 	 */
 
 	getButtonData: () => Promise<SoundButtonData>;
+	/**
+	 * Sends the updated soundbutton data to the main process
+	 * @param buttonData The new data for the soundbutton
+	 */
+	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
-	// TODO: editButton
 };
 
 const styles = [
