@@ -9,6 +9,7 @@ abstract class SoundboardApi extends Logger {
 				this.global.path.root = await this._api.getAppPath();
 				this.global.path.initRoot = null;
 			},
+			// TODO: try to get rid of this initialization
 			root: "", // Needs initialization at runtime with the above
 			resources: "/resources/",
 			sounds: "/resources/sounds/",
@@ -34,6 +35,7 @@ abstract class SoundboardApi extends Logger {
 			this._api.openContextMenu(args);
 		},
 
+		// TODO: try to remove this and use a browser-specific method instead
 		joinPaths: async (...paths: string[]): Promise<string> => {
 			return this._api.joinPaths(...paths);
 		},
