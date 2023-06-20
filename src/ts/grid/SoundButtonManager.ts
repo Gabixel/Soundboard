@@ -203,7 +203,7 @@ class SoundButtonManager extends Logger {
 		}
 
 		this._$grid.on("click", ".soundbutton", (e) => {
-			SoundButtonManager.logInfo(
+			SoundButtonManager.logDebug(
 				this.setupClick,
 				`Button "%s" clicked`,
 				$(e.target).children(".button-theme").text()
