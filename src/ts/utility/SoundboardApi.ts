@@ -8,7 +8,6 @@ abstract class SoundboardApi extends Logger {
 			initRoot: async () => {
 				this.Global.path.root = await this._api.getAppPath();
 				this.Global.path.initRoot = null;
-				return this.Global.path.root;
 			},
 			root: "", // Needs initialization at runtime with the above
 			resources: "/resources/",
