@@ -4,7 +4,7 @@ abstract class EditButtonWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		let buttonDataRequest = SoundboardApi.EditButtonWindow.getButtonData();
+		let buttonDataRequest = SoundboardApi.editButtonWindow.getButtonData();
 
 		// Create editor and wait for buttonData retrieval
 		this._editorForm = new EditorForm($("#metadata-editor")).fillInputs(

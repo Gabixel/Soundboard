@@ -12,7 +12,7 @@ abstract class Main extends Logger {
 		// Uncaught exceptions handling
 		this.initUncaughtExceptionsHandler();
 
-		await SoundboardApi.Global.path.initRoot();
+		await SoundboardApi.global.path.initRoot();
 
 		// Some info for debug
 		this.logInfo(

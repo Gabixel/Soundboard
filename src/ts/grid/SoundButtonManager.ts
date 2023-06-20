@@ -23,9 +23,9 @@ class SoundButtonManager extends Logger {
 	 */
 	private async getRandomAudio(): Promise<string> {
 		return StringUtilities.encodeFilePath(
-			await SoundboardApi.MainWindow.joinPaths(
-				SoundboardApi.Global.path.root,
-				SoundboardApi.Global.path.sounds,
+			await SoundboardApi.mainWindow.joinPaths(
+				SoundboardApi.global.path.root,
+				SoundboardApi.global.path.sounds,
 				this._randomPaths[EMath.randomInt(0, this._randomPaths.length)]
 			)
 		);
@@ -245,7 +245,7 @@ class SoundButtonManager extends Logger {
 				buttonData: SoundButtonManager.getButtonData($target),
 			};
 
-			SoundboardApi.MainWindow.openContextMenu(args);
+			SoundboardApi.mainWindow.openContextMenu(args);
 		});
 
 		return this;

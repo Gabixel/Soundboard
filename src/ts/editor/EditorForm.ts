@@ -110,7 +110,7 @@ class EditorForm extends Logger {
 
 		// Use a specific button for submit
 		$("input#editor-submit").on("click", (_e) => {
-			SoundboardApi.EditButtonWindow.updateButtonData(
+			SoundboardApi.editButtonWindow.updateButtonData(
 				this._buttonId,
 				this._buttonData
 			);

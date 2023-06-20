@@ -3,11 +3,11 @@ abstract class SoundboardApi extends Logger {
 		return this._api.isProduction;
 	}
 
-	public static Global = {
+	public static global = {
 		path: {
 			initRoot: async () => {
-				this.Global.path.root = await this._api.getAppPath();
-				this.Global.path.initRoot = null;
+				this.global.path.root = await this._api.getAppPath();
+				this.global.path.initRoot = null;
 			},
 			root: "", // Needs initialization at runtime with the above
 			resources: "/resources/",
@@ -21,10 +21,10 @@ abstract class SoundboardApi extends Logger {
 		// }
 	};
 
-	public static MainWindow = {
+	public static mainWindow = {
 		openContextMenu: (args: ContextMenuArgs = null): void => {
 			this.logDebug(
-				this.MainWindow.openContextMenu,
+				this.mainWindow.openContextMenu,
 				`Opening context menu with ${
 					args != null ? Object.keys(args).length : 0
 				} extra args:`,
@@ -45,7 +45,7 @@ abstract class SoundboardApi extends Logger {
 		},
 	};
 
-	public static EditButtonWindow = {
+	public static editButtonWindow = {
 		getButtonData: async (): Promise<{
 			id: string;
 			buttonData: SoundButtonData;
