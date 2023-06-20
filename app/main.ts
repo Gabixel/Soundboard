@@ -86,6 +86,7 @@ let mainWindowPreferences: Electron.WebPreferences = {
  * The soundbutton editor window.
  */
 let editButtonWindow: BrowserWindow;
+let editorHasUnsavedChanges = false;
 
 const editButtonWindowPath = path.join(appWindowRootPath, "editButtonWindow");
 let editButtonWindowPreferences: Electron.WebPreferences = {
@@ -204,10 +205,9 @@ function createEditButtonWindow(
 			return { id, buttonData };
 		});
 
+		// On submit
 		ipcMain.handleOnce("editor-update-buttondata", (_e, id, buttonData) => {
-			// Send updated button
-			mainWindow.webContents.send("buttondata-updated", id, buttonData);
-			// Close the window
+			saveChanges(id, buttonData);
 			editButtonWindow.close();
 		});
 
@@ -215,30 +215,55 @@ function createEditButtonWindow(
 	});
 
 	// CLosing window
-	editButtonWindow.on("close", (_e) => {
-		// let testUnsavedChanges = dialog.showMessageBoxSync(editButtonWindow, {
-		// 	title: "Unsaved changes",
-		// 	message: "Are you sure you want to exit without saving?",
-		// 	type: "question",
-		// 	buttons: ["Yes", "No", "Save and exit"],
-		// });
+	editButtonWindow.on("close", (e) => {
+		if (!editorHasUnsavedChanges) {
+			return;
+		}
 
-		// // todo: use a switch
-		// // Don't quit
-		// if (testUnsavedChanges == 1) {
-		// 	e.preventDefault();
-		// } // Exit
-		// else {
-		// editButtonWindow.destroy();
+		let testUnsavedChanges = dialog.showMessageBoxSync(editButtonWindow, {
+			title: "Unsaved changes",
+			message: "Did you want to save your changes?",
+			type: "warning",
+			buttons: ["Save and close", "Forget changes", "Wait, go back"],
+			defaultId: 2,
+			detail: "",
+			noLink: true,
+		});
 
+		console.log(testUnsavedChanges);
+
+		// Note: the 'x' button is the equivalent of pressing "No"
+		switch (testUnsavedChanges) {
+			// "Save and exit"
+			case 0:
+				// save changes and close
+				// todo: saveChanges();
+				return;
+
+			// "Go back"
+			case 2:
+				e.preventDefault();
+				return;
+
+			// "Discard"
+			default:
+				return;
+		}
+	});
+
+	// Dispose window
+	editButtonWindow.on("closed", () => {
 		editButtonWindow.removeAllListeners();
-
 		ipcMain.removeHandler("editor-request-buttondata");
 		ipcMain.removeHandler("editor-update-buttondata");
-
 		editButtonWindow = null;
-		// }
 	});
+
+	function saveChanges(id: string, buttonData: SoundButtonData) {
+		// Send updated button
+		mainWindow.webContents.send("buttondata-updated", id, buttonData);
+		editorHasUnsavedChanges = false;
+	}
 
 	/* Final load */
 
