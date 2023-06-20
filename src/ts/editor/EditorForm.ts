@@ -48,7 +48,7 @@ class EditorForm extends Logger {
 					// It's just a placeholder
 					.removeProp("value")
 			)
-			.add($(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path)));
+			.add($(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path ?? "")));
 		// .add($(``));
 		// $("#editor-submit").focus();
 
