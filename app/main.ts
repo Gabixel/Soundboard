@@ -346,12 +346,22 @@ function showContextMenu(
 }
 
 // TODO: Different OS variants(?)
-async function openFileInExplorer(path: string) {
-	await fileSystem.access(path).then(
+async function openFileInExplorer(filePath: string): Promise<void> {
+	// Empty path
+	if (filePath == "") {
+		console.log("Path is empty");
+		return;
+	}
+
+	// TODO: add more safety if path is invalid?
+	// TODO: open containing folder if file no longer exists + warn the user?
+
+	// Try to open file
+	await fileSystem.access(filePath).then(
 		() => {
 			// Success
-			console.log(`Path: "${path}"`);
-			shell.showItemInFolder(path);
+			console.log(`Path: "${filePath}"`);
+			shell.showItemInFolder(filePath);
 		},
 		(error) => {
 			console.log(error);
@@ -444,7 +454,7 @@ function initIpc() {
 						new MenuItem({
 							label: "Open in file explorer",
 							click: () => {
-								openFileInExplorer(decodeURIComponent(args.buttonData.path));
+								openFileInExplorer(decodeURIComponent(args.buttonData.path ?? ""));
 							},
 						})
 					);
