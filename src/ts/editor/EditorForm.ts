@@ -1,8 +1,17 @@
 class EditorForm extends Logger {
 	private DATA_PREFIX: string = "#button-data-";
 	private _$form: JQuery<HTMLFormElement>;
+
 	private _buttonId: string;
+	public get buttonId(): string {
+		return this._buttonId;
+	}
+	
+	
 	private _buttonData: SoundButtonData;
+	public get buttonData(): SoundButtonData {
+		return this._buttonData;
+	};
 
 	constructor($form: JQuery<HTMLFormElement>) {
 		super();

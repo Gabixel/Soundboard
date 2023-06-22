@@ -55,9 +55,21 @@ abstract class SoundboardApi extends Logger {
 			return this._api.getButtonData();
 		},
 
-		updateButtonData: async (id: string, buttonData: SoundButtonData): Promise<void> => {
+		updateButtonData: async (
+			id: string,
+			buttonData: SoundButtonData
+		): Promise<void> => {
 			return this._api.updateButtonData(id, buttonData);
 		},
+
+		onAskCompareChanges: (callback: () => void): void => {
+			this._api.onAskCompareChanges(callback);
+		},
+
+		sendCompareChanges: async (
+			id: string,
+			buttonData: SoundButtonData
+		): Promise<void> => this._api.sendCompareChanges(id, buttonData),
 	};
 
 	private static get _api(): WindowApiBridge {
@@ -91,6 +103,7 @@ type WindowApiBridge = {
 		buttonData: SoundButtonData;
 	}>;
 	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
-	// TODO:
-	// setButtonData: (buttonData: SoundButtonData) => void;
+
+	onAskCompareChanges: (callback: () => void) => void;
+	sendCompareChanges: (id: string, buttonData: SoundButtonData) => Promise<void>;
 };

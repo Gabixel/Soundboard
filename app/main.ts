@@ -86,7 +86,6 @@ let mainWindowPreferences: Electron.WebPreferences = {
  * The soundbutton editor window.
  */
 let editButtonWindow: BrowserWindow;
-let editorHasUnsavedChanges = false;
 
 const editButtonWindowPath = path.join(appWindowRootPath, "editButtonWindow");
 let editButtonWindowPreferences: Electron.WebPreferences = {
@@ -132,6 +131,7 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	// Load HTML into the window
 	mainWindow.loadFile(path.join(mainWindowPath, "/mainWindow.html"));
 
+	// Dev tools
 	if (!isProduction) {
 		mainWindow.webContents.openDevTools({
 			mode: "detach",
@@ -141,14 +141,14 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 }
 
 function createEditButtonWindow(
-	id: string,
-	buttonData: SoundButtonData,
+	id_original: string,
+	buttonData_original: SoundButtonData,
 	screenWidth: number,
 	screenHeight: number
 ) {
 	if (mainWindow == null || editButtonWindow != null) return;
 
-	let name = buttonData.title;
+	let name = buttonData_original.title;
 
 	let title = "Edit button";
 	if (name != null) {
@@ -202,53 +202,32 @@ function createEditButtonWindow(
 		// Note: do not use `handleOnce` since the editor page can be reloaded
 		// TODO: prevent CTRL-R ?
 		ipcMain.handle("editor-request-buttondata", (_e, _args) => {
-			return { id, buttonData };
+			return { id: id_original, buttonData: buttonData_original };
 		});
 
 		// On submit
 		ipcMain.handleOnce("editor-update-buttondata", (_e, id, buttonData) => {
 			saveChanges(id, buttonData);
-			editButtonWindow.close();
+			editButtonWindow.destroy();
+		});
+
+		// Check on close to see if there are unsaved changes
+		ipcMain.handle("editor-onclose-compare-changes", (_e, id, buttonData) => {
+			// Should never happen
+			// if (id_original != id) { }
+
+			if(shouldQuitCheckingChanges(id, buttonData)) {
+				editButtonWindow.destroy();
+			}
 		});
 
 		editButtonWindow.show();
 	});
 
-	// CLosing window
+	// Closing window
 	editButtonWindow.on("close", (e) => {
-		if (!editorHasUnsavedChanges) {
-			return;
-		}
-
-		let testUnsavedChanges = dialog.showMessageBoxSync(editButtonWindow, {
-			title: "Unsaved changes",
-			message: "Did you want to save your changes?",
-			type: "warning",
-			buttons: ["Save and close", "Forget changes", "Wait, go back"],
-			defaultId: 2,
-			detail: "",
-			noLink: true,
-		});
-
-		console.log(testUnsavedChanges);
-
-		// Note: the 'x' button is the equivalent of pressing "No"
-		switch (testUnsavedChanges) {
-			// "Save and exit"
-			case 0:
-				// save changes and close
-				// todo: saveChanges();
-				return;
-
-			// "Go back"
-			case 2:
-				e.preventDefault();
-				return;
-
-			// "Discard"
-			default:
-				return;
-		}
+		e.preventDefault();
+		editButtonWindow.webContents.send("editor-ask-compare-changes");
 	});
 
 	// Dispose window
@@ -256,13 +235,56 @@ function createEditButtonWindow(
 		editButtonWindow.removeAllListeners();
 		ipcMain.removeHandler("editor-request-buttondata");
 		ipcMain.removeHandler("editor-update-buttondata");
+		ipcMain.removeHandler("editor-onclose-compare-changes");
 		editButtonWindow = null;
 	});
 
-	function saveChanges(id: string, buttonData: SoundButtonData) {
+	function saveChanges(id: string, buttonData: SoundButtonData): void {
 		// Send updated button
 		mainWindow.webContents.send("buttondata-updated", id, buttonData);
-		editorHasUnsavedChanges = false;
+	}
+
+	function shouldQuitCheckingChanges(
+		id: string,
+		buttonData: SoundButtonData
+	): boolean {
+		let editorHasUnsavedChanges =
+			JSON.stringify(buttonData_original) != JSON.stringify(buttonData);
+
+		if (editorHasUnsavedChanges) {
+			/**
+			 * Possible outputs:
+			 * 0 - Wait/Cancel,
+			 * 1 - Forget/Discard,
+			 * 2 - Save & close.
+			 * Note: the 'X' button is equal to pressing the first element (0).
+			 */
+			let prompt = dialog.showMessageBoxSync(editButtonWindow, {
+				title: "Unsaved changes",
+				message: "Did you want to save your changes?",
+				type: "warning",
+				buttons: ["Wait, go back", "Forget changes", "Save and close"],
+				defaultId: 0, // "Wait/Cancel"
+				// detail: "",
+				noLink: true,
+			});
+
+			switch (prompt) {
+				// "Wait/Cancel"
+				case 0:
+					return false;
+
+				// "Save and close"
+				case 2:
+					// Save changes and close
+					saveChanges(id, buttonData);
+				// (1) "Forget/Discard"
+				default:
+					return true;
+			}
+		}
+
+		return true;
 	}
 
 	/* Final load */
@@ -272,6 +294,7 @@ function createEditButtonWindow(
 		path.join(editButtonWindowPath, "editButtonWindow.html")
 	);
 
+	// Dev tools
 	if (!isProduction) {
 		editButtonWindow.webContents.openDevTools({
 			mode: "detach",

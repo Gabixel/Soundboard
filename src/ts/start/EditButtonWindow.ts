@@ -12,6 +12,14 @@ abstract class EditButtonWindow extends Main {
 			(await buttonDataRequest).buttonData
 		);
 
+		// Send id and data when requested (during `close` event) for comparing changes
+		SoundboardApi.editButtonWindow.onAskCompareChanges(() => {
+			SoundboardApi.editButtonWindow.sendCompareChanges(
+				this._editorForm.buttonId,
+				this._editorForm.buttonData
+			);
+		});
+
 		// $(window).one("keydown", (e) => {
 		// 	if (e.key === "Escape") {
 		// TODO: close window by keypress (probably with an IPC call)

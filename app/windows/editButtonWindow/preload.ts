@@ -11,6 +11,16 @@ const api: EditButtonWindowApiBridge = {
 
 	updateButtonData: async (id, buttonData): Promise<void> =>
 		ipcRenderer.invoke("editor-update-buttondata", id, buttonData),
+
+	onAskCompareChanges: (callback: () => void): void => {
+		ipcRenderer.on("editor-ask-compare-changes", callback);
+	},
+
+	sendCompareChanges: async (
+		id: string,
+		buttonData: SoundButtonData
+	): Promise<void> =>
+		ipcRenderer.invoke("editor-onclose-compare-changes", id, buttonData),
 };
 
 type EditButtonWindowApiBridge = {
@@ -33,6 +43,10 @@ type EditButtonWindowApiBridge = {
 	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
+
+	onAskCompareChanges: (callback: () => void) => void;
+
+	sendCompareChanges: (id: string, buttonData: SoundButtonData) => Promise<void>;
 };
 
 const styles = [
