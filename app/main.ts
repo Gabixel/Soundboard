@@ -216,7 +216,7 @@ function createEditButtonWindow(
 			// Should never happen
 			// if (id_original != id) { }
 
-			if(shouldQuitCheckingChanges(id, buttonData)) {
+			if (shouldQuitCheckingChanges(id, buttonData)) {
 				editButtonWindow.destroy();
 			}
 		});
@@ -264,7 +264,8 @@ function createEditButtonWindow(
 				message: "Did you want to save your changes?",
 				type: "warning",
 				buttons: ["Wait, go back", "Forget changes", "Save and close"],
-				defaultId: 0, // "Wait/Cancel"
+				defaultId: 2, // Focused button
+				cancelId: 0, // Esc key equivalent
 				// detail: "",
 				noLink: true,
 			});
