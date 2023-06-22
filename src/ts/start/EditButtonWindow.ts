@@ -13,15 +13,28 @@ abstract class EditButtonWindow extends Main {
 		);
 
 		// Send id and data when requested (during `close` event) for comparing changes
-		SoundboardApi.editButtonWindow.onAskCompareChanges(
-			() => this.compareChangesAndClose()
+		SoundboardApi.editButtonWindow.onAskCompareChanges(() =>
+			this.compareChangesAndClose()
 		);
 
-		$(document).on("keydown", (e) => {
-			// Try closing window when pressing escape
-			if (e.key === "Escape") {
-				this.compareChangesAndClose();
+		// Setup keydown event, trying to make it syncrhonous to prevent racing conditions
+		this.triggerKeyDown();
+	}
+
+	private static triggerKeyDown(
+		e: JQuery.KeyDownEvent<Document, undefined, Document, Document> = null
+	) {
+		if (e !== null) {
+			switch (e.key) {
+				// Try closing window when pressing escape
+				case "Escape":
+					this.compareChangesAndClose();
+					break;
 			}
+		}
+
+		$(document).one("keydown", (e) => {
+			this.triggerKeyDown(e);
 		});
 	}
 
@@ -29,8 +42,7 @@ abstract class EditButtonWindow extends Main {
 	 * Called when the window gets closed (receiving a trigger from the main process) or when the user presses the escape key.
 	 */
 	private static compareChangesAndClose(): void {
-		// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
-		this._editorForm.$focusedFormElement.trigger("blur");
+		this._editorForm.unfocusInputs();
 
 		SoundboardApi.editButtonWindow.sendCompareChanges(
 			this._editorForm.buttonId,

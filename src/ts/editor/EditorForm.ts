@@ -1,12 +1,7 @@
 class EditorForm extends Logger {
 	private DATA_PREFIX: string = "#button-data-";
 
-	public $form: JQuery<HTMLFormElement>;
-
-	private _$inputs: JQuery<HTMLInputElement>;
-	public get $focusedFormElement(): JQuery<HTMLInputElement> {
-		return this.$form.find("input:focus") as JQuery<HTMLInputElement>;
-	}
+	private _$form: JQuery<HTMLFormElement>;
 
 	private _buttonId: string;
 	public get buttonId(): string {
@@ -18,10 +13,14 @@ class EditorForm extends Logger {
 		return this._buttonData;
 	}
 
+	private get _$focusedFormElement(): JQuery<HTMLInputElement> {
+		return this._$form.find("input:focus") as JQuery<HTMLInputElement>;
+	}
+
 	constructor($form: JQuery<HTMLFormElement>) {
 		super();
 
-		this.$form = $form;
+		this._$form = $form;
 
 		this.setupInputsEvents();
 		this.setupFormSubmitEvent();
@@ -34,7 +33,7 @@ class EditorForm extends Logger {
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
-		this._$inputs = $()
+		$()
 			// Title
 			.add($(`${this.DATA_PREFIX}title`).val(buttonData.title))
 			// Color
@@ -74,7 +73,12 @@ class EditorForm extends Logger {
 		return this;
 	}
 
-	private setupInputsEvents() {
+	public unfocusInputs(): void {
+		// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
+		this._$focusedFormElement.trigger("blur");
+	}
+
+	private setupInputsEvents(): void {
 		// TODO: make every element call a function to update the preview
 
 		$input("#button-data-title").on("change", (e) => {
@@ -126,24 +130,38 @@ class EditorForm extends Logger {
 		}
 	}
 
-	private setupFormSubmitEvent() {
+	private setupFormSubmitEvent(): void {
 		// Prevent default submit feature (since even a text input can trigger this by pressing "enter" for example)
-		this.$form.on("submit", (e) => e.preventDefault());
+		this._$form.on("submit", (e) => e.preventDefault());
 
 		// Use a specific button for submit
-		$("input#editor-submit").on("click", (_e) => {
-			SoundboardApi.editButtonWindow.updateButtonData(
-				this._buttonId,
-				this._buttonData
-			);
-
-			EditorForm.logInfo(
+		let $submitButton = $("input#editor-submit").one("click", (_e) => {
+			EditorForm.logDebug(
 				"Submit button",
 				"Form submitted\n",
 				"Data:",
 				this._buttonData
 			);
+
+			this.submitForm();
 		});
+
+		// Submit when pressing enter on text inputs
+		$('input[type="text"').on("keydown", (e) => {
+			if (e.key != "Enter") {
+				return;
+			}
+
+			this.unfocusInputs();
+			$submitButton.trigger("click");
+		});
+	}
+
+	private submitForm(): void {
+		SoundboardApi.editButtonWindow.updateButtonData(
+			this._buttonId,
+			this._buttonData
+		);
 	}
 
 	private updateProperty(key: SoundButtonProperties, data: any) {
