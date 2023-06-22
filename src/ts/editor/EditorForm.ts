@@ -13,7 +13,7 @@ class EditorForm extends Logger {
 		return this._buttonData;
 	}
 
-	private get _$focusedFormElement(): JQuery<HTMLInputElement> {
+	private get _$focusedFormInput(): JQuery<HTMLInputElement> {
 		return this._$form.find("input:focus") as JQuery<HTMLInputElement>;
 	}
 
@@ -75,7 +75,7 @@ class EditorForm extends Logger {
 
 	public unfocusInputs(): void {
 		// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
-		this._$focusedFormElement.trigger("blur");
+		this._$focusedFormInput.trigger("blur");
 	}
 
 	private setupInputsEvents(): void {
@@ -102,9 +102,6 @@ class EditorForm extends Logger {
 
 		// File picker
 		$input("#button-path-file").on("change", (e) => {
-			// Don't store the file in the hidden file input
-			e.preventDefault();
-
 			// TODO: check if valid?
 			let path = e.target.files[0].path;
 
@@ -112,10 +109,13 @@ class EditorForm extends Logger {
 
 			// Apply path data (from hidden file input)
 			$("#button-data-path").val(path);
+			// Don't store the file in the hidden file input
+			$input("#button-path-file").val(null);
 			this.updateProperty("path", StringUtilities.encodeFilePath(path));
 		});
 
 		$input("#button-data-path").on("change", (e) => {
+			// TODO: warn if it's invalid?
 			let path = e.target.value;
 
 			// Apply path data (from text input)
