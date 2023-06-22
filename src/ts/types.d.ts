@@ -36,6 +36,10 @@ type AudioPoolGroup = {
 	forcedStop: boolean;
 };
 
+/**
+ * Sound button metadata
+ */
+// Keep updated with "~/src/ts/types.d.ts"
 type SoundButtonData = {
 	/**
 	 * The unrendered text
@@ -63,7 +67,17 @@ type SoundButtonData = {
 	 */
 	path?: string;
 };
+type SoundButtonProperties =
+	| "title"
+	| "color"
+	| "image"
+	| "tags"
+	| "time"
+	| "path";
 
+/**
+ * Timings settings for the {@link SoundButtonData}
+ */
 type AudioTimings = {
 	/**
 	 * Start time (in milliseconds)
@@ -78,11 +92,6 @@ type AudioTimings = {
 	 * Ending condition
 	 */
 	condition: "at" | "after";
-};
-
-type ElectronFile = File & {
-	path: string;
-	name: string;
 };
 
 namespace Color {
@@ -101,3 +110,13 @@ namespace Color {
 		l: number;
 	};
 }
+
+// Keep updated with:
+// - "~/app/types.d.ts"
+type ContextMenuArgs =
+	| null
+	| (
+			| { type: "soundbutton"; id: string; buttonData: SoundButtonData }
+			| { type: "test1"; coolThing: number }
+			| { type: "test999"; a: 1; b: 2 }
+	  );

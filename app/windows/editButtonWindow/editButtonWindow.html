@@ -14,17 +14,28 @@
 
 <body style="background-color: var(--window-bg, #000);">
 	<div id="soundbutton-editor" style="opacity: 0;">
-		<div id="soundbutton-preview"></div>
+		<div id="soundbutton-preview" style="display: flex; justify-content: center; align-items: center;">
+			<!-- TODO: use preview div -->
+			<span style="text-align: center; padding: 2ch; border: 1px solid white;">preview will go here</span>
+		</div>
 		<form action="#" id="metadata-editor">
-			<!-- TODO: real-time button visualization (on a sidebar?) -->
-			<label for="button-path">Button text:</label>
-			<input type="text" placeholder="Bruh sound effect">
-			<br />
-			<label for="button-path">Button file path:</label>
-			<input type="file" id="button-path">
+			<div>
+				<label for="button-data-title">Text:</label>
+				<input type="text" id="button-data-title" placeholder="&#129345 Drum roll">
+			</div>
+			<div class="color">
+				<label for="button-data-color">Color:</label>
+				<input type="color" id="button-data-color" value="#000000">
+			</div>
+			<div>
+				<label for="button-data-path">File path:</label>
+				<input type="text" id="button-data-path" placeholder="/your/path">
+				<button type="button" id="button-path-btn"><label for="button-path-file">Browse</label></button>
+				<input type="file" id="button-path-file">
+			</div>
 			<br />
 		</form>
-		<input type="submit" value="submit" id="editor-submit" form="metadata-editor">
+		<input type="button" value="submit" id="editor-submit" form="metadata-editor" autofocus>
 	</div>
 	<script defer type="text/javascript" src="../../../resources/scripts/jquery-3.6.0.min.js"></script>
 </body>

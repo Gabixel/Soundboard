@@ -54,7 +54,7 @@ abstract class MainWindow extends Main {
 		// Setup context menu
 		// TODO: class?
 		$(document).on("contextmenu", () => {
-			SoundboardApi.openContextMenu();
+			SoundboardApi.mainWindow.openContextMenu();
 		});
 
 		$(window).on("dragover", (e) => {
@@ -62,8 +62,13 @@ abstract class MainWindow extends Main {
 			e.originalEvent.dataTransfer.dropEffect = "none";
 			return false;
 		});
+
+		SoundboardApi.mainWindow.onButtonDataUpdate((id, buttonData) => {
+			SoundButtonManager.updateButton(id, buttonData);
+		});
 	}
 
+	// TODO: include with future loader event
 	public static showWindowContent(): void {
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}

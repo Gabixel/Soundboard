@@ -77,8 +77,10 @@ const webPreferences: Electron.WebPreferences = {
 let mainWindow: BrowserWindow;
 
 const mainWindowPath = path.join(appWindowRootPath, "mainWindow");
-let mainWindowPreferences = { ...webPreferences };
-mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
+let mainWindowPreferences: Electron.WebPreferences = {
+	...webPreferences,
+	preload: path.join(mainWindowPath, "preload.js"),
+};
 
 /**
  * The soundbutton editor window.
@@ -86,11 +88,10 @@ mainWindowPreferences.preload = path.join(mainWindowPath, "preload.js");
 let editButtonWindow: BrowserWindow;
 
 const editButtonWindowPath = path.join(appWindowRootPath, "editButtonWindow");
-let editButtonWindowPreferences = { ...webPreferences };
-editButtonWindowPreferences.preload = path.join(
-	editButtonWindowPath,
-	"preload.js"
-);
+let editButtonWindowPreferences: Electron.WebPreferences = {
+	...webPreferences,
+	preload: path.join(editButtonWindowPath, "preload.js"),
+};
 
 //#region Init app
 function createMainWindow(screenWidth: number, screenHeight: number) {
@@ -130,6 +131,7 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	// Load HTML into the window
 	mainWindow.loadFile(path.join(mainWindowPath, "/mainWindow.html"));
 
+	// Dev tools
 	if (!isProduction) {
 		mainWindow.webContents.openDevTools({
 			mode: "detach",
@@ -138,15 +140,15 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 	}
 }
 
-// TODO: remove 'any'
 function createEditButtonWindow(
-	buttonData: any,
+	id_original: string,
+	buttonData_original: SoundButtonData,
 	screenWidth: number,
 	screenHeight: number
 ) {
-	if (mainWindow == null) return;
+	if (mainWindow == null || editButtonWindow != null) return;
 
-	let name = buttonData.title;
+	let name = buttonData_original.title;
 
 	let title = "Edit button";
 	if (name != null) {
@@ -184,6 +186,7 @@ function createEditButtonWindow(
 
 		autoHideMenuBar: !isProduction,
 		maximizable: false,
+		minimizable: false,
 
 		parent: mainWindow,
 		modal: true,
@@ -192,18 +195,113 @@ function createEditButtonWindow(
 		webPreferences: editButtonWindowPreferences,
 	});
 
+	/* Editor API */
+
+	// Opening window
 	editButtonWindow.once("ready-to-show", () => {
+		// Note: do not use `handleOnce` since the editor page can be reloaded
+		// TODO: prevent CTRL-R ?
+		ipcMain.handle("editor-request-buttondata", (_e, _args) => {
+			return { id: id_original, buttonData: buttonData_original };
+		});
+
+		// On submit
+		ipcMain.handleOnce("editor-update-buttondata", (_e, id, buttonData) => {
+			saveChanges(id, buttonData);
+			editButtonWindow.destroy();
+		});
+
+		// Check on close to see if there are unsaved changes
+		ipcMain.handle("editor-onclose-compare-changes", (_e, id, buttonData) => {
+			// Should never happen
+			// if (id_original != id) { }
+
+			if (shouldQuitCheckingChanges(id, buttonData)) {
+				editButtonWindow.destroy();
+			}
+		});
+
 		editButtonWindow.show();
 	});
 
-	editButtonWindow.once("close", () => {
+	// Closing window
+	editButtonWindow.on("close", (e) => {
+		e.preventDefault();
+		editButtonWindow.webContents.send("editor-ask-compare-changes");
+	});
+
+	// Dispose window
+	editButtonWindow.on("closed", () => {
+		editButtonWindow.removeAllListeners();
+		ipcMain.removeHandler("editor-request-buttondata");
+		ipcMain.removeHandler("editor-update-buttondata");
+		ipcMain.removeHandler("editor-onclose-compare-changes");
 		editButtonWindow = null;
 	});
+
+	function saveChanges(id: string, buttonData: SoundButtonData): void {
+		// Send updated button
+		mainWindow.webContents.send("buttondata-updated", id, buttonData);
+	}
+
+	function shouldQuitCheckingChanges(
+		id: string,
+		buttonData: SoundButtonData
+	): boolean {
+		let editorHasUnsavedChanges =
+			JSON.stringify(buttonData_original) != JSON.stringify(buttonData);
+
+		if (editorHasUnsavedChanges) {
+			/**
+			 * Possible outputs:
+			 * 0 - Wait/Cancel,
+			 * 1 - Forget/Discard,
+			 * 2 - Save & close.
+			 * Note: the 'X' button is equal to pressing the first element (0).
+			 */
+			let prompt = dialog.showMessageBoxSync(editButtonWindow, {
+				title: "Unsaved changes",
+				message: "Did you want to save your changes?",
+				type: "warning",
+				buttons: ["Wait, go back", "Forget changes", "Save and close"],
+				defaultId: 2, // Focused button
+				cancelId: 0, // Esc key equivalent
+				// detail: "",
+				noLink: true,
+			});
+
+			switch (prompt) {
+				// "Wait/Cancel"
+				case 0:
+					return false;
+
+				// "Save and close"
+				case 2:
+					// Save changes and close
+					saveChanges(id, buttonData);
+				// (1) "Forget/Discard"
+				default:
+					return true;
+			}
+		}
+
+		return true;
+	}
+
+	/* Final load */
 
 	// Load HTML into the window
 	editButtonWindow.loadFile(
 		path.join(editButtonWindowPath, "editButtonWindow.html")
 	);
+
+	// Dev tools
+	if (!isProduction) {
+		editButtonWindow.webContents.openDevTools({
+			mode: "detach",
+			activate: true,
+		});
+	}
 }
 
 function showContextMenu(
@@ -248,12 +346,22 @@ function showContextMenu(
 }
 
 // TODO: Different OS variants(?)
-async function openFileInExplorer(path: string) {
-	await fileSystem.access(path).then(
+async function openFileInExplorer(filePath: string): Promise<void> {
+	// Empty path
+	if (filePath == "") {
+		console.log("Path is empty");
+		return;
+	}
+
+	// TODO: add more safety if path is invalid?
+	// TODO: open containing folder if file no longer exists + warn the user?
+
+	// Try to open file
+	await fileSystem.access(filePath).then(
 		() => {
 			// Success
-			console.log(`Path: "${path}"`);
-			shell.showItemInFolder(path);
+			console.log(`Path: "${filePath}"`);
+			shell.showItemInFolder(filePath);
 		},
 		(error) => {
 			console.log(error);
@@ -312,59 +420,63 @@ app.setAboutPanelOptions({
 	iconPath: undefined,
 });
 
-//#endregion
+//#endregion Init App
 
-//#region IPC
+//#region API
+
+//#region Global API
 function initIpc() {
-	ipcMain
-		.on("open-context-menu", (_e, args: ContextMenuArgs) => {
-			// console.log(event);
-			// console.log(event.sender);
-			// console.log(args);
+	ipcMain.on("open-context-menu", (_e, args: ContextMenuArgs) => {
+		// console.log(event);
+		// console.log(event.sender);
+		// console.log(args);
 
-			const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
-			const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
+		const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
+		const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
-			let extraMenuItems: MenuItem[] = [];
+		let extraMenuItems: MenuItem[] = [];
 
-			if (args != null) {
-				switch (args.type) {
-					case "soundbutton":
-						extraMenuItems.push(
-							new MenuItem({
-								label: "Edit",
-								click: () => {
-									createEditButtonWindow(
-										args.buttonData,
-										primaryScreenWidth,
-										primaryScreenHeight
-									);
-								},
-							}),
-							new MenuItem({
-								label: "Open in file explorer",
-								click: () => {
-									openFileInExplorer(decodeURIComponent(args.buttonData.path));
-								},
-							})
-						);
-				}
+		if (args != null) {
+			switch (args.type) {
+				case "soundbutton":
+					extraMenuItems.push(
+						new MenuItem({
+							label: "Edit",
+							click: () => {
+								createEditButtonWindow(
+									args.id,
+									args.buttonData,
+									primaryScreenWidth,
+									primaryScreenHeight
+								);
+							},
+						}),
+						new MenuItem({
+							label: "Open in file explorer",
+							click: () => {
+								openFileInExplorer(decodeURIComponent(args.buttonData.path ?? ""));
+							},
+						})
+					);
 			}
+		}
 
-			// showContextMenu(extraMenu, e.x, e.y);
-			showContextMenu(null, null, extraMenuItems);
-		})
-		// TODO:
-		// .on("is-path-file", async (_e, args) => {
-		// 	console.log(await fileSystem.lstat(args));
-		// });
+		// showContextMenu(extraMenu, e.x, e.y);
+		showContextMenu(null, null, extraMenuItems);
+	});
+	// TODO:
+	// .on("is-path-file", async (_e, args) => {
+	// 	console.log(await fileSystem.lstat(args));
+	// });
 
-		ipcMain.handle("get-app-path", (_e) => {
-			return path.join(__dirname, "../");
-		});
+	ipcMain.handle("get-app-path", (_e) => {
+		return path.join(__dirname, "../");
+	});
 
-		ipcMain.handle("join-paths", (_e, ...paths: string[]) => {
-			return path.join(...paths);
-		});
+	ipcMain.handle("join-paths", (_e, ...paths: string[]) => {
+		return path.join(...paths);
+	});
 }
-//#endregion
+//#endregion Global API
+
+//#endregion API

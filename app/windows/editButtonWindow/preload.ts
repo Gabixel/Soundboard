@@ -1,8 +1,26 @@
-import { contextBridge } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
 const SOURCES_ROOT = "../../../src";
 
 const api: EditButtonWindowApiBridge = {
 	isProduction: process.env.NODE_ENV === "production",
+
+	getAppPath: async (): Promise<string> => ipcRenderer.invoke("get-app-path"),
+
+	getButtonData: async (): Promise<SoundButtonData> =>
+		ipcRenderer.invoke("editor-request-buttondata"),
+
+	updateButtonData: async (id, buttonData): Promise<void> =>
+		ipcRenderer.invoke("editor-update-buttondata", id, buttonData),
+
+	onAskCompareChanges: (callback: () => void): void => {
+		ipcRenderer.on("editor-ask-compare-changes", callback);
+	},
+
+	sendCompareChanges: async (
+		id: string,
+		buttonData: SoundButtonData
+	): Promise<void> =>
+		ipcRenderer.invoke("editor-onclose-compare-changes", id, buttonData),
 };
 
 type EditButtonWindowApiBridge = {
@@ -11,14 +29,24 @@ type EditButtonWindowApiBridge = {
 	 */
 
 	isProduction: boolean;
+	getAppPath: () => Promise<string>;
 
 	/*
 	 * EditButtonWindow
 	 */
 
+	getButtonData: () => Promise<SoundButtonData>;
+	/**
+	 * Sends the updated soundbutton data to the main process
+	 * @param buttonData The new data for the soundbutton
+	 */
+	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
-	// TODO: editButton
+
+	onAskCompareChanges: (callback: () => void) => void;
+
+	sendCompareChanges: (id: string, buttonData: SoundButtonData) => Promise<void>;
 };
 
 const styles = [
@@ -35,12 +63,13 @@ const styles = [
 const scripts = [
 	"utility/Logger",
 	"utility/JQueryFixes",
+	"utility/EMath",
 	"utility/SoundboardApi",
 	"utility/StringUtilities",
 
 	"grid/SoundButtonManager",
 
-	"editor/FormSubmitter",
+	"editor/EditorForm",
 
 	"start/Main",
 	"start/EditButtonWindow",

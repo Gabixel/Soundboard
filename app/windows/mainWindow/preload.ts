@@ -17,7 +17,15 @@ const api: MainWindowApiBridge = {
 
 	joinPaths: async (...paths: string[]): Promise<string> =>
 		ipcRenderer.invoke("join-paths", ...paths),
+
+	onButtonDataUpdate: (callback) => {
+		ipcRenderer.on("buttondata-updated", (_e, id, buttonData) => {
+			callback(id, buttonData);
+		});
+	},
 };
+
+
 
 // Keep updated with "~/src/ts/utility/SoundboardApi.ts"
 type MainWindowApiBridge = {
@@ -26,6 +34,7 @@ type MainWindowApiBridge = {
 	 */
 
 	isProduction: boolean;
+	getAppPath: () => Promise<string>;
 
 	/*
 	 * MainWindow
@@ -33,8 +42,8 @@ type MainWindowApiBridge = {
 
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
-	getAppPath: () => Promise<string>;
 	joinPaths: (...paths: string[]) => Promise<string>;
+	onButtonDataUpdate: (callback: (id: string, buttonData: SoundButtonData) => void) => void;
 };
 
 const styles = [
@@ -54,7 +63,7 @@ const styles = [
 const scripts = [
 	"utility/Logger",
 	"utility/JQueryFixes",
-	"utility/ExtendedMath",
+	"utility/EMath",
 	"utility/EventFunctions",
 	"utility/SoundBoardApi",
 	"utility/UserInterface",

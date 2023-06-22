@@ -1,8 +1,10 @@
-@import "utils/debug";
+// @import "utils/debug";
 @import "utils/functions";
 @import "utils/variables";
 
 body {
+	@focus-color: #008fb3;
+	@focus-bg: fade(@focus-color, 10%);
 	color: var(--window-fg);
 
 	padding: 10px; // .625em
@@ -11,6 +13,42 @@ body {
 	transition-duration: 0.25s;
 	transition-timing-function: linear;
 
+	input[type="text"] {
+		background: transparent;
+		border-bottom: 1px solid #fff;
+		color: #fff;
+
+		transition: background-color 0.2s, border-bottom-color 0.2s;
+		border-radius: 5px 5px 0 0;
+
+		&:focus-within {
+			background-color: @focus-bg;
+			border-bottom-color: @focus-color;
+		}
+	}
+
+	input[type="text"],
+	input[type="color"] {
+		background-color: rgb(255 255 255 / 0.1);
+	}
+
+	input[type="color"] {
+		// Remove webkit border and padding
+		border: 0;
+		padding: 0;
+
+		max-height: 1.5rem;
+
+		transition: border-bottom-color 0.2s;
+		border-radius: 5px 5px 0 0;
+		overflow: hidden;
+
+		border-bottom: 1px solid #fff;
+		&:focus-within {
+			border-bottom-color: @focus-color;
+		}
+	}
+
 	#soundbutton-editor {
 		.fill-size();
 
@@ -18,64 +56,78 @@ body {
 		transition-duration: 0.25s;
 		transition-timing-function: ease-out;
 
-		// display: flex;
-		// flex-direction: row;
-		// flex-wrap: nowrap;
-		// justify-content: flex-start;
-		// align-items: flex-start;
-
 		display: grid;
-		grid-template-rows: 1fr 2fr 2ch;
+		grid-template-rows: 1fr 2fr auto;
 		grid-template-columns: 100%;
-
-		input#button-path {
-			width: 100px;
-			word-wrap: normal;
-			word-break: normal;
-			text-overflow: clip;
-			white-space: nowrap;
-		}
-
-		input#button-path::before {
-			content: "asdasd";
-			position: relative;
-			opacity: 1;
-		}
-		input#button-path:not(::before) {
-			display: none;
-		}
-
-		input#button-path::file-selector-button,
-		input#button-path::-webkit-file-upload-button {
-			width: 50%;
-			height: 100%;
-			background-color: red;
-			font-weight: bold;
-
-			display: none;
-		}
-
-		// button, input[type="submit"], input[type="button"] {
-		// 	width: 10px;
-		// }
 
 		#soundbutton-preview {
 			grid-row: 1 / 2;
 		}
 
+		// TODO: flex
 		form#metadata-editor {
-			display: block;
-
 			grid-row: 2 / 3;
 
-			input[type="file"] {
-				// display: none;
-				// width: 40px;
+			// display: inline-block;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			justify-content: flex-start;
+			align-items: flex-start;
+
+			div {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				justify-content: flex-start;
+				align-items: baseline;
+				padding: 5px;
+				gap: 1ch;
+				width: 100%;
+				flex-grow: 0;
+				// flex-basis: 1;
+			}
+
+			input#button-data-title {
+				min-width: 0;
+				width: 80%;
+			}
+
+			div.color {
+				align-items: center;
+
+				// TODO: custom color picker?
+				input#button-data-color {
+					box-shadow: 0 0 5px 0 var(--data-color);
+
+					// Color swatch container
+					&::-webkit-color-swatch-wrapper {
+						padding: 0;
+						border: 0;
+					}
+
+					// Chosen color
+					&::-webkit-color-swatch {
+						padding: 0;
+						border: 0;
+
+						// width: 100%;
+						// height: 100%;
+					}
+				}
+			}
+
+			input#button-data-path {
+				flex-grow: 1;
+			}
+
+			// Hidden file picker for functionality
+			input#button-path-file {
+				display: none;
 			}
 		}
 
 		#editor-submit {
-			// display: none;
 			grid-row: 3 / 4;
 		}
 	}

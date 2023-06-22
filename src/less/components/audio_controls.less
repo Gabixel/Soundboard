@@ -133,9 +133,16 @@
 	#buttons-filter :nth-child(2) {
 		display: flex;
 		align-items: baseline;
+		margin-top: 2px;
 
-		label:first-child {
-			margin-right: 0.3em;
+		div {
+			display: flex;
+			align-items: baseline;
+
+			&:not(:last-child)::after {
+				content: "|";
+				margin: 0 0.5ch;
+			}
 		}
 
 		select {
@@ -145,6 +152,12 @@
 		input[type="checkbox"] {
 			align-self: center;
 			margin: 0 0.15em;
+		}
+
+		label {
+			&:first-child {
+				margin-right: 0.3em;
+			}
 		}
 	}
 

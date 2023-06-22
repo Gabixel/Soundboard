@@ -257,6 +257,10 @@ abstract class AudioPlayer extends Logger {
 		time: AudioTimings,
 		useMultiPool: boolean = false
 	): void {
+		if (!StringUtilities.isDefined(path) || path.length === 0) {
+			return Logger.logDebug(this.addAudio, "Path is not defined");
+		}
+
 		this.logInfo(
 			this.addAudio,
 			`Using path "%c${path}%c"%s`,
