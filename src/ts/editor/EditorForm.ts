@@ -147,7 +147,7 @@ class EditorForm extends Logger {
 		});
 
 		// Submit when pressing enter on text inputs
-		$('input[type="text"').on("keydown", (e) => {
+		$('input[type="text"]').on("keydown", (e) => {
 			if (e.key != "Enter") {
 				return;
 			}
