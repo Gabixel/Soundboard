@@ -14,11 +14,9 @@ abstract class EditButtonWindow extends Main {
 
 		// Send id and data when requested (during `close` event) for comparing changes
 		SoundboardApi.editButtonWindow.onAskCompareChanges(() => {
-			// Check for focused form element (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
-			let $focusedFormElement = this._editorForm.$form.find("input:focus");
-			if ($focusedFormElement.length > 0) {
-				$focusedFormElement.trigger("blur");
-			}
+			// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
+			let $focusedFormElement = this._editorForm.$focusedFormElement;
+			$focusedFormElement.trigger("blur");
 
 			SoundboardApi.editButtonWindow.sendCompareChanges(
 				this._editorForm.buttonId,

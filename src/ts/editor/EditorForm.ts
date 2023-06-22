@@ -4,6 +4,9 @@ class EditorForm extends Logger {
 	public $form: JQuery<HTMLFormElement>;
 
 	private _$inputs: JQuery<HTMLInputElement>;
+	public get $focusedFormElement(): JQuery<HTMLInputElement> {
+		return this.$form.find("input:focus") as JQuery<HTMLInputElement>;
+	}
 
 	private _buttonId: string;
 	public get buttonId(): string {
