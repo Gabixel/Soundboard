@@ -1,22 +1,24 @@
 class EditorForm extends Logger {
 	private DATA_PREFIX: string = "#button-data-";
-	private _$form: JQuery<HTMLFormElement>;
+
+	public $form: JQuery<HTMLFormElement>;
+
+	private _$inputs: JQuery<HTMLInputElement>;
 
 	private _buttonId: string;
 	public get buttonId(): string {
 		return this._buttonId;
 	}
-	
-	
+
 	private _buttonData: SoundButtonData;
 	public get buttonData(): SoundButtonData {
 		return this._buttonData;
-	};
+	}
 
 	constructor($form: JQuery<HTMLFormElement>) {
 		super();
 
-		this._$form = $form;
+		this.$form = $form;
 
 		this.setupInputsEvents();
 		this.setupFormSubmitEvent();
@@ -29,8 +31,10 @@ class EditorForm extends Logger {
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
-		$()
+		this._$inputs = $()
+			// Title
 			.add($(`${this.DATA_PREFIX}title`).val(buttonData.title))
+			// Color
 			.add(
 				$(`${this.DATA_PREFIX}color`)
 					// Apply base color
@@ -57,7 +61,10 @@ class EditorForm extends Logger {
 					// It's just a placeholder
 					.removeProp("value")
 			)
-			.add($(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path ?? "")));
+			// Path
+			.add(
+				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path ?? ""))
+			) as JQuery<HTMLInputElement>;
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -67,12 +74,12 @@ class EditorForm extends Logger {
 	private setupInputsEvents() {
 		// TODO: make every element call a function to update the preview
 
-		($("#button-data-title") as JQuery<HTMLInputElement>).on("change", (e) => {
+		$input("#button-data-title").on("change", (e) => {
 			// Apply title data
 			this.updateProperty("title", e.target.value);
 		});
 
-		($("#button-data-color") as JQuery<HTMLInputElement>)
+		$input("#button-data-color")
 			// Constant color dragging
 			.on("input", (e) => {
 				// Change shadow color
@@ -87,12 +94,11 @@ class EditorForm extends Logger {
 			});
 
 		// File picker
-		($("#button-path-file") as JQuery<HTMLInputElement>).on("change", (e) => {
+		$input("#button-path-file").on("change", (e) => {
 			// Don't store the file in the hidden file input
 			e.preventDefault();
 
 			// TODO: check if valid?
-			// TODO: encode on submit
 			let path = e.target.files[0].path;
 
 			console.log(path);
@@ -102,7 +108,7 @@ class EditorForm extends Logger {
 			this.updateProperty("path", StringUtilities.encodeFilePath(path));
 		});
 
-		($("#button-data-path") as JQuery<HTMLInputElement>).on("change", (e) => {
+		$input("#button-data-path").on("change", (e) => {
 			let path = e.target.value;
 
 			// Apply path data (from text input)
@@ -111,11 +117,15 @@ class EditorForm extends Logger {
 				path.length === 0 ? null : StringUtilities.encodeFilePath(path)
 			);
 		});
+
+		function $input(selector: string): JQuery<HTMLInputElement> {
+			return $(selector);
+		}
 	}
 
 	private setupFormSubmitEvent() {
 		// Prevent default submit feature (since even a text input can trigger this by pressing "enter" for example)
-		this._$form.on("submit", (e) => e.preventDefault());
+		this.$form.on("submit", (e) => e.preventDefault());
 
 		// Use a specific button for submit
 		$("input#editor-submit").on("click", (_e) => {
