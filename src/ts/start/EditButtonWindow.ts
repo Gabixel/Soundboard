@@ -13,25 +13,29 @@ abstract class EditButtonWindow extends Main {
 		);
 
 		// Send id and data when requested (during `close` event) for comparing changes
-		SoundboardApi.editButtonWindow.onAskCompareChanges(() => {
-			// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
-			let $focusedFormElement = this._editorForm.$focusedFormElement;
-			$focusedFormElement.trigger("blur");
+		SoundboardApi.editButtonWindow.onAskCompareChanges(
+			() => this.compareChangesAndClose()
+		);
 
-			SoundboardApi.editButtonWindow.sendCompareChanges(
-				this._editorForm.buttonId,
-				this._editorForm.buttonData
-			);
+		$(document).on("keydown", (e) => {
+			// Try closing window when pressing escape
+			if (e.key === "Escape") {
+				this.compareChangesAndClose();
+			}
 		});
+	}
 
-		// $(window).one("keydown", (e) => {
-		// 	if (e.key === "Escape") {
-		// TODO: close window by keypress (probably with an IPC call)
-		// note: the following code seems to break everything:
-		// it bypasses all events of the main process and just hides the window
-		// window.close();
-		// 	}
-		// });
+	/**
+	 * Called when the window gets closed (receiving a trigger from the main process) or when the user presses the escape key.
+	 */
+	private static compareChangesAndClose(): void {
+		// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
+		this._editorForm.$focusedFormElement.trigger("blur");
+
+		SoundboardApi.editButtonWindow.sendCompareChanges(
+			this._editorForm.buttonId,
+			this._editorForm.buttonData
+		);
 	}
 
 	// TODO: include with future loader event
