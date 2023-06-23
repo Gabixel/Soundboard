@@ -294,14 +294,6 @@ function createEditButtonWindow(
 	editButtonWindow.loadFile(
 		path.join(editButtonWindowPath, "editButtonWindow.html")
 	);
-
-	// Dev tools
-	if (!isProduction) {
-		editButtonWindow.webContents.openDevTools({
-			mode: "detach",
-			activate: true,
-		});
-	}
 }
 
 function showContextMenu(
