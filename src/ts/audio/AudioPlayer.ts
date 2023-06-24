@@ -165,22 +165,11 @@ abstract class AudioPlayer extends Logger {
 					AudioPlayer.play();
 				}
 			});
+
 		$stopButton.on("click", () => {
 			this.logInfo(this.setAudioButtons, "Stop audio button clicked");
 			AudioPlayer.stop();
 		});
-
-		// Play toggle button icon updater
-		// FIXME: Use an array / a semaphore system to check when to change the icon instead of an interval
-		let iconUpdater = setInterval(() => {
-			if (this._playToggleButtonIconIntervalLocked) {
-				return;
-			}
-
-			this.updatePlayToggleButton();
-		}, 10);
-		Main.addInterval(iconUpdater);
-		this._playToggleButtonIconInterval = iconUpdater;
 
 		return this;
 	}
