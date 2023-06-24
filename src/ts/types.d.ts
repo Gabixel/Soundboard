@@ -1,6 +1,6 @@
 type AnyFunc<T> = (...any: any[]) => T;
 
-type AudioGroup = {
+type AudioCouple = {
 	// TODO: rename to singlepoolgroup
 
 	/**

@@ -2,7 +2,7 @@ abstract class AudioPlayer extends Logger {
 	private static _singlePoolVolumeSlider: VolumeSlider;
 	private static _multiPoolVolumeSlider: VolumeSlider;
 
-	private static _audioStore: AudioStoreManager = new AudioStoreManager();
+	private static _audioStore: AudioStore = new AudioStore();
 
 	private static _$audioDevicesSelect: JQuery<HTMLInputElement>;
 	private static _audioDevices: MediaDeviceInfo[];

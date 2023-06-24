@@ -1,11 +1,11 @@
 /**
- * Pool for a `main` and a `playback` audio
+ * Pool for multiple {@link AudioCouple}s.
  */
-class AudioPool extends Logger {
+class AudioCoupleCollection extends Logger {
 	private audioPool: AudioPoolGroup[] = [];
 
 	public add(group: AudioPoolGroup): void {
-		AudioPool.logInfo(this.add, "Adding group to pool:", group);
+		AudioCoupleCollection.logInfo(this.add, "Adding group to pool:", group);
 
 		this.audioPool.push(group);
 
@@ -23,14 +23,14 @@ class AudioPool extends Logger {
 		const index = this.audioPool.indexOf(removingGroup);
 
 		if (index == -1) {
-			AudioPool.logWarn(
+			AudioCoupleCollection.logWarn(
 				this.remove,
 				"Removing pool is already removed:",
 				removingGroup
 			);
 		}
 
-		AudioPool.logInfo(this.remove, "Removing pool:", removingGroup);
+		AudioCoupleCollection.logInfo(this.remove, "Removing pool:", removingGroup);
 
 		this.audioPool.splice(index, 1);
 	}
@@ -46,7 +46,7 @@ class AudioPool extends Logger {
 
 	public pause(): void {
 		this.audioPool.forEach((group) => {
-			AudioPool.logDebug(
+			AudioCoupleCollection.logDebug(
 				this.pause,
 				"Trying to pause " + this.audioPool.length + " audio group(s)\n"
 			);
@@ -59,7 +59,7 @@ class AudioPool extends Logger {
 	}
 
 	public stop(): void {
-		AudioPool.logInfo(this.stop, "Forced multi pool stop");
+		AudioCoupleCollection.logInfo(this.stop, "Forced multi pool stop");
 
 		this.audioPool.forEach((group) => {
 			if(group.forcedStop) return;
