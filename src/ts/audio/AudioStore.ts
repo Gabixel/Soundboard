@@ -1,3 +1,6 @@
+/**
+ * Creates and stores audio tracks, with the help of an {@link AudioCoupleCollection} and instructions sent by an {@link AudioPlayer}.
+ */
 class AudioStore extends Logger {
 	// Main audio group
 	private _mainCouple: AudioCouple;

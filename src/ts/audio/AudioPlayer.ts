@@ -1,6 +1,10 @@
+/**
+ * Audio manager. It handles device changes and sends instructions to the injected {@link AudioStore}.
+ */
 abstract class AudioPlayer extends Logger {
-	private static _singlePoolVolumeSlider: VolumeSlider;
-	private static _multiPoolVolumeSlider: VolumeSlider;
+	// Audio sliders
+	private static _mainCoupleVolumeSlider: VolumeSlider;
+	private static _coupleCollectionVolumeSlider: VolumeSlider;
 
 	private static _audioStore: AudioStore = new AudioStore();
 
@@ -13,8 +17,6 @@ abstract class AudioPlayer extends Logger {
 	private static _audioDevicesInitialized: boolean = false;
 
 	private static _$playToggleButtonIcon: JQuery<HTMLElement>;
-	private static _playToggleButtonIconInterval: NodeJS.Timer;
-	private static _playToggleButtonIconIntervalLocked: boolean;
 
 	public static async initializeAudioDevices(): Promise<void> {
 		this._$audioDevicesSelect = $("#audio-output-select");
@@ -193,42 +195,42 @@ abstract class AudioPlayer extends Logger {
 		const decimals = 4;
 		const exponentialBase = 100;
 
-		this._singlePoolVolumeSlider = new VolumeSlider(
+		this._mainCoupleVolumeSlider = new VolumeSlider(
 			$singlePoolSlider,
 			() => {
 				// Update existing audio volume
-				this._audioStore.setSinglePoolVolume(this._singlePoolVolumeSlider.value);
+				this._audioStore.setSinglePoolVolume(this._mainCoupleVolumeSlider.value);
 
 				// Log new volume
 				this.logDebug(
 					"(single pool volume slider change)",
 					"Volume:",
-					this._singlePoolVolumeSlider.value
+					this._mainCoupleVolumeSlider.value
 				);
 			},
 			decimals,
 			exponentialBase
 		);
 
-		this._multiPoolVolumeSlider = new VolumeSlider(
+		this._coupleCollectionVolumeSlider = new VolumeSlider(
 			$multiPoolSlider,
 			() => {
 				// Update existing audio volume
-				this._audioStore.setMultiPoolVolume(this._multiPoolVolumeSlider.value);
+				this._audioStore.setMultiPoolVolume(this._coupleCollectionVolumeSlider.value);
 
 				// Log new volume
 				this.logDebug(
 					"(multi pool volume slider change)",
 					"Volume:",
-					this._multiPoolVolumeSlider.value
+					this._coupleCollectionVolumeSlider.value
 				);
 			},
 			decimals,
 			exponentialBase
 		);
 
-		this._singlePoolVolumeSlider.$slider.trigger("input");
-		this._multiPoolVolumeSlider.$slider.trigger("input");
+		this._mainCoupleVolumeSlider.$slider.trigger("input");
+		this._coupleCollectionVolumeSlider.$slider.trigger("input");
 
 		this.logInfo(
 			this.initVolumeSliders,
@@ -241,67 +243,77 @@ abstract class AudioPlayer extends Logger {
 		return this;
 	}
 
-	public static addAudio(
-		path: string,
-		time: AudioTimings,
-		useMultiPool: boolean = false
-	): void {
-		if (!StringUtilities.isDefined(path) || path.length === 0) {
-			return Logger.logDebug(this.addAudio, "Path is not defined");
-		}
+	/**
+	 * 
+	 * @param audioPath 
+	 * @param timings 
+	 * @param useMultiPool 
+	 */
+	public start(audioPath: string, timings: AudioTimings, useMultiPool: boolean): void {
 
-		this.logInfo(
-			this.addAudio,
-			`Using path "%c${path}%c"%s`,
-			"color: #03fc98;",
-			"",
-			"\n- Start time:",
-			time.start,
-			"(ms)\n- End time:",
-			time.end,
-			`(ms)\n- Condition: "${time.condition}"`
-		);
-
-		// TODO: clamp time? (e.g. -1000ms = 0ms)
-
-		this.createAndPlayAudio(path, time, useMultiPool);
 	}
 
-	private static createAndPlayAudio(
-		path: string,
-		time: AudioTimings,
-		useMultiPool: boolean
-	): void {
-		if (!useMultiPool) {
-			this._audioStore.addToSinglePool(path, time);
-			return;
-		}
+	// public static addAudio(
+	// 	path: string,
+	// 	time: AudioTimings,
+	// 	useMultiPool: boolean = false
+	// ): void {
+	// 	if (!StringUtilities.isDefined(path) || path.length === 0) {
+	// 		return Logger.logDebug(this.addAudio, "Path is not defined");
+	// 	}
 
-		// Limited sounds to prevent memory or human ear issues
-		if (this._audioStore.isLimitReached) {
-			this.logWarn(this.createAndPlayAudio, "Pool limit exceeded.");
-			return;
-		}
+	// 	this.logInfo(
+	// 		this.addAudio,
+	// 		`Using path "%c${path}%c"%s`,
+	// 		"color: #03fc98;",
+	// 		"",
+	// 		"\n- Start time:",
+	// 		time.start,
+	// 		"(ms)\n- End time:",
+	// 		time.end,
+	// 		`(ms)\n- Condition: "${time.condition}"`
+	// 	);
 
-		let mainAudio = new Audio(path);
+	// 	// TODO: clamp time? (e.g. -1000ms = 0ms)
 
-		$(mainAudio)
-			.one("canplay", (e) => {
-				this.logInfo(
-					this.createAndPlayAudio,
-					"Audio file created. Duration: " + e.target.duration + " seconds"
-				);
-				this.storeAudio(e.target, time);
-			})
-			.one("error", (e) => {
-				this.logError(
-					this.createAndPlayAudio,
-					"Error loading audio\n",
-					`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
-					e
-				);
-			});
-	}
+	// 	this.createAndPlayAudio(path, time, useMultiPool);
+	// }
+
+	// private static createAndPlayAudio(
+	// 	path: string,
+	// 	time: AudioTimings,
+	// 	useMultiPool: boolean
+	// ): void {
+	// 	if (!useMultiPool) {
+	// 		this._audioStore.addToSinglePool(path, time);
+	// 		return;
+	// 	}
+
+	// 	// Limited sounds to prevent memory or human ear issues
+	// 	if (this._audioStore.isLimitReached) {
+	// 		this.logWarn(this.createAndPlayAudio, "Pool limit exceeded.");
+	// 		return;
+	// 	}
+
+	// 	let mainAudio = new Audio(path);
+
+	// 	$(mainAudio)
+	// 		.one("canplay", (e) => {
+	// 			this.logInfo(
+	// 				this.createAndPlayAudio,
+	// 				"Audio file created. Duration: " + e.target.duration + " seconds"
+	// 			);
+	// 			this.storeAudio(e.target, time);
+	// 		})
+	// 		.one("error", (e) => {
+	// 			this.logError(
+	// 				this.createAndPlayAudio,
+	// 				"Error loading audio\n",
+	// 				`(Code ${e.target.error.code}) "${e.target.error.message}"\n`,
+	// 				e
+	// 			);
+	// 		});
+	// }
 
 	private static async storeAudio(
 		mainAudio: HTMLAudioElement,
@@ -322,7 +334,7 @@ abstract class AudioPlayer extends Logger {
 			forcedStop: false,
 		};
 
-		main.volume = playback.volume = this._multiPoolVolumeSlider.value;
+		main.volume = playback.volume = this._coupleCollectionVolumeSlider.value;
 		main.currentTime = playback.currentTime = time.start / 1000;
 
 		main.setSinkId(this._currentAudioDevice.deviceId);
