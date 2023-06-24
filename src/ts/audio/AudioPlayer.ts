@@ -153,7 +153,7 @@ abstract class AudioPlayer extends Logger {
 		$stopButton: JQuery<HTMLButtonElement>
 	): typeof AudioPlayer {
 		// Icon inside the play toggle button
-		this._$playToggleButtonIcon = $playToggleButton.children("i.fa-play");
+		this._$playToggleButtonIcon = $playToggleButton.children("i");
 
 		// Buttons events
 		$playToggleButton
