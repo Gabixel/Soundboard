@@ -2,9 +2,9 @@
  * Pool for multiple {@link AudioCouple}s.
  */
 class AudioCoupleCollection extends Logger {
-	private audioPool: AudioPoolGroup[] = [];
+	private audioPool: AudioCouple[] = [];
 
-	public add(group: AudioPoolGroup): void {
+	public add(group: AudioCouple): void {
 		AudioCoupleCollection.logInfo(this.add, "Adding group to pool:", group);
 
 		this.audioPool.push(group);
@@ -19,7 +19,7 @@ class AudioCoupleCollection extends Logger {
 		});
 	}
 
-	public remove(removingGroup: AudioPoolGroup): void {
+	public remove(removingGroup: AudioCouple): void {
 		const index = this.audioPool.indexOf(removingGroup);
 
 		if (index == -1) {
