@@ -33,8 +33,6 @@ class AudioSource extends Logger {
 	}
 	//#endregion
 
-	// TODO: filters class?
-
 	constructor(options?: { src?: string; audioTimings?: AudioTimings }) {
 		super();
 
@@ -86,38 +84,19 @@ class AudioSource extends Logger {
 	// 	newTimings?: AudioTimings
 	// ): void {}
 
+	// public applyFilters(filters???): this {
+
+	// }
+
 	/**
-	 * Attempts to change audio output device with the given id. **Note:** It needs to regenerate the audio, so a silence break is expected.
-	 * @param sinkId The new output devcie id
+	 * Attempts to switch to the audio output device of the given id.
+	 * @param sinkId The new output device id
 	 */
-	public async setSinkId(sinkId: string): Promise<void> {
-		const wasPlaying =
-			!this._audio.paused &&
-			// See https://stackoverflow.com/a/9444425/16804863#comment15548542_9444425
-			StringUtilities.isDefined(this._src);
-
-		if (wasPlaying) {
-			// Keep current track position if it was playing
-			this.pause();
-		}
-
-		// Since the next instruction uninevitably needs to recreate
-		// the source node, we need to remove the previous one
-		this.destroySourceNode();
-
-		// Set new id
-		await this._audio.setSinkId(sinkId);
-
-		// Then generate a new source node to play to the new output device
-		this.regenerateSourceNode();
-
-		if (wasPlaying) {
-			// Resume if it was playing
-			this.play();
-		}
+	public async setSinkId(_sinkId: string): Promise<void> {
+		await this._audioContext.setSinkId(_sinkId);
 	}
 
-	// todo: y' know.. timings
+	// TODO: y' know.. timings
 	private setAudioTimings(audioTimings: AudioTimings): void {
 		this._audioTimings = audioTimings;
 	}
