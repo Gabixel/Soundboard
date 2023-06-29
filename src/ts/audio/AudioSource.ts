@@ -33,16 +33,14 @@ class AudioSource extends Logger {
 	}
 	//#endregion
 
-	constructor(options?: { src?: string; audioTimings?: AudioTimings }) {
+	constructor(audioContext: AudioContext, options?: { src?: string; audioTimings?: AudioTimings }) {
 		super();
 
 		this._src = options.src;
 
 		this._audio = new Audio(this._src);
 
-		this._audioContext = new AudioContext({
-			latencyHint: "interactive", // This option indicates that low audio processing latency is important, such as for real-time interactive applications like games or music applications where immediate audio response is critical
-		});
+		this._audioContext = audioContext;
 
 		this.setAudioTimings(options.audioTimings);
 
@@ -89,7 +87,8 @@ class AudioSource extends Logger {
 	// }
 
 	/**
-	 * Attempts to switch to the audio output device of the given id.
+	 * Attempts to switch the given output device id.
+	 * 
 	 * @param sinkId The new output device id
 	 */
 	public async setSinkId(_sinkId: string): Promise<void> {
