@@ -6,7 +6,7 @@ class AudioSource extends Logger {
 	private _audio: HTMLAudioElement;
 
 	private _sourceNode: MediaElementAudioSourceNode;
-	private _audioContext: AudioContext;
+	private _sharedAudioContext: AudioContext;
 
 	/**
 	 * Timings for the audio. Can be undefined.
@@ -40,12 +40,12 @@ class AudioSource extends Logger {
 
 		this._audio = new Audio(this._src);
 
-		this._audioContext = audioContext;
+		this._sharedAudioContext = audioContext;
 
 		this.setAudioTimings(options.audioTimings);
 
-		this._gainNode = this._audioContext.createGain();
-		this._gainNode.connect(this._audioContext.destination);
+		this._gainNode = this._sharedAudioContext.createGain();
+		this._gainNode.connect(this._sharedAudioContext.destination);
 
 		if (this._src) {
 			this.regenerateSourceNode();
@@ -92,7 +92,7 @@ class AudioSource extends Logger {
 	 * @param sinkId The new output device id
 	 */
 	public async setSinkId(_sinkId: string): Promise<void> {
-		await this._audioContext.setSinkId(_sinkId);
+		await this._sharedAudioContext.setSinkId(_sinkId);
 	}
 
 	// TODO: y' know.. timings
@@ -110,7 +110,7 @@ class AudioSource extends Logger {
 
 	private regenerateSourceNode(): void {
 		// Generate node
-		this._sourceNode = this._audioContext.createMediaElementSource(this._audio);
+		this._sourceNode = this._sharedAudioContext.createMediaElementSource(this._audio);
 
 		// Connect node to audio context
 		this._sourceNode.connect(this._gainNode);
