@@ -24,12 +24,18 @@ class AudioCouple extends Logger implements IAudioController {
 		};
 	}
 
-	public play(): Promise<void> {
-		throw new Error("Method not implemented.");
+	public async play(): Promise<void> {
+		let mainPlay = this._source.main.play();
+		let playbackPlay = this._source.playback.play();
+
+		await Promise.all([mainPlay, playbackPlay]);
 	}
 
 	public pause(): this {
-		throw new Error("Method not implemented.");
+		this._source.main.pause();
+		this._source.playback.pause();
+		
+		return this;
 	}
 
 	public get paused(): boolean {
