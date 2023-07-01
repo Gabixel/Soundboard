@@ -78,6 +78,12 @@ abstract class MainWindow extends Main {
 		this._buttonSwap = new ButtonSwap(this._gridManager);
 	}
 
+	/**
+	 * Initializes audio logic.
+	 *
+	 * It's a bit complex, so here's a quick summary of how audio components work (in order of appearance and complexity):
+	 * - **{@link AudioSource}**: The basic one. It's a wrapper for an {@link HTMLAudioElement} with the purpose of **connecting it to two {@link AudioContext} instances** for primary (_virtual cable_) and secondary (_playback_) outputs (codenamed `main` and `playback`), with a simple {@link GainNode} (and more effects, if needed).
+	 */
 	private static setupAudio(): void {
 		let output = (this._audioOutput = new AudioOutput());
 	}

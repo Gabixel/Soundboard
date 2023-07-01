@@ -1,12 +1,17 @@
 /**
- * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
+ * The actual audio, containing an {@link HTMLAudioElement} connected to an {@link AudioContext}.
  */
 class AudioSource extends Logger {
 	// In order of flow
 	private _src: string;
 	private _audio: HTMLAudioElement;
 	private _sourceNode: MediaElementAudioSourceNode;
-	private _output: AudioOutput;
+
+	private _output: {
+		main: AudioOutput;
+		// Use playback for operations (e.g. node generation)
+		playback: AudioOutput;
+	};
 
 	/**
 	 * Timings for the audio. Can be undefined.
@@ -34,7 +39,8 @@ class AudioSource extends Logger {
 	//#endregion
 
 	constructor(
-		output: AudioOutput,
+		mainOutput: AudioOutput,
+		playbackOutput: AudioOutput,
 		options?: { src?: string; audioTimings?: AudioTimings }
 	) {
 		super();
@@ -43,12 +49,19 @@ class AudioSource extends Logger {
 
 		this._audio = new Audio(this._src);
 
-		this._output = output;
+		this._output = {
+			main: mainOutput,
+			playback: playbackOutput,
+		};
 
 		// this.setAudioTimings(options.audioTimings);
 
-		this._gainNode = this._output.generateEffect("GainNode");
-		this._output.connectNode(this._gainNode);
+		// Generate the default gain node
+		this._gainNode = playbackOutput.generateEffect("GainNode");
+
+		// Connect audio to outputs
+		mainOutput.connectNode(this._gainNode);
+		playbackOutput.connectNode(this._gainNode);
 
 		if (this._src) {
 			this.regenerateSourceNode();
@@ -95,15 +108,6 @@ class AudioSource extends Logger {
 
 	// }
 
-	/**
-	 * Attempts to switch the given output device id.
-	 *
-	 * @param sinkId The new output device id
-	 */
-	public async setSinkId(sinkId: string): Promise<void> {
-		await this._output.setSinkId(sinkId);
-	}
-
 	// TODO: y' know.. timings
 	private setAudioTimings(audioTimings: AudioTimings): void {
 		this._audioTimings = audioTimings;
@@ -113,7 +117,7 @@ class AudioSource extends Logger {
 		this.destroySourceNode();
 
 		// Generate node
-		this._sourceNode = this._output.createMediaElementSource(this._audio);
+		this._sourceNode = this._output.playback.createMediaElementSource(this._audio);
 
 		// Connect node to audio context
 		this._sourceNode.connect(this._gainNode);
