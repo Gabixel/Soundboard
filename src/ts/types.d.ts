@@ -100,3 +100,7 @@ type ContextMenuArgs =
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );
+
+enum AudioEffect {
+	gain = "gain"
+};
