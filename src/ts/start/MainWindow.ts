@@ -81,10 +81,12 @@ abstract class MainWindow extends Main {
 	 * Initializes audio logic.
 	 *
 	 * It's a bit complex, so here's a quick summary of how audio components work (in order of appearance and complexity):
-	 * - **{@link AudioSource}**: The basic one. It's a wrapper for an {@link HTMLAudioElement} with the purpose of **connecting it to an {@link AudioContext} instance** with a simple {@link GainNode} (and more effects, if needed).
-	 * - **{@link AudioCouple}**: Contains two {@link AudioSource} instances, one for **primary and**, the other, **for secondary output**.
-	 * - (**{@link IAudioController}**: Basic controls for the two previous classes.)
-	 * - **{@link AudioOutput}**: Audio output controller. It uses an {@link AudioContext} instance. In this soundboard logic, there should be one instance for primary output, and another for playback.
+	 * 1. **{@link AudioSource}**: The basic one. It's a wrapper for an {@link HTMLAudioElement} with the purpose of **connecting it to an {@link AudioContext} instance** with a simple {@link GainNode} (and more effects, if needed).
+	 * 2. **{@link AudioCouple}**: Contains two {@link AudioSource} instances, one for **primary and**, the other, **for secondary output**.
+	 * 3. (**{@link IAudioController}**: Basic controls for the two previous classes.)
+	 * 4. **{@link AudioOutput}**: Audio output controller. It uses an {@link AudioContext} instance. In this soundboard logic, there should be one instance for primary output, and another for playback.
+	 * 5. **{@link AudioStore}**: Audio storage. It can be configured to hold any number of {@link AudioCouple} instances. This can be used to have a store only 1 main audio couple, and another for a collection of them. It's should be used in the following class.
+	 * 6. **{@link AudioPlayer}**: The wrapper for all of the above, containing the two {@link AudioStore} instances mentioned earlier, and two {@link AudioOutput}s.
 	 */
 	private static setupAudio(): void {
 		this._audioPlayer = new AudioPlayer();
