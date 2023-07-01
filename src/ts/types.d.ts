@@ -1,21 +1,5 @@
 type AnyFunc<T> = (...any: any[]) => T;
 
-type AudioCouple = {
-	/**
-	 * The main audio instance (possibly sent to a virtual channel).
-	 */
-	main: HTMLAudioElement;
-
-	/**
-	 * The playback instance (heard from the host machine).
-	 */
-	playback: HTMLAudioElement;
-
-	$all: JQuery<HTMLAudioElement>;
-	all: (func: (audio: HTMLAudioElement) => void) => void;
-	lastTrack: string;
-};
-
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 
 /**

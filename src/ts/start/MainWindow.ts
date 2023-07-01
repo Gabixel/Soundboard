@@ -81,7 +81,10 @@ abstract class MainWindow extends Main {
 	 * Initializes audio logic.
 	 *
 	 * It's a bit complex, so here's a quick summary of how audio components work (in order of appearance and complexity):
-	 * - **{@link AudioSource}**: The basic one. It's a wrapper for an {@link HTMLAudioElement} with the purpose of **connecting it to two {@link AudioContext} instances** for primary (_virtual cable_) and secondary (_playback_) outputs (codenamed `main` and `playback`), with a simple {@link GainNode} (and more effects, if needed).
+	 * - **{@link AudioSource}**: The basic one. It's a wrapper for an {@link HTMLAudioElement} with the purpose of **connecting it to an {@link AudioContext} instance** with a simple {@link GainNode} (and more effects, if needed).
+	 * - **{@link AudioCouple}**: Contains two {@link AudioSource} instances, one for **primary and**, the other, **for secondary output**.
+	 * - (**{@link IAudioController}**: Basic controls for the two previous classes.)
+	 * - **{@link AudioOutput}**: Audio output controller. It uses an {@link AudioContext} instance. In this soundboard logic, there should be one instance for primary output, and another for playback.
 	 */
 	private static setupAudio(): void {
 		this._audioPlayer = new AudioPlayer();

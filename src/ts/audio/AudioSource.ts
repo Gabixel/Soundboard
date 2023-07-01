@@ -1,7 +1,7 @@
 /**
  * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
  */
-class AudioSource extends Logger {
+class AudioSource extends Logger implements IAudioController {
 	private _src: string;
 	private _audio: HTMLAudioElement;
 	private _sourceNode: MediaElementAudioSourceNode;
@@ -18,15 +18,9 @@ class AudioSource extends Logger {
 	 */
 	private _gainNode: GainNode;
 
-	/**
-	 * The audio volume.
-	 */
 	public get volume(): number {
 		return this._gainNode.gain.value;
 	}
-	/**
-	 * The audio volume.
-	 */
 	public set volume(v: number) {
 		this._gainNode.gain.value = v;
 	}
@@ -53,18 +47,13 @@ class AudioSource extends Logger {
 		this.createSourceNode();
 	}
 
-	/**
-	 * Starts the audio. Creates the audio node if missing.
-	 */
-	public play(): this {
+	public async play(): Promise<void> {
 		if (this._src == null) {
 			AudioSource.logError(this.play, "Audio source is null");
-			return this;
+			return;
 		}
 
 		this._audio.play();
-
-		return this;
 	}
 
 	public pause(): this {
