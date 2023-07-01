@@ -1,7 +1,14 @@
 interface IAudioOutput {
 	connectNode(node: AudioNode): void;
 	disconnectNode(node: AudioNode): void;
+
+	
 	sinkId: string;
+	/**
+	 * Attempts to switch the given output device id.
+	 *
+	 * @param sinkId The new output device id
+	 */
 	setSinkId(sinkId: string): Promise<void>;
 
 	/**

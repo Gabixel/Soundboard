@@ -80,6 +80,7 @@ const scripts = [
 	"controls/UiScale",
 
 	"audio/AudioSource",
+	"audio/AudioCouple",
 	"audio/AudioOutput",
 	"audio/AudioStore",
 	"audio/AudioPlayer",
