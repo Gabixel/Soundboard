@@ -50,9 +50,7 @@ class AudioSource extends Logger {
 		this._gainNode = this._output.generateEffect("GainNode");
 		this._output.connectNode(this._gainNode);
 
-		if (this._src) {
-			this.regenerateSourceNode();
-		}
+		this.createSourceNode();
 	}
 
 	/**
@@ -60,14 +58,8 @@ class AudioSource extends Logger {
 	 */
 	public play(): this {
 		if (this._src == null) {
-			AudioSource.logDebug(this.play, "Audio source is null");
+			AudioSource.logError(this.play, "Audio source is null");
 			return this;
-		}
-
-		if (this._sourceNode == null) {
-			AudioSource.logInfo(this.play, "Audio node is null, generating…");
-			// Generate the source node if it's missing
-			this.regenerateSourceNode();
 		}
 
 		this._audio.play();
@@ -100,21 +92,11 @@ class AudioSource extends Logger {
 		this._audioTimings = audioTimings;
 	}
 
-	private regenerateSourceNode(): void {
-		this.destroySourceNode();
-
+	private createSourceNode(): void {
 		// Generate node
 		this._sourceNode = this._output.createMediaElementSource(this._audio);
 
 		// Connect node to audio context
 		this._sourceNode.connect(this._gainNode);
-	}
-
-	/**
-	 * Disconnects the source node from the gain one and deallocates the former.
-	 */
-	private destroySourceNode(): void {
-		this._sourceNode?.disconnect();
-		this._sourceNode = null;
 	}
 }
