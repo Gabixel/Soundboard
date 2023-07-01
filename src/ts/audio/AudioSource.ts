@@ -81,6 +81,10 @@ class AudioSource extends Logger {
 		return this;
 	}
 
+	public get paused(): boolean {
+		return this._audio.paused;
+	}
+
 	// public changeTrack(
 	// 	src: string,
 	// 	keepPreviousTimings?: boolean,
