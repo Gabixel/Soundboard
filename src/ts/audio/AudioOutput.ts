@@ -3,7 +3,7 @@
  */
 class AudioOutput extends Logger implements IAudioOutput {
 	/**
-	 * The audio output
+	 * The audio output.
 	 */
 	private _context: AudioContext;
 
@@ -12,12 +12,16 @@ class AudioOutput extends Logger implements IAudioOutput {
 		BiquadFilterNode,
 	};
 
-	constructor() {
+	constructor(sinkId?: string) {
 		super();
 
 		this._context = new AudioContext({
 			latencyHint: "interactive", // This option indicates that low audio processing latency is important, such as for real-time interactive applications like games or music applications where immediate audio response is critical
 		});
+
+		if(sinkId) {
+			this.setSinkId(sinkId);
+		}
 	}
 
 	public connectNode(node: AudioNode): void {

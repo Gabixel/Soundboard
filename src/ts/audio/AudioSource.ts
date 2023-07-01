@@ -8,8 +8,13 @@ class AudioSource extends Logger {
 	private _sourceNode: MediaElementAudioSourceNode;
 
 	private _output: {
+		/**
+		 * **Use `playback`** for operations (e.g. node generation).
+		 */
 		main: AudioOutput;
-		// Use playback for operations (e.g. node generation)
+		/**
+		 * Use this output for operations (e.g. node generation).
+		 */
 		playback: AudioOutput;
 	};
 
@@ -117,7 +122,9 @@ class AudioSource extends Logger {
 		this.destroySourceNode();
 
 		// Generate node
-		this._sourceNode = this._output.playback.createMediaElementSource(this._audio);
+		this._sourceNode = this._output.playback.createMediaElementSource(
+			this._audio
+		);
 
 		// Connect node to audio context
 		this._sourceNode.connect(this._gainNode);

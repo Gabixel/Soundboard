@@ -7,7 +7,6 @@ abstract class MainWindow extends Main {
 	private static _buttonSwap: ButtonSwap;
 
 	// Audio
-	private static _audioOutput: AudioOutput;
 	private static _audioPlayer: AudioPlayer;
 
 	public static async initWindow() {
@@ -85,7 +84,7 @@ abstract class MainWindow extends Main {
 	 * - **{@link AudioSource}**: The basic one. It's a wrapper for an {@link HTMLAudioElement} with the purpose of **connecting it to two {@link AudioContext} instances** for primary (_virtual cable_) and secondary (_playback_) outputs (codenamed `main` and `playback`), with a simple {@link GainNode} (and more effects, if needed).
 	 */
 	private static setupAudio(): void {
-		let output = (this._audioOutput = new AudioOutput());
+		this._audioPlayer = new AudioPlayer();
 	}
 }
 
