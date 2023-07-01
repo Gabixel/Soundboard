@@ -16,6 +16,8 @@ type AudioCouple = {
 	lastTrack: string;
 };
 
+type AudioEffect = "GainNode" | "BiquadFilterNode";
+
 /**
  * Sound button metadata
  */
@@ -47,6 +49,7 @@ type SoundButtonData = {
 	 */
 	path?: string;
 };
+
 type SoundButtonProperties =
 	| "title"
 	| "color"
@@ -100,7 +103,3 @@ type ContextMenuArgs =
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );
-
-enum AudioEffect {
-	gain = "gain"
-};

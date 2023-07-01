@@ -2,11 +2,11 @@
  * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
  */
 class AudioSource extends Logger {
+	// In order of flow
 	private _src: string;
 	private _audio: HTMLAudioElement;
-
 	private _sourceNode: MediaElementAudioSourceNode;
-	private _sharedAudioContext: AudioContext;
+	private _output: AudioOutput;
 
 	/**
 	 * Timings for the audio. Can be undefined.
@@ -33,19 +33,22 @@ class AudioSource extends Logger {
 	}
 	//#endregion
 
-	constructor(audioContext: AudioContext, options?: { src?: string; audioTimings?: AudioTimings }) {
+	constructor(
+		output: AudioOutput,
+		options?: { src?: string; audioTimings?: AudioTimings }
+	) {
 		super();
 
-		this._src = options.src;
+		this._src = options?.src;
 
 		this._audio = new Audio(this._src);
 
-		this._sharedAudioContext = audioContext;
+		this._output = output;
 
-		this.setAudioTimings(options.audioTimings);
+		// this.setAudioTimings(options.audioTimings);
 
-		this._gainNode = this._sharedAudioContext.createGain();
-		this._gainNode.connect(this._sharedAudioContext.destination);
+		this._gainNode = this._output.generateEffect("GainNode");
+		this._output.connectNode(this._gainNode);
 
 		if (this._src) {
 			this.regenerateSourceNode();
@@ -56,11 +59,13 @@ class AudioSource extends Logger {
 	 * Starts the audio. Creates the audio node if missing.
 	 */
 	public play(): this {
-		if (!this._src) {
+		if (this._src == null) {
+			AudioSource.logDebug(this.play, "Audio source is null");
 			return this;
 		}
 
 		if (this._sourceNode == null) {
+			AudioSource.logInfo(this.play, "Audio node is null, generating…");
 			// Generate the source node if it's missing
 			this.regenerateSourceNode();
 		}
@@ -88,11 +93,11 @@ class AudioSource extends Logger {
 
 	/**
 	 * Attempts to switch the given output device id.
-	 * 
+	 *
 	 * @param sinkId The new output device id
 	 */
-	public async setSinkId(_sinkId: string): Promise<void> {
-		await this._sharedAudioContext.setSinkId(_sinkId);
+	public async setSinkId(sinkId: string): Promise<void> {
+		await this._output.setSinkId(sinkId);
 	}
 
 	// TODO: y' know.. timings
@@ -100,19 +105,21 @@ class AudioSource extends Logger {
 		this._audioTimings = audioTimings;
 	}
 
+	private regenerateSourceNode(): void {
+		this.destroySourceNode();
+
+		// Generate node
+		this._sourceNode = this._output.createMediaElementSource(this._audio);
+
+		// Connect node to audio context
+		this._sourceNode.connect(this._gainNode);
+	}
+
 	/**
 	 * Disconnects the source node from the gain one and deallocates the former.
 	 */
 	private destroySourceNode(): void {
-		this._sourceNode.disconnect(this._gainNode);
+		this._sourceNode?.disconnect();
 		this._sourceNode = null;
-	}
-
-	private regenerateSourceNode(): void {
-		// Generate node
-		this._sourceNode = this._sharedAudioContext.createMediaElementSource(this._audio);
-
-		// Connect node to audio context
-		this._sourceNode.connect(this._gainNode);
 	}
 }

@@ -7,14 +7,17 @@ class AudioOutput extends Logger implements IAudioOutput {
 	 */
 	private _context: AudioContext;
 
-	private m = new Map<AudioEffect, () => AudioNode>([
-		[AudioEffect.gain, () => this._context.createGain()],
-	]);
+	private static effectMap: Record<AudioEffect, any> = {
+		GainNode,
+		BiquadFilterNode,
+	};
 
 	constructor() {
 		super();
 
-		this._context = new AudioContext();
+		this._context = new AudioContext({
+			latencyHint: "interactive", // This option indicates that low audio processing latency is important, such as for real-time interactive applications like games or music applications where immediate audio response is critical
+		});
 	}
 
 	public connectNode(node: AudioNode): void {
@@ -29,11 +32,17 @@ class AudioOutput extends Logger implements IAudioOutput {
 		return this._context.sinkId;
 	}
 
-	public setSinkId(sinkId: string): void {
-		this._context.setSinkId(sinkId);
+	public async setSinkId(sinkId: string): Promise<void> {
+		await this._context.setSinkId(sinkId);
 	}
 
-	public generateEffect(effect: AudioEffect): AudioNode {
-		return this.m.get(effect)();
+	public generateEffect<T>(effect: AudioEffect): T {
+		return new AudioOutput.effectMap[effect](this._context);
+	}
+
+	public createMediaElementSource(
+		element: HTMLMediaElement
+	): MediaElementAudioSourceNode {
+		return this._context.createMediaElementSource(element);
 	}
 }

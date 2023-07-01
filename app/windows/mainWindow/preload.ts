@@ -79,10 +79,10 @@ const scripts = [
 	"controls/PresetsPanel",
 	"controls/UiScale",
 
+	"audio/AudioSource",
+	"audio/AudioOutput",
 	"audio/AudioParallelCollection",
 	"audio/AudioStore",
-	"audio/AudioOutput",
-	"audio/AudioSource",
 	"audio/AudioPlayer",
 
 	"ToolbarManager",
