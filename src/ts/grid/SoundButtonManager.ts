@@ -222,7 +222,7 @@ class SoundButtonManager extends Logger {
 			const useMultiPool = e.shiftKey; // If the shift key is pressed, use the multi-pool
 
 			// TODO: inject player
-			AudioPlayer.addAudio(path, time, useMultiPool);
+			// AudioPlayer.addAudio(path, time, useMultiPool);
 		});
 
 		return this;
