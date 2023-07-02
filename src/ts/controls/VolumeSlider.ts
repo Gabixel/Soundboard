@@ -4,10 +4,14 @@ class VolumeSlider extends Logger {
 		return this._$slider;
 	}
 
-	private _valueDecimals: number;
+	private _decimals: number;
 	private _exponentialBase: number;
 
-	public value = 0;
+	private _value: number = 0;
+	public get value(): number {
+		return this._value;
+	}
+
 	private get _maxSliderValue(): number {
 		return parseInt(this._$slider.attr("max"));
 	}
@@ -26,13 +30,13 @@ class VolumeSlider extends Logger {
 					HTMLInputElement,
 					"input"
 			  >,
-		decimals: number = 0,
-		exponentialBase: number = 50
+		decimals?: number,
+		exponentialBase?: number
 	) {
 		super();
 
-		this._valueDecimals = decimals;
-		this._exponentialBase = exponentialBase;
+		this._decimals = decimals ?? 0;
+		this._exponentialBase = exponentialBase ?? 50;
 
 		this._$slider = $slider
 			// On change
@@ -53,9 +57,9 @@ class VolumeSlider extends Logger {
 	}
 
 	private updateVolume() {
-		this.value = EMath.getExponentialValue(
+		this._value = EMath.getExponentialValue(
 			parseInt(this._$slider.val() as string) / this._maxSliderValue,
-			this._valueDecimals,
+			this._decimals,
 			this._exponentialBase
 		);
 	}

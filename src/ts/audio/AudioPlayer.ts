@@ -24,7 +24,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		second: AudioStore;
 	};
 
-	// private _slider: VolumeSlider;
+	private _slider: VolumeSlider;
 
 	constructor(outputOptions?: { mainSinkId?: string; playbackSinkId?: string }) {
 		super();
@@ -67,5 +67,42 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 			src: options.src,
 			audioTimings: options.audioTimings,
 		});
+	}
+
+	public setupVolumeSlider(
+		$volumeSlider: JQuery<HTMLInputElement>,
+		options?: {
+			decimals?: number;
+			exponentialBase?: number;
+		}
+	): this {
+		this._slider = new VolumeSlider(
+			$volumeSlider,
+			() => {
+				// Update existing audio volume
+				this._storage.first.setVolume(this._slider.value);
+				this._storage.second.setVolume(this._slider.value);
+
+				// // Log new volume
+				// this.logDebug(
+				// 	"(single pool volume slider change)",
+				// 	"Volume:",
+				// 	this._mainCoupleVolumeSlider.value
+				// );
+				console.debug("volume changed: " + this._slider.value);
+			},
+			options?.decimals,
+			options?.exponentialBase
+		);
+
+		// Change initial value
+		$volumeSlider.trigger("input");
+
+		// this.logInfo(
+		// 	this.setupVolumeSlider,
+		// 	"Sliders set!\n",
+		// 	$volumeSlider,
+		// );
+		return this;
 	}
 }

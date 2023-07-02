@@ -56,8 +56,14 @@ class AudioStore extends EventTarget {
 	}
 
 	public pause(): void {
-		this._audioCoupleList.forEach((couple) => {
+		this.forEach((couple) => {
 			couple.pause();
+		});
+	}
+
+	public setVolume(v: number) {
+		this.forEach((couple) => {
+			couple.volume = v;
 		});
 	}
 
@@ -81,7 +87,6 @@ class AudioStore extends EventTarget {
 		if (!this.hasFreeStorage()) {
 			// TODO: log
 
-			
 			if (this._recycleCopies && this.foundCopyAndRestarted(options)) {
 				// If an identical copy has been revived
 				// TODO: log
@@ -175,7 +180,7 @@ class AudioStore extends EventTarget {
 
 		if (coupleIndex >= 0) {
 			console.log("found at index " + coupleIndex);
-			
+
 			couple = this._audioCoupleList.splice(coupleIndex, 1)[0];
 			this._audioCoupleList.push(couple);
 		}
@@ -195,5 +200,11 @@ class AudioStore extends EventTarget {
 			// this._audioCoupleList.filter((couple) => couple.playing).length <
 			// 	this._storageLimit
 		);
+	}
+
+	private forEach(
+		callbackfn: (value: AudioCouple, index: number, array: AudioCouple[]) => void
+	) {
+		this._audioCoupleList.forEach(callbackfn);
 	}
 }
