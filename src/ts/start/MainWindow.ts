@@ -86,7 +86,7 @@ abstract class MainWindow extends Main {
 	 * 3. (**{@link IAudioController}**: Basic controls for the two previous classes.)
 	 * 4. **{@link AudioOutput}**: Audio output controller. It uses an {@link AudioContext} instance. In this soundboard logic, there should be one instance for primary output, and another for playback.
 	 * 5. **{@link AudioStore}**: Audio storage. It can be configured to hold any number of {@link AudioCouple} instances. This can be used to have a store only 1 main audio couple, and another for a collection of them. It's should be used in the following class.
-	 * 6. **{@link AudioPlayer}**: The wrapper for all of the above, containing the two {@link AudioStore} instances mentioned earlier, and two {@link AudioOutput}s.
+	 * 6. **{@link AudioPlayer}**: The biggest one. The wrapper for all of the above, containing the two {@link AudioStore} instances mentioned earlier, and two {@link AudioOutput}s. The one that {@link SoundButtonManager} should call when a button gets clicked.
 	 */
 	private static setupAudio(): void {
 		this._audioPlayer = new AudioPlayer();
