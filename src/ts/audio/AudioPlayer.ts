@@ -39,7 +39,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 				replaceIfMaxedOut: true,
 				recycleIfSingle: true,
 			}),
-			second: new AudioStore(2, this._output),
+			second: new AudioStore(-1, this._output),
 		};
 	}
 

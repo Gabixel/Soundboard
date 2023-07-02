@@ -19,9 +19,9 @@ class AudioStore extends EventTarget {
 	private _replaceIfMaxedOut: boolean;
 
 	/**
-	 * If the limit is set to 1, choose if to re-use the same audio source.
+	 * Can be use to re-use the same audio source (if the limit is 1), or the oldest identical from the list (2 or more).
 	 */
-	private _recycleIfSingle: boolean;
+	private _recycleCopies: boolean;
 
 	/**
 	 * @param storageLimit If the limit is less than 1, there won't be one. By default is `-1` for better readability.
@@ -46,11 +46,11 @@ class AudioStore extends EventTarget {
 
 		this._replaceIfMaxedOut = options?.replaceIfMaxedOut ?? false;
 
-		this._recycleIfSingle = options?.recycleIfSingle ?? storageLimit == 1;
+		this._recycleCopies = options?.recycleIfSingle ?? storageLimit == 1;
 
 		this._output = output;
 
-		if (this._recycleIfSingle) {
+		if (this._recycleCopies) {
 			this.createAndPushCouple();
 		}
 	}
@@ -66,7 +66,7 @@ class AudioStore extends EventTarget {
 		// TODO: timings & filters
 		audioTimings?: AudioTimings;
 	}): void {
-		if (this._recycleIfSingle) {
+		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
 
 			if (couple.src === options.src) {
@@ -81,7 +81,8 @@ class AudioStore extends EventTarget {
 		if (!this.hasFreeStorage()) {
 			// TODO: log
 
-			if (this.foundCopyAndRestarted(options)) {
+			
+			if (this._recycleCopies && this.foundCopyAndRestarted(options)) {
 				// If an identical copy has been revived
 				// TODO: log
 				return;
@@ -124,7 +125,7 @@ class AudioStore extends EventTarget {
 			this._output.playback,
 			options,
 			true,
-			this._recycleIfSingle
+			this._recycleCopies
 		);
 
 		// Store new index
@@ -136,7 +137,7 @@ class AudioStore extends EventTarget {
 
 		$(couple)
 			.on("ended error", () => {
-				if (!this._recycleIfSingle) {
+				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
 					this._audioCoupleList.splice(index);
 				}
