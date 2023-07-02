@@ -1,4 +1,7 @@
-class AudioCouple extends Logger implements IAudioController {
+/**
+ * Contains two {@link AudioSource} instances, one for **primary and**, the other, **for secondary output**.
+ */
+class AudioCouple extends EventTarget implements IAudioController {
 	private _source: {
 		main: AudioSource;
 		playback: AudioSource;
@@ -14,7 +17,7 @@ class AudioCouple extends Logger implements IAudioController {
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
-		options?: { src?: string; audioTimings?: AudioTimings }
+		options?: { src?: string; audioTimings?: AudioTimings, autoPlay?: boolean}
 	) {
 		super();
 
@@ -22,6 +25,8 @@ class AudioCouple extends Logger implements IAudioController {
 			main: new AudioSource(mainOutput, options),
 			playback: new AudioSource(playbackOutput, options),
 		};
+
+		this.initEventListeners();
 	}
 
 	public async play(): Promise<void> {
@@ -34,11 +39,34 @@ class AudioCouple extends Logger implements IAudioController {
 	public pause(): this {
 		this._source.main.pause();
 		this._source.playback.pause();
-		
+
 		return this;
 	}
 
 	public get paused(): boolean {
-		return this._source.main.paused && this._source.playback.paused;
+		return this._source.main.paused;
+	}
+
+	public get playing(): boolean {
+		return this._source.main.playing;
+	}
+
+	public get ended(): boolean {
+		return this._source.main.ended;
+	}
+
+	private initEventListeners(): void {
+		$(this._source.main)
+			.on("ended", () => this.triggerEvent("ended"))
+			.on("canplay", () => this.triggerEvent("canplay"))
+			.on("error", () => this.triggerEvent("error"));
+		$(this._source.playback)
+			.on("ended", () => this.triggerEvent("ended"))
+			.on("canplay", () => this.triggerEvent("canplay"))
+			.on("error", () => this.triggerEvent("error"));
+	}
+
+	private triggerEvent(eventName: string): void {
+		this.dispatchEvent(new Event(eventName));
 	}
 }
