@@ -3,6 +3,18 @@
  */
 interface IAudioController {
 	/**
+	 * Audio source.
+	 */
+	src: string;
+
+	/**
+	 * Audio timings settings.
+	 */
+	audioTimings: AudioTimings;
+
+	// TODO: effects
+
+	/**
 	 * Starts the audio (if there's a source file).
 	 */
 	play(): Promise<void>;
@@ -12,12 +24,16 @@ interface IAudioController {
 	 */
 	pause(): this;
 
+	seekTo(time: number): void;
+
+	restart(): void;
+
+	playing: boolean;
+
 	/**
 	 * If the audio is currently paused or not.
 	 */
 	paused: boolean;
-
-	playing: boolean;
 
 	ended: boolean;
 

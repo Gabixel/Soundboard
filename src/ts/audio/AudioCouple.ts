@@ -7,6 +7,14 @@ class AudioCouple extends EventTarget implements IAudioController {
 		playback: AudioSource;
 	};
 
+	public get src(): string {
+		return this._source.main.src;
+	}
+
+	public get audioTimings(): AudioTimings {
+		return this._source.main.audioTimings;
+	}
+
 	public get volume(): number {
 		return this._source.main.volume;
 	}
@@ -17,13 +25,14 @@ class AudioCouple extends EventTarget implements IAudioController {
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
-		options?: { src?: string; audioTimings?: AudioTimings, autoPlay?: boolean}
+		options?: { src?: string; audioTimings?: AudioTimings },
+		autoPlay?: boolean
 	) {
 		super();
 
 		this._source = {
-			main: new AudioSource(mainOutput, options),
-			playback: new AudioSource(playbackOutput, options),
+			main: new AudioSource(mainOutput, options, autoPlay),
+			playback: new AudioSource(playbackOutput, options, autoPlay),
 		};
 
 		this.initEventListeners();
@@ -43,12 +52,22 @@ class AudioCouple extends EventTarget implements IAudioController {
 		return this;
 	}
 
-	public get paused(): boolean {
-		return this._source.main.paused;
+	public seekTo(time: number): void {
+		this._source.main.seekTo(time);
+		this._source.playback.seekTo(time);
+	}
+
+	public restart(): void {
+		this._source.main.restart();
+		this._source.playback.restart();
 	}
 
 	public get playing(): boolean {
 		return this._source.main.playing;
+	}
+
+	public get paused(): boolean {
+		return this._source.main.paused;
 	}
 
 	public get ended(): boolean {

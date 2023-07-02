@@ -2,15 +2,25 @@
  * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
  */
 class AudioSource extends EventTarget implements IAudioController {
-	private _src: string;
 	private _audio: HTMLAudioElement;
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _output: AudioOutput;
 
 	/**
-	 * Timings for the audio. Can be undefined.
+	 * Audio source.
+	 */
+	private _src: string;
+	public get src(): string {
+		return this._src;
+	}
+
+	/**
+	 * Audio timings settings.
 	 */
 	private _audioTimings: AudioTimings;
+	public get audioTimings(): AudioTimings {
+		return this._audioTimings;
+	}
 
 	//#region Volume
 	/**
@@ -28,7 +38,8 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	constructor(
 		output: AudioOutput,
-		options?: { src?: string; audioTimings?: AudioTimings, autoPlay?: boolean }
+		options?: { src?: string; audioTimings?: AudioTimings },
+		autoPlay?: boolean
 	) {
 		super();
 
@@ -36,7 +47,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 		this._audio = new Audio(this._src);
 		this._audio.preload = "";
-		this._audio.autoplay = options.autoPlay ?? false
+		this._audio.autoplay = autoPlay ?? false;
 
 		this._output = output;
 
@@ -65,18 +76,30 @@ class AudioSource extends EventTarget implements IAudioController {
 		return this;
 	}
 
-	public get paused(): boolean {
-		return this._audio.paused;
+	public seekTo(time: number): void {
+		if (this._src == null) {
+			// Logger.logError(this.play, "Audio source is null");
+			return;
+		}
+
+		this._audio.currentTime = time;
+	}
+
+	public restart(): void {
+		this.seekTo(0);
 	}
 
 	public get playing(): boolean {
-		return !this._audio.paused;
+		return !this.paused && !this.ended;
+	}
+
+	public get paused(): boolean {
+		return this._audio.paused;
 	}
 
 	public get ended(): boolean {
 		return this._audio.ended;
 	}
-
 
 	// public changeTrack(
 	// 	src: string,
