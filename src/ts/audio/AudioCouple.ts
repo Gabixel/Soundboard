@@ -30,6 +30,7 @@ class AudioCouple extends EventTarget implements IAudioController {
 	) {
 		super();
 
+		// Audio sources
 		this._source = {
 			main: new AudioSource(mainOutput, options, autoPlay),
 			playback: new AudioSource(playbackOutput, options, autoPlay),
@@ -80,17 +81,20 @@ class AudioCouple extends EventTarget implements IAudioController {
 	}
 
 	private initEventListeners(): void {
-		$(this._source.main)
-			.on("ended", () => this.triggerEvent("ended"))
-			.on("canplay", () => this.triggerEvent("canplay"))
-			.on("error", () => this.triggerEvent("error"));
-		$(this._source.playback)
-			.on("ended", () => this.triggerEvent("ended"))
-			.on("canplay", () => this.triggerEvent("canplay"))
-			.on("error", () => this.triggerEvent("error"));
+		this.setEventsTo(this._source.main);
+		this.setEventsTo(this._source.playback);
 	}
 
-	private triggerEvent(eventName: string): void {
-		this.dispatchEvent(new Event(eventName));
+	private setEventsTo(source: AudioSource) {
+		$(source)
+			.on("error", () => event("error"))
+			.on("ended", () => event("ended"))
+			.on("pause", () => event("pause"))
+			.on("resume", () => event("resume"))
+			.on("canplay", () => event("canplay"));
+
+		var event = (eventName: string): void => {
+			this.dispatchEvent(new Event(eventName));
+		};
 	}
 }

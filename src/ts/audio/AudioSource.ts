@@ -69,7 +69,10 @@ class AudioSource extends EventTarget implements IAudioController {
 			return;
 		}
 
-		this._audio.play();
+		this._audio.play().then(() => {
+			// Trigger resume event after starting/resuming
+			this.triggerEvent("resume");
+		});
 	}
 
 	public pause(): this {
@@ -157,6 +160,12 @@ class AudioSource extends EventTarget implements IAudioController {
 			.on("ended", () => {
 				this.destroy();
 				this.triggerEvent("ended");
+			})
+			.on("pause", () => {
+				// Trigger pause event only when it just paused
+				if (!this.ended) {
+					this.triggerEvent("pause");
+				}
 			})
 			.on("canplay", () => {
 				this.triggerEvent("canplay");

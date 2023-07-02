@@ -1,7 +1,7 @@
 /**
  * Storage for one or more audio couples.
  */
-class AudioStore extends Logger {
+class AudioStore extends EventTarget {
 	private _storageLimit: number;
 	private _audioCoupleList: AudioCouple[] = [];
 
@@ -24,6 +24,12 @@ class AudioStore extends Logger {
 		this._storageLimit = storageLimit;
 
 		this._replaceIfMaxedOut = options?.replaceIfMaxedOut ?? false;
+	}
+
+	public pause(): void {
+		this._audioCoupleList.forEach((couple) => {
+			couple.pause();
+		});
 	}
 
 	public storeCouple(
@@ -57,11 +63,12 @@ class AudioStore extends Logger {
 			let replacingCouple = this._audioCoupleList[0];
 
 			// Remove remove events
-			$(replacingCouple).off("ended error");
+			$(replacingCouple).off("ended error pause resume");
 
 			// Add new couple to the old index
 			createAndPushCouple(0);
 
+			// Dispose old couple
 			replacingCouple.end();
 			replacingCouple = null;
 		}
@@ -76,11 +83,24 @@ class AudioStore extends Logger {
 				this._audioCoupleList[index] = couple;
 			}
 
-			$(couple).on("ended error", () => {
-				this._audioCoupleList.splice(index);
-			});
+			$(couple)
+				.on("ended error", () => {
+					// Remove if ended or if something goes wrong
+					this._audioCoupleList.splice(index);
+					
+					// Trigger storage state change event
+					event("statechange");
+				})
+				.on("pause resume", () => {
+					// Trigger storage state change event
+					event("statechange");
+				});
 
 			return couple;
+
+			var event = (event: string): void => {
+				this.dispatchEvent(new Event(event));
+			};
 		};
 	}
 
@@ -98,6 +118,7 @@ class AudioStore extends Logger {
 				couple.audioTimings === options.audioTimings
 		);
 
+		// Restart couple
 		couple?.restart();
 
 		return couple != undefined;
