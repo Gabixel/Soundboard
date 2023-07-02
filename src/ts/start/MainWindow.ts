@@ -90,6 +90,8 @@ abstract class MainWindow extends Main {
 	 */
 	private static setupAudio(): void {
 		this._audioPlayer = new AudioPlayer();
+
+		this._soundButtonManager.setupAudioPlayer(this._audioPlayer);
 	}
 }
 
