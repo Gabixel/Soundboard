@@ -24,6 +24,11 @@ interface IAudioController {
 	 */
 	pause(): this;
 
+	/**
+	 * Ends the audio (if there's a source file).
+	 */
+	end(): void;
+
 	seekTo(time: number): void;
 
 	restart(): void;

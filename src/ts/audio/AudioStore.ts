@@ -35,33 +35,56 @@ class AudioStore extends Logger {
 			src: string;
 			// TODO: timings & filters
 			audioTimings?: AudioTimings;
-		},
-		autoPlay?: boolean
+		}
 	): void {
-		if (this.foundAndRestarted(options)) {
-			return;
-		} else if (!this.hasFreeStorage()) {
+		if (this.foundCopyAndRestarted(options)) {
 			// TODO: log
-
-			// Override enabled
-			if (this._replaceIfMaxedOut) {
-				// todo: override
-			}
-
 			return;
 		}
 
-		const couple = new AudioCouple(
-			output.main,
-			output.playback,
-			options,
-			autoPlay
-		);
+		if (this.hasFreeStorage()) {
+			createAndPushCouple();
+		} else {
+			// TODO: log
 
-		this._audioCoupleList.push(couple);
+			if (!this._replaceIfMaxedOut) {
+				return;
+			}
+
+			// Replace is enabled
+
+			// Get oldest couple
+			let replacingCouple = this._audioCoupleList[0];
+
+			// Remove remove events
+			$(replacingCouple).off("ended error");
+
+			// Add new couple to the old index
+			createAndPushCouple(0);
+
+			replacingCouple.end();
+			replacingCouple = null;
+		}
+
+		var createAndPushCouple = (index: number = null): AudioCouple => {
+			let couple = new AudioCouple(output.main, output.playback, options, true);
+
+			// Store new index
+			if (index === null) {
+				index = this._audioCoupleList.push(couple) - 1;
+			} else {
+				this._audioCoupleList[index] = couple;
+			}
+
+			$(couple).on("ended error", () => {
+				this._audioCoupleList.splice(index);
+			});
+
+			return couple;
+		};
 	}
 
-	private foundAndRestarted(options: {
+	private foundCopyAndRestarted(options: {
 		src: string;
 		// TODO: timings & filters
 		audioTimings?: AudioTimings;

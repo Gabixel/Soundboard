@@ -6,6 +6,8 @@ class AudioSource extends EventTarget implements IAudioController {
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _output: AudioOutput;
 
+	private _destroyed: boolean = false;
+
 	/**
 	 * Audio source.
 	 */
@@ -46,8 +48,8 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._src = options?.src;
 
 		this._audio = new Audio(this._src);
-		this._audio.preload = "";
-		this._audio.autoplay = autoPlay ?? false;
+		this._audio.preload = "metadata";
+		this._audio.autoplay = autoPlay ?? true;
 
 		this._output = output;
 
@@ -62,7 +64,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public async play(): Promise<void> {
-		if (this._src == null) {
+		if (this._src == null || this._destroyed) {
 			// Logger.logError(this.play, "Audio source is null");
 			return;
 		}
@@ -71,22 +73,33 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public pause(): this {
+		if (this._destroyed) {
+			return this;
+		}
+
 		this._audio.pause();
 
 		return this;
 	}
 
-	public seekTo(time: number): void {
-		if (this._src == null) {
+	public seekTo(time: number): this {
+		if (this._src == null || this._destroyed) {
 			// Logger.logError(this.play, "Audio source is null");
-			return;
+			return this;
 		}
 
 		this._audio.currentTime = time;
+		return this;
 	}
 
-	public restart(): void {
+	public restart(): this {
 		this.seekTo(0);
+		return this;
+	}
+
+	public end(): this {
+		this.seekTo(this._audio.duration);
+		return this;
 	}
 
 	public get playing(): boolean {
@@ -112,9 +125,9 @@ class AudioSource extends EventTarget implements IAudioController {
 	// }
 
 	// TODO: y' know.. timings
-	private setAudioTimings(audioTimings: AudioTimings): void {
-		this._audioTimings = audioTimings;
-	}
+	// private setAudioTimings(audioTimings: AudioTimings): void {
+	// 	this._audioTimings = audioTimings;
+	// }
 
 	private createSourceNode(): void {
 		// Generate node
@@ -124,11 +137,30 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._sourceNode.connect(this._gainNode);
 	}
 
+	private destroy(): void {
+		this._destroyed = true;
+
+		this._gainNode.disconnect();
+		this._sourceNode.disconnect();
+		this._gainNode = this._sourceNode = null;
+
+		this._audio.srcObject = null;
+		this._audio = null;
+	}
+
 	private initEventListeners(): void {
 		$(this._audio)
-			.on("ended", () => this.triggerEvent("ended"))
-			.on("canplay", () => this.triggerEvent("canplay"))
-			.on("error", () => this.triggerEvent("error"));
+			.on("error", () => {
+				this.destroy();
+				this.triggerEvent("error");
+			})
+			.on("ended", () => {
+				this.destroy();
+				this.triggerEvent("ended");
+			})
+			.on("canplay", () => {
+				this.triggerEvent("canplay");
+			});
 	}
 
 	private triggerEvent(eventName: string): void {

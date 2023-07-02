@@ -62,6 +62,11 @@ class AudioCouple extends EventTarget implements IAudioController {
 		this._source.playback.restart();
 	}
 
+	public end(): void {
+		this._source.main.end();
+		this._source.playback.end();
+	}
+
 	public get playing(): boolean {
 		return this._source.main.playing;
 	}

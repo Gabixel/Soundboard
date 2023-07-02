@@ -28,10 +28,6 @@ class AudioOutput extends Logger implements IAudioOutput {
 		node.connect(this._context.destination);
 	}
 
-	public disconnectNode(node: AudioNode): void {
-		node.disconnect(this._context.destination);
-	}
-
 	public get sinkId(): string {
 		return this._context.sinkId;
 	}
