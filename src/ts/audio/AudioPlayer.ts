@@ -13,12 +13,59 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		playback: AudioOutput;
 	};
 
+	private _storage: {
+		/**
+		 * First storage is limited to 1 audio.
+		 */
+		first: AudioStore;
+		/**
+		 * Second storage is unlimited.
+		 */
+		second: AudioStore;
+	};
+
+	// private _slider: VolumeSlider;
+
 	constructor(outputOptions?: { mainSinkId?: string; playbackSinkId?: string }) {
 		super();
 
 		this._output = {
-			main: new AudioOutput(outputOptions.mainSinkId),
-			playback: new AudioOutput(outputOptions.playbackSinkId),
+			main: new AudioOutput(outputOptions?.mainSinkId),
+			playback: new AudioOutput(outputOptions?.playbackSinkId),
 		};
+
+		this._storage = {
+			first: new AudioStore(1, this._output, {
+				replaceIfMaxedOut: true,
+				recycleIfSingle: true,
+			}),
+			second: new AudioStore(2, this._output),
+		};
+	}
+
+	public play(
+		options: {
+			src: string;
+			audioTimings?: AudioTimings;
+		},
+		useSecondaryStorage: boolean
+	): void {
+		if (options.src == null) {
+			// TODO: log
+			return;
+		}
+
+		let chosenStorage: AudioStore = useSecondaryStorage
+			? this._storage.second
+			: this._storage.first;
+
+		console.log(
+			"Using " + (useSecondaryStorage ? "secondary" : "primary") + " storage"
+		);
+
+		chosenStorage.storeAudio({
+			src: options.src,
+			audioTimings: options.audioTimings,
+		});
 	}
 }

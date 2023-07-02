@@ -6,6 +6,11 @@ class AudioSource extends EventTarget implements IAudioController {
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _output: AudioOutput;
 
+	/**
+	 * If we want to preserve this source on end (for re-use). Else, use {@link _destroyed}.
+	 */
+	private _preserve: boolean;
+
 	private _destroyed: boolean = false;
 
 	/**
@@ -41,7 +46,8 @@ class AudioSource extends EventTarget implements IAudioController {
 	constructor(
 		output: AudioOutput,
 		options?: { src?: string; audioTimings?: AudioTimings },
-		autoPlay?: boolean
+		autoPlay?: boolean,
+		preserveOnEnd?: boolean
 	) {
 		super();
 
@@ -50,10 +56,15 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio = new Audio(this._src);
 		this._audio.preload = "metadata";
 		this._audio.autoplay = autoPlay ?? true;
+		this._audio.loop = false;
 
 		this._output = output;
 
+		this._preserve = preserveOnEnd;
+
 		// this.setAudioTimings(options.audioTimings);
+		// for now:
+		this._audioTimings = options?.audioTimings;
 
 		this._gainNode = this._output.generateEffect("GainNode");
 		this._output.connectNode(this._gainNode);
@@ -61,6 +72,10 @@ class AudioSource extends EventTarget implements IAudioController {
 		this.createSourceNode();
 
 		this.initEventListeners();
+	}
+
+	public changeAudio(src: string): void {
+		this._audio.src = src;
 	}
 
 	public async play(): Promise<void> {
@@ -140,6 +155,46 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._sourceNode.connect(this._gainNode);
 	}
 
+	private initEventListeners(): void {
+		$(this._audio)
+			.on("error", (_e) => {
+				if (!this._preserve) {
+					this.destroy();
+				}
+
+				// console.log("error", _e);
+
+				this.triggerEvent("error");
+			})
+			.on("ended", () => {
+				if (!this._preserve) {
+					this.destroy();
+				}
+				console.log("ended");
+
+				this.triggerEvent("ended");
+			})
+			.on("pause", () => {
+				// console.log("pause");
+
+				// Trigger pause event only when it just paused
+				if (!this.ended) {
+					this.triggerEvent("pause");
+				}
+			})
+			.on("canplay", () => {
+				// console.log("canplay");
+				this.triggerEvent("canplay");
+			});
+	}
+
+	private triggerEvent(eventName: string): void {
+		this.dispatchEvent(new Event(eventName));
+	}
+
+	/**
+	 * Dispose logic.
+	 */
 	private destroy(): void {
 		this._destroyed = true;
 
@@ -149,30 +204,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 		this._audio.srcObject = null;
 		this._audio = null;
-	}
 
-	private initEventListeners(): void {
-		$(this._audio)
-			.on("error", () => {
-				this.destroy();
-				this.triggerEvent("error");
-			})
-			.on("ended", () => {
-				this.destroy();
-				this.triggerEvent("ended");
-			})
-			.on("pause", () => {
-				// Trigger pause event only when it just paused
-				if (!this.ended) {
-					this.triggerEvent("pause");
-				}
-			})
-			.on("canplay", () => {
-				this.triggerEvent("canplay");
-			});
-	}
-
-	private triggerEvent(eventName: string): void {
-		this.dispatchEvent(new Event(eventName));
+		this._output = null;
 	}
 }

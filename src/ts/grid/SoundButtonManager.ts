@@ -15,9 +15,11 @@ class SoundButtonManager extends Logger {
 			condition: "after",
 		},
 	};
-	
+
 	private _randomPaths: string[] = ["Clown Horn.mp3"];
 	private _$grid: JQuery<HTMLElement>;
+
+	private _audioPlayer: AudioPlayer;
 
 	/**
 	 * Returns a random audio file from a set of hardcoded paths (for testing purposes)
@@ -111,11 +113,19 @@ class SoundButtonManager extends Logger {
 
 		// If the button doesn't exist
 		if ($button.length < 1) {
-			Logger.logDebug(SoundButtonManager.updateButton, "Button not found, ignoring changes.\n", buttonData);
+			Logger.logDebug(
+				SoundButtonManager.updateButton,
+				"Button not found, ignoring changes.\n",
+				buttonData
+			);
 			return;
 		}
 
-		Logger.logInfo(SoundButtonManager.updateButton, "Applying button data:\n", buttonData);
+		Logger.logInfo(
+			SoundButtonManager.updateButton,
+			"Applying button data:\n",
+			buttonData
+		);
 
 		this.applyButtonData($button, buttonData);
 	}
@@ -204,6 +214,8 @@ class SoundButtonManager extends Logger {
 		}
 
 		this._$grid.on("click", ".soundbutton", (e) => {
+			// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
+
 			SoundButtonManager.logDebug(
 				this.setupClick,
 				`Button "%s" clicked`,
@@ -220,10 +232,14 @@ class SoundButtonManager extends Logger {
 				condition: $button.attr("data-end-type") as "at" | "after",
 			};
 
-			const useMultiPool = e.shiftKey; // If the shift key is pressed, use the multi-pool
-
-			// TODO: inject player
-			// AudioPlayer.addAudio(path, time, useMultiPool);
+			this._audioPlayer.play(
+				{
+					src: path,
+					audioTimings: null,
+				},
+				// If the shift key is pressed, use the secondary storage
+				e.shiftKey
+			);
 		});
 
 		return this;
@@ -249,6 +265,11 @@ class SoundButtonManager extends Logger {
 			SoundboardApi.mainWindow.openContextMenu(args);
 		});
 
+		return this;
+	}
+
+	public setupAudioPlayer(player: AudioPlayer): this {
+		this._audioPlayer = player;
 		return this;
 	}
 

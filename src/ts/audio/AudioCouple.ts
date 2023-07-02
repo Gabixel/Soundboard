@@ -26,17 +26,24 @@ class AudioCouple extends EventTarget implements IAudioController {
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
 		options?: { src?: string; audioTimings?: AudioTimings },
-		autoPlay?: boolean
+		autoPlay?: boolean,
+		preserveOnEnd?: boolean
 	) {
 		super();
 
 		// Audio sources
 		this._source = {
-			main: new AudioSource(mainOutput, options, autoPlay),
-			playback: new AudioSource(playbackOutput, options, autoPlay),
+			main: new AudioSource(mainOutput, options, autoPlay, preserveOnEnd),
+			playback: new AudioSource(playbackOutput, options, autoPlay, preserveOnEnd),
 		};
 
 		this.initEventListeners();
+	}
+
+	public changeAudio(src: string): void {
+		// TODO: update timings, etc.
+		this._source.main.changeAudio(src);
+		this._source.playback.changeAudio(src);
 	}
 
 	public async play(): Promise<void> {

@@ -14,6 +14,8 @@ interface IAudioController {
 
 	// TODO: effects
 
+	changeAudio(src: string): void;
+
 	/**
 	 * Starts the audio (if there's a source file).
 	 */
