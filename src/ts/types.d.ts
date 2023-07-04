@@ -1,6 +1,11 @@
 type AnyFunc<T> = (...any: any[]) => T;
 
 type AudioEffect = "GainNode" | "BiquadFilterNode";
+type AudioSourceOptions = {
+	src?: string;
+	audioTimings?: AudioTimings;
+	volume?: number;
+};
 
 /**
  * Sound button metadata

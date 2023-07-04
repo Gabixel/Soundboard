@@ -25,7 +25,7 @@ class AudioCouple extends EventTarget implements IAudioController {
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
-		options?: { src?: string; audioTimings?: AudioTimings },
+		options?: AudioSourceOptions,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
@@ -89,19 +89,16 @@ class AudioCouple extends EventTarget implements IAudioController {
 
 	private initEventListeners(): void {
 		this.setEventsTo(this._source.main);
-		this.setEventsTo(this._source.playback);
+		// this.setEventsTo(this._source.playback);
+		$(this._source.playback).on("error", () => {});
 	}
 
 	private setEventsTo(source: AudioSource) {
 		$(source)
-			.on("error", () => event("error"))
-			.on("ended", () => event("ended"))
-			.on("pause", () => event("pause"))
-			.on("resume", () => event("resume"))
-			.on("canplay", () => event("canplay"));
-
-		var event = (eventName: string): void => {
-			this.dispatchEvent(new Event(eventName));
-		};
+			.on("error", () => this.dispatchEvent(new Event("error")))
+			.on("ended", () => this.dispatchEvent(new Event("ended")))
+			.on("pause", () => this.dispatchEvent(new Event("pause")))
+			.on("resume", () => this.dispatchEvent(new Event("resume")))
+			.on("canplay", () => this.dispatchEvent(new Event("canplay")));
 	}
 }

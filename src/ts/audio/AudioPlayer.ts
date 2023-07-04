@@ -24,7 +24,10 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		second: AudioStore;
 	};
 
-	private _slider: VolumeSlider;
+	// Controls
+	private _$playToggleButton: JQuery<HTMLButtonElement>;
+	private _$stopButton: JQuery<HTMLButtonElement>;
+	private _volumeSlider: VolumeSlider;
 
 	constructor(outputOptions?: { mainSinkId?: string; playbackSinkId?: string }) {
 		super();
@@ -43,13 +46,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		};
 	}
 
-	public play(
-		options: {
-			src: string;
-			audioTimings?: AudioTimings;
-		},
-		useSecondaryStorage: boolean
-	): void {
+	public play(options: AudioSourceOptions, useSecondaryStorage: boolean): void {
 		if (options.src == null) {
 			// TODO: log
 			return;
@@ -65,8 +62,39 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 
 		chosenStorage.storeAudio({
 			src: options.src,
-			audioTimings: options.audioTimings,
+			audioTimings: options?.audioTimings,
+			volume: this._volumeSlider.value,
 		});
+	}
+
+	public setControls(
+		$playToggleButton: JQuery<HTMLButtonElement>,
+		$stopButton: JQuery<HTMLButtonElement>
+	): this {
+		this._$playToggleButton = $playToggleButton;
+		$playToggleButton.on("click", () => {
+			this.handlePlayPauseButtonClick();
+		});
+
+		this._$stopButton = $stopButton;
+		$stopButton.on("click", () => {
+			this.handleStopButtonClick();
+		});
+
+		return this;
+	}
+
+	public bindStateChange(): this {
+		$(this._storage.first).on("playstatechange", () => {
+			this.updatePlayPauseButton();
+		});
+		$(this._storage.second).on("playstatechange", () => {
+			this.updatePlayPauseButton();
+		});
+
+		console.log(this._storage);
+
+		return this;
 	}
 
 	public setupVolumeSlider(
@@ -76,12 +104,12 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 			exponentialBase?: number;
 		}
 	): this {
-		this._slider = new VolumeSlider(
+		this._volumeSlider = new VolumeSlider(
 			$volumeSlider,
 			() => {
 				// Update existing audio volume
-				this._storage.first.setVolume(this._slider.value);
-				this._storage.second.setVolume(this._slider.value);
+				this._storage.first.setVolume(this._volumeSlider.value);
+				this._storage.second.setVolume(this._volumeSlider.value);
 
 				// // Log new volume
 				// this.logDebug(
@@ -89,7 +117,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 				// 	"Volume:",
 				// 	this._mainCoupleVolumeSlider.value
 				// );
-				console.debug("volume changed: " + this._slider.value);
+				console.debug("volume changed: " + this._volumeSlider.value);
 			},
 			options?.decimals,
 			options?.exponentialBase
@@ -104,5 +132,34 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		// 	$volumeSlider,
 		// );
 		return this;
+	}
+
+	// TODO: move play/pause/stop functionality to a separate class
+	private handlePlayPauseButtonClick(): void {
+
+		// TODO: prevent events from firing when manually pausing/resuming (for sanity)
+
+		this._storage.first.pause();
+		this._storage.second.pause();
+	}
+
+	private handleStopButtonClick(): void {
+		this._storage.first.end();
+		this._storage.second.end();
+	}
+
+	private updatePlayPauseButton(): void {
+		this.setPlayPauseButton(
+			this._storage.first.playing || this._storage.second.playing
+		);
+	}
+
+	private setPlayPauseButton(isPlaying: boolean): void {
+		console.log("audio icon should update");
+
+		this._$playToggleButton
+			.children("i")
+			.toggleClass("fa-pause", isPlaying)
+			.toggleClass("fa-play", !isPlaying);
 	}
 }

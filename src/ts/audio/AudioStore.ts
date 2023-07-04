@@ -55,10 +55,24 @@ class AudioStore extends EventTarget {
 		}
 	}
 
+	public get playing(): boolean {
+		return this.some((couple) => couple.playing);
+	}
+
 	public pause(): void {
 		this.forEach((couple) => {
 			couple.pause();
 		});
+	}
+
+	public end(): void {
+		if (this._storageLimit == 1 && this._recycleCopies) {
+			this._audioCoupleList[0].pause();
+		} else {
+			this.forEach((couple) => {
+				couple.end();
+			});
+		}
 	}
 
 	public setVolume(v: number) {
@@ -68,9 +82,10 @@ class AudioStore extends EventTarget {
 	}
 
 	public storeAudio(options: {
-		src: string;
+		src?: string;
 		// TODO: timings & filters
 		audioTimings?: AudioTimings;
+		volume?: number;
 	}): void {
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
@@ -103,7 +118,7 @@ class AudioStore extends EventTarget {
 			let replacingCouple = this._audioCoupleList.shift();
 
 			// Remove remove events
-			$(replacingCouple).off("ended error pause resume");
+			$(replacingCouple).off("ended error pause resume canplay");
 
 			// Add new couple to the old index
 			this.createAndPushCouple(options);
@@ -118,11 +133,7 @@ class AudioStore extends EventTarget {
 	}
 
 	private createAndPushCouple(
-		options?: {
-			src?: string;
-			// TODO: timings & filters
-			audioTimings?: AudioTimings;
-		},
+		options?: AudioSourceOptions,
 		index?: number
 	): AudioCouple {
 		let couple = new AudioCouple(
@@ -145,24 +156,23 @@ class AudioStore extends EventTarget {
 				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
 					this._audioCoupleList.splice(index);
+
 				}
 
 				// Trigger storage state change event
-				this.dispatchEvent(new Event("statechange"));
+				this.dispatchEvent(new Event("playstatechange"));
 			})
-			.on("pause resume", () => {
+			.on("pause resume canplay", () => {
+				console.log("resume or pause or canplay");
+
 				// Trigger storage state change event
-				this.dispatchEvent(new Event("statechange"));
+				this.dispatchEvent(new Event("playstatechange"));
 			});
 
 		return couple;
 	}
 
-	private foundCopyAndRestarted(options: {
-		src: string;
-		// TODO: timings & filters
-		audioTimings?: AudioTimings;
-	}): boolean {
+	private foundCopyAndRestarted(options: AudioSourceOptions): boolean {
 		if (this._audioCoupleList.length == 0) {
 			return false;
 		}
@@ -172,10 +182,10 @@ class AudioStore extends EventTarget {
 		let coupleIndex = this._audioCoupleList.findIndex(
 			(couple) =>
 				// Couple has same src
-				couple.src == options.src &&
+				couple?.src == options?.src &&
 				// Couple has same timings
-				JSON.stringify(couple.audioTimings ?? null) ==
-					JSON.stringify(options.audioTimings ?? null)
+				JSON.stringify(couple?.audioTimings ?? null) ==
+					JSON.stringify(options?.audioTimings ?? null)
 		);
 
 		if (coupleIndex >= 0) {
@@ -205,6 +215,16 @@ class AudioStore extends EventTarget {
 	private forEach(
 		callbackfn: (value: AudioCouple, index: number, array: AudioCouple[]) => void
 	) {
-		this._audioCoupleList.forEach(callbackfn);
+		this._audioCoupleList.forEach(callbackfn, this);
+	}
+
+	private some(
+		predicate: (
+			value: AudioCouple,
+			index: number,
+			array: AudioCouple[]
+		) => unknown
+	): boolean {
+		return this._audioCoupleList.some(predicate, this);
 	}
 }

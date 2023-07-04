@@ -89,10 +89,13 @@ abstract class MainWindow extends Main {
 	 * 6. **{@link AudioPlayer}**: The biggest one. The wrapper for all of the above, containing the two {@link AudioStore} instances mentioned earlier, and two {@link AudioOutput}s. The one that {@link SoundButtonManager} should call when a button gets clicked.
 	 */
 	private static setupAudio(): void {
-		this._audioPlayer = new AudioPlayer().setupVolumeSlider($("#volume-slider"), {
-			decimals: 4,
-			exponentialBase: 100,
-		});
+		this._audioPlayer = new AudioPlayer()
+			.setControls($("#play-toggle-audio-button"), $("#stop-audio-button"))
+			.bindStateChange()
+			.setupVolumeSlider($("#volume-slider"), {
+				decimals: 4,
+				exponentialBase: 100,
+			});
 
 		this._soundButtonManager.setupAudioPlayer(this._audioPlayer);
 	}

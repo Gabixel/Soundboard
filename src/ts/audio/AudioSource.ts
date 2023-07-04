@@ -45,7 +45,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	constructor(
 		output: AudioOutput,
-		options?: { src?: string; audioTimings?: AudioTimings },
+		options?: AudioSourceOptions,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
@@ -69,6 +69,8 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._gainNode = this._output.generateEffect("GainNode");
 		this._output.connectNode(this._gainNode);
 
+		this.volume = options?.volume ?? 1;
+
 		this.createSourceNode();
 
 		this.initEventListeners();
@@ -84,10 +86,13 @@ class AudioSource extends EventTarget implements IAudioController {
 			return;
 		}
 
-		this._audio.play().then(() => {
-			// Trigger resume event after starting/resuming
-			this.triggerEvent("resume");
-		});
+		this._audio.play();
+		// .then(() => {
+		// 	console.log();
+
+		// 	// Trigger resume event after starting/resuming
+		// 	this.triggerEvent("resume");
+		// })
 	}
 
 	public pause(): this {
