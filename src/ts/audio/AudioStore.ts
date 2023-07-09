@@ -59,6 +59,12 @@ class AudioStore extends EventTarget {
 		return this.some((couple) => couple.playing);
 	}
 
+	public async play(): Promise<void> {
+		for await (const couple of this._audioCoupleList) {
+			couple.play();
+		}
+	}
+
 	public pause(): void {
 		this.forEach((couple) => {
 			couple.pause();
@@ -66,13 +72,9 @@ class AudioStore extends EventTarget {
 	}
 
 	public end(): void {
-		if (this._storageLimit == 1 && this._recycleCopies) {
-			this._audioCoupleList[0].pause();
-		} else {
-			this.forEach((couple) => {
-				couple.end();
-			});
-		}
+		this.forEach((couple) => {
+			couple.end();
+		});
 	}
 
 	public setVolume(v: number) {
@@ -156,13 +158,14 @@ class AudioStore extends EventTarget {
 				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
 					this._audioCoupleList.splice(index);
-
 				}
+
+				console.log("ended or error");
 
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			})
-			.on("pause resume canplay", () => {
+			.on("canplay", () => {
 				console.log("resume or pause or canplay");
 
 				// Trigger storage state change event

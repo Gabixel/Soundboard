@@ -51,7 +51,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	) {
 		super();
 
-		this._src = options?.src;
+		this._src = options?.src ?? "";
 
 		this._audio = new Audio(this._src);
 		this._audio.preload = "metadata";
@@ -77,12 +77,13 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public changeAudio(src: string): void {
-		this._audio.src = src;
+		this._audio.src = src ?? "";
+		this._audio.load();
 	}
 
 	public async play(): Promise<void> {
 		if (this._src == null || this._destroyed) {
-			// Logger.logError(this.play, "Audio source is null");
+			Logger.logError(this.play, "Can't resume, audio source is null or audio is destroyed");
 			return;
 		}
 
@@ -107,7 +108,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public seekTo(time: number): this {
 		if (this._src == null || this._destroyed) {
-			// Logger.logError(this.play, "Audio source is null");
+			Logger.logError(this.play, "Can't seek, audio source is null or audio is destroyed");
 			return this;
 		}
 
@@ -117,11 +118,14 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public restart(): this {
 		this.seekTo(0);
+		this.play();
 		return this;
 	}
 
 	public end(): this {
 		this.seekTo(this._audio.duration);
+		$(this._audio).trigger("end");
+
 		return this;
 	}
 
@@ -175,6 +179,7 @@ class AudioSource extends EventTarget implements IAudioController {
 				if (!this._preserve) {
 					this.destroy();
 				}
+
 				console.log("ended");
 
 				this.triggerEvent("ended");
