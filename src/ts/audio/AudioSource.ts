@@ -14,11 +14,11 @@ class AudioSource extends EventTarget implements IAudioController {
 	private _destroyed: boolean = false;
 
 	/**
-	 * Audio source.
+	 * Audio source. We store it separately because if {@link Audio}'s `src` is not set, it will point to its document.
 	 */
-	private _src: string;
+	private _audioSrc: string;
 	public get src(): string {
-		return this._src;
+		return this._audioSrc;
 	}
 
 	/**
@@ -57,21 +57,27 @@ class AudioSource extends EventTarget implements IAudioController {
 		this.changeAudio(options?.src);
 	}
 
-	public changeAudio(src?: string): void {
+	public changeAudio(src: string): void {
 		if (this._destroyed) {
 			return;
 		}
 
-		this._audio.src = src ?? "";
-		this._audio.load();
+		this._audioSrc = src ?? undefined;
+		if (this.src) {
+			this._audio.src = src;
+			this._audio.load();
+		}
 	}
 
 	public async play(): Promise<void> {
-		if (this._src == null || this._destroyed) {
-			Logger.logError(
-				this.play,
-				"Can't resume, source is null or audio is destroyed"
-			);
+		if (!this.src) {
+			console.log("Audio has no src, play has been prevented");
+			
+			return;
+		}
+
+		if (this._destroyed) {
+			Logger.logError(this.play, "Can't resume: audio is destroyed");
 			return;
 		}
 
@@ -89,11 +95,15 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public seekTo(time: number): this {
-		if (this._src == null || this._destroyed) {
-			Logger.logError(
-				this.play,
-				"Can't seek, audio source is null or audio is destroyed"
-			);
+		if (!this.src) {
+			console.log("Audio has no src, play has been prevented");
+
+			return this;
+		}
+
+		if (this._destroyed) {
+			Logger.logError(this.play, "Can't resume: audio is destroyed");
+
 			return this;
 		}
 
@@ -161,12 +171,16 @@ class AudioSource extends EventTarget implements IAudioController {
 				console.error("error", _e);
 
 				if (!this._preserve) {
+					console.log("destroying");
+
 					this.destroy();
 				}
 
 				this.triggerEvent("error");
 			})
 			.on("ended", () => {
+				console.log("ended");
+
 				if (!this._preserve) {
 					this.destroy();
 				}
@@ -186,7 +200,7 @@ class AudioSource extends EventTarget implements IAudioController {
 				if (this._destroyed) {
 					return;
 				}
-				
+
 				console.log("canplay");
 
 				this.triggerEvent("canplay");
