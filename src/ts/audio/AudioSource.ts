@@ -39,9 +39,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	) {
 		super();
 
-		this._src = options?.src ?? "";
-
-		this._audio = new Audio(this._src);
+		this._audio = new Audio();
 		this._audio.preload = "metadata";
 		this._audio.autoplay = autoPlay ?? true;
 		this._audio.loop = false;
@@ -60,9 +58,15 @@ class AudioSource extends EventTarget implements IAudioController {
 		this.createSourceNode();
 
 		this.initEventListeners();
+
+		this.changeAudio(options?.src);
 	}
 
-	public changeAudio(src: string): void {
+	public changeAudio(src?: string): void {
+		if (this._destroyed) {
+			return;
+		}
+
 		this._audio.src = src ?? "";
 		this._audio.load();
 	}
@@ -71,7 +75,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		if (this._src == null || this._destroyed) {
 			Logger.logError(
 				this.play,
-				"Can't resume, audio source is null or audio is destroyed"
+				"Can't resume, source is null or audio is destroyed"
 			);
 			return;
 		}
@@ -158,6 +162,21 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	private initEventListeners(): void {
 		$(this._audio)
+			.on("error", (_e) => {
+				console.log("error");
+				
+				if(this._audio.srcObject == null) {
+					return;
+				}
+
+				console.error("error", _e);
+
+				if (!this._preserve) {
+					this.destroy();
+				}
+
+				this.triggerEvent("error");
+			})
 			.on("ended", () => {
 				if (!this._preserve) {
 					this.destroy();
@@ -173,7 +192,7 @@ class AudioSource extends EventTarget implements IAudioController {
 			})
 			.on("canplay", () => {
 				console.log("canplay");
-				
+
 				this.triggerEvent("canplay");
 			});
 	}
