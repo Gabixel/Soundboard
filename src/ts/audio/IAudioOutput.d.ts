@@ -14,7 +14,7 @@ interface IAudioOutput {
 	 * @param effect The desired effect node to generate
 	 * @returns The generated effect node (as an {@link AudioNode})
 	 */
-	generateEffect<T>(effect: AudioEffect): T;
+	createEffect<T>(effect: AudioEffect): T;
 
 	/**
 	 * Creates the souce node for a {@link HTMLMediaElement}.

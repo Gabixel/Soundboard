@@ -66,7 +66,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		// for now:
 		this._audioTimings = options?.audioTimings;
 
-		this._gainNode = this._output.generateEffect("GainNode");
+		this._gainNode = this._output.createEffect("GainNode");
 		this._output.connectNode(this._gainNode);
 
 		this.volume = options?.volume ?? 1;

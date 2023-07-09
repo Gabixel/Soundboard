@@ -24,8 +24,8 @@ class AudioOutput extends Logger implements IAudioOutput {
 		}
 	}
 
-	public connectNode(node: AudioNode): void {
-		node.connect(this._context.destination);
+		this._volumeGainNode = this._context.createGain();
+		this._volumeGainNode.connect(this._context.destination);
 	}
 
 	public get sinkId(): string {
@@ -36,7 +36,11 @@ class AudioOutput extends Logger implements IAudioOutput {
 		await this._context.setSinkId(sinkId);
 	}
 
-	public generateEffect<T>(effect: AudioEffect): T | never {
+	public connectNode(node: AudioNode): void {
+		node.connect(this._volumeGainNode);
+	}
+
+	public createEffect<T>(effect: AudioEffect): T | never {
 		// Check if the effect is actually in the allowed list
 		for (const effectKey in AudioOutput.effectMap) {
 			if (effectKey !== effect) {
