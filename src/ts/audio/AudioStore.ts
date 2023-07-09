@@ -160,14 +160,10 @@ class AudioStore extends EventTarget {
 					this._audioCoupleList.splice(index);
 				}
 
-				console.log("ended or error");
-
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			})
 			.on("canplay", () => {
-				console.log("resume or pause or canplay");
-
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			});

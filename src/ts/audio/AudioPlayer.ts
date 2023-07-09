@@ -54,7 +54,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 
 	public play(options: AudioSourceOptions, useSecondaryStorage: boolean): void {
 		if (options.src == null) {
-			// TODO: log
+			console.log("given source is null, skipping");
 			return;
 		}
 
