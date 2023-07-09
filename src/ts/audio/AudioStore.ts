@@ -114,7 +114,7 @@ class AudioStore extends EventTarget {
 			let replacingCouple = this._audioCoupleList.shift();
 
 			// Remove remove events
-			$(replacingCouple).off("ended error pause resume canplay");
+			$(replacingCouple).off("ended error canplay");
 
 			// Add new couple to the old index
 			this.createAndPushCouple(options);
