@@ -36,8 +36,19 @@ class AudioOutput extends Logger implements IAudioOutput {
 		await this._context.setSinkId(sinkId);
 	}
 
-	public generateEffect<T>(effect: AudioEffect): T {
-		return new AudioOutput.effectMap[effect](this._context);
+	public generateEffect<T>(effect: AudioEffect): T | never {
+		// Check if the effect is actually in the allowed list
+		for (const effectKey in AudioOutput.effectMap) {
+			if (effectKey !== effect) {
+				continue;
+			}
+
+			return new AudioOutput.effectMap[effect](this._context);
+		}
+
+		throw new RangeError(
+			`The "${effect}" effect doest not exist or is not supported.`
+		);
 	}
 
 	public createMediaElementSource(
