@@ -29,19 +29,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		return this._audioTimings;
 	}
 
-	//#region Volume
-	/**
-	 * Volume control for our audio.
-	 */
-	private _gainNode: GainNode;
-
-	public get volume(): number {
-		return this._gainNode.gain.value;
-	}
-	public set volume(v: number) {
-		this._gainNode.gain.value = v;
-	}
-	//#endregion
+	private _normalizationGain: GainNode;
 
 	constructor(
 		output: AudioOutput,
@@ -66,10 +54,8 @@ class AudioSource extends EventTarget implements IAudioController {
 		// for now:
 		this._audioTimings = options?.audioTimings;
 
-		this._gainNode = this._output.createEffect("GainNode");
-		this._output.connectNode(this._gainNode);
-
-		this.volume = options?.volume ?? 1;
+		this._normalizationGain = this._output.createEffect("GainNode");
+		this._output.connectNode(this._normalizationGain);
 
 		this.createSourceNode();
 
@@ -83,7 +69,10 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public async play(): Promise<void> {
 		if (this._src == null || this._destroyed) {
-			Logger.logError(this.play, "Can't resume, audio source is null or audio is destroyed");
+			Logger.logError(
+				this.play,
+				"Can't resume, audio source is null or audio is destroyed"
+			);
 			return;
 		}
 
@@ -108,7 +97,10 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public seekTo(time: number): this {
 		if (this._src == null || this._destroyed) {
-			Logger.logError(this.play, "Can't seek, audio source is null or audio is destroyed");
+			Logger.logError(
+				this.play,
+				"Can't seek, audio source is null or audio is destroyed"
+			);
 			return this;
 		}
 
@@ -161,39 +153,27 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._sourceNode = this._output.createMediaElementSource(this._audio);
 
 		// Connect node to audio context
-		this._sourceNode.connect(this._gainNode);
+		this._sourceNode.connect(this._normalizationGain);
 	}
 
 	private initEventListeners(): void {
 		$(this._audio)
-			.on("error", (_e) => {
-				if (!this._preserve) {
-					this.destroy();
-				}
-
-				// console.log("error", _e);
-
-				this.triggerEvent("error");
-			})
 			.on("ended", () => {
 				if (!this._preserve) {
 					this.destroy();
 				}
 
-				console.log("ended");
-
 				this.triggerEvent("ended");
 			})
 			.on("pause", () => {
-				// console.log("pause");
-
 				// Trigger pause event only when it just paused
 				if (!this.ended) {
 					this.triggerEvent("pause");
 				}
 			})
 			.on("canplay", () => {
-				// console.log("canplay");
+				console.log("canplay");
+				
 				this.triggerEvent("canplay");
 			});
 	}
@@ -208,9 +188,9 @@ class AudioSource extends EventTarget implements IAudioController {
 	private destroy(): void {
 		this._destroyed = true;
 
-		this._gainNode.disconnect();
+		this._normalizationGain.disconnect();
 		this._sourceNode.disconnect();
-		this._gainNode = this._sourceNode = null;
+		this._normalizationGain = this._sourceNode = null;
 
 		this._audio.srcObject = null;
 		this._audio = null;

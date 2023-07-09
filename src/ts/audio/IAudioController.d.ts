@@ -43,9 +43,4 @@ interface IAudioController {
 	paused: boolean;
 
 	ended: boolean;
-
-	/**
-	 * The audio volume.
-	 */
-	volume: number;
 }

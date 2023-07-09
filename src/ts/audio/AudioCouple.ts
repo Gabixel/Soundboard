@@ -15,13 +15,6 @@ class AudioCouple extends EventTarget implements IAudioController {
 		return this._source.main.audioTimings;
 	}
 
-	public get volume(): number {
-		return this._source.main.volume;
-	}
-	public set volume(v: number) {
-		this._source.main.volume = this._source.playback.volume = v;
-	}
-
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,

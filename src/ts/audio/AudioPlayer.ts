@@ -69,7 +69,6 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		chosenStorage.storeAudio({
 			src: options.src,
 			audioTimings: options?.audioTimings,
-			volume: this._volumeSlider.value,
 		});
 	}
 
@@ -112,8 +111,8 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 			$volumeSlider,
 			() => {
 				// Update existing audio volume
-				this._storage.first.setVolume(this._volumeSlider.value);
-				this._storage.second.setVolume(this._volumeSlider.value);
+				this._output.main.setVolume(this._volumeSlider.value);
+				this._output.playback.setVolume(this._volumeSlider.value);
 
 				// // Log new volume
 				// this.logDebug(

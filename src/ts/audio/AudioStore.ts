@@ -77,18 +77,12 @@ class AudioStore extends EventTarget {
 		});
 	}
 
-	public setVolume(newVolume: number) {
-		this.forEach((couple) => {
-			couple.volume = newVolume;
-		});
-	}
-
 	public storeAudio(options: {
 		src?: string;
 		// TODO: timings & filters
 		audioTimings?: AudioTimings;
-		volume?: number;
 	}): void {
+		// When limit is 1 and recycle is enabled
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
 

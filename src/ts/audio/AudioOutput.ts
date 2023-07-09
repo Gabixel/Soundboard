@@ -7,15 +7,12 @@ class AudioOutput extends Logger implements IAudioOutput {
 	 */
 	private _context: AudioContext;
 
-	/**
-	 * Global volume control.
-	 */
-	private _volumeGainNode: GainNode;
+	private _masterVolume: GainNode;
 
 	/**
 	 * Available effects for the user
 	 */
-	private static effectMap: Record<AudioEffect, any> = {
+	private static EFFECT_MAP: Record<AudioEffect, any> = {
 		GainNode,
 		BiquadFilterNode,
 	};
@@ -31,8 +28,8 @@ class AudioOutput extends Logger implements IAudioOutput {
 			this.setSinkId(sinkId);
 		}
 
-		this._volumeGainNode = this._context.createGain();
-		this._volumeGainNode.connect(this._context.destination);
+		this._masterVolume = this._context.createGain();
+		this._masterVolume.connect(this._context.destination);
 	}
 
 	public get sinkId(): string {
@@ -44,17 +41,17 @@ class AudioOutput extends Logger implements IAudioOutput {
 	}
 
 	public connectNode(node: AudioNode): void {
-		node.connect(this._volumeGainNode);
+		node.connect(this._masterVolume);
 	}
 
 	public createEffect<T>(effect: AudioEffect): T | never {
 		// Check if the effect is actually in the allowed list
-		for (const effectKey in AudioOutput.effectMap) {
+		for (const effectKey in AudioOutput.EFFECT_MAP) {
 			if (effectKey !== effect) {
 				continue;
 			}
 
-			return new AudioOutput.effectMap[effect](this._context);
+			return new AudioOutput.EFFECT_MAP[effect](this._context);
 		}
 
 		throw new RangeError(
@@ -69,6 +66,6 @@ class AudioOutput extends Logger implements IAudioOutput {
 	}
 
 	public setVolume(newVolume: number): void {
-		this._volumeGainNode.gain.value = newVolume;
+		this._masterVolume.gain.value = newVolume;
 	}
 }
