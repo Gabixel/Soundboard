@@ -6,7 +6,7 @@ class GridResizer extends Logger {
 	private _buttonFilterer: ButtonFilterer;
 	private _soundButtonManager: SoundButtonManager;
 
-	private resizerInitialized: boolean = false;
+	private _resizerInitialized: boolean = false;
 
 	// Semaphore for resize events
 	private resizingRow: boolean = false;
@@ -112,6 +112,8 @@ class GridResizer extends Logger {
 			}
 		});
 
+		this._resizerInitialized = true;
+
 		return this;
 	}
 
@@ -187,15 +189,15 @@ class GridResizer extends Logger {
 
 		for (let i = 0; i < emptyCells; i++) {
 			const $button = $(
-				// SoundboardApi.isProduction
-				/*?*/ this._soundButtonManager.generateButton(
+				SoundboardApi.isProduction || this._resizerInitialized
+				? this._soundButtonManager.generateButton(
 					// Generate all button of the same color on production
 					null,
 					this._gridManager.size + i - emptyCells
 				)
-				// : await this._soundButtonManager.generateRandomButton(
-				// 		this._gridManager.size + i - emptyCells
-				//   )
+				: await this._soundButtonManager.generateRandomButton(
+						this._gridManager.size + i - emptyCells
+				  )
 			);
 
 			// TODO: Not sure if it's better triggering the filter instead of this.
