@@ -50,6 +50,7 @@ class AudioStore extends EventTarget {
 
 		this._output = output;
 
+		// Create recycling audio couple
 		if (this._recycleCopies) {
 			this.createAndPushCouple();
 		}
@@ -77,17 +78,18 @@ class AudioStore extends EventTarget {
 		});
 	}
 
-	public storeAudio(options: {
+	public async storeAudio(options: {
 		src?: string;
 		// TODO: timings & filters
 		audioTimings?: AudioTimings;
-	}): void {
+	}): Promise<void> {
 		// When limit is 1 and recycle is enabled
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
 
+			// TODO: update settings (i.e. timings & effects)
 			if (couple.src === options.src) {
-				couple.seekTo(0);
+				await couple.restart();
 			} else {
 				this._audioCoupleList[0].changeAudio(options.src);
 			}
@@ -141,7 +143,7 @@ class AudioStore extends EventTarget {
 		);
 
 		// Store new index
-		if (index == undefined) {
+		if (!index) {
 			index = this._audioCoupleList.push(couple) - 1;
 		} else {
 			this._audioCoupleList[index] = couple;

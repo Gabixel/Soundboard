@@ -33,7 +33,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22).
 	 * Seems pretty rare, but it's nice to have.
 	 */
-	private _isResuming: boolean = false;
+	private _isAwaitingAudio: boolean = false;
 
 	constructor(outputOptions?: { mainSinkId?: string; playbackSinkId?: string }) {
 		super();
@@ -52,7 +52,10 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		};
 	}
 
-	public play(options: AudioSourceOptions, useSecondaryStorage: boolean): void {
+	public async play(
+		options: AudioSourceOptions,
+		useSecondaryStorage: boolean
+	): Promise<void> {
 		if (options.src == null) {
 			console.log("given source is null, skipping");
 			return;
@@ -66,10 +69,12 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 			"Using " + (useSecondaryStorage ? "secondary" : "primary") + " storage"
 		);
 
-		chosenStorage.storeAudio({
+		this._isAwaitingAudio = true;
+		await chosenStorage.storeAudio({
 			src: options.src,
 			audioTimings: options?.audioTimings,
 		});
+		this._isAwaitingAudio = false;
 	}
 
 	public setControls(
@@ -140,20 +145,20 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	// TODO: move play/pause/stop functionality to a separate class
 	private async handlePlayPauseButtonClick(): Promise<void> {
 		if (this._storage.first.playing || this._storage.second.playing) {
-			if (this._isResuming) {
+			if (this._isAwaitingAudio) {
 				return;
 			}
 
 			this._storage.first.pause();
 			this._storage.second.pause();
 		} else {
-			this._isResuming = true;
+			this._isAwaitingAudio = true;
 
 			try {
 				await this._storage.first.play();
 				await this._storage.second.play();
 			} finally {
-				this._isResuming = false;
+				this._isAwaitingAudio = false;
 			}
 		}
 
@@ -161,7 +166,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	}
 
 	private handleStopButtonClick(): void {
-		if (this._isResuming) {
+		if (this._isAwaitingAudio) {
 			return;
 		}
 

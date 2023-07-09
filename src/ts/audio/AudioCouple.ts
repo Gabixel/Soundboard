@@ -58,9 +58,9 @@ class AudioCouple extends EventTarget implements IAudioController {
 		this._source.playback.seekTo(time);
 	}
 
-	public restart(): void {
-		this._source.main.restart();
-		this._source.playback.restart();
+	public async restart(): Promise<void> {
+		await this._source.main.restart();
+		await this._source.playback.restart();
 	}
 
 	public end(): void {

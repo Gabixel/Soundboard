@@ -72,7 +72,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	public async play(): Promise<void> {
 		if (!this.src) {
 			console.log("Audio has no src, play has been prevented");
-			
+
 			return;
 		}
 
@@ -111,15 +111,15 @@ class AudioSource extends EventTarget implements IAudioController {
 		return this;
 	}
 
-	public restart(): this {
+	public async restart(): Promise<void> {
 		this.seekTo(0);
-		this.play();
-		return this;
+		await this.play();
 	}
 
 	public end(): this {
-		this.seekTo(this._audio.duration);
-		$(this._audio).trigger("end");
+		this.pause();
+		this.seekTo(0);
+		$(this._audio).trigger("ended");
 
 		return this;
 	}
@@ -180,7 +180,7 @@ class AudioSource extends EventTarget implements IAudioController {
 			})
 			.on("ended", () => {
 				console.log("ended");
-
+				
 				if (!this._preserve) {
 					this.destroy();
 				}
