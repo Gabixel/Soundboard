@@ -174,12 +174,19 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("ended");
 			})
 			.on("pause", () => {
-				// Trigger pause event only when it just paused
-				if (!this.ended) {
-					this.triggerEvent("pause");
+				// Don't trigger pause event if the audio has ended
+				if (this.ended) {
+					return;
 				}
+
+				this.triggerEvent("pause");
 			})
 			.on("canplay", () => {
+				// Don't trigger canplay if the audio has been destroyed
+				if (this._destroyed) {
+					return;
+				}
+				
 				console.log("canplay");
 
 				this.triggerEvent("canplay");
