@@ -81,12 +81,6 @@ class AudioSource extends EventTarget implements IAudioController {
 		}
 
 		this._audio.play();
-		// .then(() => {
-		// 	console.log();
-
-		// 	// Trigger resume event after starting/resuming
-		// 	this.triggerEvent("resume");
-		// })
 	}
 
 	public pause(): this {
