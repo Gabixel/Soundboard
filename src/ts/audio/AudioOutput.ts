@@ -7,6 +7,14 @@ class AudioOutput extends Logger implements IAudioOutput {
 	 */
 	private _context: AudioContext;
 
+	/**
+	 * Global volume control.
+	 */
+	private _volumeGainNode: GainNode;
+
+	/**
+	 * Available effects for the user
+	 */
 	private static effectMap: Record<AudioEffect, any> = {
 		GainNode,
 		BiquadFilterNode,
@@ -19,10 +27,9 @@ class AudioOutput extends Logger implements IAudioOutput {
 			latencyHint: "interactive", // This option indicates that low audio processing latency is important, such as for real-time interactive applications like games or music applications where immediate audio response is critical
 		});
 
-		if(sinkId) {
+		if (sinkId) {
 			this.setSinkId(sinkId);
 		}
-	}
 
 		this._volumeGainNode = this._context.createGain();
 		this._volumeGainNode.connect(this._context.destination);
@@ -59,5 +66,9 @@ class AudioOutput extends Logger implements IAudioOutput {
 		element: HTMLMediaElement
 	): MediaElementAudioSourceNode {
 		return this._context.createMediaElementSource(element);
+	}
+
+	public setVolume(newVolume: number): void {
+		this._volumeGainNode.gain.value = newVolume;
 	}
 }

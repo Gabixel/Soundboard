@@ -77,9 +77,9 @@ class AudioStore extends EventTarget {
 		});
 	}
 
-	public setVolume(v: number) {
+	public setVolume(newVolume: number) {
 		this.forEach((couple) => {
-			couple.volume = v;
+			couple.volume = newVolume;
 		});
 	}
 
