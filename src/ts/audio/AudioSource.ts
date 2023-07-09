@@ -29,8 +29,6 @@ class AudioSource extends EventTarget implements IAudioController {
 		return this._audioTimings;
 	}
 
-	private _normalizationGain: GainNode;
-
 	constructor(
 		output: AudioOutput,
 		options?: AudioSourceOptions,
@@ -51,9 +49,6 @@ class AudioSource extends EventTarget implements IAudioController {
 		// this.setAudioTimings(options.audioTimings);
 		// for now:
 		this._audioTimings = options?.audioTimings;
-
-		this._normalizationGain = this._output.createEffect("GainNode");
-		this._output.connectNode(this._normalizationGain);
 
 		this.createSourceNode();
 
@@ -147,19 +142,19 @@ class AudioSource extends EventTarget implements IAudioController {
 	// }
 
 	private createSourceNode(): void {
-		// Generate node
+		// Generate source node
 		this._sourceNode = this._output.createMediaElementSource(this._audio);
 
-		// Connect node to audio context
-		this._sourceNode.connect(this._normalizationGain);
+		// Connect source node to audio context
+		this._output.connectNode(this._sourceNode);
 	}
 
 	private initEventListeners(): void {
 		$(this._audio)
 			.on("error", (_e) => {
 				console.log("error");
-				
-				if(this._audio.srcObject == null) {
+
+				if (this._audio.srcObject == null) {
 					return;
 				}
 
@@ -201,9 +196,8 @@ class AudioSource extends EventTarget implements IAudioController {
 	private destroy(): void {
 		this._destroyed = true;
 
-		this._normalizationGain.disconnect();
 		this._sourceNode.disconnect();
-		this._normalizationGain = this._sourceNode = null;
+		this._sourceNode = null;
 
 		this._audio.srcObject = null;
 		this._audio = null;
