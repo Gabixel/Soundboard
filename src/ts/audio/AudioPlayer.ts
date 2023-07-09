@@ -29,6 +29,12 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	private _$stopButton: JQuery<HTMLButtonElement>;
 	private _volumeSlider: VolumeSlider;
 
+	/**
+	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22).
+	 * Seems pretty rare, but it's nice to have.
+	 */
+	private _isResuming: boolean = false;
+
 	constructor(outputOptions?: { mainSinkId?: string; playbackSinkId?: string }) {
 		super();
 
@@ -92,8 +98,6 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 			this.updatePlayPauseButton();
 		});
 
-		console.log(this._storage);
-
 		return this;
 	}
 
@@ -135,15 +139,33 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	}
 
 	// TODO: move play/pause/stop functionality to a separate class
-	private handlePlayPauseButtonClick(): void {
+	private async handlePlayPauseButtonClick(): Promise<void> {
+		if (this._storage.first.playing || this._storage.second.playing) {
+			if (this._isResuming) {
+				return;
+			}
 
-		// TODO: prevent events from firing when manually pausing/resuming (for sanity)
+			this._storage.first.pause();
+			this._storage.second.pause();
+		} else {
+			this._isResuming = true;
 
-		this._storage.first.pause();
-		this._storage.second.pause();
+			try {
+				await this._storage.first.play();
+				await this._storage.second.play();
+			} finally {
+				this._isResuming = false;
+			}
+		}
+
+		this.updatePlayPauseButton();
 	}
 
 	private handleStopButtonClick(): void {
+		if (this._isResuming) {
+			return;
+		}
+
 		this._storage.first.end();
 		this._storage.second.end();
 	}
@@ -155,7 +177,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	}
 
 	private setPlayPauseButton(isPlaying: boolean): void {
-		console.log("audio icon should update");
+		// console.log("audio icon should update");
 
 		this._$playToggleButton
 			.children("i")
