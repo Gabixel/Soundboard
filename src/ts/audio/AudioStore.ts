@@ -150,7 +150,7 @@ class AudioStore extends EventTarget {
 			.on("ended error", () => {
 				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
-					this._audioCoupleList.splice(index);
+					this._audioCoupleList.splice(index, 1);
 				}
 
 				// Trigger storage state change event
