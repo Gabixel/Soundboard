@@ -61,24 +61,24 @@ class AudioStore extends EventTarget {
 	}
 
 	public get playing(): boolean {
-		return this.some((couple) => couple.playing);
+		return this.some((couple) => couple?.playing ?? false);
 	}
 
 	public async play(): Promise<void> {
 		for await (const couple of this._audioCoupleList) {
-			couple.play();
+			couple?.play();
 		}
 	}
 
 	public pause(): void {
 		this.forEach((couple) => {
-			couple.pause();
+			couple?.pause();
 		});
 	}
 
 	public end(): void {
 		this.forEach((couple) => {
-			couple.end();
+			couple?.end();
 		});
 	}
 
@@ -150,11 +150,22 @@ class AudioStore extends EventTarget {
 			.on("ended error", () => {
 				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
-					this._audioCoupleList.splice(index, 1);
+					// this._audioCoupleList.splice(index, 1);
+					this._audioCoupleList[index] = null;
 				}
 
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
+
+				// Clear array if it's all null
+				if (
+					this._audioCoupleList.every((coupleIteration) => coupleIteration === null)
+				) {
+					console.log("disposing entire storage list since it's empty");
+					
+					this._audioCoupleList.length = 0;
+					
+				}
 			})
 			.on("canplay", () => {
 				// Trigger storage state change event
