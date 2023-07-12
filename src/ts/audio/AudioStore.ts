@@ -37,6 +37,9 @@ class AudioStore extends EventTarget {
 			 * To be used when a storage limit is set.
 			 */
 			replaceIfMaxedOut?: boolean;
+			/**
+			 *  This removes the `replaceIfMaxedOut` option if enabled.
+			 */
 			recycleIfSingle?: boolean;
 		}
 	) {
@@ -44,9 +47,10 @@ class AudioStore extends EventTarget {
 
 		this._storageLimit = storageLimit;
 
-		this._replaceIfMaxedOut = options?.replaceIfMaxedOut ?? false;
-
 		this._recycleCopies = options?.recycleIfSingle ?? storageLimit == 1;
+
+		this._replaceIfMaxedOut =
+			!this._recycleCopies && (options?.replaceIfMaxedOut ?? false);
 
 		this._output = output;
 
@@ -100,17 +104,14 @@ class AudioStore extends EventTarget {
 		if (!this.hasFreeStorage()) {
 			// TODO: log
 
-			if (this._recycleCopies && this.foundCopyAndRestarted(options)) {
-				// If an identical copy has been revived
-				// TODO: log
+			if (
+				!this._replaceIfMaxedOut ||
+				(this._replaceIfMaxedOut && this.foundCopyAndRestarted(options))
+			) {
 				return;
 			}
 
-			if (!this._replaceIfMaxedOut) {
-				return;
-			}
-
-			// Replace is enabled
+			// Replace is enabled and there's no existing similar audio
 
 			// Get oldest couple
 			let replacingCouple = this._audioCoupleList.shift();
@@ -118,16 +119,12 @@ class AudioStore extends EventTarget {
 			// Remove remove events
 			$(replacingCouple).off("ended error canplay");
 
-			// Add new couple to the old index
-			this.createAndPushCouple(options);
-
 			// Dispose old couple
 			replacingCouple.end();
 			replacingCouple = null;
-		} else {
-			// Free storage
-			this.createAndPushCouple(options);
 		}
+
+		this.createAndPushCouple(options);
 	}
 
 	private createAndPushCouple(
