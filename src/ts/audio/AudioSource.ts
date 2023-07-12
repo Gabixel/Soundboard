@@ -217,6 +217,8 @@ class AudioSource extends EventTarget implements IAudioController {
 	private destroy(): void {
 		this._destroyed = true;
 
+		$(this._audio).off("error ended pause canplay");
+
 		this._sourceNode.disconnect();
 		this._sourceNode = null;
 
