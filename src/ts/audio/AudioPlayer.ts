@@ -65,10 +65,6 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 			? this._storage.parallel
 			: this._storage.single;
 
-		console.log(
-			"Using " + (useSecondaryStorage ? "secondary" : "primary") + " storage"
-		);
-
 		this._isAwaitingAudio = true;
 		await chosenStorage.storeAudio({
 			src: options.src,
@@ -87,8 +83,8 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		});
 
 		this._$stopButton = $stopButton;
-		$stopButton.on("click", () => {
-			this.handleStopButtonClick();
+		$stopButton.on("click", (e) => {
+			this.handleStopButtonClick(e);
 		});
 
 		return this;
@@ -166,12 +162,22 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	}
 
 	private handleStopButtonClick(
+		e: JQuery.ClickEvent<
+			HTMLButtonElement,
+			undefined,
+			HTMLButtonElement,
+			HTMLButtonElement
+		>
 	): void {
 		if (this._isAwaitingAudio) {
 			return;
 		}
 
-		this._storage.single.end();
+		// If the user doesn't press the shift key, also stop the single storage
+		if (!e.shiftKey) {
+			this._storage.single.end();
+		}
+
 		this._storage.parallel.end();
 	}
 
