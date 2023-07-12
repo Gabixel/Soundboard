@@ -15,13 +15,13 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 
 	private _storage: {
 		/**
-		 * First storage is limited to 1 audio.
+		 * First (single) storage is limited to 1 audio.
 		 */
-		first: AudioStore;
+		single: AudioStore;
 		/**
-		 * Second storage is unlimited.
+		 * Second (parallel) storage is unlimited.
 		 */
-		second: AudioStore;
+		parallel: AudioStore;
 	};
 
 	// Controls
@@ -44,11 +44,11 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		};
 
 		this._storage = {
-			first: new AudioStore(1, this._output, {
+			single: new AudioStore(1, this._output, {
 				replaceIfMaxedOut: true,
 				recycleIfSingle: true,
 			}),
-			second: new AudioStore(-1, this._output),
+			parallel: new AudioStore(-1, this._output),
 		};
 	}
 
@@ -62,8 +62,8 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		}
 
 		let chosenStorage: AudioStore = useSecondaryStorage
-			? this._storage.second
-			: this._storage.first;
+			? this._storage.parallel
+			: this._storage.single;
 
 		console.log(
 			"Using " + (useSecondaryStorage ? "secondary" : "primary") + " storage"
@@ -95,10 +95,10 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	}
 
 	public bindStateChange(): this {
-		$(this._storage.first).on("playstatechange", () => {
+		$(this._storage.single).on("playstatechange", () => {
 			this.updatePlayPauseButton();
 		});
-		$(this._storage.second).on("playstatechange", () => {
+		$(this._storage.parallel).on("playstatechange", () => {
 			this.updatePlayPauseButton();
 		});
 
@@ -144,19 +144,19 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 
 	// TODO: move play/pause/stop functionality to a separate class
 	private async handlePlayPauseButtonClick(): Promise<void> {
-		if (this._storage.first.playing || this._storage.second.playing) {
+		if (this._storage.single.playing || this._storage.parallel.playing) {
 			if (this._isAwaitingAudio) {
 				return;
 			}
 
-			this._storage.first.pause();
-			this._storage.second.pause();
+			this._storage.single.pause();
+			this._storage.parallel.pause();
 		} else {
 			this._isAwaitingAudio = true;
 
 			try {
-				await this._storage.first.play();
-				await this._storage.second.play();
+				await this._storage.single.play();
+				await this._storage.parallel.play();
 			} finally {
 				this._isAwaitingAudio = false;
 			}
@@ -165,18 +165,19 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		this.updatePlayPauseButton();
 	}
 
-	private handleStopButtonClick(): void {
+	private handleStopButtonClick(
+	): void {
 		if (this._isAwaitingAudio) {
 			return;
 		}
 
-		this._storage.first.end();
-		this._storage.second.end();
+		this._storage.single.end();
+		this._storage.parallel.end();
 	}
 
 	private updatePlayPauseButton(): void {
 		this.setPlayPauseButton(
-			this._storage.first.playing || this._storage.second.playing
+			this._storage.single.playing || this._storage.parallel.playing
 		);
 	}
 
