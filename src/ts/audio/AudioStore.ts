@@ -165,10 +165,6 @@ class AudioStore extends EventTarget {
 	}
 
 	private foundCopyAndRestarted(options: AudioSourceOptions): boolean {
-		if (this._audioCoupleList.length == 0) {
-			return false;
-		}
-
 		let couple: AudioCouple = null;
 
 		let coupleIndex = this._audioCoupleList.findIndex(
