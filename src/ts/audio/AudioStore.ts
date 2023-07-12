@@ -181,7 +181,7 @@ class AudioStore extends EventTarget {
 		);
 
 		if (coupleIndex >= 0) {
-			console.log("found at index " + coupleIndex);
+			console.log("found audio copy at index " + coupleIndex);
 
 			couple = this._audioCoupleList.splice(coupleIndex, 1)[0];
 			this._audioCoupleList.push(couple);
