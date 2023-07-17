@@ -150,7 +150,7 @@ class AudioStore extends EventTarget {
 			.on("ended error", () => {
 				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
-					// this._audioCoupleList.splice(index, 1);
+					console.log("audio ended at index " + index);
 					this._audioCoupleList[index] = null;
 				}
 
@@ -164,12 +164,13 @@ class AudioStore extends EventTarget {
 					console.log("disposing entire storage list since it's empty");
 					
 					this._audioCoupleList.length = 0;
-					
 				}
 			})
 			.on("canplay", () => {
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
+			}).on("pause", () => {
+				console.log("audio paused at (ideal) index " + index);
 			});
 
 		return couple;
