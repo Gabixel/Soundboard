@@ -4,6 +4,7 @@ type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
 	src?: string;
 	audioTimings?: AudioTimings;
+	loop?: boolean;
 };
 
 /**

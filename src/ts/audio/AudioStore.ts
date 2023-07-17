@@ -82,11 +82,7 @@ class AudioStore extends EventTarget {
 		});
 	}
 
-	public async storeAudio(options: {
-		src?: string;
-		// TODO: timings & filters
-		audioTimings?: AudioTimings;
-	}): Promise<void> {
+	public async storeAudio(options: AudioSourceOptions): Promise<void> {
 		// When limit is 1 and recycle is enabled
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
@@ -127,6 +123,12 @@ class AudioStore extends EventTarget {
 		this.createAndPushCouple(options);
 	}
 
+	public setLoop(loop: boolean) {
+		this.forEach((couple) => {
+			couple.loop = loop;
+		});
+	}
+
 	private createAndPushCouple(
 		options?: AudioSourceOptions,
 		index?: number
@@ -162,14 +164,15 @@ class AudioStore extends EventTarget {
 					this._audioCoupleList.every((coupleIteration) => coupleIteration === null)
 				) {
 					console.log("disposing entire storage list since it's empty");
-					
+
 					this._audioCoupleList.length = 0;
 				}
 			})
 			.on("canplay", () => {
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
-			}).on("pause", () => {
+			})
+			.on("pause", () => {
 				console.log("audio paused at (ideal) index " + index);
 			});
 

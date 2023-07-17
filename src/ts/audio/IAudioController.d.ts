@@ -43,4 +43,6 @@ interface IAudioController {
 	paused: boolean;
 
 	ended: boolean;
+
+	loop: boolean;
 }

@@ -15,6 +15,14 @@ class AudioCouple extends EventTarget implements IAudioController {
 		return this._source.main.audioTimings;
 	}
 
+	public get loop(): boolean {
+		return this._source.main.loop;
+	}
+
+	public set loop(loop: boolean) {
+		this._source.main.loop = this._source.playback.loop = loop;
+	}
+
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,

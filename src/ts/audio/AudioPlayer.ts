@@ -27,6 +27,7 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	// Controls
 	private _$playToggleButton: JQuery<HTMLButtonElement>;
 	private _$stopButton: JQuery<HTMLButtonElement>;
+	private _$loopButton: JQuery<HTMLInputElement>;
 	private _volumeSlider: VolumeSlider;
 
 	/**
@@ -69,22 +70,30 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		await chosenStorage.storeAudio({
 			src: options.src,
 			audioTimings: options?.audioTimings,
+			loop: this._$loopButton.is(":checked")
 		});
 		this._isAwaitingAudio = false;
 	}
 
 	public setControls(
 		$playToggleButton: JQuery<HTMLButtonElement>,
-		$stopButton: JQuery<HTMLButtonElement>
+		$stopButton: JQuery<HTMLButtonElement>,
+		$loopButton: JQuery<HTMLInputElement>
 	): this {
 		this._$playToggleButton = $playToggleButton;
-		$playToggleButton.on("click", () => {
+		this._$playToggleButton.on("click", () => {
 			this.handlePlayPauseButtonClick();
 		});
 
 		this._$stopButton = $stopButton;
-		$stopButton.on("click", (e) => {
+		this._$stopButton.on("click", (e) => {
 			this.handleStopButtonClick(e);
+		});
+
+		this._$loopButton = $loopButton;
+		this._$loopButton.on("change", (e) => {
+			let checked = $(e.target).is(":checked");
+			this._storage.single.setLoop(checked);
 		});
 
 		return this;

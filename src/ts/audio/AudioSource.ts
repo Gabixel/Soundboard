@@ -21,6 +21,18 @@ class AudioSource extends EventTarget implements IAudioController {
 		return this._audioSrc;
 	}
 
+	public get loop(): boolean {
+		return this._audio.loop;
+	}
+
+	public set loop(loop: boolean) {
+		if (!this._preserve) {
+			throw new ReferenceError("Can't loop audio if 'preserve' is not enabled");
+		}
+
+		this._audio.loop = loop;
+	}
+
 	/**
 	 * Audio timings settings.
 	 */
@@ -179,10 +191,11 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("error");
 			})
 			.on("ended", () => {
-				if (this._preserve) {
-					this.seekTo(0);
-				} else {
+				if (!this._preserve) {
 					this.destroy();
+				} else if (!this.loop) {
+					// Manual seek
+					this.seekTo(0);
 				}
 
 				this.triggerEvent("ended");
