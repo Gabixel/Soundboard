@@ -96,7 +96,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public seekTo(time: number): this {
 		if (!this.src) {
-			console.log("Audio has no src, play has been prevented");
+			console.log("Audio has no src, seekTo has been prevented");
 
 			return this;
 		}
@@ -118,7 +118,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public end(): this {
 		this.pause();
-		this.seekTo(0);
+
 		$(this._audio).trigger("ended");
 
 		return this;
@@ -162,11 +162,11 @@ class AudioSource extends EventTarget implements IAudioController {
 	private initEventListeners(): void {
 		$(this._audio)
 			.on("error", (_e) => {
-				console.log("error");
+				// console.log("error");
 
-				if (this._audio.srcObject == null) {
-					return;
-				}
+				// if (this._audio.srcObject == null) {
+				// 	return;
+				// }
 
 				console.error("error", _e);
 
@@ -179,9 +179,9 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("error");
 			})
 			.on("ended", () => {
-				console.log("ended");
-				
-				if (!this._preserve) {
+				if (this._preserve) {
+					this.seekTo(0);
+				} else {
 					this.destroy();
 				}
 
