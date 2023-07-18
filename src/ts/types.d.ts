@@ -2,8 +2,9 @@ type AnyFunc<T> = (...any: any[]) => T;
 
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
-	src?: string;
-	audioTimings?: AudioTimings;
+	src: string;
+	volume: number;
+	audioTimings: AudioTimings;
 	loop?: boolean;
 };
 

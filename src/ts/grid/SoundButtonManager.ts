@@ -224,7 +224,7 @@ class SoundButtonManager extends Logger {
 
 			const $button = $(e.target);
 
-			const path = $button.attr("data-path");
+			const src = $button.attr("data-path");
 
 			const time: AudioTimings = {
 				start: parseInt($button.attr("data-start-time")),
@@ -232,14 +232,17 @@ class SoundButtonManager extends Logger {
 				condition: $button.attr("data-end-type") as "at" | "after",
 			};
 
-			this._audioPlayer.play(
-				{
-					src: path,
-					audioTimings: null,
-				},
-				// If the shift key is pressed, use the secondary storage
-				e.shiftKey
-			);
+			const volume = +$button.attr("data-volume");
+
+			const options: AudioSourceOptions = {
+				src,
+				volume,
+				audioTimings: null,
+			};
+
+			const useSecondaryStorage = e.shiftKey;
+
+			this._audioPlayer.play(options, useSecondaryStorage);
 		});
 
 		return this;

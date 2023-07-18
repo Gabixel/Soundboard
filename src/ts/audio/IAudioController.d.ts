@@ -12,6 +12,10 @@ interface IAudioController {
 	 */
 	audioTimings: AudioTimings;
 
+	loop: boolean;
+
+	volume: number;
+
 	// TODO: effects
 
 	changeAudio(src: string): void;
@@ -43,6 +47,4 @@ interface IAudioController {
 	paused: boolean;
 
 	ended: boolean;
-
-	loop: boolean;
 }

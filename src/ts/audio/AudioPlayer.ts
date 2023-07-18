@@ -69,8 +69,9 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 		this._isAwaitingAudio = true;
 		await chosenStorage.storeAudio({
 			src: options.src,
-			audioTimings: options?.audioTimings,
-			loop: this._$loopButton.is(":checked")
+			audioTimings: options.audioTimings,
+			loop: this._$loopButton.is(":checked"),
+			volume: options.volume
 		});
 		this._isAwaitingAudio = false;
 	}

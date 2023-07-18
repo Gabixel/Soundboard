@@ -184,11 +184,12 @@ class AudioStore extends EventTarget {
 
 		let coupleIndex = this._audioCoupleList.findIndex(
 			(couple) =>
+				couple != null &&
 				// Couple has same src
-				couple?.src == options?.src &&
+				couple.src == options.src &&
 				// Couple has same timings
-				JSON.stringify(couple?.audioTimings ?? null) ==
-					JSON.stringify(options?.audioTimings ?? null)
+				JSON.stringify(couple.audioTimings ?? null) ==
+					JSON.stringify(options.audioTimings ?? null)
 		);
 
 		if (coupleIndex >= 0) {
@@ -198,7 +199,6 @@ class AudioStore extends EventTarget {
 			this._audioCoupleList.push(couple);
 		}
 
-		// Restart couple
 		couple?.restart();
 
 		return couple != undefined;

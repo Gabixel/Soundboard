@@ -33,6 +33,14 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio.loop = loop;
 	}
 
+	public get volume(): number {
+		return this._audio.volume;
+	}
+
+	public set volume(volume: number) {
+		this._audio.volume = volume;
+	}
+
 	/**
 	 * Audio timings settings.
 	 */
