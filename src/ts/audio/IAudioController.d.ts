@@ -8,13 +8,16 @@ interface IAudioController {
 	src: string;
 
 	/**
-	 * Audio timings settings.
+	 * TODO: Audio timings settings.
 	 */
 	audioTimings: AudioTimings;
 
 	loop: boolean;
 
 	volume: number;
+
+	// TODO:
+	// playbackRate: number;
 
 	// TODO: effects
 
@@ -31,7 +34,7 @@ interface IAudioController {
 	pause(): this;
 
 	/**
-	 * Ends the audio (if there's a source file).
+	 * Forcibly ends the audio (if there's a source file).
 	 */
 	end(): void;
 

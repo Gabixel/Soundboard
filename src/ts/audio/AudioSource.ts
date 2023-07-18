@@ -138,6 +138,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	public end(): this {
 		this.pause();
+		this.seekTo(0);
 
 		$(this._audio).trigger("ended");
 
@@ -199,11 +200,10 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("error");
 			})
 			.on("ended", () => {
+				console.log("ended");
+
 				if (!this._preserve) {
 					this.destroy();
-				} else if (!this.loop) {
-					// Manual seek
-					this.seekTo(0);
 				}
 
 				this.triggerEvent("ended");
