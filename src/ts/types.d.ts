@@ -9,33 +9,32 @@ type AudioSourceOptions = {
 };
 
 /**
- * Sound button metadata
+ * Sound button metadata.
  */
 // Keep updated with "~/src/ts/types.d.ts"
 type SoundButtonData = {
 	/**
-	 * The unrendered text
+	 * The unrendered text.
 	 */
 	title?: string;
 	/**
-	 * The color (fallback if image is failing/missing)
+	 * The color (fallback if image is failing/missing).
 	 */
 	color?: Color.HSL;
-
 	/**
-	 * The background image
+	 * The background image.
 	 */
 	image?: string;
 	/**
-	 * Search tags
+	 * Search tags.
 	 */
 	tags?: string[];
 	/**
-	 * The audio start/end timestamp conditions
+	 * The audio start/end timestamp conditions.
 	 */
 	time?: AudioTimings;
 	/**
-	 * Audio file path
+	 * Audio file path.
 	 */
 	path?: string;
 };
@@ -70,15 +69,15 @@ type AudioTimings = {
 namespace Color {
 	type HSL = {
 		/**
-		 * Hue
+		 * Hue.
 		 */
 		h: number;
 		/**
-		 * Saturation
+		 * Saturation.
 		 */
 		s: number;
 		/**
-		 * Lightness
+		 * Lightness.
 		 */
 		l: number;
 	};
