@@ -34,18 +34,14 @@ type SoundButtonData = {
 	 */
 	time?: AudioTimings;
 	/**
+	 * Desired volume for the audio.
+	 */
+	volume?: number;
+	/**
 	 * Audio file path.
 	 */
 	path?: string;
 };
-
-type SoundButtonProperties =
-	| "title"
-	| "color"
-	| "image"
-	| "tags"
-	| "time"
-	| "path";
 
 /**
  * Timings settings for the {@link SoundButtonData}

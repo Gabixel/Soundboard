@@ -8,12 +8,13 @@ class SoundButtonManager extends Logger {
 		color: { h: 0, s: 0, l: 80 },
 		image: null,
 		tags: [],
-		path: null,
 		time: {
 			start: 0,
 			end: 0,
 			condition: "after",
 		},
+		volume: 1,
+		path: null,
 	};
 
 	private _randomPaths: string[] = ["Clown Horn.mp3"];
@@ -70,8 +71,9 @@ class SoundButtonManager extends Logger {
 			color: { h, s, l },
 			image: SoundButtonManager.DEFAULT_METADATA.image,
 			tags: SoundButtonManager.DEFAULT_METADATA.tags,
-			path: await this.getRandomAudio(),
 			time: SoundButtonManager.DEFAULT_METADATA.time,
+			volume: SoundButtonManager.DEFAULT_METADATA.volume,
+			path: await this.getRandomAudio(),
 		};
 
 		return SoundButtonManager.createWithData(data, index);
@@ -222,25 +224,18 @@ class SoundButtonManager extends Logger {
 				$(e.target).children(".button-theme").text()
 			);
 
-			const $button = $(e.target);
+			const data = SoundButtonManager.getButtonData($(e.target));
 
-			const src = $button.attr("data-path");
-
-			const time: AudioTimings = {
-				start: parseInt($button.attr("data-start-time")),
-				end: parseInt($button.attr("data-end-time")),
-				condition: $button.attr("data-end-type") as "at" | "after",
-			};
-
-			const volume = +$button.attr("data-volume");
+			const src = data.path;
+			const audioTimings: AudioTimings = null; // data.time;
+			const volume = data.volume;
+			const useSecondaryStorage = e.shiftKey;
 
 			const options: AudioSourceOptions = {
 				src,
 				volume,
-				audioTimings: null,
+				audioTimings,
 			};
-
-			const useSecondaryStorage = e.shiftKey;
 
 			this._audioPlayer.play(options, useSecondaryStorage);
 		});
@@ -283,9 +278,10 @@ class SoundButtonManager extends Logger {
 			title: data.title ?? defaultData.title,
 			color: data.color ?? defaultData.color,
 			image: data.image ?? defaultData.image,
-			path: data.path ?? defaultData.path,
 			tags: data.tags ?? defaultData.tags,
 			time: data.time ?? defaultData.time,
+			volume: 1,
+			path: data.path ?? defaultData.path,
 		};
 	}
 
@@ -306,6 +302,9 @@ class SoundButtonManager extends Logger {
 			.attr("data-start-time", buttonData.time.start)
 			.attr("data-end-time", buttonData.time.end)
 			.attr("data-end-type", buttonData.time.condition)
+
+			// Volume
+			.attr("data-volume", buttonData.volume)
 
 			// Color
 			.css("--hue", buttonData.color.h.toString())
@@ -328,6 +327,8 @@ class SoundButtonManager extends Logger {
 				.attr("data-tags")
 				.split(" ")
 				.filter((tag) => tag.length > 0),
+			// TODO: time: null,
+			volume: +$button.attr("data-volume"),
 			path: $button.attr("data-path"),
 		};
 	}

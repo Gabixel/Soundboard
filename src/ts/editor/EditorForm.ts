@@ -63,6 +63,8 @@ class EditorForm extends Logger {
 					// It's just a placeholder
 					.removeProp("value")
 			)
+			// Volume
+			.add($(`${this.DATA_PREFIX}volume`).val(buttonData.volume ?? 1))
 			// Path
 			.add(
 				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path ?? ""))
@@ -81,12 +83,12 @@ class EditorForm extends Logger {
 	private setupInputsEvents(): void {
 		// TODO: make every element call a function to update the preview
 
-		$input("#button-data-title").on("change", (e) => {
+		$input(`${this.DATA_PREFIX}title`).on("change", (e) => {
 			// Apply title data
 			this.updateProperty("title", e.target.value);
 		});
 
-		$input("#button-data-color")
+		$input(`${this.DATA_PREFIX}color`)
 			// Constant color dragging
 			.on("input", (e) => {
 				// Change shadow color
@@ -101,7 +103,7 @@ class EditorForm extends Logger {
 			});
 
 		// File picker
-		$input("#button-path-file").on("change", (e) => {
+		$input(`${this.DATA_PREFIX}file`).on("change", (e) => {
 			// TODO: check if valid?
 			let path = e.target.files[0].path;
 
@@ -114,7 +116,14 @@ class EditorForm extends Logger {
 			this.updateProperty("path", StringUtilities.encodeFilePath(path));
 		});
 
-		$input("#button-data-path").on("change", (e) => {
+		$input(`${this.DATA_PREFIX}volume`).on("change", (e) => {
+			let volume = +e.target.value;
+
+			// Apply volume
+			this.updateProperty("volume", volume);
+		});
+
+		$input(`${this.DATA_PREFIX}path`).on("change", (e) => {
 			// TODO: warn if it's invalid?
 			let path = e.target.value;
 
@@ -164,7 +173,10 @@ class EditorForm extends Logger {
 		);
 	}
 
-	private updateProperty(key: SoundButtonProperties, data: any) {
+	private updateProperty<
+		TKey extends keyof SoundButtonData,
+		TValue extends SoundButtonData[TKey]
+	>(key: TKey, data: TValue) {
 		if (key in this._buttonData) {
 			this._buttonData[key] = data;
 		}
