@@ -1,7 +1,7 @@
 /**
  * Filterer for sound buttons inside a grid
  */
-class ButtonFilterer extends Logger {
+class ButtonFilterer {
 	private _gridManager: GridManager;
 
 	private _filter: string[] = [];
@@ -22,8 +22,6 @@ class ButtonFilterer extends Logger {
 	// FIXME: trigger filter after swapping buttons
 
 	constructor(gridManager: GridManager) {
-		super();
-
 		this._gridManager = gridManager;
 
 		Logger.logDebug("Initialized!");

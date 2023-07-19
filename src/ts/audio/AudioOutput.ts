@@ -1,7 +1,7 @@
 /**
  * Centralized audio effects generation and output.
  */
-class AudioOutput extends Logger implements IAudioOutput {
+class AudioOutput implements IAudioOutput {
 	/**
 	 * The audio output.
 	 */
@@ -18,8 +18,6 @@ class AudioOutput extends Logger implements IAudioOutput {
 	};
 
 	constructor(sinkId?: string) {
-		super();
-
 		this._context = new AudioContext({
 			latencyHint: "interactive", // This option indicates that low audio processing latency is important, such as for real-time interactive applications like games or music applications where immediate audio response is critical
 		});

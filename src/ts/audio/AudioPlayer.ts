@@ -1,7 +1,7 @@
 /**
  * Audio management class
  */
-class AudioPlayer extends Logger implements IAudioPlayer {
+class AudioPlayer implements IAudioPlayer {
 	private _output: {
 		/**
 		 * The primary output. It should go to the (hopefully) virtual output so that it can be redirected to virtual inputs.
@@ -37,8 +37,6 @@ class AudioPlayer extends Logger implements IAudioPlayer {
 	private _isAwaitingAudio: boolean = false;
 
 	constructor(outputOptions?: { mainSinkId?: string; playbackSinkId?: string }) {
-		super();
-
 		this._output = {
 			main: new AudioOutput(outputOptions?.mainSinkId),
 			playback: new AudioOutput(outputOptions?.playbackSinkId),

@@ -1,4 +1,4 @@
-abstract class UiScale extends Logger {
+abstract class UiScale {
 	private static $scaleInput: JQuery<HTMLInputElement>;
 	private static $lockCheckbox: JQuery<HTMLInputElement>;
 	private static $resetButton: JQuery<HTMLButtonElement>;

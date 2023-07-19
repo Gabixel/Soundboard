@@ -1,4 +1,4 @@
-abstract class SoundboardApi extends Logger {
+abstract class SoundboardApi {
 	public static get isProduction(): boolean {
 		return this._api.isProduction;
 	}

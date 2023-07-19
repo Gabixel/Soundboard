@@ -1,7 +1,7 @@
 /**
  * Container and management for sound buttons
  */
-class GridManager extends Logger {
+class GridManager {
 	private _$grid: JQuery<HTMLElement>;
 
 	private _gridRows: number = 0;
@@ -48,8 +48,6 @@ class GridManager extends Logger {
 	//#endregion
 
 	constructor($grid: JQuery<HTMLElement>) {
-		super();
-
 		this._$grid = $grid;
 		Logger.logDebug("Initialized!");
 	}

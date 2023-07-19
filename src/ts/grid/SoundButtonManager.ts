@@ -2,7 +2,7 @@
 /**
  * Sound buttons management
  */
-class SoundButtonManager extends Logger {
+class SoundButtonManager {
 	private static DEFAULT_METADATA: SoundButtonData = {
 		title: "-",
 		color: { h: 0, s: 0, l: 80 },
@@ -37,8 +37,6 @@ class SoundButtonManager extends Logger {
 
 	// TODO: remove random gen
 	constructor($grid: JQuery<HTMLElement>) {
-		super();
-
 		this._$grid = $grid;
 
 		Logger.logDebug("Initialized!");

@@ -1,4 +1,4 @@
-class ButtonSwap extends Logger {
+class ButtonSwap {
 	private _gridManager: GridManager;
 
 	private isPreparingDrag = false;
@@ -19,8 +19,6 @@ class ButtonSwap extends Logger {
 	private dragFunction: (e: JQuery.MouseMoveEvent) => void = null;
 
 	constructor(gridManager: GridManager) {
-		super();
-
 		this._gridManager = gridManager;
 
 		this.initMouseDown();

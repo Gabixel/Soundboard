@@ -1,4 +1,4 @@
-abstract class Main extends Logger {
+abstract class Main {
 	// TODO: create a specific object to store intervals(?)
 	private static _intervals: NodeJS.Timer[] = [];
 
