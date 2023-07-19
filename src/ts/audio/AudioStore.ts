@@ -83,6 +83,8 @@ class AudioStore extends EventTarget {
 	}
 
 	public async storeAudio(options: AudioSourceOptions): Promise<void> {
+		// TODO: improve checks and apply all data if it changes
+
 		// When limit is 1 and recycle is enabled
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
@@ -91,8 +93,11 @@ class AudioStore extends EventTarget {
 			if (couple.src === options.src) {
 				await couple.restart();
 			} else {
-				this._audioCoupleList[0].changeAudio(options.src);
+				couple.changeAudio(options.src);
 			}
+
+			couple.volume = options.volume;
+			// TODO: update more data (e.g. timings and [playbackrate, in the future])
 
 			return;
 		}
