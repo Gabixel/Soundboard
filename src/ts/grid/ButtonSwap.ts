@@ -27,7 +27,7 @@ class ButtonSwap extends Logger {
 		this.initDocumentEvents();
 		this.setMouseDrag_1();
 
-		ButtonSwap.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	private mouseDrag_1 = (e: JQuery.MouseMoveEvent): void => {
@@ -216,7 +216,6 @@ class ButtonSwap extends Logger {
 		$drag.css("--index", dropTargetIndex.toString());
 
 		this.logDebug(
-			this.swapButtons,
 			`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
 				.children(".button-theme")
 				.text()}"`

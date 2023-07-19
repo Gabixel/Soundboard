@@ -2,83 +2,114 @@ abstract class Logger {
 	private static chosenStyle: number = 2;
 
 	/** Debug-level logging (aka "Verbose") */
-	public static logDebug(
-		callerFunction: AnyFunc<any> | string,
-		message: string,
-		...args: any[]
-	): void {
+	public static logDebug(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
-		let info = this.getInfo(callerFunction, message);
 
-		console.debug(info.attributes[0], ...info.attributes[1], ...args);
+		this.log(console.debug, message, ...args);
 	}
 
 	/** Info-level logging */
-	public static logInfo(
-		callerFunction: AnyFunc<any> | string,
-		message: string,
-		...args: any[]
-	): void {
+	public static logInfo(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
-		let info = this.getInfo(callerFunction, message);
 
-		console.info(info.attributes[0], ...info.attributes[1], ...args);
+		this.log(console.info, message, ...args);
 	}
 
 	/** Warning-level logging */
-	public static logWarn(
-		callerFunction: AnyFunc<any> | string,
-		message: string,
-		...args: any[]
-	): void {
+	public static logWarn(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
-		let info = this.getInfo(callerFunction, message);
 
-		console.warn(info.attributes[0], ...info.attributes[1], ...args);
+		this.log(console.warn, message, ...args);
 	}
 
 	/** Error-level logging */
-	public static logError(
-		callerFunction: AnyFunc<any> | string,
-		message: string,
-		...args: any[]
-	): void {
+	public static logError(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
-		let info = this.getInfo(callerFunction, message);
 
-		console.error(info.attributes[0], ...info.attributes[1], ...args);
+		this.log(console.error, message, ...args);
 	}
 
-	private static getInfo(
-		callerFunction: AnyFunc<any> | string,
-		message: string
-	): {
-		callerClass: string;
-		attributes: [string, string[]];
-	} {
-		const finalCallerClass = this.name;
+	private static log(
+		logFunc: (message?: any, ...optionalParams: any[]) => void,
+		message: string,
+		...args: any[]
+	): void {
+		let info = this.getCallerInfo(message);
 
-		const finalCallerFunction =
-			typeof callerFunction === "string" ? callerFunction : callerFunction?.name;
+		logFunc(
+			info.attributes[0],
+			...info.attributes[1],
+			...args,
+			...(info.scriptFileName ? ["\n", info.scriptFileName] : [])
+		);
+	}
+
+	private static getCallerInfo(message: string): {
+		attributes: [string, string[]];
+		scriptFileName: string;
+	} {
+		// Create an Error object to capture the current stack trace
+		const err = new Error();
+
+		// Get the stack trace lines
+		const stackTrace = err.stack.split("\n");
+
+		// Find the index of the line that doesn't contain the Logger information
+		let callerIndex = 0;
+		for (let i = 2; i < stackTrace.length; i++) {
+			if (!stackTrace[i].includes("Logger")) {
+				callerIndex = i;
+				break;
+			}
+		}
+
+		console.log(callerIndex);
+		
+
+		// Get the caller line from the stack trace
+		const callerLine = stackTrace[callerIndex].trim();
+
+		// Regular expression to extract the caller class and function
+		const regex = /at (?:new )?(?:\S+? )?(\S+?) \((\S+?):\d+:\d+\)/;
+		const match = regex.exec(callerLine);
+
+		let callerClass,
+			callerFunction,
+			scriptFileName = "";
+
+		if (match) {
+			const [, caller, filePath] = match;
+			const dotIndex = caller.indexOf(".");
+
+			if (dotIndex === -1) {
+				// If no dot found, then it's just the caller class (constructor)
+				callerClass = caller === "new" ? "" : caller;
+				callerFunction = caller === "new" ? "constructor" : "";
+			} else {
+				// Split the caller into class and function
+				callerClass = caller.slice(0, dotIndex);
+				callerFunction = caller.slice(dotIndex + 1);
+			}
+
+			// Get only the script file from the file path
+			scriptFileName = filePath.split("/").pop();
+		}
 
 		let attributes: [string, string[]] = this.getStyledAttributes(
-			finalCallerClass,
-			finalCallerFunction,
+			callerClass ?? "",
+			callerFunction ?? "",
 			message
 		);
 
-		return {
-			callerClass: finalCallerClass,
-			attributes,
-		};
+		return { attributes, scriptFileName };
 	}
 
 	private static getStyledAttributes(
@@ -86,105 +117,7 @@ abstract class Logger {
 		callerFunction: string,
 		message: string
 	): [string, string[]] {
-		switch (this.chosenStyle) {
-			case 0:
-				return this.getStyle_0(callerClass, callerFunction, message);
-
-			case 1:
-				return this.getStyle_1(callerClass, callerFunction, message);
-
-			case 2:
-			default:
-				return this.getStyle_2(callerClass, callerFunction, message);
-		}
-	}
-
-	private static getStyle_0(
-		callerClass: string,
-		callerFunction: string,
-		message: string
-	): [string, string[]] {
-		const shadowEffect: string = "text-shadow: 0 .5px 3px rgb(255 255 255 / .1)";
-
-		const boldEffect: string = "font-weight: bold";
-
-		let callerClassRendered = "-";
-		let callerClassProperties: string[] = [];
-
-		// Not empty/null string
-		if (callerClass) {
-			callerClassRendered = `%c${callerClass}`;
-			callerClassProperties.push(
-				`color: ${StringUtilities.getHSL(callerClass, 100, 70)};
-				${boldEffect};
-				${shadowEffect}`
-			);
-		}
-
-		let callerFunctionRendered = "-";
-		let callerFunctionProperties: string[] = [];
-
-		// Not empty/null string
-		if (callerFunction) {
-			callerFunctionRendered = `%c${callerFunction}`;
-			callerFunctionProperties.push(
-				`color: ${StringUtilities.getHSL(callerFunction, 100, 70)};
-				${boldEffect};
-				${shadowEffect}`
-			);
-		}
-
-		return [
-			`%c[${callerClassRendered}%c] (${callerFunctionRendered}%c) → ` + message,
-			[
-				"color: inherit; margin: 5px 0",
-				...callerClassProperties,
-				"color: inherit",
-				...callerFunctionProperties,
-				"color: inherit",
-			],
-		];
-	}
-
-	private static getStyle_1(
-		callerClass: any,
-		callerFunction: string,
-		message: string
-	): [string, string[]] {
-		const colorName = callerFunction ?? callerClass ?? "???";
-		const bgColor = StringUtilities.getHSL(colorName, 100, 20);
-		const fgColor = StringUtilities.getHSL(colorName, 100, 90);
-		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
-		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
-		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
-
-		let callerClassRendered = "%c...";
-		let callerClassProperties: string[] = [headerMiddleEffect];
-
-		// Not empty/null string
-		if (callerClass) {
-			callerClassRendered = `%c${callerClass}`;
-		}
-
-		let callerFunctionRendered = "";
-		let callerFunctionProperties: string[] = [];
-
-		// Not empty/null string
-		if (callerFunction) {
-			callerFunctionRendered = `%c ⨠ %c${callerFunction}`;
-			callerFunctionProperties = [headerMiddleEffect, headerMiddleEffect];
-		}
-
-		return [
-			`%c ${callerClassRendered}${callerFunctionRendered}%c %c ` + message,
-			[
-				headerStartEffect,
-				...callerClassProperties,
-				...callerFunctionProperties,
-				headerEndEffect,
-				"color: inherit",
-			],
-		];
+		return this.getStyle_2(callerClass, callerFunction, message);
 	}
 
 	private static getStyle_2(

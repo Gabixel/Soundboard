@@ -99,7 +99,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		}
 
 		if (this._destroyed) {
-			Logger.logError(this.play, "Can't resume: audio is destroyed");
+			Logger.logError("Can't resume: audio is destroyed");
 			return;
 		}
 
@@ -124,7 +124,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		}
 
 		if (this._destroyed) {
-			Logger.logError(this.play, "Can't resume: audio is destroyed");
+			Logger.logError("Can't seekTo: audio is destroyed");
 
 			return this;
 		}

@@ -27,7 +27,7 @@ class GridResizer extends Logger {
 		this._buttonFilterer = buttonFilterer;
 		this._soundButtonManager = soundButtonManager;
 
-		GridResizer.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	/**

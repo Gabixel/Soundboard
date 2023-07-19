@@ -16,7 +16,6 @@ abstract class Main extends Logger {
 
 		// Some info for debug
 		this.logInfo(
-			this.init,
 			"\nUserAgent:",
 			navigator.userAgent,
 			"\nMain language:",

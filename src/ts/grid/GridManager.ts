@@ -51,22 +51,19 @@ class GridManager extends Logger {
 		super();
 
 		this._$grid = $grid;
-		GridManager.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	public setRows(newValue: number): void {
 		this._gridRows = newValue;
 
-		GridManager.logDebug(this.setRows, `Row size changed (${this._gridRows})`);
+		Logger.logDebug(`Row size changed (${this._gridRows})`);
 	}
 
 	public setColumns(newValue: number): void {
 		this._gridCols = newValue;
 
-		GridManager.logDebug(
-			this.setColumns,
-			`Column size changed (${this._gridCols})`
-		);
+		Logger.logDebug(`Column size changed (${this._gridCols})`);
 	}
 
 	public resetSoundButtonCount(): void {
@@ -86,7 +83,6 @@ class GridManager extends Logger {
 
 		if (index >= size) {
 			GridManager.logError(
-				this.getButtonAtIndex,
 				`Index '${index}' is out of bounds. Current max index: (${size} - 1 = ${
 					size - 1
 				})`

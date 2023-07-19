@@ -24,8 +24,7 @@ abstract class SoundboardApi extends Logger {
 
 	public static mainWindow = {
 		openContextMenu: (args: ContextMenuArgs = null): void => {
-			this.logDebug(
-				this.mainWindow.openContextMenu,
+			Logger.logDebug(
 				`Opening context menu with ${
 					args != null ? Object.keys(args).length : 0
 				} extra args:`,

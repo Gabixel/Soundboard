@@ -26,7 +26,7 @@ class ButtonFilterer extends Logger {
 
 		this._gridManager = gridManager;
 
-		ButtonFilterer.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	public setupInputs(
@@ -90,7 +90,7 @@ class ButtonFilterer extends Logger {
 
 	private visuallyUpdateFilter(): void {
 		if (!this.isFiltering) {
-			ButtonFilterer.logInfo(this.visuallyUpdateFilter, "Cleared filter.");
+			ButtonFilterer.logInfo("Cleared filter.");
 			this.clearFilter();
 			return;
 		}
@@ -111,7 +111,6 @@ class ButtonFilterer extends Logger {
 		].filter((f) => f.length > 0);
 
 		ButtonFilterer.logInfo(
-			this.visuallyUpdateFilter,
 			"Filtered " + filteredButtonsLength + " buttons.",
 			"\nFilter:",
 			this.filter,
