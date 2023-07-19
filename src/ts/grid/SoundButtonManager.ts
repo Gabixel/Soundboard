@@ -274,13 +274,14 @@ class SoundButtonManager extends Logger {
 	private static sanitizeButtonData(data: SoundButtonData): SoundButtonData {
 		const defaultData = SoundButtonManager.DEFAULT_METADATA;
 
+		// TODO: actually sanitize
 		return {
 			title: data.title ?? defaultData.title,
 			color: data.color ?? defaultData.color,
 			image: data.image ?? defaultData.image,
 			tags: data.tags ?? defaultData.tags,
 			time: data.time ?? defaultData.time,
-			volume: 1,
+			volume: data.volume ?? defaultData.volume,
 			path: data.path ?? defaultData.path,
 		};
 	}
@@ -328,7 +329,7 @@ class SoundButtonManager extends Logger {
 				.split(" ")
 				.filter((tag) => tag.length > 0),
 			// TODO: time: null,
-			volume: +$button.attr("data-volume"),
+			volume: parseFloat($button.attr("data-volume")),
 			path: $button.attr("data-path"),
 		};
 	}

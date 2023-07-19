@@ -33,12 +33,12 @@ class EditorForm extends Logger {
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
-		$()
+		this.$input()
 			// Title
-			.add($(`${this.DATA_PREFIX}title`).val(buttonData.title))
+			.add(this.$dataInput("title").val(buttonData.title))
 			// Color
 			.add(
-				$(`${this.DATA_PREFIX}color`)
+				this.$dataInput("color")
 					// Apply base color
 					.val(
 						"#" +
@@ -64,11 +64,11 @@ class EditorForm extends Logger {
 					.removeProp("value")
 			)
 			// Volume
-			.add($(`${this.DATA_PREFIX}volume`).val(buttonData.volume ?? 1))
+			.add(this.$dataInput("volume").val(buttonData.volume ?? 1))
 			// Path
 			.add(
-				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path ?? ""))
-			) as JQuery<HTMLInputElement>;
+				this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? ""))
+			);
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -103,7 +103,7 @@ class EditorForm extends Logger {
 			});
 
 		this.$dataInput("volume").on("change", (e) => {
-			let volume = +e.target.value;
+			let volume = parseFloat(e.target.value);
 
 			// Apply volume
 			this.updateProperty("volume", volume);
@@ -182,7 +182,7 @@ class EditorForm extends Logger {
 	/**
 	 * Returns the {@link JQuery<HTMLInputElement>} version of the selector.
 	 */
-	private $input(selector: string): JQuery<HTMLInputElement> {
+	private $input(selector?: string): JQuery<HTMLInputElement> {
 		return $(selector);
 	}
 
