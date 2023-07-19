@@ -33,12 +33,12 @@ class EditorForm extends Logger {
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
-		$()
+		this.$input()
 			// Title
-			.add($(`${this.DATA_PREFIX}title`).val(buttonData.title))
+			.add(this.$dataInput("title").val(buttonData.title))
 			// Color
 			.add(
-				$(`${this.DATA_PREFIX}color`)
+				this.$dataInput("color")
 					// Apply base color
 					.val(
 						"#" +
@@ -63,10 +63,12 @@ class EditorForm extends Logger {
 					// It's just a placeholder
 					.removeProp("value")
 			)
+			// Volume
+			.add(this.$dataInput("volume").val(buttonData.volume ?? 1))
 			// Path
 			.add(
-				$(`${this.DATA_PREFIX}path`).val(decodeURIComponent(buttonData.path ?? ""))
-			) as JQuery<HTMLInputElement>;
+				this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? ""))
+			);
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -81,12 +83,12 @@ class EditorForm extends Logger {
 	private setupInputsEvents(): void {
 		// TODO: make every element call a function to update the preview
 
-		$input("#button-data-title").on("change", (e) => {
+		this.$dataInput("title").on("change", (e) => {
 			// Apply title data
 			this.updateProperty("title", e.target.value);
 		});
 
-		$input("#button-data-color")
+		this.$dataInput("color")
 			// Constant color dragging
 			.on("input", (e) => {
 				// Change shadow color
@@ -100,21 +102,29 @@ class EditorForm extends Logger {
 				this.updateProperty("color", { h: hsl[0], s: hsl[1], l: hsl[2] });
 			});
 
+		this.$dataInput("volume").on("change", (e) => {
+			let volume = parseFloat(e.target.value);
+
+			// Apply volume
+			this.updateProperty("volume", volume);
+		});
+
 		// File picker
-		$input("#button-path-file").on("change", (e) => {
+		this.$input("#button-path-file").on("change", (e) => {
 			// TODO: check if valid?
 			let path = e.target.files[0].path;
 
 			console.log(path);
 
 			// Apply path data (from hidden file input)
-			$("#button-data-path").val(path);
+			this.$dataInput("path").val(path);
 			// Don't store the file in the hidden file input
-			$input("#button-path-file").val(null);
+			this.$input("#button-path-file").val(null);
+
+			// Apply path (from file picker)
 			this.updateProperty("path", StringUtilities.encodeFilePath(path));
 		});
-
-		$input("#button-data-path").on("change", (e) => {
+		this.$dataInput("path").on("change", (e) => {
 			// TODO: warn if it's invalid?
 			let path = e.target.value;
 
@@ -124,10 +134,6 @@ class EditorForm extends Logger {
 				path.length === 0 ? null : StringUtilities.encodeFilePath(path)
 			);
 		});
-
-		function $input(selector: string): JQuery<HTMLInputElement> {
-			return $(selector);
-		}
 	}
 
 	private setupFormSubmitEvent(): void {
@@ -164,9 +170,29 @@ class EditorForm extends Logger {
 		);
 	}
 
-	private updateProperty(key: SoundButtonProperties, data: any) {
+	private updateProperty<
+		TKey extends keyof SoundButtonData,
+		TValue extends SoundButtonData[TKey]
+	>(key: TKey, data: TValue) {
 		if (key in this._buttonData) {
 			this._buttonData[key] = data;
 		}
+	}
+
+	/**
+	 * Returns the {@link JQuery<HTMLInputElement>} version of the selector.
+	 */
+	private $input(selector?: string): JQuery<HTMLInputElement> {
+		return $(selector);
+	}
+
+	/**
+	 * Returns the {@link JQuery<HTMLInputElement>} of a key in {@link SoundButtonData}.
+	 */
+	private $dataInput<TKey extends keyof SoundButtonData>(
+		data: TKey
+	): JQuery<HTMLInputElement> {
+		// TODO: probably needs to be changed if there will be more complex input elements
+		return this.$input(`${this.DATA_PREFIX}${data}`);
 	}
 }

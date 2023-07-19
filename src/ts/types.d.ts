@@ -1,79 +1,47 @@
 type AnyFunc<T> = (...any: any[]) => T;
 
-type AudioGroup = {
-	// TODO: rename to singlepoolgroup
-
-	/**
-	 * The main audio instance (possibly sent to a virtual channel).
-	 */
-	main: HTMLAudioElement;
-
-	/**
-	 * The playback instance (heard from the host machine).
-	 */
-	playback: HTMLAudioElement;
-
-	$all: JQuery<HTMLAudioElement>;
-	all: (func: (audio: HTMLAudioElement) => void) => void;
-	lastTrack: string;
-};
-
-type AudioPoolGroup = {
-	// TODO: rename to multipoolgroup
-	/**
-	 * The main audio instance (possibly sent to a virtual channel)
-	 */
-	main: HTMLAudioElement;
-
-	/**
-	 * The playback instance (heard from the host machine).
-	 */
-	playback: HTMLAudioElement;
-
-	$all: JQuery<HTMLAudioElement>;
-	all: (func: (audio: HTMLAudioElement) => void) => void;
-	ended: boolean;
-	forcedStop: boolean;
+type AudioEffect = "GainNode" | "BiquadFilterNode";
+type AudioSourceOptions = {
+	src: string;
+	volume: number;
+	audioTimings: AudioTimings;
+	loop?: boolean;
 };
 
 /**
- * Sound button metadata
+ * Sound button metadata.
  */
 // Keep updated with "~/src/ts/types.d.ts"
 type SoundButtonData = {
 	/**
-	 * The unrendered text
+	 * The unrendered text.
 	 */
 	title?: string;
 	/**
-	 * The color (fallback if image is failing/missing)
+	 * The color (fallback if image is failing/missing).
 	 */
 	color?: Color.HSL;
-
 	/**
-	 * The background image
+	 * The background image.
 	 */
 	image?: string;
 	/**
-	 * Search tags
+	 * Search tags.
 	 */
 	tags?: string[];
 	/**
-	 * The audio start/end timestamp conditions
+	 * The audio start/end timestamp conditions.
 	 */
 	time?: AudioTimings;
 	/**
-	 * Audio file path
+	 * Desired volume for the audio.
+	 */
+	volume?: number;
+	/**
+	 * Audio file path.
 	 */
 	path?: string;
 };
-type SoundButtonProperties =
-	| "title"
-	| "color"
-	| "image"
-	| "tags"
-	| "time"
-	| "path";
 
 /**
  * Timings settings for the {@link SoundButtonData}
@@ -97,15 +65,15 @@ type AudioTimings = {
 namespace Color {
 	type HSL = {
 		/**
-		 * Hue
+		 * Hue.
 		 */
 		h: number;
 		/**
-		 * Saturation
+		 * Saturation.
 		 */
 		s: number;
 		/**
-		 * Lightness
+		 * Lightness.
 		 */
 		l: number;
 	};

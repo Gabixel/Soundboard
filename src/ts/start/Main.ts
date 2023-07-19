@@ -51,10 +51,6 @@ abstract class Main extends Logger {
 				return;
 			}
 
-			if (typeof AudioPlayer != "undefined") {
-				AudioPlayer.stop();
-			}
-
 			this.clearIntervals();
 
 			this.logError(

@@ -1,3 +1,4 @@
+// TODO: rename (anche update audio documentation after this)
 /**
  * Sound buttons management
  */
@@ -7,16 +8,19 @@ class SoundButtonManager extends Logger {
 		color: { h: 0, s: 0, l: 80 },
 		image: null,
 		tags: [],
-		path: null,
 		time: {
 			start: 0,
 			end: 0,
 			condition: "after",
 		},
+		volume: 1,
+		path: null,
 	};
-	
+
 	private _randomPaths: string[] = ["Clown Horn.mp3"];
 	private _$grid: JQuery<HTMLElement>;
+
+	private _audioPlayer: AudioPlayer;
 
 	/**
 	 * Returns a random audio file from a set of hardcoded paths (for testing purposes)
@@ -67,8 +71,9 @@ class SoundButtonManager extends Logger {
 			color: { h, s, l },
 			image: SoundButtonManager.DEFAULT_METADATA.image,
 			tags: SoundButtonManager.DEFAULT_METADATA.tags,
-			path: await this.getRandomAudio(),
 			time: SoundButtonManager.DEFAULT_METADATA.time,
+			volume: SoundButtonManager.DEFAULT_METADATA.volume,
+			path: await this.getRandomAudio(),
 		};
 
 		return SoundButtonManager.createWithData(data, index);
@@ -110,11 +115,19 @@ class SoundButtonManager extends Logger {
 
 		// If the button doesn't exist
 		if ($button.length < 1) {
-			Logger.logDebug(SoundButtonManager.updateButton, "Button not found, ignoring changes.\n", buttonData);
+			Logger.logDebug(
+				SoundButtonManager.updateButton,
+				"Button not found, ignoring changes.\n",
+				buttonData
+			);
 			return;
 		}
 
-		Logger.logInfo(SoundButtonManager.updateButton, "Applying button data:\n", buttonData);
+		Logger.logInfo(
+			SoundButtonManager.updateButton,
+			"Applying button data:\n",
+			buttonData
+		);
 
 		this.applyButtonData($button, buttonData);
 	}
@@ -203,26 +216,28 @@ class SoundButtonManager extends Logger {
 		}
 
 		this._$grid.on("click", ".soundbutton", (e) => {
+			// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
+
 			SoundButtonManager.logDebug(
 				this.setupClick,
 				`Button "%s" clicked`,
 				$(e.target).children(".button-theme").text()
 			);
 
-			const $button = $(e.target);
+			const data = SoundButtonManager.getButtonData($(e.target));
 
-			const path = $button.attr("data-path");
+			const src = data.path;
+			const audioTimings: AudioTimings = null; // data.time;
+			const volume = data.volume;
+			const useSecondaryStorage = e.shiftKey;
 
-			const time: AudioTimings = {
-				start: parseInt($button.attr("data-start-time")),
-				end: parseInt($button.attr("data-end-time")),
-				condition: $button.attr("data-end-type") as "at" | "after",
+			const options: AudioSourceOptions = {
+				src,
+				volume,
+				audioTimings,
 			};
 
-			const useMultiPool = e.shiftKey; // If the shift key is pressed, use the multi-pool
-
-			// TODO: inject player
-			AudioPlayer.addAudio(path, time, useMultiPool);
+			this._audioPlayer.play(options, useSecondaryStorage);
 		});
 
 		return this;
@@ -251,16 +266,23 @@ class SoundButtonManager extends Logger {
 		return this;
 	}
 
+	public setupAudioPlayer(player: AudioPlayer): this {
+		this._audioPlayer = player;
+		return this;
+	}
+
 	private static sanitizeButtonData(data: SoundButtonData): SoundButtonData {
 		const defaultData = SoundButtonManager.DEFAULT_METADATA;
 
+		// TODO: actually sanitize
 		return {
 			title: data.title ?? defaultData.title,
 			color: data.color ?? defaultData.color,
 			image: data.image ?? defaultData.image,
-			path: data.path ?? defaultData.path,
 			tags: data.tags ?? defaultData.tags,
 			time: data.time ?? defaultData.time,
+			volume: data.volume ?? defaultData.volume,
+			path: data.path ?? defaultData.path,
 		};
 	}
 
@@ -281,6 +303,9 @@ class SoundButtonManager extends Logger {
 			.attr("data-start-time", buttonData.time.start)
 			.attr("data-end-time", buttonData.time.end)
 			.attr("data-end-type", buttonData.time.condition)
+
+			// Volume
+			.attr("data-volume", buttonData.volume)
 
 			// Color
 			.css("--hue", buttonData.color.h.toString())
@@ -303,6 +328,8 @@ class SoundButtonManager extends Logger {
 				.attr("data-tags")
 				.split(" ")
 				.filter((tag) => tag.length > 0),
+			// TODO: time: null,
+			volume: parseFloat($button.attr("data-volume")),
 			path: $button.attr("data-path"),
 		};
 	}
