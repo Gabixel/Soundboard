@@ -4,7 +4,7 @@
 class AudioSource extends EventTarget implements IAudioController {
 	private _audio: HTMLAudioElement;
 	private _sourceNode: MediaElementAudioSourceNode;
-	private _output: AudioOutput;
+	private _audioOutput: AudioOutput;
 
 	/**
 	 * If we want to preserve this source on end (for re-use). Else, use {@link _destroyed}.
@@ -50,7 +50,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	constructor(
-		output: AudioOutput,
+		audioOutput: AudioOutput,
 		options?: AudioSourceOptions,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
@@ -62,7 +62,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio.autoplay = autoPlay ?? true;
 		this._audio.loop = false;
 
-		this._output = output;
+		this._audioOutput = audioOutput;
 
 		this.volume = options?.volume ?? 1;
 
@@ -176,10 +176,10 @@ class AudioSource extends EventTarget implements IAudioController {
 
 	private createSourceNode(): void {
 		// Generate source node
-		this._sourceNode = this._output.createMediaElementSource(this._audio);
+		this._sourceNode = this._audioOutput.createMediaElementSource(this._audio);
 
 		// Connect source node to audio context
-		this._output.connectNode(this._sourceNode);
+		this._audioOutput.connectNode(this._sourceNode);
 	}
 
 	private initEventListeners(): void {
@@ -243,6 +243,6 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio.srcObject = null;
 		this._audio = null;
 
-		this._output = null;
+		this._audioOutput = null;
 	}
 }
