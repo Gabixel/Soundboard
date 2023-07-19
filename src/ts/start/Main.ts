@@ -15,7 +15,7 @@ abstract class Main extends Logger {
 		await SoundboardApi.global.path.initRoot();
 
 		// Some info for debug
-		this.logInfo(
+		Logger.logInfo(
 			"\nUserAgent:",
 			navigator.userAgent,
 			"\nMain language:",
@@ -52,8 +52,7 @@ abstract class Main extends Logger {
 
 			this.clearIntervals();
 
-			this.logError(
-				null,
+			Logger.logError(
 				"An unexpected error has occurred.\n",
 				event,
 				"\n",
@@ -69,8 +68,7 @@ abstract class Main extends Logger {
 			// Don't print default error
 			event.preventDefault();
 
-			this.logError(
-				null,
+			Logger.logError(
 				"An unexpected (in promise) error has occurred.\n",
 				`'${event.reason}'\n`,
 				event
