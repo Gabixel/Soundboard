@@ -83,12 +83,12 @@ class EditorForm extends Logger {
 	private setupInputsEvents(): void {
 		// TODO: make every element call a function to update the preview
 
-		$input(`${this.DATA_PREFIX}title`).on("change", (e) => {
+		this.$dataInput("title").on("change", (e) => {
 			// Apply title data
 			this.updateProperty("title", e.target.value);
 		});
 
-		$input(`${this.DATA_PREFIX}color`)
+		this.$dataInput("color")
 			// Constant color dragging
 			.on("input", (e) => {
 				// Change shadow color
@@ -102,28 +102,29 @@ class EditorForm extends Logger {
 				this.updateProperty("color", { h: hsl[0], s: hsl[1], l: hsl[2] });
 			});
 
-		// File picker
-		$input(`${this.DATA_PREFIX}file`).on("change", (e) => {
-			// TODO: check if valid?
-			let path = e.target.files[0].path;
-
-			console.log(path);
-
-			// Apply path data (from hidden file input)
-			$("#button-data-path").val(path);
-			// Don't store the file in the hidden file input
-			$input("#button-path-file").val(null);
-			this.updateProperty("path", StringUtilities.encodeFilePath(path));
-		});
-
-		$input(`${this.DATA_PREFIX}volume`).on("change", (e) => {
+		this.$dataInput("volume").on("change", (e) => {
 			let volume = +e.target.value;
 
 			// Apply volume
 			this.updateProperty("volume", volume);
 		});
 
-		$input(`${this.DATA_PREFIX}path`).on("change", (e) => {
+		// File picker
+		this.$input("#button-path-file").on("change", (e) => {
+			// TODO: check if valid?
+			let path = e.target.files[0].path;
+
+			console.log(path);
+
+			// Apply path data (from hidden file input)
+			this.$dataInput("path").val(path);
+			// Don't store the file in the hidden file input
+			this.$input("#button-path-file").val(null);
+
+			// Apply path (from file picker)
+			this.updateProperty("path", StringUtilities.encodeFilePath(path));
+		});
+		this.$dataInput("path").on("change", (e) => {
 			// TODO: warn if it's invalid?
 			let path = e.target.value;
 
@@ -133,10 +134,6 @@ class EditorForm extends Logger {
 				path.length === 0 ? null : StringUtilities.encodeFilePath(path)
 			);
 		});
-
-		function $input(selector: string): JQuery<HTMLInputElement> {
-			return $(selector);
-		}
 	}
 
 	private setupFormSubmitEvent(): void {
@@ -180,5 +177,22 @@ class EditorForm extends Logger {
 		if (key in this._buttonData) {
 			this._buttonData[key] = data;
 		}
+	}
+
+	/**
+	 * Returns the {@link JQuery<HTMLInputElement>} version of the selector.
+	 */
+	private $input(selector: string): JQuery<HTMLInputElement> {
+		return $(selector);
+	}
+
+	/**
+	 * Returns the {@link JQuery<HTMLInputElement>} of a key in {@link SoundButtonData}.
+	 */
+	private $dataInput<TKey extends keyof SoundButtonData>(
+		data: TKey
+	): JQuery<HTMLInputElement> {
+		// TODO: probably needs to be changed if there will be more complex input elements
+		return this.$input(`${this.DATA_PREFIX}${data}`);
 	}
 }
