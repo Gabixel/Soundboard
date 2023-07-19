@@ -213,7 +213,7 @@ class ButtonSwap {
 		$drop.css("--index", lastTargetIndex.toString());
 		$drag.css("--index", dropTargetIndex.toString());
 
-		this.logDebug(
+		Logger.logDebug(
 			`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
 				.children(".button-theme")
 				.text()}"`

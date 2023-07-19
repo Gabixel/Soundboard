@@ -80,7 +80,7 @@ class GridManager {
 		const size = this.size;
 
 		if (index >= size) {
-			GridManager.logError(
+			Logger.logError(
 				`Index '${index}' is out of bounds. Current max index: (${size} - 1 = ${
 					size - 1
 				})`

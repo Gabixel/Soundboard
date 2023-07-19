@@ -140,7 +140,7 @@ class EditorForm {
 
 		// Use a specific button for submit
 		let $submitButton = $("input#editor-submit").one("click", (_e) => {
-			EditorForm.logDebug(
+			Logger.logDebug(
 				"Submit button",
 				"Form submitted\n",
 				"Data:",

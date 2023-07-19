@@ -169,7 +169,7 @@ class SoundButtonManager {
 
 				console.log(encodedPath);
 
-				SoundButtonManager.logInfo(
+				Logger.logInfo(
 					"Audio drop successful.\n" +
 						"• Files: %O\n" +
 						"\t---------\n" +
