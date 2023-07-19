@@ -71,9 +71,6 @@ abstract class Logger {
 			}
 		}
 
-		console.log(callerIndex);
-		
-
 		// Get the caller line from the stack trace
 		const callerLine = stackTrace[callerIndex].trim();
 
