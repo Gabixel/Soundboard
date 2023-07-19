@@ -38,7 +38,6 @@ abstract class Logger {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
-
 		let info = this.getInfo(callerFunction, message);
 
 		console.warn(info.attributes[0], ...info.attributes[1], ...args);
@@ -53,7 +52,6 @@ abstract class Logger {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
-
 		let info = this.getInfo(callerFunction, message);
 
 		console.error(info.attributes[0], ...info.attributes[1], ...args);
@@ -66,21 +64,19 @@ abstract class Logger {
 		callerClass: string;
 		attributes: [string, string[]];
 	} {
-		const callerClass = this.name;
-		let attributes: [string, string[]];
+		const finalCallerClass = this.name;
 
-		if (typeof callerFunction === "string") {
-			attributes = this.getStyledAttributes(callerClass, callerFunction, message);
-		} else {
-			attributes = this.getStyledAttributes(
-				callerClass,
-				callerFunction?.name,
-				message
-			);
-		}
+		const finalCallerFunction =
+			typeof callerFunction === "string" ? callerFunction : callerFunction?.name;
+
+		let attributes: [string, string[]] = this.getStyledAttributes(
+			finalCallerClass,
+			finalCallerFunction,
+			message
+		);
 
 		return {
-			callerClass,
+			callerClass: finalCallerClass,
 			attributes,
 		};
 	}
