@@ -90,7 +90,11 @@ abstract class MainWindow extends Main {
 	 */
 	private static setupAudio(): void {
 		this._audioPlayer = new AudioPlayer()
-			.setControls($("#play-toggle-audio-button"), $("#stop-audio-button"))
+			.setControls(
+				$("#play-toggle-audio-button"),
+				$("#stop-audio-button"),
+				$("#audio-loop-single")
+			)
 			.bindStateChange()
 			.setupVolumeSlider($("#volume-slider"), {
 				decimals: 4,
