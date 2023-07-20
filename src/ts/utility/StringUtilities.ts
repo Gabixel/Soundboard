@@ -98,4 +98,12 @@ abstract class StringUtilities {
 	public static isDefined(obj: any): boolean {
 		return obj != null;
 	}
+
+	public static setupStringPrototypeExtensions(): void {
+		String.prototype.test = function test () {
+			return this + "a";
+		}
+
+		// "a".test();
+	}
 }

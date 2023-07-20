@@ -5,9 +5,12 @@ abstract class SoundboardApi {
 
 	public static global = {
 		path: {
-			initRoot: async () => {
+			/**
+			 * Tries to find the applicaton path.
+			 */
+			retrieveAppPath: async () => {
 				this.global.path.root = await this._api.getAppPath();
-				this.global.path.initRoot = null;
+				this.global.path.retrieveAppPath = null;
 			},
 			// TODO: try to get rid of this initialization
 			root: "", // Needs initialization at runtime with the above
