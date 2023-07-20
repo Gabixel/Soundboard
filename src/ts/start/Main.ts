@@ -43,9 +43,13 @@ abstract class Main {
 			throw new ReferenceError("StringUtilities is not available");
 		}
 
-		// Fix JQuery passive events (?)
-		// TODO: improve / check what it actually does
-		JQueryFixes.fixPassiveEvents();
+		if (this.classExists(typeof JQueryFixes)) {
+			// Fix JQuery passive events (?)
+			// TODO: improve / check what it actually does
+			JQueryFixes.fixPassiveEvents();
+		} else {
+			throw new ReferenceError("JQueryFixes is not available");
+		}
 
 		if (appPathRequest) {
 			await appPathRequest;
