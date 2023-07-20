@@ -127,9 +127,9 @@ abstract class Logger {
 			textForColor = callerClass;
 		}
 
-		// "ClassName:FunctionName"
+		// "ClassName.FunctionName"
 		if (StringUtilities.isDefined(callerFunction)) {
-			textForColor += ":" + callerFunction;
+			textForColor += "." + callerFunction;
 		}
 
 		const bgColor = StringUtilities.getHSL(textForColor, 100, 20);
