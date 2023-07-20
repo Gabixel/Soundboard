@@ -13,7 +13,7 @@ abstract class Main {
 		if (this.classExists(typeof SoundboardApi)) {
 			appPathRequest = SoundboardApi.global.path.retrieveAppPath();
 		} else {
-			console.error("SoundboardApi is not available");
+			throw new ReferenceError("SoundboardApi is not available");
 		}
 
 		if (this.classExists(typeof Logger)) {
@@ -30,17 +30,17 @@ abstract class Main {
 				"\nNavigator:",
 				navigator
 			);
-			
+
 			// Uncaught exceptions handling
 			this.initUncaughtExceptionsHandler();
 		} else {
-			console.error("Logger is not available");
+			throw new ReferenceError("Logger is not available");
 		}
 
 		if (this.classExists(typeof StringUtilities)) {
 			StringUtilities.setupStringPrototypeExtensions();
 		} else {
-			console.error("StringUtilities is not available");
+			throw new ReferenceError("StringUtilities is not available");
 		}
 
 		// Fix JQuery passive events (?)
