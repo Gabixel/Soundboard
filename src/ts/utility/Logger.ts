@@ -1,13 +1,11 @@
 abstract class Logger {
-	private static chosenStyle: number = 2;
-
 	/** Debug-level logging (aka "Verbose") */
 	public static logDebug(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
 
-		this.log(console.debug, message, ...args);
+		this.configureAndSendLog(console.debug, message, ...args);
 	}
 
 	/** Info-level logging */
@@ -16,7 +14,7 @@ abstract class Logger {
 			return;
 		}
 
-		this.log(console.info, message, ...args);
+		this.configureAndSendLog(console.info, message, ...args);
 	}
 
 	/** Warning-level logging */
@@ -25,7 +23,7 @@ abstract class Logger {
 			return;
 		}
 
-		this.log(console.warn, message, ...args);
+		this.configureAndSendLog(console.warn, message, ...args);
 	}
 
 	/** Error-level logging */
@@ -34,10 +32,10 @@ abstract class Logger {
 			return;
 		}
 
-		this.log(console.error, message, ...args);
+		this.configureAndSendLog(console.error, message, ...args);
 	}
 
-	private static log(
+	private static configureAndSendLog(
 		logFunc: (message?: any, ...optionalParams: any[]) => void,
 		message: string,
 		...args: any[]
