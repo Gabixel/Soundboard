@@ -1,5 +1,5 @@
 abstract class Logger {
-	/** Debug-level logging (aka "Verbose") */
+	/** Debug-level logging (aka "Verbose"). */
 	public static logDebug(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
@@ -8,7 +8,7 @@ abstract class Logger {
 		this.configureAndSendLog(console.debug, message, ...args);
 	}
 
-	/** Info-level logging */
+	/** Info-level logging. */
 	public static logInfo(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
@@ -17,7 +17,7 @@ abstract class Logger {
 		this.configureAndSendLog(console.info, message, ...args);
 	}
 
-	/** Warning-level logging */
+	/** Warning-level logging. */
 	public static logWarn(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
@@ -26,7 +26,7 @@ abstract class Logger {
 		this.configureAndSendLog(console.warn, message, ...args);
 	}
 
-	/** Error-level logging */
+	/** Error-level logging. */
 	public static logError(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
