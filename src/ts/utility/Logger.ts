@@ -42,12 +42,12 @@ abstract class Logger {
 		message: string,
 		...args: any[]
 	): void {
-		let info = this.styleInfo(message);
+		let info = this.getAndStyleInfo(message);
 
 		logFunc(info.text, ...info.style, ...args);
 	}
 
-	private static styleInfo(message: string): LoggerStyleAttributes {
+	private static getAndStyleInfo(message: string): LoggerStyleAttributes {
 		// Create an Error object to capture the current stack trace
 		const err = new Error();
 
