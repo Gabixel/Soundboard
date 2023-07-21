@@ -3,7 +3,14 @@ interface Window {
 }
 
 interface String {
-	test(): string;
+	/**
+	 * Returns an `hsl()` function as a string.
+	 *
+	 * @param str The string that will be converted to a hue value
+	 * @param saturation The saturation level
+	 * @param lightness The lightness level
+	 */
+	getHSL(saturation: number, lightness: number): string;
 }
 
 interface HTMLAudioElement {
