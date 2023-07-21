@@ -16,6 +16,12 @@ abstract class Main {
 			throw new ReferenceError("SoundboardApi is not available");
 		}
 
+		if (this.classExists(typeof StringUtilities)) {
+			StringUtilities.setupStringPrototypeExtensions();
+		} else {
+			throw new ReferenceError("StringUtilities is not available");
+		}
+
 		if (this.classExists(typeof Logger)) {
 			// Some info for debug
 			Logger.logInfo(
@@ -35,12 +41,6 @@ abstract class Main {
 			this.initUncaughtExceptionsHandler();
 		} else {
 			throw new ReferenceError("Logger is not available");
-		}
-
-		if (this.classExists(typeof StringUtilities)) {
-			StringUtilities.setupStringPrototypeExtensions();
-		} else {
-			throw new ReferenceError("StringUtilities is not available");
 		}
 
 		if (this.classExists(typeof JQueryFixes)) {

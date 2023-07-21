@@ -2,6 +2,10 @@ interface Window {
 	api: WindowApiBridge;
 }
 
+interface String {
+	test(): string;
+}
+
 interface HTMLAudioElement {
 	setSinkId(deviceId: string): Promise<undefined>;
 	sinkId: string;
