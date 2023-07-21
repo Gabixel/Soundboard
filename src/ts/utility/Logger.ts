@@ -70,7 +70,7 @@ abstract class Logger {
 		const regex = /at (?:new )?(?:\S+? )?(\S+?) \((\S+?):\d+:\d+\)/;
 		const match = regex.exec(callerLine);
 
-		let callerClass, callerFunction, callerPath;
+		let callerClass, callerFunction, callerFile;
 
 		if (match) {
 			const [, caller, filePath] = match;
@@ -90,11 +90,11 @@ abstract class Logger {
 			}
 
 			// Get only the script file from the file path
-			callerPath = filePath.split("/").pop();
+			callerFile = filePath.split("/").pop();
 		}
 
 		let styledAttributes = this.getStyledAttributes(
-			callerPath,
+			callerFile,
 			callerClass,
 			callerFunction,
 			message
@@ -104,7 +104,7 @@ abstract class Logger {
 	}
 
 	private static getStyledAttributes(
-		callerPath: string,
+		callerFile: string,
 		callerClass: string,
 		callerFunction: string,
 		message: string
@@ -128,9 +128,9 @@ abstract class Logger {
 		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 
 		// Caller file path style
-		let callerPathRendered = "(unknown file)";
-		if (callerPath) {
-			callerPathRendered = `${callerPath}`;
+		let callerFileRendered = "(unknown file)";
+		if (callerFile) {
+			callerFileRendered = `${callerFile}`;
 		}
 
 		// Caller class style
@@ -151,7 +151,7 @@ abstract class Logger {
 		// Get UTC version of current timestamp
 		let displayTime: string = Logger.getDateTime();
 
-		let text = `%c %c${displayTime}%c %c %c %c${callerPathRendered}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
+		let text = `%c %c${displayTime}%c %c %c %c${callerFileRendered}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
 
 		return {
 			text,
