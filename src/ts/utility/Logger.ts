@@ -40,18 +40,18 @@ abstract class Logger {
 		message: string,
 		...args: any[]
 	): void {
-		let info = this.getCallerInfo(message);
+		let info = this.styleInfo(message);
 
 		logFunc(
-			info.attributes[0],
-			...info.attributes[1],
+			info.styleAttributes.text,
+			...info.styleAttributes.style,
 			...args,
 			...(info.scriptFileName ? ["\n", info.scriptFileName] : [])
 		);
 	}
 
-	private static getCallerInfo(message: string): {
-		attributes: [string, string[]];
+	private static styleInfo(message: string): {
+		styleAttributes: LoggerStyleAttributes;
 		scriptFileName: string;
 	} {
 		// Create an Error object to capture the current stack trace
@@ -98,20 +98,20 @@ abstract class Logger {
 			scriptFileName = filePath.split("/").pop();
 		}
 
-		let attributes: [string, string[]] = this.getStyledAttributes(
+		let attributes = this.getStyledAttributes(
 			callerClass ?? "",
 			callerFunction ?? "",
 			message
 		);
 
-		return { attributes, scriptFileName };
+		return { styleAttributes: attributes, scriptFileName };
 	}
 
 	private static getStyledAttributes(
 		callerClass: string,
 		callerFunction: string,
 		message: string
-	): [string, string[]] {
+	): LoggerStyleAttributes {
 		return this.getStyle_2(callerClass, callerFunction, message);
 	}
 
@@ -119,7 +119,7 @@ abstract class Logger {
 		callerClass: any,
 		callerFunction: string,
 		message: string
-	): [string, string[]] {
+	): LoggerStyleAttributes {
 		let textForColor: string = "???";
 
 		// "ClassName"
@@ -154,6 +154,30 @@ abstract class Logger {
 		}
 
 		// Get UTC version of current timestamp
+		let displayTime = Logger.getDateTime();
+
+		let text = `%c %c${displayTime}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
+
+		return {
+			text,
+			style: [
+				// Display time
+				headerStartEffect,
+				headerMiddleEffect,
+				headerEndEffect,
+				"color: inherit",
+
+				// Caller function & class
+				headerStartEffect,
+				...callerClassProperties,
+				...callerFunctionProperties,
+				headerEndEffect,
+				"color: inherit",
+			],
+		};
+	}
+
+	private static getDateTime() {
 		const date = StringUtilities.UTCDate(new Date());
 
 		// Display the time in a better way
@@ -173,23 +197,7 @@ abstract class Logger {
 		displayTime += ":" + date.getMinutes().toString().padStart(2, "0");
 		// Seconds
 		displayTime += ":" + date.getSeconds().toString().padStart(2, "0");
-
-		return [
-			`%c %c${displayTime}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`,
-			[
-				// Display time
-				headerStartEffect,
-				headerMiddleEffect,
-				headerEndEffect,
-				"color: inherit",
-
-				// Caller function & class
-				headerStartEffect,
-				...callerClassProperties,
-				...callerFunctionProperties,
-				headerEndEffect,
-				"color: inherit",
-			],
-		];
+		
+		return displayTime;
 	}
 }
