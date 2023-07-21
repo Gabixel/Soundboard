@@ -1,4 +1,5 @@
 abstract class Logger {
+	//#region Log functions
 	/** Debug-level logging (aka "Verbose"). */
 	public static logDebug(message: string, ...args: any[]): void {
 		if (SoundboardApi.isProduction) {
@@ -34,6 +35,7 @@ abstract class Logger {
 
 		this.configureAndSendLog(console.error, message, ...args);
 	}
+	//#endregion
 
 	private static configureAndSendLog(
 		logFunc: (message?: any, ...optionalParams: any[]) => void,
@@ -42,18 +44,10 @@ abstract class Logger {
 	): void {
 		let info = this.styleInfo(message);
 
-		logFunc(
-			info.styleAttributes.text,
-			...info.styleAttributes.style,
-			...args,
-			...(info.scriptFileName ? ["\n", info.scriptFileName] : [])
-		);
+		logFunc(info.text, ...info.style, ...args);
 	}
 
-	private static styleInfo(message: string): {
-		styleAttributes: LoggerStyleAttributes;
-		scriptFileName: string;
-	} {
+	private static styleInfo(message: string): LoggerStyleAttributes {
 		// Create an Error object to capture the current stack trace
 		const err = new Error();
 
@@ -76,18 +70,19 @@ abstract class Logger {
 		const regex = /at (?:new )?(?:\S+? )?(\S+?) \((\S+?):\d+:\d+\)/;
 		const match = regex.exec(callerLine);
 
-		let callerClass,
-			callerFunction,
-			scriptFileName = "";
+		let callerClass, callerFunction, callerPath;
 
 		if (match) {
 			const [, caller, filePath] = match;
 			const dotIndex = caller.indexOf(".");
 
+			console.log(caller);
+			
+
 			if (dotIndex === -1) {
 				// If no dot found, then it's just the caller class (constructor)
-				callerClass = caller === "new" ? "" : caller;
-				callerFunction = caller === "new" ? "constructor" : "";
+				callerClass = caller;
+				callerFunction = "[constructor]";
 			} else {
 				// Split the caller into class and function
 				callerClass = caller.slice(0, dotIndex);
@@ -95,28 +90,22 @@ abstract class Logger {
 			}
 
 			// Get only the script file from the file path
-			scriptFileName = filePath.split("/").pop();
+			callerPath = filePath.split("/").pop();
 		}
 
-		let attributes = this.getStyledAttributes(
-			callerClass ?? "",
-			callerFunction ?? "",
+		let styledAttributes = this.getStyledAttributes(
+			callerPath,
+			callerClass,
+			callerFunction,
 			message
 		);
 
-		return { styleAttributes: attributes, scriptFileName };
+		return styledAttributes;
 	}
 
 	private static getStyledAttributes(
+		callerPath: string,
 		callerClass: string,
-		callerFunction: string,
-		message: string
-	): LoggerStyleAttributes {
-		return this.getStyle_2(callerClass, callerFunction, message);
-	}
-
-	private static getStyle_2(
-		callerClass: any,
 		callerFunction: string,
 		message: string
 	): LoggerStyleAttributes {
@@ -132,31 +121,37 @@ abstract class Logger {
 			textForColor += "." + callerFunction;
 		}
 
-		const bgColor = StringUtilities.getHSL(textForColor, 100, 20);
-		const fgColor = StringUtilities.getHSL(textForColor, 100, 90);
+		const bgColor = textForColor.getHSL(100, 20);
+		const fgColor = textForColor.getHSL(100, 90);
 		const headerStartEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 15px 0 0 15px; padding: 2px 0 2px 2px; margin: 5px 0; border-width: 2px 0 2px 2px; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerMiddleEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0; padding: 2px 0; margin-left: -0.4px; border-width: 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 		const headerEndEffect: string = `background-color: ${bgColor}; color: ${fgColor}; border-radius: 0 15px 15px 0; padding: 2px 2px 2px 0; margin-left: -0.4px; border-width: 2px 2px 2px 0; border-style: solid; border-color: ${fgColor}; font-weight: bold`;
 
+		// Caller file path style
+		let callerPathRendered = "(unknown file)";
+		if (callerPath) {
+			callerPathRendered = `${callerPath}`;
+		}
+
 		// Caller class style
 		let callerClassRendered = "%c...";
-		let callerClassProperties: string[] = [headerMiddleEffect];
+		let callerClassStyle: string[] = [headerMiddleEffect];
 		if (callerClass) {
 			callerClassRendered = `%c${callerClass}`;
 		}
 
 		// Caller function style
 		let callerFunctionRendered = "";
-		let callerFunctionProperties: string[] = [];
+		let callerFunctionStyle: string[] = [];
 		if (callerFunction) {
 			callerFunctionRendered = `%c ⨠ %c${callerFunction}`;
-			callerFunctionProperties = [headerMiddleEffect, headerMiddleEffect];
+			callerFunctionStyle = [headerMiddleEffect, headerMiddleEffect];
 		}
 
 		// Get UTC version of current timestamp
-		let displayTime = Logger.getDateTime();
+		let displayTime: string = Logger.getDateTime();
 
-		let text = `%c %c${displayTime}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
+		let text = `%c %c${displayTime}%c %c %c %c${callerPathRendered}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
 
 		return {
 			text,
@@ -166,11 +161,18 @@ abstract class Logger {
 				headerMiddleEffect,
 				headerEndEffect,
 				"color: inherit",
+				
+				// File path
+				headerStartEffect,
+				headerMiddleEffect,
+				headerEndEffect,
+
+				"color: inherit",
 
 				// Caller function & class
 				headerStartEffect,
-				...callerClassProperties,
-				...callerFunctionProperties,
+				...callerClassStyle,
+				...callerFunctionStyle,
 				headerEndEffect,
 				"color: inherit",
 			],
@@ -197,7 +199,7 @@ abstract class Logger {
 		displayTime += ":" + date.getMinutes().toString().padStart(2, "0");
 		// Seconds
 		displayTime += ":" + date.getSeconds().toString().padStart(2, "0");
-		
+
 		return displayTime;
 	}
 }
