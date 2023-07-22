@@ -76,9 +76,6 @@ abstract class Logger {
 			const [, caller, filePath] = match;
 			const dotIndex = caller.indexOf(".");
 
-			console.log(caller);
-			
-
 			if (dotIndex === -1) {
 				// If no dot found, then it's just the caller class (constructor)
 				callerClass = caller;
