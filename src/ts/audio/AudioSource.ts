@@ -185,13 +185,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	private initEventListeners(): void {
 		$(this._audio)
 			.on("error", (_e) => {
-				// console.log("error");
-
-				// if (this._audio.srcObject == null) {
-				// 	return;
-				// }
-
-				console.error("error", _e);
+				Logger.logError("Audio source error", _e);
 
 				if (!this._preserve) {
 					console.log("destroying");
@@ -202,7 +196,7 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("error");
 			})
 			.on("ended", () => {
-				console.log("ended");
+				Logger.logDebug("Audio source ended");
 
 				if (!this._preserve) {
 					this.destroy();
@@ -219,7 +213,9 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("pause");
 			})
 			.on("canplay", () => {
-				console.log("canplay");
+				// TODO: sear
+
+				Logger.logDebug("Audio source can play");
 
 				this.triggerEvent("canplay");
 			});
