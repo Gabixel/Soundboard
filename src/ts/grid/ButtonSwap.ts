@@ -207,8 +207,8 @@ class ButtonSwap {
 		$dragged.attr("id", "sound_btn_" + dropTargetIndex);
 		$dropTarget.attr("id", "sound_btn_" + draggedIndex);
 
-		$dragged.attr("tabindex", dropTargetIndex);
-		$dropTarget.attr("tabindex", draggedIndex);
+		$dragged.attr("tabindex", dropTargetIndex + 1);
+		$dropTarget.attr("tabindex", draggedIndex + 1);
 
 		$dragged.css("--index", dropTargetIndex.toString());
 		$dropTarget.css("--index", draggedIndex.toString());
