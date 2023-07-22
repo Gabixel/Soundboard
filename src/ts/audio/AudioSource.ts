@@ -68,7 +68,7 @@ class AudioSource extends EventTarget implements IAudioController {
 
 		this._preserve = preserveOnEnd;
 
-		// this.setAudioTimings(options.audioTimings);
+		// TODO: this.setAudioTimings(options.audioTimings);
 		// for now:
 		this._audioTimings = options?.audioTimings;
 
