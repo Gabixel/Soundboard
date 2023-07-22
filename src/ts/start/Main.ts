@@ -13,13 +13,13 @@ abstract class Main {
 		if (this.classExists(typeof SoundboardApi)) {
 			appPathRequest = SoundboardApi.global.path.retrieveAppPath();
 		} else {
-			throw new ReferenceError("SoundboardApi is not available");
+			throw new TypeError("SoundboardApi is not available");
 		}
 
 		if (this.classExists(typeof StringUtilities)) {
 			StringUtilities.setupStringPrototypeExtensions();
 		} else {
-			throw new ReferenceError("StringUtilities is not available");
+			throw new TypeError("StringUtilities is not available");
 		}
 
 		if (this.classExists(typeof Logger)) {
@@ -40,7 +40,7 @@ abstract class Main {
 			// Uncaught exceptions handling
 			this.initUncaughtExceptionsHandler();
 		} else {
-			throw new ReferenceError("Logger is not available");
+			throw new TypeError("Logger is not available");
 		}
 
 		if (this.classExists(typeof JQueryFixes)) {
@@ -48,7 +48,7 @@ abstract class Main {
 			// TODO: improve / check what it actually does
 			JQueryFixes.fixPassiveEvents();
 		} else {
-			throw new ReferenceError("JQueryFixes is not available");
+			throw new TypeError("JQueryFixes is not available");
 		}
 
 		if (appPathRequest) {
