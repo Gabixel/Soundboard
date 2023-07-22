@@ -196,27 +196,28 @@ class ButtonSwap {
 	}
 
 	private static swapButtons(
-		$drag: JQuery<HTMLElement>,
-		$drop: JQuery<HTMLElement>
+		$dragged: JQuery<HTMLElement>,
+		$dropTarget: JQuery<HTMLElement>
 	): void {
-		const dropTargetIndex = parseInt($drop.css("--index"));
-		const lastTargetIndex = parseInt($drag.css("--index"));
+		const draggedIndex = parseInt($dragged.css("--index"));
+		const dropTargetIndex = parseInt($dropTarget.css("--index"));
 
 		// TODO: move to a function inside SoundButtonManager
 
-		$drop.attr("id", "sound_btn_" + lastTargetIndex);
-		$drag.attr("id", "sound_btn_" + dropTargetIndex);
+		$dragged.attr("id", "sound_btn_" + dropTargetIndex);
+		$dropTarget.attr("id", "sound_btn_" + draggedIndex);
 
-		$drop.attr("tabindex", lastTargetIndex);
-		$drag.attr("tabindex", dropTargetIndex);
+		$dragged.attr("tabindex", dropTargetIndex);
+		$dropTarget.attr("tabindex", draggedIndex);
 
-		$drop.css("--index", lastTargetIndex.toString());
-		$drag.css("--index", dropTargetIndex.toString());
+		$dragged.css("--index", dropTargetIndex.toString());
+		$dropTarget.css("--index", draggedIndex.toString());
+
+		let draggedText = $dragged.children(".button-theme").text();
+		let dropTargetText = $dropTarget.children(".button-theme").text();
 
 		Logger.logDebug(
-			`Swapped buttons "${$drag.children(".button-theme").text()}" and "${$drop
-				.children(".button-theme")
-				.text()}"`
+			`Swapped buttons "${draggedText}" (${draggedIndex}) with "${dropTargetText}" (${dropTargetIndex})`
 		);
 	}
 
