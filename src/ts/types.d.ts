@@ -1,4 +1,7 @@
-type AnyFunc<T> = (...any: any[]) => T;
+type Class = { new (): any };
+
+type Function<T> = (...any: any[]) => T;
+type AnyFunction = AnyFunction<any>;
 
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
@@ -88,3 +91,8 @@ type ContextMenuArgs =
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );
+
+type LoggerStyleAttributes = {
+	text: string;
+	style: string[];
+};

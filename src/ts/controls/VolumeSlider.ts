@@ -1,4 +1,4 @@
-class VolumeSlider extends Logger {
+class VolumeSlider {
 	private _$slider: JQuery<HTMLInputElement>;
 	public get $slider(): JQuery<HTMLInputElement> {
 		return this._$slider;
@@ -33,8 +33,6 @@ class VolumeSlider extends Logger {
 		decimals?: number,
 		exponentialBase?: number
 	) {
-		super();
-
 		this._decimals = decimals ?? 0;
 		this._exponentialBase = exponentialBase ?? 50;
 

@@ -1,13 +1,16 @@
-abstract class SoundboardApi extends Logger {
+abstract class SoundboardApi {
 	public static get isProduction(): boolean {
 		return this._api.isProduction;
 	}
 
 	public static global = {
 		path: {
-			initRoot: async () => {
+			/**
+			 * Tries to find the applicaton path.
+			 */
+			retrieveAppPath: async () => {
 				this.global.path.root = await this._api.getAppPath();
-				this.global.path.initRoot = null;
+				this.global.path.retrieveAppPath = null;
 			},
 			// TODO: try to get rid of this initialization
 			root: "", // Needs initialization at runtime with the above
@@ -24,8 +27,7 @@ abstract class SoundboardApi extends Logger {
 
 	public static mainWindow = {
 		openContextMenu: (args: ContextMenuArgs = null): void => {
-			this.logDebug(
-				this.mainWindow.openContextMenu,
+			Logger.logDebug(
 				`Opening context menu with ${
 					args != null ? Object.keys(args).length : 0
 				} extra args:`,

@@ -1,7 +1,7 @@
 /**
  * Filterer for sound buttons inside a grid
  */
-class ButtonFilterer extends Logger {
+class ButtonFilterer {
 	private _gridManager: GridManager;
 
 	private _filter: string[] = [];
@@ -22,11 +22,9 @@ class ButtonFilterer extends Logger {
 	// FIXME: trigger filter after swapping buttons
 
 	constructor(gridManager: GridManager) {
-		super();
-
 		this._gridManager = gridManager;
 
-		ButtonFilterer.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	public setupInputs(
@@ -90,7 +88,7 @@ class ButtonFilterer extends Logger {
 
 	private visuallyUpdateFilter(): void {
 		if (!this.isFiltering) {
-			ButtonFilterer.logInfo(this.visuallyUpdateFilter, "Cleared filter.");
+			Logger.logInfo("Cleared filter.");
 			this.clearFilter();
 			return;
 		}
@@ -110,8 +108,7 @@ class ButtonFilterer extends Logger {
 			$("#filter-buttons-path").is(":checked") ? "path" : "",
 		].filter((f) => f.length > 0);
 
-		ButtonFilterer.logInfo(
-			this.visuallyUpdateFilter,
+		Logger.logInfo(
 			"Filtered " + filteredButtonsLength + " buttons.",
 			"\nFilter:",
 			this.filter,

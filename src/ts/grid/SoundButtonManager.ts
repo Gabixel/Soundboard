@@ -2,7 +2,7 @@
 /**
  * Sound buttons management
  */
-class SoundButtonManager extends Logger {
+class SoundButtonManager {
 	private static DEFAULT_METADATA: SoundButtonData = {
 		title: "-",
 		color: { h: 0, s: 0, l: 80 },
@@ -37,11 +37,9 @@ class SoundButtonManager extends Logger {
 
 	// TODO: remove random gen
 	constructor($grid: JQuery<HTMLElement>) {
-		super();
-
 		this._$grid = $grid;
 
-		SoundButtonManager.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	public generateButton(
@@ -116,7 +114,6 @@ class SoundButtonManager extends Logger {
 		// If the button doesn't exist
 		if ($button.length < 1) {
 			Logger.logDebug(
-				SoundButtonManager.updateButton,
 				"Button not found, ignoring changes.\n",
 				buttonData
 			);
@@ -124,7 +121,6 @@ class SoundButtonManager extends Logger {
 		}
 
 		Logger.logInfo(
-			SoundButtonManager.updateButton,
 			"Applying button data:\n",
 			buttonData
 		);
@@ -135,7 +131,7 @@ class SoundButtonManager extends Logger {
 	public static setupDragAndDrop($button: JQuery<HTMLElement>): void {
 		$button
 			.on("dragenter", (e: JQuery.DragEnterEvent) => {
-				SoundButtonManager.logDebug(this.setupDragAndDrop, "'dragenter' triggered");
+				Logger.logDebug("'dragenter' triggered");
 
 				e.stopPropagation();
 				e.preventDefault();
@@ -150,7 +146,7 @@ class SoundButtonManager extends Logger {
 			})
 			// TODO: https://www.electronjs.org/docs/latest/tutorial/native-file-drag-drop
 			.on("drop", (e: JQuery.DropEvent) => {
-				SoundButtonManager.logDebug(this.setupDragAndDrop, "'drop' triggered");
+				Logger.logDebug("'drop' triggered");
 
 				const notSuccesful =
 					!e.originalEvent.dataTransfer ||
@@ -173,8 +169,7 @@ class SoundButtonManager extends Logger {
 
 				console.log(encodedPath);
 
-				SoundButtonManager.logInfo(
-					this.setupDragAndDrop,
+				Logger.logInfo(
 					"Audio drop successful.\n" +
 						"• Files: %O\n" +
 						"\t---------\n" +
@@ -200,7 +195,7 @@ class SoundButtonManager extends Logger {
 				$button.css("--saturation", "100%");
 			})
 			.on("dragleave", (e: JQuery.DragLeaveEvent) => {
-				SoundButtonManager.logDebug(this.setupDragAndDrop, "'dragleave' triggered");
+				Logger.logDebug("'dragleave' triggered");
 
 				e.preventDefault();
 				e.stopPropagation();
@@ -218,8 +213,7 @@ class SoundButtonManager extends Logger {
 		this._$grid.on("click", ".soundbutton", (e) => {
 			// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
 
-			SoundButtonManager.logDebug(
-				this.setupClick,
+			Logger.logDebug(
 				`Button "%s" clicked`,
 				$(e.target).children(".button-theme").text()
 			);

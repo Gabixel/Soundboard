@@ -1,7 +1,7 @@
 /**
  * Container and management for sound buttons
  */
-class GridManager extends Logger {
+class GridManager {
 	private _$grid: JQuery<HTMLElement>;
 
 	private _gridRows: number = 0;
@@ -48,25 +48,20 @@ class GridManager extends Logger {
 	//#endregion
 
 	constructor($grid: JQuery<HTMLElement>) {
-		super();
-
 		this._$grid = $grid;
-		GridManager.logDebug(null, "Initialized!");
+		Logger.logDebug("Initialized!");
 	}
 
 	public setRows(newValue: number): void {
 		this._gridRows = newValue;
 
-		GridManager.logDebug(this.setRows, `Row size changed (${this._gridRows})`);
+		Logger.logDebug(`Row size changed (${this._gridRows})`);
 	}
 
 	public setColumns(newValue: number): void {
 		this._gridCols = newValue;
 
-		GridManager.logDebug(
-			this.setColumns,
-			`Column size changed (${this._gridCols})`
-		);
+		Logger.logDebug(`Column size changed (${this._gridCols})`);
 	}
 
 	public resetSoundButtonCount(): void {
@@ -85,8 +80,7 @@ class GridManager extends Logger {
 		const size = this.size;
 
 		if (index >= size) {
-			GridManager.logError(
-				this.getButtonAtIndex,
+			Logger.logError(
 				`Index '${index}' is out of bounds. Current max index: (${size} - 1 = ${
 					size - 1
 				})`

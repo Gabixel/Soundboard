@@ -1,4 +1,4 @@
-class EditorForm extends Logger {
+class EditorForm {
 	private DATA_PREFIX: string = "#button-data-";
 
 	private _$form: JQuery<HTMLFormElement>;
@@ -18,8 +18,6 @@ class EditorForm extends Logger {
 	}
 
 	constructor($form: JQuery<HTMLFormElement>) {
-		super();
-
 		this._$form = $form;
 
 		this.setupInputsEvents();
@@ -142,7 +140,7 @@ class EditorForm extends Logger {
 
 		// Use a specific button for submit
 		let $submitButton = $("input#editor-submit").one("click", (_e) => {
-			EditorForm.logDebug(
+			Logger.logDebug(
 				"Submit button",
 				"Form submitted\n",
 				"Data:",

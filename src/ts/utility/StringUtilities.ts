@@ -18,12 +18,11 @@ abstract class StringUtilities {
 	// }
 
 	/**
-	 * Returns as `hsl()` function as a string.
+	 * Returns an `hsl()` function as a string.
 	 *
 	 * @param str The string that will be converted to a hue value
 	 * @param saturation The saturation level
 	 * @param lightness The lightness level
-	 * @returns
 	 */
 	public static getHSL(
 		str: string,
@@ -97,5 +96,14 @@ abstract class StringUtilities {
 
 	public static isDefined(obj: any): boolean {
 		return obj != null;
+	}
+
+	public static setupStringPrototypeExtensions(): void {
+		String.prototype.getHSL = function getHSL(
+			saturation: number = 100,
+			lightness: number = 50
+		): string {
+			return StringUtilities.getHSL(this as string, saturation, lightness);
+		};
 	}
 }

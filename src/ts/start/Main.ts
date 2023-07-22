@@ -1,7 +1,6 @@
-abstract class Main extends Logger {
+abstract class Main {
 	// TODO: create a specific object to store intervals(?)
 	private static _intervals: NodeJS.Timer[] = [];
-
 	public static addInterval(interval: NodeJS.Timer): void {
 		this._intervals.push(interval);
 	}
@@ -9,29 +8,52 @@ abstract class Main extends Logger {
 	// TODO: add a loader and pass the window container to it to integrate the fade-in animation with the loader stop event
 
 	protected static async init(): Promise<void> {
-		// Uncaught exceptions handling
-		this.initUncaughtExceptionsHandler();
+		let appPathRequest: Promise<void> = null;
 
-		await SoundboardApi.global.path.initRoot();
+		if (this.classExists(typeof SoundboardApi)) {
+			appPathRequest = SoundboardApi.global.path.retrieveAppPath();
+		} else {
+			throw new TypeError("SoundboardApi is not available");
+		}
 
-		// Some info for debug
-		this.logInfo(
-			this.init,
-			"\nUserAgent:",
-			navigator.userAgent,
-			"\nMain language:",
-			navigator.language,
-			"\nLanguages:",
-			navigator.languages,
-			"\nCookie enabled?",
-			navigator.cookieEnabled,
-			"\nNavigator:",
-			navigator
-		);
+		if (this.classExists(typeof StringUtilities)) {
+			StringUtilities.setupStringPrototypeExtensions();
+		} else {
+			throw new TypeError("StringUtilities is not available");
+		}
 
-		// Fix JQuery passive events (?)
-		// TODO: improve / check what it actually does
-		JQueryFixes.fixPassiveEvents();
+		if (this.classExists(typeof Logger)) {
+			// Some info for debug
+			Logger.logInfo(
+				"\nUserAgent:",
+				navigator.userAgent,
+				"\nMain language:",
+				navigator.language,
+				"\nLanguages:",
+				navigator.languages,
+				"\nCookie enabled?",
+				navigator.cookieEnabled,
+				"\nNavigator:",
+				navigator
+			);
+
+			// Uncaught exceptions handling
+			this.initUncaughtExceptionsHandler();
+		} else {
+			throw new TypeError("Logger is not available");
+		}
+
+		if (this.classExists(typeof JQueryFixes)) {
+			// Fix JQuery passive events (?)
+			// TODO: improve / check what it actually does
+			JQueryFixes.fixPassiveEvents();
+		} else {
+			throw new TypeError("JQueryFixes is not available");
+		}
+
+		if (appPathRequest) {
+			await appPathRequest;
+		}
 	}
 
 	protected static clearIntervals() {
@@ -53,8 +75,7 @@ abstract class Main extends Logger {
 
 			this.clearIntervals();
 
-			this.logError(
-				null,
+			Logger.logError(
 				"An unexpected error has occurred.\n",
 				event,
 				"\n",
@@ -66,20 +87,25 @@ abstract class Main extends Logger {
 		};
 
 		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event
-		window.onunhandledrejection = (event) => {
+		window.onunhandledrejection = (e) => {
 			// Don't print default error
-			event.preventDefault();
+			e.preventDefault();
 
-			this.logError(
-				null,
+			Logger.logError(
 				"An unexpected (in promise) error has occurred.\n",
-				`'${event.reason}'\n`,
-				event
+				`'${e.reason}'\n`,
+				e
 			);
 		};
+
+		Logger.logDebug("Exception handler is running...");
 
 		function validExtension(source: string): boolean {
 			return ["js", "ts"].some((extension) => source.endsWith("." + extension));
 		}
+	}
+
+	private static classExists(type: string): boolean {
+		return type === "function";
 	}
 }

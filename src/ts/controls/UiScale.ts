@@ -1,4 +1,4 @@
-abstract class UiScale extends Logger {
+abstract class UiScale {
 	private static $scaleInput: JQuery<HTMLInputElement>;
 	private static $lockCheckbox: JQuery<HTMLInputElement>;
 	private static $resetButton: JQuery<HTMLButtonElement>;
@@ -82,7 +82,7 @@ abstract class UiScale extends Logger {
 					},
 					325
 				);
-				this.logDebug(
+				Logger.logDebug(
 					"(ui scale slider click)",
 					"UI Scale changed:",
 					parseFloat($(e.target).val().toString())
