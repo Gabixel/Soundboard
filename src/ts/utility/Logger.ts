@@ -76,6 +76,9 @@ abstract class Logger {
 			const [, caller, filePath] = match;
 			const dotIndex = caller.indexOf(".");
 
+			console.log(caller);
+			
+
 			if (dotIndex === -1) {
 				// If no dot found, then it's just the caller class (constructor)
 				callerClass = caller;
@@ -84,6 +87,10 @@ abstract class Logger {
 				// Split the caller into class and function
 				callerClass = caller.slice(0, dotIndex);
 				callerFunction = caller.slice(dotIndex + 1);
+
+				// if(callerFunction === "<anonymous>") {
+				// 	callerFunction = "👻";
+				// }
 			}
 
 			// Get only the script file from the file path
@@ -131,24 +138,21 @@ abstract class Logger {
 		}
 
 		// Caller class style
-		let callerClassRendered = "%c...";
-		let callerClassStyle: string[] = [headerMiddleEffect];
+		let callerClassRendered = "...";
 		if (callerClass) {
-			callerClassRendered = `%c${callerClass}`;
+			callerClassRendered = `${callerClass}`;
 		}
 
 		// Caller function style
 		let callerFunctionRendered = "";
-		let callerFunctionStyle: string[] = [];
 		if (callerFunction) {
-			callerFunctionRendered = `%c ⨠ %c${callerFunction}`;
-			callerFunctionStyle = [headerMiddleEffect, headerMiddleEffect];
+			callerFunctionRendered = ` ⨠ ${callerFunction}`;
 		}
 
 		// Get UTC version of current timestamp
 		let displayTime: string = Logger.getDateTime();
 
-		let text = `%c %c${displayTime}%c %c %c %c${callerFileRendered}%c %c %c ${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
+		let text = `%c %c${displayTime}%c %c %c %c${callerFileRendered}%c %c %c %c${callerClassRendered}${callerFunctionRendered}%c %c ${message}`;
 
 		return {
 			text,
@@ -158,7 +162,7 @@ abstract class Logger {
 				headerMiddleEffect,
 				headerEndEffect,
 				"color: inherit",
-				
+
 				// File path
 				headerStartEffect,
 				headerMiddleEffect,
@@ -167,8 +171,7 @@ abstract class Logger {
 
 				// Caller function & class
 				headerStartEffect,
-				...callerClassStyle,
-				...callerFunctionStyle,
+				headerMiddleEffect,
 				headerEndEffect,
 				"color: inherit",
 			],
