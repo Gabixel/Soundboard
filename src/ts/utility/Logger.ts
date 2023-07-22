@@ -40,14 +40,41 @@ abstract class Logger {
 	private static configureAndSendLog(
 		logFunc: (message?: any, ...optionalParams: any[]) => void,
 		message: string,
-		...args: any[]
+		...args: (
+			| any
+			| {
+					class: Class;
+					function?: AnyFunction;
+			  }
+		)[]
 	): void {
-		let info = this.getAndStyleInfo(message);
+		let manualCallerClass, manualCallerFunction;
+
+		let lastArg = args.slice(-1)?.[0];
+		if (
+			lastArg != undefined &&
+			typeof lastArg === "object" &&
+			Object.keys(lastArg).every((key) => key === "class" || key === "function")
+		) {
+			args.splice(-1);
+			manualCallerClass = lastArg.class;
+			manualCallerFunction = lastArg.function;
+		}
+
+		let info = this.getAndStyleInfo(
+			message,
+			manualCallerClass,
+			manualCallerFunction
+		);
 
 		logFunc(info.text, ...info.style, ...args);
 	}
 
-	private static getAndStyleInfo(message: string): LoggerStyleAttributes {
+	private static getAndStyleInfo(
+		message: string,
+		manualCallerClass?: Class,
+		manualCallerFunction?: AnyFunction
+	): LoggerStyleAttributes {
 		// Create an Error object to capture the current stack trace
 		const err = new Error();
 
@@ -93,6 +120,11 @@ abstract class Logger {
 			// Get only the script file from the file path
 			callerFile = filePath.split("/").pop();
 		}
+		// Use provided caller names
+		else {
+			callerClass = manualCallerClass.name;
+			callerFunction = manualCallerFunction ?? "<anonymous>";
+		}
 
 		let styledAttributes = this.getStyledAttributes(
 			callerFile,
@@ -113,12 +145,12 @@ abstract class Logger {
 		let textForColor: string = "???";
 
 		// "ClassName"
-		if (StringUtilities.isDefined(callerClass)) {
+		if (callerClass) {
 			textForColor = callerClass;
 		}
 
 		// "ClassName.FunctionName"
-		if (StringUtilities.isDefined(callerFunction)) {
+		if (callerFunction) {
 			textForColor += "." + callerFunction;
 		}
 

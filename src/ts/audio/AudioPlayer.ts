@@ -123,13 +123,10 @@ class AudioPlayer implements IAudioPlayer {
 				this._output.main.setVolume(this._volumeSlider.value);
 				this._output.playback.setVolume(this._volumeSlider.value);
 
-				// // Log new volume
-				// this.logDebug(
-				// 	"(single pool volume slider change)",
-				// 	"Volume:",
-				// 	this._mainCoupleVolumeSlider.value
-				// );
-				console.debug("volume changed: " + this._volumeSlider.value);
+				// Log new volume
+				Logger.logDebug("Volume changed:", this._volumeSlider.value, {
+					class: VolumeSlider,
+				});
 			},
 			options?.decimals,
 			options?.exponentialBase
@@ -138,11 +135,10 @@ class AudioPlayer implements IAudioPlayer {
 		// Change initial value
 		$volumeSlider.trigger("input");
 
-		// this.logInfo(
-		// 	this.setupVolumeSlider,
-		// 	"Sliders set!\n",
-		// 	$volumeSlider,
-		// );
+		Logger.logInfo(
+			"Volume slider set!\n",
+			$volumeSlider,
+		);
 		return this;
 	}
 

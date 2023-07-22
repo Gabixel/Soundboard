@@ -1,4 +1,7 @@
-type AnyFunc<T> = (...any: any[]) => T;
+type Class = { new (): any };
+
+type Function<T> = (...any: any[]) => T;
+type AnyFunction = AnyFunction<any>;
 
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
