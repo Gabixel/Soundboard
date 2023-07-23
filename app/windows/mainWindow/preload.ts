@@ -71,6 +71,7 @@ const scripts = [
 
 	"grid/GridManager",
 	"grid/GridResizer",
+	"grid/GridNavigation",
 	"grid/ButtonSwap",
 	"grid/ButtonFilterer",
 	"grid/SoundButtonManager",
