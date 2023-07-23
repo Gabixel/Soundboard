@@ -4,6 +4,7 @@ abstract class MainWindow extends Main {
 	private static _soundButtonManager: SoundButtonManager;
 	private static _buttonFilterer: ButtonFilterer;
 	private static _gridResizer: GridResizer;
+	private static _gridNavigation: GridNavigation;
 	private static _buttonSwap: ButtonSwap;
 
 	// Audio
@@ -72,6 +73,9 @@ abstract class MainWindow extends Main {
 			this._soundButtonManager,
 			this._buttonFilterer
 		).setInputs($("#grid-rows"), $("#grid-columns"), $("#clear-grid"));
+
+		// Arrow key movement
+		this._gridNavigation = new GridNavigation(this._gridManager);
 
 		// Button swap
 		this._buttonSwap = new ButtonSwap(this._gridManager);

@@ -113,17 +113,11 @@ class SoundButtonManager {
 
 		// If the button doesn't exist
 		if ($button.length < 1) {
-			Logger.logDebug(
-				"Button not found, ignoring changes.\n",
-				buttonData
-			);
+			Logger.logDebug("Button not found, ignoring changes.\n", buttonData);
 			return;
 		}
 
-		Logger.logInfo(
-			"Applying button data:\n",
-			buttonData
-		);
+		Logger.logInfo("Applying button data:\n", buttonData);
 
 		this.applyButtonData($button, buttonData);
 	}
