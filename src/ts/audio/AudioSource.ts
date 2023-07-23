@@ -190,7 +190,7 @@ class AudioSource extends EventTarget implements IAudioController {
 				Logger.logError("Audio source error", _e);
 
 				if (!this._preserve) {
-					console.log("destroying");
+					Logger.logDebug("Destroying audio source");
 
 					this.destroy();
 				}
