@@ -228,6 +228,3 @@ class ButtonSwap {
 		else return null;
 	}
 }
-
-// TODO: Remove event listeners on mouseup and reassign them on mousedown.
-// This should alleviate performance issues during window resizing.
