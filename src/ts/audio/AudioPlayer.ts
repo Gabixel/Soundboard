@@ -135,7 +135,7 @@ class AudioPlayer implements IAudioPlayer {
 		// Change initial value
 		$volumeSlider.trigger("input");
 
-		Logger.logInfo(
+		Logger.logDebug(
 			"Volume slider set!\n",
 			$volumeSlider,
 		);
