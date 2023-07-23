@@ -56,7 +56,7 @@ class AudioPlayer implements IAudioPlayer {
 		useSecondaryStorage: boolean
 	): Promise<void> {
 		if (options.src == null) {
-			console.log("given source is null, skipping");
+			Logger.logDebug("Source is null, skipping");
 			return;
 		}
 
@@ -68,7 +68,7 @@ class AudioPlayer implements IAudioPlayer {
 		await chosenStorage.storeAudio({
 			src: options.src,
 			audioTimings: options.audioTimings,
-			loop: this._$loopButton.is(":checked"),
+			loop: !useSecondaryStorage && this._$loopButton.is(":checked"),
 			volume: options.volume
 		});
 		this._isAwaitingAudio = false;

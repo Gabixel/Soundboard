@@ -11,6 +11,8 @@ class AudioSource extends EventTarget implements IAudioController {
 	 */
 	private _preserve: boolean;
 
+	private _canPlayCurrentSource: CanPlayTypeResult = "";
+
 	private _destroyed: boolean = false;
 
 	/**
@@ -26,7 +28,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public set loop(loop: boolean) {
-		if (!this._preserve) {
+		if (loop && !this._preserve) {
 			throw new ReferenceError("Can't loop audio if 'preserve' is not enabled");
 		}
 
@@ -60,7 +62,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio = new Audio();
 		this._audio.preload = "metadata";
 		this._audio.autoplay = autoPlay ?? true;
-		this._audio.loop = false;
+		this.loop = options?.loop ?? false;
 
 		this._audio.disableRemotePlayback = true;
 
@@ -86,6 +88,8 @@ class AudioSource extends EventTarget implements IAudioController {
 			return;
 		}
 
+		this._canPlayCurrentSource = "maybe";
+
 		this._betterSrc = src ?? undefined;
 		if (this._betterSrc) {
 			this._audio.src = src;
@@ -94,14 +98,22 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public async play(): Promise<void> {
+		if (this._destroyed) {
+			Logger.logError("Can't resume: audio is destroyed");
+			return;
+		}
+
 		if (!this._betterSrc) {
-			console.log("Audio has no src, play has been prevented");
+			Logger.logDebug("Audio has no src, play has been prevented");
 
 			return;
 		}
 
-		if (this._destroyed) {
-			Logger.logError("Can't resume: audio is destroyed");
+		if (!this._canPlayCurrentSource) {
+			Logger.logDebug(
+				"Audio source is unavailable, unsupported or has been prevented due to an error"
+			);
+
 			return;
 		}
 
@@ -119,14 +131,14 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public seekTo(time: number): this {
-		if (!this._betterSrc) {
-			console.log("Audio has no src, seekTo has been prevented");
+		if (this._destroyed) {
+			Logger.logError("Can't seekTo: audio is destroyed");
 
 			return this;
 		}
 
-		if (this._destroyed) {
-			Logger.logError("Can't seekTo: audio is destroyed");
+		if (!this._betterSrc) {
+			console.log("Audio has no src, seekTo has been prevented");
 
 			return this;
 		}
@@ -193,6 +205,8 @@ class AudioSource extends EventTarget implements IAudioController {
 					Logger.logDebug("Destroying audio source");
 
 					this.destroy();
+				} else {
+					this._canPlayCurrentSource = "";
 				}
 
 				this.triggerEvent("error");
@@ -215,8 +229,6 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("pause");
 			})
 			.on("canplay", () => {
-				// TODO: sear
-
 				Logger.logDebug("Audio source can play");
 
 				this.triggerEvent("canplay");
