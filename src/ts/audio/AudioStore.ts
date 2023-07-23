@@ -90,10 +90,10 @@ class AudioStore extends EventTarget {
 			const couple = this._audioCoupleList[0];
 
 			// TODO: update settings (i.e. timings & effects)
-			if (couple.src === options.src) {
+			if (couple.betterSrc === options.src) {
 				await couple.restart();
 			} else {
-				couple.changeAudio(options.src);
+				couple.changeTrack(options.src);
 			}
 
 			couple.volume = options.volume;
@@ -191,7 +191,7 @@ class AudioStore extends EventTarget {
 			(couple) =>
 				couple != null &&
 				// Couple has same src
-				couple.src == options.src &&
+				couple.betterSrc == options.src &&
 				// Couple has same timings
 				JSON.stringify(couple.audioTimings ?? null) ==
 					JSON.stringify(options.audioTimings ?? null)

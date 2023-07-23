@@ -7,8 +7,8 @@ class AudioCouple extends EventTarget implements IAudioController {
 		playback: AudioSource;
 	};
 
-	public get src(): string {
-		return this._couple.main.src;
+	public get betterSrc(): string {
+		return this._couple.main.betterSrc;
 	}
 
 	public get audioTimings(): AudioTimings {
@@ -49,10 +49,10 @@ class AudioCouple extends EventTarget implements IAudioController {
 		this.initEventListeners();
 	}
 
-	public changeAudio(src: string): void {
+	public changeTrack(src: string): void {
 		// TODO: update timings, etc.
-		this._couple.main.changeAudio(src);
-		this._couple.playback.changeAudio(src);
+		this._couple.main.changeTrack(src);
+		this._couple.playback.changeTrack(src);
 	}
 
 	public async play(): Promise<void> {

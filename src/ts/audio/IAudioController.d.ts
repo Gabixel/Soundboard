@@ -5,7 +5,7 @@ interface IAudioController {
 	/**
 	 * Audio source.
 	 */
-	src: string;
+	betterSrc: string;
 
 	/**
 	 * TODO: Audio timings settings.
@@ -21,7 +21,7 @@ interface IAudioController {
 
 	// TODO: effects
 
-	changeAudio(src: string): void;
+	changeTrack(src: string): void;
 
 	/**
 	 * Starts the audio (if there's a source file).

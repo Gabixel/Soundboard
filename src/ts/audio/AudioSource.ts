@@ -14,11 +14,11 @@ class AudioSource extends EventTarget implements IAudioController {
 	private _destroyed: boolean = false;
 
 	/**
-	 * Audio source. We store it separately because if {@link Audio}'s `src` is not set, it will point to its document.
+	 * Audio source. This is the "better" version because we can detect if it's "undefined", while the native {@link Audio}'s doesn't have control of that.
 	 */
-	private _audioSrc: string;
-	public get src(): string {
-		return this._audioSrc;
+	private _betterSrc: string;
+	public get betterSrc(): string {
+		return this._betterSrc;
 	}
 
 	public get loop(): boolean {
@@ -76,25 +76,25 @@ class AudioSource extends EventTarget implements IAudioController {
 
 		this.createSourceNode();
 
-		this.initEventListeners();
+		this.initAudioEventListeners();
 
-		this.changeAudio(options?.src);
+		this.changeTrack(options?.src);
 	}
 
-	public changeAudio(src: string): void {
+	public changeTrack(src: string): void {
 		if (this._destroyed) {
 			return;
 		}
 
-		this._audioSrc = src ?? undefined;
-		if (this.src) {
+		this._betterSrc = src ?? undefined;
+		if (this._betterSrc) {
 			this._audio.src = src;
 			this._audio.load();
 		}
 	}
 
 	public async play(): Promise<void> {
-		if (!this.src) {
+		if (!this._betterSrc) {
 			console.log("Audio has no src, play has been prevented");
 
 			return;
@@ -119,7 +119,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public seekTo(time: number): this {
-		if (!this.src) {
+		if (!this._betterSrc) {
 			console.log("Audio has no src, seekTo has been prevented");
 
 			return this;
@@ -184,10 +184,10 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
-	private initEventListeners(): void {
+	private initAudioEventListeners(): void {
 		$(this._audio)
-			.on("error", (_e) => {
-				Logger.logError("Audio source error", _e);
+			.on("error", (e) => {
+				Logger.logError("Audio source error", e);
 
 				if (!this._preserve) {
 					Logger.logDebug("Destroying audio source");
@@ -223,6 +223,10 @@ class AudioSource extends EventTarget implements IAudioController {
 			});
 	}
 
+	private destroyAudioEventListeners(): void {
+		$(this._audio).off("error ended pause canplay");
+	}
+
 	private triggerEvent(eventName: string): void {
 		this.dispatchEvent(new Event(eventName));
 	}
@@ -233,7 +237,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	private destroy(): void {
 		this._destroyed = true;
 
-		$(this._audio).off("error ended pause canplay");
+		this.destroyAudioEventListeners();
 
 		this._sourceNode.disconnect();
 		this._sourceNode = null;
