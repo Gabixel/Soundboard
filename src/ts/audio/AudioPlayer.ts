@@ -68,7 +68,7 @@ class AudioPlayer implements IAudioPlayer {
 		await chosenStorage.storeAudio({
 			src: options.src,
 			audioTimings: options.audioTimings,
-			loop: this._$loopButton.is(":checked"),
+			loop: !useSecondaryStorage && this._$loopButton.is(":checked"),
 			volume: options.volume
 		});
 		this._isAwaitingAudio = false;
