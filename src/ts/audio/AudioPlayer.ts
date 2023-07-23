@@ -56,7 +56,7 @@ class AudioPlayer implements IAudioPlayer {
 		useSecondaryStorage: boolean
 	): Promise<void> {
 		if (options.src == null) {
-			console.log("given source is null, skipping");
+			Logger.logDebug("Source is null, skipping");
 			return;
 		}
 
