@@ -11,6 +11,8 @@ class AudioSource extends EventTarget implements IAudioController {
 	 */
 	private _preserve: boolean;
 
+	private _canPlayCurrentSource: CanPlayTypeResult = "maybe";
+
 	private _destroyed: boolean = false;
 
 	/**
@@ -215,8 +217,6 @@ class AudioSource extends EventTarget implements IAudioController {
 				this.triggerEvent("pause");
 			})
 			.on("canplay", () => {
-				// TODO: sear
-
 				Logger.logDebug("Audio source can play");
 
 				this.triggerEvent("canplay");
