@@ -28,7 +28,7 @@ class AudioSource extends EventTarget implements IAudioController {
 	}
 
 	public set loop(loop: boolean) {
-		if (!this._preserve) {
+		if (loop && !this._preserve) {
 			throw new ReferenceError("Can't loop audio if 'preserve' is not enabled");
 		}
 
@@ -62,7 +62,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio = new Audio();
 		this._audio.preload = "metadata";
 		this._audio.autoplay = autoPlay ?? true;
-		this._audio.loop = false;
+		this.loop = options.loop ?? false;
 
 		this._audio.disableRemotePlayback = true;
 
