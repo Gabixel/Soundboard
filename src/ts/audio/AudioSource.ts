@@ -62,7 +62,7 @@ class AudioSource extends EventTarget implements IAudioController {
 		this._audio = new Audio();
 		this._audio.preload = "metadata";
 		this._audio.autoplay = autoPlay ?? true;
-		this.loop = options.loop ?? false;
+		this.loop = options?.loop ?? false;
 
 		this._audio.disableRemotePlayback = true;
 
