@@ -37,7 +37,9 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 			if (device == 0) {
 				// Set to default device
 				this._audioPlayer.setSinkId("");
-				Logger.logDebug("Audio id is 0, sinkId will be emptied to make the AudioContext decide based on the default output device.")
+				Logger.logDebug(
+					"Audio id is 0, sinkId will be emptied to make the AudioContext decide based on the default output device."
+				);
 				return;
 			}
 
@@ -53,16 +55,19 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 	}
 
 	private refreshDeviceSelect(): void {
-		this._$audioDevicesSelect.empty();
+		let newList: JQuery<HTMLOptionElement>[] = [];
 
 		this._cachedDevices.forEach((device, i) => {
-			this._$audioDevicesSelect.append(
+			newList.push(
 				$("<option>", {
 					value: i,
 					text: device.label,
 				})
 			);
 		});
+
+		this._$audioDevicesSelect.empty();
+		this._$audioDevicesSelect.append(newList);
 	}
 
 	private initializeDeviceManager(): void {
