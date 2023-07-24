@@ -9,6 +9,7 @@ abstract class MainWindow extends Main {
 
 	// Audio
 	private static _audioPlayer: AudioPlayer;
+	private static _audioDeviceSelect: AudioDeviceSelect;
 
 	public static async initWindow() {
 		await super.init();
@@ -104,6 +105,11 @@ abstract class MainWindow extends Main {
 				decimals: 4,
 				exponentialBase: 100,
 			});
+
+		this._audioDeviceSelect = new AudioDeviceSelect(
+			$("#audio-output-select"),
+			this._audioPlayer
+		);
 
 		this._soundButtonManager.setupAudioPlayer(this._audioPlayer);
 	}
