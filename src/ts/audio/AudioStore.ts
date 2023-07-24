@@ -130,6 +130,10 @@ class AudioStore extends EventTarget {
 
 	public setLoop(loop: boolean) {
 		this.forEach((couple) => {
+			if (couple == null) {
+				return;
+			}
+
 			couple.loop = loop;
 		});
 	}
