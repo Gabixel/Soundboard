@@ -74,6 +74,11 @@ class AudioPlayer implements IAudioPlayer {
 		this._isAwaitingAudio = false;
 	}
 
+	public setSinkId(sinkId: string): void {
+		this._output.main.setSinkId(sinkId);
+		this._output.playback.setSinkId(sinkId);
+	}
+
 	public setControls(
 		$playToggleButton: JQuery<HTMLButtonElement>,
 		$stopButton: JQuery<HTMLButtonElement>,
