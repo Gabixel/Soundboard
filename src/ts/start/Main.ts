@@ -93,7 +93,7 @@ abstract class Main {
 
 			Logger.logError(
 				"An unexpected (in promise) error has occurred.\n",
-				`'${e.reason}'\n`,
+				`'${e.reason?.stack ?? e.reason}'\n`,
 				e
 			);
 		};
