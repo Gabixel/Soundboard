@@ -1,7 +1,7 @@
 /**
  * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
  */
-class AudioSource extends EventTarget implements IAudioController {
+class AudioSource extends EventTarget implements IAudioControls {
 	private _audio: HTMLAudioElement;
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _audioOutput: AudioOutput;

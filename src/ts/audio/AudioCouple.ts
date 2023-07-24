@@ -1,7 +1,7 @@
 /**
  * Contains two {@link AudioSource} instances, one for **primary and**, the other, **for secondary output**.
  */
-class AudioCouple extends EventTarget implements IAudioController {
+class AudioCouple extends EventTarget implements IAudioControls {
 	private _couple: {
 		main: AudioSource;
 		playback: AudioSource;
