@@ -22,7 +22,6 @@ class GridNavigation {
 			}
 
 			const currentTabIndex = parseInt($focusedButton.attr("tabindex"));
-			this._gridManager.size;
 
 			const columns = this._gridManager.cols;
 			const buttonsLength = this._gridManager.size;
