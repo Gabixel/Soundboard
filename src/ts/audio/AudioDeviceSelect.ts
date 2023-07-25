@@ -50,8 +50,8 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 		}
 	}
 
-	private async cacheDevices(): Promise<void> {
-		this._cachedDevices = await this.getDevices();
+	private async cacheDevices(devices: MediaDeviceInfo[]): Promise<void> {
+		this._cachedDevices = devices;
 	}
 
 	private refreshDeviceSelect(): void {
@@ -70,24 +70,75 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 		this._$audioDevicesSelect.append(newList);
 	}
 
-	private initializeDeviceManager(): void {
-		this.cacheDevices().then(() => {
-			this.refreshDeviceSelect();
+	private async updateAll(
+		checkForDifferentArray: boolean = false
+	): Promise<void> {
+		let newDevices = await this.getDevices();
 
-			this._$audioDevicesSelect.on("change", () => {
-				const audioIndex = parseInt(this._$audioDevicesSelect.val() as string);
+		if (
+			checkForDifferentArray &&
+			this.areMediaDeviceArraysEqual(this._cachedDevices, newDevices)
+		) {
+			Logger.logDebug(
+				"Updated (output) media devices are the same, no need to update."
+			);
+			return;
+		}
 
-				Logger.logDebug(
-					`Audio output device changed from dropdown.\n( id: ${audioIndex}, label: %c"${this._$audioDevicesSelect
-						.children("option:selected")
-						.text()}"%c )`,
-					"font-style: italic;",
-					"font-style: normal;"
-				);
+		await this.cacheDevices(newDevices);
 
-				this.setDevice(audioIndex);
-			});
+		this.refreshDeviceSelect();
+
+		// This gets triggered even at startup, but we don't care since the event hasn't been captured yet
+		this._$audioDevicesSelect.trigger("change");
+	}
+
+	private areMediaDeviceArraysEqual(
+		arr1: MediaDeviceInfo[],
+		arr2: MediaDeviceInfo[]
+	) {
+		// Check if both arrays have the same length
+		if (arr1.length !== arr2.length) {
+			return false;
+		}
+
+		// Compare each element in both arrays
+		for (let i = 0; i < arr1.length; i++) {
+			const device1 = arr1[i];
+			const device2 = arr2[i];
+
+			// Check if deviceId and kind properties match for each element
+			if (device1.deviceId !== device2.deviceId || device1.kind !== device2.kind) {
+				return false;
+			}
+		}
+
+		// If all elements match, the arrays are equal
+		return true;
+	}
+
+	private async initializeDeviceManager(): Promise<void> {
+		await this.updateAll();
+
+		this._$audioDevicesSelect.on("change", () => {
+			const audioIndex = parseInt(this._$audioDevicesSelect.val() as string);
+
+			Logger.logDebug(
+				`Audio output device changed from dropdown.\n( id: ${audioIndex}, label: %c"${this._$audioDevicesSelect
+					.children("option:selected")
+					.text()}"%c )`,
+				"font-style: italic;",
+				"font-style: normal;"
+			);
+
+			this.setDevice(audioIndex);
 		});
+
+		navigator.mediaDevices.ondevicechange = (e) => {
+			Logger.logDebug("Media devices triggered an update.\n", e);
+
+			this.updateAll(true);
+		};
 	}
 
 	/**
