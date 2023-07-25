@@ -122,7 +122,7 @@ abstract class Logger {
 		}
 		// Use provided caller names
 		else {
-			callerClass = manualCallerClass.name;
+			callerClass = manualCallerClass?.name ?? "???";
 			callerFunction = manualCallerFunction ?? "<anonymous>";
 		}
 
