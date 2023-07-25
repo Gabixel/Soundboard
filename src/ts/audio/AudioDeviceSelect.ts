@@ -119,9 +119,10 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 			const audioIndex = parseInt(this._$audioDevicesSelect.val() as string);
 
 			Logger.logDebug(
-				`Audio output device changed from dropdown.\n( id: ${audioIndex}, label: %c"${this._$audioDevicesSelect
-					.children("option:selected")
-					.text()}"%c )`,
+				`Audio output device changed from dropdown.\n` +
+					`( id: ${audioIndex}, label: %c"${this._$audioDevicesSelect
+						.children("option:selected")
+						.text()}"%c )`,
 				"font-style: italic;",
 				"font-style: normal;"
 			);
