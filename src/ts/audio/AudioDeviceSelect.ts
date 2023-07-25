@@ -102,19 +102,14 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 			return false;
 		}
 
-		// Compare each element in both arrays
-		for (let i = 0; i < arr1.length; i++) {
-			const device1 = arr1[i];
-			const device2 = arr2[i];
-
-			// Check if deviceId and kind properties match for each element
-			if (device1.deviceId !== device2.deviceId || device1.kind !== device2.kind) {
-				return false;
-			}
-		}
-
 		// If all elements match, the arrays are equal
-		return true;
+		return arr1.every((device1, i) => {
+			let device2 = arr2[i];
+
+			return (
+				device1.deviceId !== device2.deviceId || device1.kind !== device2.kind
+			);
+		});
 	}
 
 	private async initializeDeviceManager(): Promise<void> {
