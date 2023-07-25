@@ -130,6 +130,7 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 			this.setDevice(audioIndex);
 		});
 
+		// TODO: discover why this gets called twice when the event is fired because of an input device
 		navigator.mediaDevices.ondevicechange = (e) => {
 			Logger.logDebug("Media devices triggered an update.\n", e);
 
