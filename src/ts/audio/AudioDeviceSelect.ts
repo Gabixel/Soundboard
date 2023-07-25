@@ -2,6 +2,8 @@
  * Manager for audio output devices and their selection.
  */
 class AudioDeviceSelect implements IAudioDeviceSelect {
+	private static VAC_NAME = "Virtual Audio Cable (VB-Audio Virtual Cable)";
+
 	private _$audioDevicesSelect: JQuery<HTMLSelectElement>;
 	private _audioPlayer: AudioPlayer;
 
@@ -50,6 +52,10 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 		}
 	}
 
+	private get selectedIndex(): number {
+		return parseInt(this._$audioDevicesSelect.val() as string);
+	}
+
 	private async cacheDevices(devices: MediaDeviceInfo[]): Promise<void> {
 		this._cachedDevices = devices;
 	}
@@ -89,7 +95,8 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 
 		this.refreshDeviceSelect();
 
-		// This gets triggered even at startup, but we don't care since the event hasn't been captured yet
+		this.hardCodeVACToDefault();
+
 		this._$audioDevicesSelect.trigger("change");
 	}
 
@@ -113,10 +120,8 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 	}
 
 	private async initializeDeviceManager(): Promise<void> {
-		await this.updateAll();
-
 		this._$audioDevicesSelect.on("change", () => {
-			const audioIndex = parseInt(this._$audioDevicesSelect.val() as string);
+			const audioIndex = this.selectedIndex;
 
 			Logger.logDebug(
 				`Audio output device changed from dropdown.\n` +
@@ -129,6 +134,10 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 
 			this.setDevice(audioIndex);
 		});
+
+		// TODO: can be moved above if hardcoded VAC gets removed
+		// Note: if there'll be a save/load system, this probably needs to stay here
+		await this.updateAll();
 
 		navigator.mediaDevices.ondevicechange = (e) => {
 			// Debounce logic to prevent weird multiple calls from some input/output devices
@@ -147,7 +156,26 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 	}
 
 	/**
-	 * Hardcoded method to apply the Virtual Audio Cable, if present.
+	 * Hardcoded method to apply the Virtual Audio Cable as default output, if present.
 	 */
-	private hardCodeVAC(): void {}
+	private hardCodeVACToDefault(): void {
+		let VACIndex = -1;
+
+		const hasVAC = this._cachedDevices.some((device, i) => {
+			if (device.label != AudioDeviceSelect.VAC_NAME) {
+				return false;
+			}
+
+			VACIndex = i;
+			return true;
+		});
+
+		if (!hasVAC) {
+			return;
+		}
+
+		this._$audioDevicesSelect
+			.find(`>option:eq(${VACIndex})`)
+			.prop("selected", true);
+	}
 }
