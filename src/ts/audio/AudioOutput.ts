@@ -10,7 +10,7 @@ class AudioOutput implements IAudioOutput {
 	private _masterVolume: GainNode;
 
 	/**
-	 * Available effects for the user
+	 * Available effects for the user.
 	 */
 	private static EFFECT_MAP: Record<AudioEffect, any> = {
 		GainNode,

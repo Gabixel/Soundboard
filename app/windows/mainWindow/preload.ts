@@ -82,6 +82,7 @@ const scripts = [
 
 	"audio/AudioSource",
 	"audio/AudioCouple",
+	"audio/AudioDeviceSelect",
 	"audio/AudioOutput",
 	"audio/AudioStore",
 	"audio/AudioPlayer",

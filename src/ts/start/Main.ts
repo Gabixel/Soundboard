@@ -1,9 +1,7 @@
 abstract class Main {
-	// TODO: create a specific object to store intervals(?)
-	private static _intervals: NodeJS.Timer[] = [];
-	public static addInterval(interval: NodeJS.Timer): void {
-		this._intervals.push(interval);
-	}
+	// TODO: create a specific object to store these(?)
+	private static _intervals: Record<string, NodeJS.Timer> = {};
+	private static _timeouts: Record<string, NodeJS.Timeout> = {};
 
 	// TODO: add a loader and pass the window container to it to integrate the fade-in animation with the loader stop event
 
@@ -56,8 +54,26 @@ abstract class Main {
 		}
 	}
 
-	protected static clearIntervals() {
-		this._intervals.forEach((interval) => clearInterval(interval));
+	public static addInterval(name: string, interval: NodeJS.Timer): void {
+		this._intervals[name] = interval;
+	}
+	public static addTimeout(name: string, timeout: NodeJS.Timeout): void {
+		this._timeouts[name] = timeout;
+	}
+
+	public static removeInterval(name: string, stop: boolean = true): void {
+		if (stop) {
+			clearInterval(this._intervals[name]);
+		}
+
+		delete this._intervals[name];
+	}
+	public static removeTimeout(name: string, stop: boolean = true): void {
+		if (stop) {
+			clearTimeout(this._timeouts[name]);
+		}
+
+		delete this._timeouts[name];
 	}
 
 	private static initUncaughtExceptionsHandler() {
@@ -72,8 +88,6 @@ abstract class Main {
 			if (!validExtension(source)) {
 				return;
 			}
-
-			this.clearIntervals();
 
 			Logger.logError(
 				"An unexpected error has occurred.\n",
@@ -93,7 +107,7 @@ abstract class Main {
 
 			Logger.logError(
 				"An unexpected (in promise) error has occurred.\n",
-				`'${e.reason}'\n`,
+				`'${e.reason?.stack ?? e.reason}'\n`,
 				e
 			);
 		};

@@ -1,7 +1,7 @@
 /**
  * Audio controls (e.g. play/pause, volume, etc.)
  */
-interface IAudioController {
+interface IAudioControls {
 	/**
 	 * Audio source.
 	 */
