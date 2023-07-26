@@ -18,12 +18,6 @@ abstract class MainWindow extends Main {
 
 		this.setupAudio();
 
-		// Initialize volume in the audio player and the play/stop buttons
-		// AudioPlayer.initVolumeSliders(
-		// 	$("#volume-slider-primary"),
-		// 	$("#volume-slider-secondary")
-		// ).setAudioButtons($("#play-toggle-audio-button"), $("#stop-audio-button"));
-
 		// Set UI scale controls
 		UiScale.setControls(
 			$("#ui-scale-slider"),
