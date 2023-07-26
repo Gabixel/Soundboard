@@ -88,8 +88,8 @@ class ButtonFilterer {
 
 	private visuallyUpdateFilter(): void {
 		if (!this.isFiltering) {
-			Logger.logInfo("Cleared filter.");
 			this.clearFilter();
+			Logger.logDebug("Cleared filter.");
 			return;
 		}
 
@@ -108,7 +108,7 @@ class ButtonFilterer {
 			$("#filter-buttons-path").is(":checked") ? "path" : "",
 		].filter((f) => f.length > 0);
 
-		Logger.logInfo(
+		Logger.logDebug(
 			"Filtered " + filteredButtonsLength + " buttons.",
 			"\nFilter:",
 			this.filter,
