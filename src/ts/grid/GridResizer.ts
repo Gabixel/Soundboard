@@ -123,8 +123,8 @@ class GridResizer {
 		this.updateButtonFontSize();
 	}
 
-	private updateAxis($e: JQuery<HTMLInputElement>, axis: "row" | "col") {
-		const axisSize = this.clampGridSizeValue($e);
+	private updateAxis($rowsOrColumnsInput: JQuery<HTMLInputElement>, axis: "row" | "col") {
+		const axisSize = this.clampGridSizeValue($rowsOrColumnsInput);
 
 		switch (axis) {
 			case "row":
@@ -146,8 +146,8 @@ class GridResizer {
 		}
 	}
 
-	private clampGridSizeValue($e: JQuery<HTMLInputElement>): number {
-		const $target = $e;
+	private clampGridSizeValue($rowsOrColumnsInput: JQuery<HTMLInputElement>): number {
+		const $target = $rowsOrColumnsInput;
 		const value = parseInt($target.val().toString());
 
 		let max = parseFloat($target.attr("max").toString());
