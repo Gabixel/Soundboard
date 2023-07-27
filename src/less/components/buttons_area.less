@@ -45,7 +45,18 @@
 			background-color: transparent;
 			color: var(--window-fg);
 
-			&:hover, &:focus-visible, &.selected {
+			&:hover {
+				@color-opacity: 0.1;
+				background-image: linear-gradient(
+						to bottom,
+						rgba(0, 0, 0, @color-opacity),
+						rgba(0, 0, 0, @color-opacity)
+					),
+					linear-gradient(to bottom, var(--buttons-grid-bg), var(--buttons-grid-bg));
+			}
+
+			&.selected {
+				background-image: none;
 				background-color: var(--buttons-grid-bg);
 			}
 		}
