@@ -12,6 +12,28 @@ type AudioSourceOptions = {
 };
 
 /**
+ * A collection of {@link SoundButtonData}.
+ */
+type SoundButtonCollection = {
+	/**
+	 * Id for the order in the tab list.
+	 */
+	id: number,
+	/**
+	 * Visible name in the tab list.
+	 */
+	name: string,
+	/**
+	 * To check if the collection is stored in the user's files.
+	 */
+	isCached: boolean,
+	/**
+	 * The list of button data of the collection.
+	 */
+	buttons: SoundButtonData[],
+};
+
+/**
  * Sound button metadata.
  */
 // Keep updated with "~/src/ts/types.d.ts"
