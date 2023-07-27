@@ -44,7 +44,7 @@ class SoundButtonManager {
 
 	public generateButton(
 		index: null | number,
-		data: null | SoundButtonData,
+		data: null | SoundButtonData
 	): HTMLElement {
 		if (!StringUtilities.isDefined(data)) {
 			data = SoundButtonManager.DEFAULT_METADATA;
@@ -53,9 +53,7 @@ class SoundButtonManager {
 		return SoundButtonManager.createWithData(data, index);
 	}
 
-	public async generateRandomButton(
-		index: null | number
-	): Promise<HTMLElement> {
+	public async generateRandomButton(index: null | number): Promise<HTMLElement> {
 		let [h, s, l] = [
 			EMath.randomInt(0, 361),
 			EMath.randomInt(0, 100),
@@ -81,8 +79,8 @@ class SoundButtonManager {
 		data: SoundButtonData,
 		index: null | number
 	): HTMLElement {
-		const $button = $(`<button type="button" class="soundbutton"></button>`);
-		$button.append(`<div class="button-theme"></div>`);
+		const $button = $(`<button type="button" class="soundbutton">`)
+			.append(`<div class="button-theme">`);
 
 		this.applyInitialData($button, data, index);
 		this.setupDragAndDrop($button);
