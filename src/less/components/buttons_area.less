@@ -1,29 +1,41 @@
 @import "../utils/functions";
 @import "../utils/variables";
 
-#buttons-grid {
+#buttons-area {
 	flex-grow: 2;
 	flex-basis: 0;
 	.set-radius(@main-radius);
 	.hide-overflow();
 
-	@grid-gap: 8px;
-	display: grid;
-	gap: @grid-gap;
-	padding: @grid-gap;
-
-	background-color: var(--buttons-grid-bg);
-
 	margin-bottom: 10px;
 
-	grid-template-rows: repeat(var(--rows), 1fr);
-	grid-template-columns: repeat(var(--columns), 1fr);
+	background-color: var(--window-bg);
 
-	&.has-dragging-child {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
 
-		&,
-		& .soundbutton {
-			cursor: grabbing;
+	#buttons-grids {
+		.buttons-grid {
+			background-color: var(--buttons-grid-bg);
+			.set-radius(@main-radius);
+			.hide-overflow();
+
+			@grid-gap: 8px;
+			display: grid;
+			gap: @grid-gap;
+			padding: @grid-gap;
+
+			grid-template-rows: repeat(var(--rows), 1fr);
+			grid-template-columns: repeat(var(--columns), 1fr);
+
+			&.has-dragging-child {
+				&,
+				& .soundbutton {
+					cursor: grabbing;
+				}
+			}
 		}
 	}
 }
