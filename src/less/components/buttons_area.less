@@ -9,7 +9,10 @@
 
 	margin-bottom: 10px;
 
-	background-color: var(--window-bg);
+	background-image: linear-gradient(
+		var(--window-bg) 50%,
+		var(--buttons-grid-bg) 50%
+	);
 
 	display: flex;
 	flex-direction: column;
@@ -17,7 +20,13 @@
 	align-items: flex-start;
 
 	#buttons-grids {
+		flex-grow: 1;
+		width: 100%;
+
 		.buttons-grid {
+			width: 100%;
+			height: 100%;
+
 			background-color: var(--buttons-grid-bg);
 			.set-radius(@main-radius);
 			.hide-overflow();
