@@ -30,11 +30,32 @@
 		justify-content: flex-start;
 		align-items: flex-start;
 
+		overflow: hidden;
+
+		max-width: -webkit-fill-available;
+
 		#buttons-collections-tabs {
 			display: flex;
 			flex-direction: row;
 			justify-content: flex-start;
 			align-items: flex-start;
+
+			overflow-x: auto;
+			white-space: nowrap;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			// TODO: apply only when childrens are overflowing
+			// + split in "overflow-left" and "overflow-right" classes
+			-webkit-mask-image: linear-gradient(
+				to right,
+				#00000000 0%,
+				#ffffff 3%,
+				97%,
+				#00000000 100%,
+			);
 		}
 
 		button.tab-button {
