@@ -42,10 +42,7 @@ class GridNavigation {
 
 					break;
 				case "ArrowRight":
-					if (
-						currentTabIndex < buttonsLength &&
-						currentTabIndex % columns != 0
-					) {
+					if (currentTabIndex < buttonsLength && currentTabIndex % columns != 0) {
 						finalTabIndex = currentTabIndex + 1;
 					}
 
@@ -65,7 +62,7 @@ class GridNavigation {
 			// Focus
 			this._gridManager.$buttons
 				.filter(`[tabindex="${finalTabIndex}"]`)[0]
-				.focus();
+				?.focus();
 		});
 	}
 }
