@@ -79,8 +79,9 @@ class SoundButtonManager {
 		data: SoundButtonData,
 		index: null | number
 	): HTMLElement {
-		const $button = $(`<button type="button" class="soundbutton">`)
-			.append(`<div class="button-theme">`);
+		const $button = $(`<button type="button" class="soundbutton">`).append(
+			`<div class="button-theme">`
+		);
 
 		this.applyInitialData($button, data, index);
 		this.setupDragAndDrop($button);
