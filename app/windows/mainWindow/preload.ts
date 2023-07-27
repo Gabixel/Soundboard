@@ -55,7 +55,7 @@ const styles = [
 
 	"toolbar",
 	"audio_controls",
-	"buttons_grid",
+	"buttons_area",
 	"sound_button",
 	"volume_slider",
 ];
