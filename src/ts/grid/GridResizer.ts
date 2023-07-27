@@ -123,7 +123,10 @@ class GridResizer {
 		this.updateButtonFontSize();
 	}
 
-	private updateAxis($rowsOrColumnsInput: JQuery<HTMLInputElement>, axis: "row" | "col") {
+	private updateAxis(
+		$rowsOrColumnsInput: JQuery<HTMLInputElement>,
+		axis: "row" | "col"
+	) {
 		const axisSize = this.clampGridSizeValue($rowsOrColumnsInput);
 
 		switch (axis) {
@@ -146,7 +149,9 @@ class GridResizer {
 		}
 	}
 
-	private clampGridSizeValue($rowsOrColumnsInput: JQuery<HTMLInputElement>): number {
+	private clampGridSizeValue(
+		$rowsOrColumnsInput: JQuery<HTMLInputElement>
+	): number {
 		const $target = $rowsOrColumnsInput;
 		const value = parseInt($target.val().toString());
 
@@ -188,14 +193,14 @@ class GridResizer {
 		for (let i = 0; i < emptyCells; i++) {
 			const $button = $(
 				SoundboardApi.isProduction || this._resizerInitialized
-				? this._soundButtonManager.generateButton(
-					// Generate all button of the same color on production
-					null,
-					this._gridManager.size + i - emptyCells
-				)
-				: await this._soundButtonManager.generateRandomButton(
-						this._gridManager.size + i - emptyCells
-				  )
+					? this._soundButtonManager.generateButton(
+							this._gridManager.size + i - emptyCells,
+							// Generate all button of the same color on production
+							null
+					  )
+					: await this._soundButtonManager.generateRandomButton(
+							this._gridManager.size + i - emptyCells
+					  )
 			);
 
 			// TODO: Not sure if it's better triggering the filter instead of this.

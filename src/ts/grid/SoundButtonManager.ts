@@ -43,8 +43,8 @@ class SoundButtonManager {
 	}
 
 	public generateButton(
-		data: null | SoundButtonData = null,
-		index: null | number = null
+		index: null | number,
+		data: null | SoundButtonData,
 	): HTMLElement {
 		if (!StringUtilities.isDefined(data)) {
 			data = SoundButtonManager.DEFAULT_METADATA;
@@ -54,7 +54,7 @@ class SoundButtonManager {
 	}
 
 	public async generateRandomButton(
-		index: null | number = null
+		index: null | number
 	): Promise<HTMLElement> {
 		let [h, s, l] = [
 			EMath.randomInt(0, 361),
