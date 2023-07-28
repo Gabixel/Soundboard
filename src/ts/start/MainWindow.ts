@@ -6,6 +6,7 @@ abstract class MainWindow extends Main {
 	private static _gridResizer: GridResizer;
 	private static _gridNavigation: GridNavigation;
 	private static _buttonSwap: ButtonSwap;
+	private static _soundButtonDataCollection: SoundButtonDataCollection;
 
 	// Audio
 	private static _audioPlayer: AudioPlayer;
@@ -17,6 +18,8 @@ abstract class MainWindow extends Main {
 		await this.setupGrid();
 
 		this.setupAudio();
+
+		this.setupCollections();
 
 		// Set UI scale controls
 		UiScale.setControls(
@@ -74,6 +77,12 @@ abstract class MainWindow extends Main {
 
 		// Button swap
 		this._buttonSwap = new ButtonSwap(this._gridManager);
+	}
+
+	private static setupCollections(): void {
+		this._soundButtonDataCollection = new SoundButtonDataCollection(
+			$("#buttons-collections-controls")
+		);
 	}
 
 	/**
