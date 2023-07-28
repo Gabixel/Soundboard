@@ -4,6 +4,7 @@
  */
 class SoundButtonManager {
 	private static DEFAULT_METADATA: SoundButtonData = {
+		isEdited: false,
 		title: "-",
 		color: { h: 0, s: 0, l: 80 },
 		image: null,
@@ -61,6 +62,7 @@ class SoundButtonManager {
 		];
 
 		let data: SoundButtonData = {
+			isEdited: SoundButtonManager.DEFAULT_METADATA.isEdited,
 			title: isNaN(index)
 				? SoundButtonManager.DEFAULT_METADATA.title
 				: (index + 1).toString(),
@@ -104,7 +106,7 @@ class SoundButtonManager {
 			// CSS flex index
 			.css("--index", index.toString());
 
-		this.applyButtonData($button, buttonData);
+		this.applyButtonData($button, buttonData, false);
 	}
 
 	public static updateButton(id: string, buttonData: SoundButtonData): void {
@@ -258,11 +260,18 @@ class SoundButtonManager {
 		return this;
 	}
 
-	private static sanitizeButtonData(data: SoundButtonData): SoundButtonData {
+	private static sanitizeButtonData(
+		data: SoundButtonData | null
+	): SoundButtonData {
 		const defaultData = SoundButtonManager.DEFAULT_METADATA;
+
+		if (!data) {
+			data = defaultData;
+		}
 
 		// TODO: actually sanitize
 		return {
+			isEdited: data.isEdited,
 			title: data.title ?? defaultData.title,
 			color: data.color ?? defaultData.color,
 			image: data.image ?? defaultData.image,
@@ -275,12 +284,15 @@ class SoundButtonManager {
 
 	private static applyButtonData(
 		$button: JQuery<HTMLElement>,
-		buttonData: SoundButtonData
+		buttonData: SoundButtonData,
+		sanitize: boolean = true
 	): void {
-		// Check for problems
-		buttonData = this.sanitizeButtonData(buttonData);
+		if (sanitize) {
+			buttonData = this.sanitizeButtonData(buttonData);
+		}
 
 		$button
+			.attr("data-is-edited", buttonData.isEdited.toString())
 			// TODO: apply color
 			// TODO: apply image
 			.attr("data-path", buttonData.path)
@@ -304,6 +316,7 @@ class SoundButtonManager {
 
 	private static getButtonData($button: JQuery<HTMLElement>): SoundButtonData {
 		return {
+			isEdited: !!$button.attr("data-is-edited"),
 			title: $button.children(".button-theme").text(),
 			color: {
 				h: parseInt($button.css("--hue")),
