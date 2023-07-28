@@ -21,6 +21,7 @@ class CollectionTabs {
 
 		this.initAddCollectionButtonEvents();
 		this.initTabContainerEvents();
+		this.initWindowEventsForTabOverflow();
 	}
 
 	private initAddCollectionButtonEvents(): void {
@@ -48,41 +49,86 @@ class CollectionTabs {
 	}
 
 	private initTabContainerEvents(): void {
-		this._$tabsContainer.on("wheel", (e) => {
-			if(e.ctrlKey) {
-				return;
-			}
+		this._$tabsContainer[0].addEventListener(
+			"wheel",
+			(e) => {
+				if (e.ctrlKey) {
+					return;
+				}
 
-			let tabContainer =  this._$tabsContainer[0]
-			
-			const maxScrollWidth = tabContainer.scrollWidth - tabContainer.clientWidth;
+				let scrollSpeed = 50;
 
-			// @ts-ignore
-			let scrollAmount = e.deltaY;
+				// Prevent native horizontal scrolling
+				if (e.shiftKey) {
+					e.preventDefault();
+					scrollSpeed = 100;
+				}
 
-			console.log(scrollAmount);
-			
-		});
+				let tabContainer = this._$tabsContainer[0];
+
+				const maxScrollWidth = tabContainer.scrollWidth - tabContainer.clientWidth;
+				const previousScrollLeft = tabContainer.scrollLeft;
+
+				// @ts-ignore
+				let scrollAmount = EventFunctions.getUpdatedValueFromWheel(
+					e,
+					previousScrollLeft,
+					scrollSpeed,
+					[0, maxScrollWidth]
+				);
+
+				if (scrollAmount == previousScrollLeft) {
+					return;
+				}
+
+				// $(tabContainer).stop(true, false);
+				// $(tabContainer).animate(
+				// 	{
+				// 		scrollLeft: scrollAmount,
+				// 	},
+				// 	325
+				// );
+
+				console.log(tabContainer.scrollWidth);
+				console.log(tabContainer.clientWidth);
+				console.log(tabContainer.scrollLeft);
+
+				tabContainer.scrollLeft = scrollAmount;
+
+				console.log(scrollAmount);
+				console.log("---------------");
+
+				this.updateTabListOverflow();
+			},
+			{ passive: false }
+		);
 	}
 
-	private createCollectionTab(
-		// id?: number,
-		// name?: string,
-		// buttonsData?: SoundButtonData[]
-	): void {
+	private initWindowEventsForTabOverflow(): void {
+		Logger.logError("TODO");
+
+		// TODO: API function to check for "finished resize"
+	}
+
+	private createCollectionTab(): // id?: number,
+	// name?: string,
+	// buttonsData?: SoundButtonData[]
+	void {
 		let tab = this.generateCollectionTab(null);
 
 		this._$tabsContainer.append(tab);
+
+		this.updateTabListOverflow();
 	}
 
 	private generateCollectionTab(
 		id?: number,
 		name?: string
 	): JQuery<HTMLButtonElement> {
-		if(!id) {
+		if (!id) {
 			id = this._$tabsContainer.children("button.tab-button").length;
 		}
-		
+
 		let tab = $(`<button id="button-collection-tab-${id}">`)
 			.addClass("tab-button")
 			.attr("tabindex", -1)
@@ -90,4 +136,9 @@ class CollectionTabs {
 
 		return tab;
 	}
+
+	/**
+	 * Updates the class by checking if the element is overflowing and/or scorlling.
+	 */
+	private updateTabListOverflow(): void {}
 }
