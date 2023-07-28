@@ -6,7 +6,7 @@ abstract class MainWindow extends Main {
 	private static _gridResizer: GridResizer;
 	private static _gridNavigation: GridNavigation;
 	private static _buttonSwap: ButtonSwap;
-	private static _soundButtonDataCollection: SoundButtonDataCollection;
+	private static _collectionTabs: CollectionTabs;
 
 	// Audio
 	private static _audioPlayer: AudioPlayer;
@@ -80,7 +80,7 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupCollections(): void {
-		this._soundButtonDataCollection = new CollectionTabs(
+		this._collectionTabs = new CollectionTabs(
 			$("#buttons-collections-controls")
 		);
 	}

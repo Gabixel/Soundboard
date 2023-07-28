@@ -14,7 +14,7 @@ type AudioSourceOptions = {
 /**
  * A collection of {@link SoundButtonData}.
  */
-type SoundButtonCollection = {
+type SoundButtonDataCollection = {
 	/**
 	 * Id for the order in the tab list.
 	 */
