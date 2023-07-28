@@ -81,22 +81,7 @@ class CollectionTabs {
 					return;
 				}
 
-				// $(tabContainer).stop(true, false);
-				// $(tabContainer).animate(
-				// 	{
-				// 		scrollLeft: scrollAmount,
-				// 	},
-				// 	325
-				// );
-
-				console.log(tabContainer.scrollWidth);
-				console.log(tabContainer.clientWidth);
-				console.log(tabContainer.scrollLeft);
-
 				tabContainer.scrollLeft = scrollAmount;
-
-				console.log(scrollAmount);
-				console.log("---------------");
 
 				this.updateTabListOverflow();
 			},
