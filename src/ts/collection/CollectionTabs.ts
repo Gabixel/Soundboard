@@ -61,7 +61,7 @@ class CollectionTabs {
 				// Prevent native horizontal scrolling
 				if (e.shiftKey) {
 					e.preventDefault();
-					scrollSpeed = 100;
+					scrollSpeed = 80;
 				}
 
 				let tabContainer = this._$tabsContainer[0];
