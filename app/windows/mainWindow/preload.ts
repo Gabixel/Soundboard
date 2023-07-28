@@ -81,7 +81,7 @@ const scripts = [
 	"control/UiScale",
 	"control/ToolbarManager",
 
-	"collection/ButtonDataCollection",
+	"collection/SoundButtonDataCollection",
 
 	"audio/AudioSource",
 	"audio/AudioCouple",
