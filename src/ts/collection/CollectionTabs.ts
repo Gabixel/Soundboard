@@ -90,9 +90,7 @@ class CollectionTabs {
 	}
 
 	private initWindowEventsForTabOverflow(): void {
-		Logger.logWarn("TODO");
-
-		// TODO: API function to check for "finished resize"
+		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
 	private createCollectionTab(): // id?: number,
