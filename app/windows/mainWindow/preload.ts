@@ -79,6 +79,7 @@ const scripts = [
 	"control/VolumeSlider",
 	"control/PresetsPanel",
 	"control/UiScale",
+	"control/ToolbarManager",
 
 	"audio/AudioSource",
 	"audio/AudioCouple",
@@ -86,8 +87,6 @@ const scripts = [
 	"audio/AudioOutput",
 	"audio/AudioStore",
 	"audio/AudioPlayer",
-
-	"ToolbarManager",
 
 	"start/Main",
 	"start/MainWindow",
