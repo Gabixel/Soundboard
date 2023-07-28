@@ -14,7 +14,7 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		this.setupGrid();
+		await this.setupGrid();
 
 		this.setupAudio();
 
