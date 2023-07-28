@@ -80,7 +80,7 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupCollections(): void {
-		this._soundButtonDataCollection = new SoundButtonDataCollection(
+		this._soundButtonDataCollection = new CollectionTabs(
 			$("#buttons-collections-controls")
 		);
 	}

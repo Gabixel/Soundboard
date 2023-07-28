@@ -82,6 +82,7 @@ const scripts = [
 	"control/ToolbarManager",
 
 	"collection/SoundButtonDataCollection",
+	"collection/CollectionTabs",
 
 	"audio/AudioSource",
 	"audio/AudioCouple",
