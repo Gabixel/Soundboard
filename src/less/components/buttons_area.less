@@ -47,15 +47,31 @@
 				display: none;
 			}
 
-			// TODO: apply only when childrens are overflowing
-			// + split in "overflow-left" and "overflow-right" classes
-			-webkit-mask-image: linear-gradient(
-				to right,
-				#00000000 0%,
-				#ffffff 3%,
-				97%,
-				#00000000 100%
-			);
+			&.overflow-left {
+				-webkit-mask-image: linear-gradient(
+					to right,
+					#00000000 0%,
+					#ffffff 3%
+				);
+			}
+
+			&.overflow-right {
+				-webkit-mask-image: linear-gradient(
+					to left,
+					#00000000 0%,
+					#ffffff 3%
+				);
+			}
+
+			&.overflow-all {
+				-webkit-mask-image: linear-gradient(
+					to right,
+					#00000000 0%,
+					#ffffff 3%,
+					97%,
+					#00000000 100%
+				);
+			}
 		}
 
 		button.tab-button {
