@@ -90,7 +90,7 @@ class CollectionTabs {
 	}
 
 	private initWindowEventsForTabOverflow(): void {
-		Logger.logError("TODO");
+		Logger.logWarn("TODO");
 
 		// TODO: API function to check for "finished resize"
 	}
@@ -125,5 +125,7 @@ class CollectionTabs {
 	/**
 	 * Updates the class by checking if the element is overflowing and/or scorlling.
 	 */
-	private updateTabListOverflow(): void {}
+	private updateTabListOverflow(): void {
+		Logger.logWarn("TODO");
+	}
 }
