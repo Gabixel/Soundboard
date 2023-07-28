@@ -2,7 +2,7 @@
  * The collection manager for sound buttons.
  */
 class SoundButtonDataCollection {
-	private _$controlsContainer: JQuery<HTMLDivElement>;
+	private _$tabsContainer: JQuery<HTMLDivElement>;
 
 	/**
 	 * Keyboard spam prevention.
@@ -11,10 +11,14 @@ class SoundButtonDataCollection {
 	private _$addCollectionButton: JQuery<HTMLButtonElement>;
 
 	constructor($controlsContainer: JQuery<HTMLDivElement>) {
-		this._$controlsContainer = $controlsContainer;
+		this._$tabsContainer = $controlsContainer.find(
+			"#buttons-collections"
+		) as JQuery<HTMLDivElement>;
+
 		this._$addCollectionButton = $controlsContainer.find(
-			">button#add-collection-button"
+			"#add-collection-button"
 		) as JQuery<HTMLButtonElement>;
+		
 		this.initAddCollectionButtonEvents();
 	}
 
