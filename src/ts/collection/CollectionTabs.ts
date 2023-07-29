@@ -127,7 +127,6 @@ class CollectionTabs {
 
 	private addEventsToTab(tab: JQuery<HTMLButtonElement>): void {
 		tab.on("dblclick", () => {
-			Logger.logDebug("dbl click");
 			this.showTabRenameInput(tab);
 		});
 	}
@@ -135,28 +134,42 @@ class CollectionTabs {
 	private showTabRenameInput(tab: JQuery<HTMLButtonElement>): void {
 		let name = tab.text();
 
-		let input = this.generateTabRenameInput(
-			name,
-			tab.innerWidth() - +tab.css("padding-left").replace("px", "") * 2
-		);
+		let tabInnerWidth =
+			tab.innerWidth() - +tab.css("padding-left").replace("px", "") * 2;
+
+		let renameInput = this.generateTabRenameInput(name, tabInnerWidth);
+		this.addEventsToTabRenameInput(tab, renameInput);
 
 		tab.empty();
-		tab.append(input);
-		input.trigger("focus");
-		input.trigger("select");
+		tab.append(renameInput);
+		renameInput.trigger("focus");
+		renameInput.trigger("select");
 
 		this.updateTabListOverflow();
+	}
+
+	private addEventsToTabRenameInput(_tab: JQuery<HTMLButtonElement>, renameInput: JQuery<HTMLInputElement>): void {
+		renameInput.on("blur", () => {
+			console.log("rename input blur");
+			
+		})
 	}
 
 	private generateTabRenameInput(
 		value: string,
 		width: number
 	): JQuery<HTMLInputElement> {
+		const maxTabInnerWidth = 100;
+
+		if (isNaN(width) || width > maxTabInnerWidth) {
+			width = maxTabInnerWidth;
+		}
+
 		let input = $(`<input>`, {
 			type: "text",
 			value,
-			// style: `height: 1em; background: transparent; color: #fff; width: ${width}px; padding: 0; margin: 0;`,
-			style: `height: 1em; background: #fff; color: #000; width: ${width}px; padding: 0; margin: 0;`,
+			// style: `height: 1em; border: 0; background: transparent; color: #fff; width: ${width}px; padding: 0; margin: 0;`,
+			style: `height: 1em; background: #fff; border: 0; color: #000; width: ${width}px; padding: 0; margin: 0;`,
 		}) as JQuery<HTMLInputElement>;
 
 		return input;
