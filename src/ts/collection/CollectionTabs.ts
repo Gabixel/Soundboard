@@ -79,7 +79,7 @@ class CollectionTabs {
 				let scrollAmount = EventFunctions.getUpdatedValueFromWheel(
 					e,
 					previousScrollLeft,
-					scrollSpeed,
+					-scrollSpeed,
 					[0, maxScrollWidth]
 				);
 
