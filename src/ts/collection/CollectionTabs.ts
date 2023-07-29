@@ -75,7 +75,6 @@ class CollectionTabs {
 				const maxScrollWidth = tabContainer.scrollWidth - tabContainer.clientWidth;
 				const previousScrollLeft = tabContainer.scrollLeft;
 
-				// @ts-ignore
 				let scrollAmount = EventFunctions.getUpdatedValueFromWheel(
 					e,
 					previousScrollLeft,
