@@ -196,6 +196,24 @@ class CollectionTabs {
 	 * Updates the class by checking if the element is overflowing and/or scorlling.
 	 */
 	private updateTabListOverflow(): void {
-		Logger.logWarn("TODO");
+		let container = this._$tabsContainer[0];
+
+		const overflows = {
+			left: container.scrollLeft > 0,
+			right: container.scrollLeft + container.clientWidth < container.scrollWidth,
+		};
+
+		this._$tabsContainer.toggleClass(
+			"overflow-all",
+			overflows.left && overflows.right
+		);
+		this._$tabsContainer.toggleClass(
+			"overflow-left",
+			overflows.left && !overflows.right
+		);
+		this._$tabsContainer.toggleClass(
+			"overflow-right",
+			!overflows.left && overflows.right
+		);
 	}
 }
