@@ -81,7 +81,7 @@
 				background-color: #ffffff18;
 			}
 
-			&:hover {
+			&:hover, &:focus-visible {
 				@color-opacity: 0.05;
 				background-image: linear-gradient(
 						to bottom,
@@ -106,6 +106,10 @@
 
 				background: transparent;
 				color: #fff;
+
+				&::selection {
+					background-color: var(--main-bg);
+				}
 			}
 		}
 
