@@ -180,8 +180,7 @@ class CollectionTabs {
 			type: "text",
 			id: "tab-rename-input",
 			value,
-			// style: `height: 1em; border: 0; background: transparent; color: #fff; width: ${width}px; padding: 0; margin: 0;`,
-			style: `height: 1em; background: #fff; border: 0; color: #000; width: ${width}px; padding: 0; margin: 0;`,
+			style: `width: ${width}px;`,
 		}) as JQuery<HTMLInputElement>;
 
 		return input;
