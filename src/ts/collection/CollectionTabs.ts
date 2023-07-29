@@ -148,11 +148,23 @@ class CollectionTabs {
 		this.updateTabListOverflow();
 	}
 
-	private addEventsToTabRenameInput(_tab: JQuery<HTMLButtonElement>, renameInput: JQuery<HTMLInputElement>): void {
-		renameInput.on("blur", () => {
-			console.log("rename input blur");
-			
-		})
+	private addEventsToTabRenameInput(
+		tab: JQuery<HTMLButtonElement>,
+		renameInput: JQuery<HTMLInputElement>
+	): void {
+		renameInput.on("blur keydown", (e) => {
+			const isBlur = e.type == "blur";
+			const isEnterKey = e.type == "keydown" && e.key == "Enter";
+
+			if (!isBlur && !isEnterKey) {
+				return;
+			}
+
+			// Destroy input and apply new text
+			tab.text(renameInput.val() as string);
+
+			this.updateTabListOverflow();
+		});
 	}
 
 	private generateTabRenameInput(
