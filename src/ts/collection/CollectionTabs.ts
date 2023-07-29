@@ -187,8 +187,8 @@ class CollectionTabs {
 		let input = $(`<input>`, {
 			type: "text",
 			id: "tab-rename-input",
-			maxlength: 25,
 			value,
+			maxlength: 25,
 			style: `width: ${width}px;`,
 		}) as JQuery<HTMLInputElement>;
 
