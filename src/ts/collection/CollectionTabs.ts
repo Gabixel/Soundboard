@@ -2,6 +2,7 @@
  * The collection tab manager.
  */
 class CollectionTabs {
+	private _soundButtonCollection: SoundButtonCollection;
 	private _$tabsContainer: JQuery<HTMLDivElement>;
 
 	/**
@@ -24,6 +25,11 @@ class CollectionTabs {
 		this.initWindowEventsForTabOverflow();
 	}
 
+	public attachSoundButtonCollection(collection: SoundButtonCollection): this {
+		this._soundButtonCollection = collection;
+		return this;
+	}
+
 	private initAddCollectionButtonEvents(): void {
 		this._$addCollectionButton
 			.on("keydown mouseup", (e) => {
@@ -31,7 +37,7 @@ class CollectionTabs {
 					return;
 				}
 
-				const isEnterKey = e.key === "Enter";
+				const isEnterKey = e.key === "Enter" || e.key === " ";
 				const isLeftMouse = e.button === 0;
 
 				// No extra keys involved
@@ -41,7 +47,7 @@ class CollectionTabs {
 
 				this._isAddCollectionButtonHeld = isEnterKey;
 
-				this.createCollectionTab();
+				this.prepareTab();
 			})
 			.on("blur keyup", (_e) => {
 				this._isAddCollectionButtonHeld = false;
@@ -93,21 +99,20 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
-	private createCollectionTab(): // id?: number,
+	private prepareTab(): // id?: number,
 	// name?: string,
 	// buttonsData?: SoundButtonData[]
 	void {
-		let tab = this.generateCollectionTab(null);
+		let tab = this.generateTab(null);
+
+		this.addEventsToTab(tab);
 
 		this._$tabsContainer.append(tab);
 
 		this.updateTabListOverflow();
 	}
 
-	private generateCollectionTab(
-		id?: number,
-		name?: string
-	): JQuery<HTMLButtonElement> {
+	private generateTab(id?: number, name?: string): JQuery<HTMLButtonElement> {
 		if (!id) {
 			id = this._$tabsContainer.children("button.tab-button").length;
 		}
@@ -119,6 +124,47 @@ class CollectionTabs {
 
 		return tab;
 	}
+
+	private addEventsToTab(tab: JQuery<HTMLButtonElement>): void {
+		tab.on("dblclick", () => {
+			Logger.logDebug("dbl click");
+			this.showTabRenameInput(tab);
+		});
+	}
+
+	private showTabRenameInput(tab: JQuery<HTMLButtonElement>): void {
+		let name = tab.text();
+
+		let input = this.generateTabRenameInput(
+			name,
+			tab.innerWidth() - +tab.css("padding-left").replace("px", "") * 2
+		);
+
+		tab.empty();
+		tab.append(input);
+		input.trigger("focus");
+		input.trigger("select");
+
+		this.updateTabListOverflow();
+	}
+
+	private generateTabRenameInput(
+		value: string,
+		width: number
+	): JQuery<HTMLInputElement> {
+		let input = $(`<input>`, {
+			type: "text",
+			value,
+			// style: `height: 1em; background: transparent; color: #fff; width: ${width}px; padding: 0; margin: 0;`,
+			style: `height: 1em; background: #fff; color: #000; width: ${width}px; padding: 0; margin: 0;`,
+		}) as JQuery<HTMLInputElement>;
+
+		return input;
+	}
+
+	// private renameTab(id: number, newName: string): void {
+	// 	this._$tabsContainer.find("")
+	// }
 
 	/**
 	 * Updates the class by checking if the element is overflowing and/or scorlling.

@@ -6,6 +6,9 @@ abstract class MainWindow extends Main {
 	private static _gridResizer: GridResizer;
 	private static _gridNavigation: GridNavigation;
 	private static _buttonSwap: ButtonSwap;
+
+	// Collection and grid tabs
+	private static _soundButtonCollection: SoundButtonCollection;
 	private static _collectionTabs: CollectionTabs;
 
 	// Audio
@@ -80,9 +83,11 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupCollections(): void {
+		this._soundButtonCollection = new SoundButtonCollection();
+
 		this._collectionTabs = new CollectionTabs(
 			$("#buttons-collections-controls")
-		);
+		).attachSoundButtonCollection(this._soundButtonCollection);
 	}
 
 	/**
