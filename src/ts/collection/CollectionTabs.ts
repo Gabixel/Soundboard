@@ -104,7 +104,7 @@ class CollectionTabs {
 	void {
 		let tab = this.generateTab(null);
 
-		this.addEventsToTab(tab);
+		this.addDoubleClickEventToTab(tab);
 
 		this._$tabsContainer.append(tab);
 
@@ -124,8 +124,8 @@ class CollectionTabs {
 		return tab;
 	}
 
-	private addEventsToTab(tab: JQuery<HTMLButtonElement>): void {
-		tab.on("dblclick", () => {
+	private addDoubleClickEventToTab(tab: JQuery<HTMLButtonElement>): void {
+		tab.one("dblclick", () => {
 			this.showTabRenameInput(tab);
 		});
 	}
@@ -154,13 +154,23 @@ class CollectionTabs {
 		renameInput.on("blur keydown", (e) => {
 			const isBlur = e.type == "blur";
 			const isEnterKey = e.type == "keydown" && e.key == "Enter";
+			const isEscapeKey = e.type == "keydown" && e.key == "Escape";
 
-			if (!isBlur && !isEnterKey) {
+			if (!isBlur && !isEnterKey && !isEscapeKey) {
 				return;
 			}
 
-			// Destroy input and apply new text
-			tab.text(renameInput.val() as string);
+			let value = renameInput.attr("value");
+
+			if (!isEscapeKey) {
+				value = renameInput.val() as string;
+			}
+
+			// This also removes the input
+			this.renameTab(tab, value, !isEscapeKey);
+
+			// Re-add double click event
+			this.addDoubleClickEventToTab(tab);
 
 			this.updateTabListOverflow();
 		});
@@ -170,15 +180,14 @@ class CollectionTabs {
 		value: string,
 		width: number
 	): JQuery<HTMLInputElement> {
-		const maxTabInnerWidth = 100;
+		const minTabInnerWidth = 70;
 
-		if (isNaN(width) || width > maxTabInnerWidth) {
-			width = maxTabInnerWidth;
-		}
+		width = Math.max(width, minTabInnerWidth);
 
 		let input = $(`<input>`, {
 			type: "text",
 			id: "tab-rename-input",
+			maxlength: 25,
 			value,
 			style: `width: ${width}px;`,
 		}) as JQuery<HTMLInputElement>;
@@ -186,9 +195,20 @@ class CollectionTabs {
 		return input;
 	}
 
-	// private renameTab(id: number, newName: string): void {
-	// 	this._$tabsContainer.find("")
-	// }
+	private renameTab(
+		tab: JQuery<HTMLButtonElement>,
+		name: string,
+		shouldSave: boolean = true
+	): void {
+		// Destroy input and apply new text
+		tab.text(name);
+
+		if (!shouldSave) {
+			return;
+		}
+
+		// TODO: rename actual collection data
+	}
 
 	/**
 	 * Updates the class by checking if the element is overflowing and/or scorlling.
