@@ -2,8 +2,8 @@
  * The collection tab manager.
  */
 class CollectionTabs {
-	private _soundButtonCollection: SoundButtonCollection;
 	private _$tabsContainer: JQuery<HTMLDivElement>;
+	private _soundButtonCollection: SoundButtonCollection;
 
 	/**
 	 * Keyboard spam prevention.
@@ -20,8 +20,8 @@ class CollectionTabs {
 			"#add-collection-button"
 		) as JQuery<HTMLButtonElement>;
 
-		this.initAddCollectionButtonEvents();
 		this.initTabContainerEvents();
+		this.initAddCollectionButtonEvents();
 		this.initWindowEventsForTabOverflow();
 	}
 
