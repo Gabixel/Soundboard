@@ -218,7 +218,9 @@ class CollectionTabs {
 
 		const overflows = {
 			left: container.scrollLeft > 0,
-			right: container.scrollLeft + container.clientWidth < container.scrollWidth,
+			right:
+				Math.round(container.scrollLeft) + container.clientWidth <
+				container.scrollWidth - 1,
 		};
 
 		this._$tabsContainer.toggleClass(
