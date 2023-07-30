@@ -11,7 +11,10 @@ class CollectionTabs {
 	private _isAddCollectionButtonHeld: boolean = false;
 	private _$addCollectionButton: JQuery<HTMLButtonElement>;
 
-	constructor($controlsContainer: JQuery<HTMLDivElement>) {
+	constructor(
+		$controlsContainer: JQuery<HTMLDivElement>,
+		soundButtonCollection: SoundButtonCollection
+	) {
 		this._$tabsContainer = $controlsContainer.find(
 			"#buttons-collections"
 		) as JQuery<HTMLDivElement>;
@@ -20,14 +23,12 @@ class CollectionTabs {
 			"#add-collection-button"
 		) as JQuery<HTMLButtonElement>;
 
+		this._soundButtonCollection = soundButtonCollection;
+
 		this.initTabContainerEvents();
 		this.initAddCollectionButtonEvents();
 		this.initWindowEventsForTabOverflow();
-	}
-
-	public attachSoundButtonCollections(collection: SoundButtonCollection): this {
-		this._soundButtonCollection = collection;
-		return this;
+		this.checkForEmptyTabList();
 	}
 
 	private initAddCollectionButtonEvents(): void {
@@ -47,7 +48,7 @@ class CollectionTabs {
 
 				this._isAddCollectionButtonHeld = isEnterKey;
 
-				this.prepareTab();
+				this.createTab();
 			})
 			.on("blur keyup", (_e) => {
 				this._isAddCollectionButtonHeld = false;
@@ -98,20 +99,27 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
-	private prepareTab(): // id?: number,
+	private createTab(focusNewTab: boolean = false): // id?: number,
 	// name?: string,
 	// buttonsData?: SoundButtonData[]
 	void {
-		let tab = this.generateTab(null);
+		let tab = this.generateTabElement(null);
 
 		this.addDoubleClickEventToTab(tab);
 
 		this._$tabsContainer.append(tab);
 
+		if (focusNewTab) {
+			// TODO: select new tab as active
+		}
+
 		this.updateTabListOverflow();
 	}
 
-	private generateTab(id?: number, name?: string): JQuery<HTMLButtonElement> {
+	private generateTabElement(
+		id?: number,
+		name?: string
+	): JQuery<HTMLButtonElement> {
 		if (!id) {
 			id = this._$tabsContainer.children("button.tab-button").length;
 		}
@@ -122,6 +130,16 @@ class CollectionTabs {
 			.text(name ?? `Collection ${id + 1}`) as JQuery<HTMLButtonElement>;
 
 		return tab;
+	}
+
+	private checkForEmptyTabList() {
+		// TODO: use this method also when deleting is implemented
+
+		if (!this._soundButtonCollection.isEmpty) {
+			return;
+		}
+
+		this.createTab(true);
 	}
 
 	private addDoubleClickEventToTab(tab: JQuery<HTMLButtonElement>): void {

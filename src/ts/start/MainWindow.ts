@@ -89,10 +89,11 @@ abstract class MainWindow extends Main {
 			.loadCache()
 			.finally(() => {
 				console.log("Cache finished loading");
-				
+
 				this._collectionTabs = new CollectionTabs(
-					$("#buttons-collections-controls")
-				).attachSoundButtonCollections(this._soundButtonCollection);
+					$("#buttons-collections-controls"),
+					this._soundButtonCollection
+				);
 			});
 	}
 

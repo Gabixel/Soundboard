@@ -40,6 +40,10 @@ class SoundButtonCollection {
 		collection.name = name;
 	}
 
+	public get isEmpty(): boolean {
+		return this._collections.length == 0;
+	}
+
 	private findFirstFreeId(): number {
 		let freeId = 0;
 
