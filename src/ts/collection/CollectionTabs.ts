@@ -220,7 +220,8 @@ class CollectionTabs {
 			left: container.scrollLeft > 0,
 			right:
 				Math.round(container.scrollLeft) + container.clientWidth <
-				container.scrollWidth - 1,
+				container.scrollWidth -
+					4 * Math.round(parseFloat($(document.body).css("zoom"))),
 		};
 
 		this._$tabsContainer.toggleClass(
