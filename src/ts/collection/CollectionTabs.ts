@@ -29,6 +29,8 @@ class CollectionTabs {
 		this.initAddCollectionButtonEvents();
 		this.initWindowEventsForTabOverflow();
 		this.checkForEmptyTabList();
+
+		Logger.logDebug("Initialized!");
 	}
 
 	private initAddCollectionButtonEvents(): void {
@@ -48,7 +50,9 @@ class CollectionTabs {
 
 				this._isAddCollectionButtonHeld = isEnterKey;
 
-				this.createTab();
+				let focusNewTab = isEnterKey || (isLeftMouse && !e.shiftKey);
+
+				this.createTab(focusNewTab);
 			})
 			.on("blur keyup", (_e) => {
 				this._isAddCollectionButtonHeld = false;
@@ -99,7 +103,7 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
-	private createTab(focusNewTab: boolean = false): // id?: number,
+	private createTab(focusNewTab: boolean = true): // id?: number,
 	// name?: string,
 	// buttonsData?: SoundButtonData[]
 	void {
@@ -109,7 +113,11 @@ class CollectionTabs {
 
 		this._$tabsContainer.append(tab);
 
+		Logger.logDebug(`New tab created: "${tab.text()}"`);
+
 		if (focusNewTab) {
+			console.debug("Focusing new tab");
+			
 			// TODO: select new tab as active
 		}
 
@@ -139,7 +147,7 @@ class CollectionTabs {
 			return;
 		}
 
-		this.createTab(true);
+		this.createTab();
 	}
 
 	private addDoubleClickEventToTab(tab: JQuery<HTMLButtonElement>): void {
