@@ -2,7 +2,7 @@
 /**
  * Sound buttons management
  */
-class SoundButtonManager {
+class SoundButton {
 	private static DEFAULT_METADATA: SoundButtonData = {
 		isEdited: false,
 		title: "-",
@@ -48,10 +48,10 @@ class SoundButtonManager {
 		data: null | SoundButtonData
 	): HTMLElement {
 		if (!StringUtilities.isDefined(data)) {
-			data = SoundButtonManager.DEFAULT_METADATA;
+			data = SoundButton.DEFAULT_METADATA;
 		}
 
-		return SoundButtonManager.createWithData(data, index);
+		return SoundButton.createWithData(data, index);
 	}
 
 	public async generateRandomButton(index: null | number): Promise<HTMLElement> {
@@ -62,19 +62,19 @@ class SoundButtonManager {
 		];
 
 		let data: SoundButtonData = {
-			isEdited: SoundButtonManager.DEFAULT_METADATA.isEdited,
+			isEdited: SoundButton.DEFAULT_METADATA.isEdited,
 			title: isNaN(index)
-				? SoundButtonManager.DEFAULT_METADATA.title
+				? SoundButton.DEFAULT_METADATA.title
 				: (index + 1).toString(),
 			color: { h, s, l },
-			image: SoundButtonManager.DEFAULT_METADATA.image,
-			tags: SoundButtonManager.DEFAULT_METADATA.tags,
-			time: SoundButtonManager.DEFAULT_METADATA.time,
-			volume: SoundButtonManager.DEFAULT_METADATA.volume,
+			image: SoundButton.DEFAULT_METADATA.image,
+			tags: SoundButton.DEFAULT_METADATA.tags,
+			time: SoundButton.DEFAULT_METADATA.time,
+			volume: SoundButton.DEFAULT_METADATA.volume,
 			path: await this.getRandomAudio(),
 		};
 
-		return SoundButtonManager.createWithData(data, index);
+		return SoundButton.createWithData(data, index);
 	}
 
 	public static createWithData(
@@ -213,7 +213,7 @@ class SoundButtonManager {
 				$(e.target).children(".button-theme").text()
 			);
 
-			const data = SoundButtonManager.getButtonData($(e.target));
+			const data = SoundButton.getButtonData($(e.target));
 
 			const src = data.path;
 			const audioTimings: AudioTimings = null; // data.time;
@@ -246,7 +246,7 @@ class SoundButtonManager {
 			let args: ContextMenuArgs = {
 				type: "soundbutton",
 				id: $target.attr("id"),
-				buttonData: SoundButtonManager.getButtonData($target),
+				buttonData: SoundButton.getButtonData($target),
 			};
 
 			SoundboardApi.mainWindow.openContextMenu(args);
@@ -263,7 +263,7 @@ class SoundButtonManager {
 	private static sanitizeButtonData(
 		data: SoundButtonData | null
 	): SoundButtonData {
-		const defaultData = SoundButtonManager.DEFAULT_METADATA;
+		const defaultData = SoundButton.DEFAULT_METADATA;
 
 		if (!data) {
 			data = defaultData;

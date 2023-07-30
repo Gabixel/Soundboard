@@ -4,7 +4,7 @@
 class GridResizer {
 	private _gridManager: GridManager;
 	private _buttonFilterer: ButtonFilterer;
-	private _soundButtonManager: SoundButtonManager;
+	private _soundButtonManager: SoundButton;
 
 	private _resizerInitialized: boolean = false;
 
@@ -18,7 +18,7 @@ class GridResizer {
 
 	constructor(
 		gridManager: GridManager,
-		soundButtonManager: SoundButtonManager,
+		soundButtonManager: SoundButton,
 		buttonFilterer: ButtonFilterer
 	) {
 		this._gridManager = gridManager;

@@ -1,7 +1,7 @@
 abstract class MainWindow extends Main {
 	// Grid & Buttons
 	private static _gridManager: GridManager;
-	private static _soundButtonManager: SoundButtonManager;
+	private static _soundButtonManager: SoundButton;
 	private static _buttonFilterer: ButtonFilterer;
 	private static _gridResizer: GridResizer;
 	private static _gridNavigation: GridNavigation;
@@ -43,9 +43,9 @@ abstract class MainWindow extends Main {
 			return false;
 		});
 
-		SoundboardApi.mainWindow.onButtonDataUpdate((id, buttonData) => {
-			SoundButtonManager.updateButton(id, buttonData);
-		});
+		// SoundboardApi.mainWindow.onButtonDataUpdate((id, buttonData) => {
+		// 	SoundButtonManager.updateButton(id, buttonData);
+		// });
 	}
 
 	// TODO: include with future loader event
@@ -54,15 +54,6 @@ abstract class MainWindow extends Main {
 	}
 
 	private static async setupGrid(): Promise<void> {
-
-
-
-
-
-
-
-
-
 		/*
 		// Grid manager
 		this._gridManager = new GridManager($("#buttons-grid"));
@@ -116,7 +107,7 @@ abstract class MainWindow extends Main {
 	 * 3. (**{@link IAudioControls}**: Basic controls for the two previous classes.)
 	 * 4. **{@link AudioOutput}**: Audio output controller. It uses an {@link AudioContext} instance. In this soundboard logic, there should be one instance for primary output, and another for playback.
 	 * 5. **{@link AudioStore}**: Audio storage. It can be configured to hold any number of {@link AudioCouple} instances. This can be used to have a store only 1 main audio couple, and another for a collection of them. It should be used in the following class.
-	 * 6. **{@link AudioPlayer}**: The biggest one. The wrapper for all of the above, containing the two {@link AudioStore} instances mentioned earlier, and two {@link AudioOutput}s. This is the class that {@link SoundButtonManager} calls when a button gets clicked.
+	 * 6. **{@link AudioPlayer}**: The biggest one. The wrapper for all of the above, containing the two {@link AudioStore} instances mentioned earlier, and two {@link AudioOutput}s. This is the class that {@link SoundButton} calls when a button gets clicked.
 	 */
 	private static setupAudio(): void {
 		this._audioPlayer = new AudioPlayer()

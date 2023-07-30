@@ -25,8 +25,6 @@ const api: MainWindowApiBridge = {
 	},
 };
 
-
-
 // Keep updated with "~/src/ts/utility/SoundboardApi.ts"
 type MainWindowApiBridge = {
 	/*
@@ -43,7 +41,9 @@ type MainWindowApiBridge = {
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
 	joinPaths: (...paths: string[]) => Promise<string>;
-	onButtonDataUpdate: (callback: (id: string, buttonData: SoundButtonData) => void) => void;
+	onButtonDataUpdate: (
+		callback: (id: string, buttonData: SoundButtonData) => void
+	) => void;
 };
 
 const styles = [
@@ -69,12 +69,13 @@ const scripts = [
 	"utility/UserInterface",
 	"utility/StringUtilities",
 
+	"soundbutton/SoundButton",
+
 	"grid/GridManager",
 	"grid/GridResizer",
 	"grid/GridNavigation",
 	"grid/ButtonSwap",
 	"grid/ButtonFilterer",
-	"grid/SoundButtonManager",
 
 	"control/VolumeSlider",
 	"control/PresetsPanel",
