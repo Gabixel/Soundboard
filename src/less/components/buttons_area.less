@@ -28,7 +28,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-start;
-		align-items: flex-start;
+		align-items: stretch;
 
 		overflow: hidden;
 
@@ -38,7 +38,7 @@
 			display: flex;
 			flex-direction: row;
 			justify-content: flex-start;
-			align-items: flex-start;
+			align-items: stretch;
 
 			overflow-x: scroll;
 			white-space: nowrap;
@@ -70,6 +70,9 @@
 			margin: 0;
 			padding: (@margin + 1) @button-inner-gap (@margin - 1);
 			.set-radius(@main-radius @main-radius 0 0);
+
+			box-sizing: content-box;
+			min-width: 1ch;
 
 			background-color: transparent;
 			color: var(--window-fg);
