@@ -87,7 +87,7 @@ abstract class MainWindow extends Main {
 
 		this._collectionTabs = new CollectionTabs(
 			$("#buttons-collections-controls")
-		).attachSoundButtonCollection(this._soundButtonCollection);
+		).attachSoundButtonCollections(this._soundButtonCollection);
 	}
 
 	/**

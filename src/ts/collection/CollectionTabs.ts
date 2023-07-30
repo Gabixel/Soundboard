@@ -25,7 +25,7 @@ class CollectionTabs {
 		this.initWindowEventsForTabOverflow();
 	}
 
-	public attachSoundButtonCollection(collection: SoundButtonCollection): this {
+	public attachSoundButtonCollections(collection: SoundButtonCollection): this {
 		this._soundButtonCollection = collection;
 		return this;
 	}
