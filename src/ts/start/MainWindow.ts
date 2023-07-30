@@ -54,6 +54,16 @@ abstract class MainWindow extends Main {
 	}
 
 	private static async setupGrid(): Promise<void> {
+
+
+
+
+
+
+
+
+
+		/*
 		// Grid manager
 		this._gridManager = new GridManager($("#buttons-grid"));
 
@@ -79,7 +89,7 @@ abstract class MainWindow extends Main {
 		this._gridNavigation = new GridNavigation(this._gridManager);
 
 		// Button swap
-		this._buttonSwap = new ButtonSwap(this._gridManager);
+		this._buttonSwap = new ButtonSwap(this._gridManager);*/
 	}
 
 	private static setupCollections(): void {
@@ -126,7 +136,7 @@ abstract class MainWindow extends Main {
 			this._audioPlayer
 		);
 
-		this._soundButtonManager.setupAudioPlayer(this._audioPlayer);
+		// this._soundButtonManager.setupAudioPlayer(this._audioPlayer);
 	}
 }
 
