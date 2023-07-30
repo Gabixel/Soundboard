@@ -4,6 +4,10 @@
 class SoundButtonCollection {
 	private _collections: SoundButtonDataCollection[] = [];
 
+	public get isEmpty(): boolean {
+		return this._collections.length == 0;
+	}
+
 	public addNewCollection(name: string): SoundButtonDataCollection {
 		let collection: SoundButtonDataCollection = {
 			id: this.findFirstFreeId(),
@@ -38,10 +42,6 @@ class SoundButtonCollection {
 		let collection = this.getCollection(id);
 
 		collection.name = name;
-	}
-
-	public get isEmpty(): boolean {
-		return this._collections.length == 0;
 	}
 
 	private findFirstFreeId(): number {
