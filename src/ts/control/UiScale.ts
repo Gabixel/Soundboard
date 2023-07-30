@@ -51,6 +51,8 @@ abstract class UiScale {
 			$(document.body).stop(true, false);
 			this.setSliderValue(value);
 			$(document.body).css("zoom", value);
+			
+			$(window).trigger("resize");
 		});
 	}
 
@@ -87,6 +89,8 @@ abstract class UiScale {
 					"UI Scale changed:",
 					parseFloat($(e.target).val().toString())
 				);
+
+				$(window).trigger("resize");
 			});
 	}
 
