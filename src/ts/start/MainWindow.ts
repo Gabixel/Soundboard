@@ -1,11 +1,11 @@
 abstract class MainWindow extends Main {
-	// Grid & Buttons
+	/*// Grid & Buttons
 	private static _gridManager: GridManager;
 	private static _soundButtonManager: SoundButton;
 	private static _buttonFilterer: ButtonFilterer;
 	private static _gridResizer: GridResizer;
 	private static _gridNavigation: GridNavigation;
-	private static _buttonSwap: ButtonSwap;
+	private static _buttonSwap: ButtonSwap;*/
 
 	// Collection and grid tabs
 	private static _soundButtonCollection: SoundButtonCollection;
