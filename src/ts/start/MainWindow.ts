@@ -85,9 +85,15 @@ abstract class MainWindow extends Main {
 	private static setupCollections(): void {
 		this._soundButtonCollection = new SoundButtonCollection();
 
-		this._collectionTabs = new CollectionTabs(
-			$("#buttons-collections-controls")
-		).attachSoundButtonCollections(this._soundButtonCollection);
+		new SoundButtonCollectionCache(this._soundButtonCollection)
+			.loadCache()
+			.finally(() => {
+				console.log("Cache finished loading");
+				
+				this._collectionTabs = new CollectionTabs(
+					$("#buttons-collections-controls")
+				).attachSoundButtonCollections(this._soundButtonCollection);
+			});
 	}
 
 	/**
