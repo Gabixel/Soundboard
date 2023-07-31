@@ -153,6 +153,9 @@
 			display: grid;
 			gap: @grid-gap;
 			padding: @grid-gap;
+			&:not(.active) {
+				display: none;
+			}
 
 			grid-template-rows: repeat(var(--rows), 1fr);
 			grid-template-columns: repeat(var(--columns), 1fr);
@@ -162,10 +165,6 @@
 				& .soundbutton {
 					cursor: grabbing;
 				}
-			}
-
-			&.active {
-				
 			}
 		}
 	}
