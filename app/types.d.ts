@@ -8,8 +8,9 @@ type ContextMenuArgs =
 	  );
 
 /**
- * Sound button metadata
+ * Sound button metadata.
  */
+// Keep updated with "~/src/ts/types.d.ts"
 type SoundButtonData = {
 	/**
 	 * The unrendered text

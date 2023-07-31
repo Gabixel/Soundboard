@@ -36,10 +36,11 @@ type SoundButtonDataCollection = {
 /**
  * Sound button metadata.
  */
-// Keep updated with "~/src/ts/types.d.ts"
+// Keep updated with "~/app/types.d.ts"
 type SoundButtonData = {
 	/**
 	 * To check if the user has changed any value of the button, in which case it will be cached.
+	 * Do not 
 	 */
 	isEdited: boolean,
 	/**
