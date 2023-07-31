@@ -132,12 +132,12 @@ class CollectionTabs {
 			id = this._$tabsContainer.children("button.tab-button").length;
 		}
 
-		let tab = $(`<button id="button-collection-tab-${id}">`)
+		let $tab = $(`<button id="button-collection-tab-${id}">`)
 			.addClass("tab-button")
 			.attr("tabindex", -1)
 			.text(name ?? `Collection ${id + 1}`) as JQuery<HTMLButtonElement>;
 
-		return tab;
+		return $tab;
 	}
 
 	private checkForEmptyTabList() {
@@ -150,23 +150,23 @@ class CollectionTabs {
 		this.createTab();
 	}
 
-	private addDoubleClickEventToTab(tab: JQuery<HTMLButtonElement>): void {
-		tab.one("dblclick", () => {
-			this.showTabRenameInput(tab);
+	private addDoubleClickEventToTab($tab: JQuery<HTMLButtonElement>): void {
+		$tab.one("dblclick", () => {
+			this.showTabRenameInput($tab);
 		});
 	}
 
-	private showTabRenameInput(tab: JQuery<HTMLButtonElement>): void {
-		let name = tab.text();
+	private showTabRenameInput($tab: JQuery<HTMLButtonElement>): void {
+		let name = $tab.text();
 
 		let tabInnerWidth =
-			tab.innerWidth() - +tab.css("padding-left").replace("px", "") * 2;
+			$tab.innerWidth() - +$tab.css("padding-left").replace("px", "") * 2;
 
 		let renameInput = this.generateTabRenameInput(name, tabInnerWidth);
-		this.addEventsToTabRenameInput(tab, renameInput);
+		this.addEventsToTabRenameInput($tab, renameInput);
 
-		tab.empty();
-		tab.append(renameInput);
+		$tab.empty();
+		$tab.append(renameInput);
 		renameInput.trigger("focus");
 		renameInput.trigger("select");
 
@@ -174,10 +174,10 @@ class CollectionTabs {
 	}
 
 	private addEventsToTabRenameInput(
-		tab: JQuery<HTMLButtonElement>,
-		renameInput: JQuery<HTMLInputElement>
+		$tab: JQuery<HTMLButtonElement>,
+		$renameInput: JQuery<HTMLInputElement>
 	): void {
-		renameInput.on("blur keydown", (e) => {
+		$renameInput.on("blur keydown", (e) => {
 			const isBlur = e.type == "blur";
 			const isEnterKey = e.type == "keydown" && e.key == "Enter";
 			const isEscapeKey = e.type == "keydown" && e.key == "Escape";
@@ -186,17 +186,17 @@ class CollectionTabs {
 				return;
 			}
 
-			let value = renameInput.attr("value");
+			let value = $renameInput.attr("value");
 
 			if (!isEscapeKey) {
-				value = renameInput.val() as string;
+				value = $renameInput.val() as string;
 			}
 
 			// This also removes the input
-			this.renameTab(tab, value, !isEscapeKey);
+			this.renameTab($tab, value, !isEscapeKey);
 
 			// Re-add double click event
-			this.addDoubleClickEventToTab(tab);
+			this.addDoubleClickEventToTab($tab);
 
 			this.updateTabListOverflow();
 		});
@@ -210,7 +210,7 @@ class CollectionTabs {
 
 		width = Math.max(width, minTabInnerWidth);
 
-		let input = $(`<input>`, {
+		let $input = $(`<input>`, {
 			type: "text",
 			id: "tab-rename-input",
 			value,
@@ -218,7 +218,7 @@ class CollectionTabs {
 			style: `width: ${width}px;`,
 		}) as JQuery<HTMLInputElement>;
 
-		return input;
+		return $input;
 	}
 
 	private renameTab(
