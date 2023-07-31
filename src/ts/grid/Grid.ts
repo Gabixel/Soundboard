@@ -52,7 +52,6 @@ class Grid {
 		this.createGrid(id);
 
 		if (focusNewGrid) {
-			Logger.logDebug("Focusing new grid");
 			this.focusGrid(id);
 		}
 	}
@@ -66,6 +65,8 @@ class Grid {
 		if ($focusingGrid.length == 0) {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
+		
+		Logger.logDebug(`Focusing grid with index "${id}"`);
 
 		this.activeGrid.removeClass(Grid.GRID_ACTIVE_CLASS);
 		$focusingGrid.addClass(Grid.GRID_ACTIVE_CLASS);

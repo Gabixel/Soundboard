@@ -37,7 +37,7 @@ class CollectionTabs {
 		this.initTabContainerEvents();
 		this.initWindowEventsForTabOverflow();
 		this.checkForEmptyTabList();
-		
+
 		this.initAddCollectionButtonEvents();
 
 		Logger.logDebug("Initialized!");
@@ -188,6 +188,8 @@ class CollectionTabs {
 		if ($focusingTab.length == 0) {
 			throw new ReferenceError(`Tab not found with index "${id}"`);
 		}
+
+		Logger.logDebug(`Focusing tab with index "${id}"`);
 
 		this.activeTab.removeClass(CollectionTabs.TAB_ACTIVE_CLASS);
 		$focusingTab.addClass(CollectionTabs.TAB_ACTIVE_CLASS);
