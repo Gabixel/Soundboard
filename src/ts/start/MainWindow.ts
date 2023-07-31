@@ -103,7 +103,8 @@ abstract class MainWindow extends Main {
 
 				this._collectionTabs = new CollectionTabs(
 					$("#buttons-collections-controls"),
-					this._soundButtonCollection
+					this._soundButtonCollection,
+					this._grid
 				);
 			});
 	}
