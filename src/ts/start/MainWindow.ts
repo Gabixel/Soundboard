@@ -27,7 +27,6 @@ abstract class MainWindow extends Main {
 
 		this.setupCollections();
 
-		// Set UI scale controls
 		UiScale.setControls(
 			$("#ui-scale-slider"),
 			$("#ui-scale-lock"),
@@ -40,12 +39,15 @@ abstract class MainWindow extends Main {
 			SoundboardApi.mainWindow.openContextMenu();
 		});
 
+		// Drag over visual issue prevention(?)
+		// TODO: can probably be removed, doesn't seem to fix anything
 		$(window).on("dragover", (e) => {
 			e.preventDefault();
 			e.originalEvent.dataTransfer.dropEffect = "none";
 			return false;
 		});
 
+		// TODO: move somewhere else
 		// SoundboardApi.mainWindow.onButtonDataUpdate((id, buttonData) => {
 		// 	SoundButtonManager.updateButton(id, buttonData);
 		// });
