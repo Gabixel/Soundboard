@@ -65,7 +65,7 @@ class Grid {
 		if ($focusingGrid.length == 0) {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
-		
+
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
 		this.activeGrid.removeClass(Grid.GRID_ACTIVE_CLASS);
@@ -97,10 +97,14 @@ class Grid {
 	}
 
 	private generateGridElement(id: number): JQuery<HTMLDivElement> {
+		let text = "grid " + id;
+		let color = (EMath.randomInt() + text).getHSL(50, 50);
+
 		let $grid = $("<div>", {
 			id: Grid.GRID_ID_PREFIX + id,
 			class: Grid.GRID_CLASS,
-			text: "grid " + id
+			text,
+			style: "background-color: " + color,
 		}) as JQuery<HTMLDivElement>;
 
 		return $grid;
