@@ -69,13 +69,12 @@ const scripts = [
 	"utility/UserInterface",
 	"utility/StringUtilities",
 
+	"soundbutton/SoundButtonSwap",
 	"soundbutton/SoundButton",
 
-	"grid/GridManager",
-	"grid/GridResizer",
-	"grid/GridNavigation",
-	"grid/ButtonSwap",
-	"grid/ButtonFilterer",
+	"grid/GridSize",
+	"grid/GridGenerator",
+	"grid/Grid",
 
 	"control/VolumeSlider",
 	"control/PresetsPanel",

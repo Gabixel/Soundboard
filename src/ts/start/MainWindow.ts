@@ -1,4 +1,7 @@
 abstract class MainWindow extends Main {
+	// Grid
+	private static _grid: Grid;
+
 	/*// Grid & Buttons
 	private static _gridManager: GridManager;
 	private static _soundButtonManager: SoundButton;
@@ -54,6 +57,8 @@ abstract class MainWindow extends Main {
 	}
 
 	private static async setupGrid(): Promise<void> {
+		this._grid = new Grid($("#buttons-grids"));
+
 		/*
 		// Grid manager
 		this._gridManager = new GridManager($("#buttons-grid"));
