@@ -3,6 +3,8 @@
  */
 class CollectionTabs {
 	private static TAB_ID_PREFIX: string = "button-collection-tab-";
+	private static TAB_CLASS: string = "tab-button";
+	private static TAB_ACTIVE_CLASS: string = "active";
 	private static RENAME_INPUT_ID: string = "tab-rename-input";
 
 	private _$tabsContainer: JQuery<HTMLDivElement>;
@@ -110,6 +112,18 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
+	private get activeTab(): JQuery<HTMLButtonElement> {
+		return this._$tabsContainer.find(
+			`>.${CollectionTabs.TAB_CLASS}.${CollectionTabs.TAB_ACTIVE_CLASS}`
+		) as JQuery<HTMLButtonElement>;
+	}
+
+	private getTab(id: number): JQuery<HTMLButtonElement> {
+		return this._$tabsContainer.find(
+			`>#${CollectionTabs.TAB_ID_PREFIX}${id}`
+		) as JQuery<HTMLButtonElement>;
+	}
+
 	private createTab(name: string, focusNewTab: boolean = true): void {
 		let $tab = this.generateTabElement(null, name);
 
@@ -122,6 +136,10 @@ class CollectionTabs {
 		Logger.logDebug(`New tab created: "${tabName}" (id: "${$tab[0].id}")`);
 
 		let collection = this._soundButtonCollection.addNewCollection(tabName);
+
+		if (focusNewTab) {
+			this.focusTab(collection.id);
+		}
 
 		this._grid.addNewGrid(collection.id, focusNewTab);
 
@@ -138,12 +156,23 @@ class CollectionTabs {
 
 		let $tab = $("<button>", {
 			id: CollectionTabs.TAB_ID_PREFIX + id,
-			class: "tab-button",
+			class: CollectionTabs.TAB_CLASS,
 			tabindex: -1,
 			text: name ?? `Collection ${id + 1}`,
 		}) as JQuery<HTMLButtonElement>;
 
 		return $tab;
+	}
+
+	private focusTab(id: number): void {
+		let $focusingTab = this.getTab(id);
+
+		if($focusingTab.length == 0) {
+			throw new ReferenceError(`Tab not found with index "${id}"`);
+		}
+
+		this.activeTab.removeClass(CollectionTabs.TAB_ACTIVE_CLASS);
+		$focusingTab.addClass(CollectionTabs.TAB_ACTIVE_CLASS);
 	}
 
 	private checkForEmptyTabList() {

@@ -1,7 +1,7 @@
 class Grid {
 	private static GRID_ID_PREFIX: string = "buttons-grid-";
 	private static GRID_CLASS: string = "buttons-grid";
-	private static GRID_ACTIVE_CLASS: string = "focused";
+	private static GRID_ACTIVE_CLASS: string = "active";
 
 	private _$gridsContainer: JQuery<HTMLDivElement>;
 
@@ -99,6 +99,7 @@ class Grid {
 		let $grid = $("<div>", {
 			id: Grid.GRID_ID_PREFIX + id,
 			class: Grid.GRID_CLASS,
+			text: "grid " + id
 		}) as JQuery<HTMLDivElement>;
 
 		return $grid;
