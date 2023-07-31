@@ -21,7 +21,7 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		await this.setupGrid();
+		this.setupGrid();
 
 		this.setupAudio();
 
@@ -58,8 +58,11 @@ abstract class MainWindow extends Main {
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
 
-	private static async setupGrid(): Promise<void> {
-		this._grid = new Grid($("#buttons-grids"));
+	private static setupGrid(): void {
+		this._grid = new Grid($("#buttons-grids"))
+			.setupGridGenerator()
+			.setupGridSize($("#grid-rows"), $("#grid-columns"))
+			.setupButtonSwap();
 
 		/*
 		// Grid manager
