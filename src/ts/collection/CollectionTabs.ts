@@ -57,9 +57,9 @@ class CollectionTabs {
 
 				this._isAddCollectionButtonHeld = isEnterKey;
 
-				let focusNewTab = (isEnterKey || isLeftMouse) && !e.shiftKey;
+				let focusNewTab = !e.shiftKey;
 
-				this.createTab(focusNewTab);
+				this.createTab(null, focusNewTab);
 			})
 			.on("blur keyup", (_e) => {
 				this._isAddCollectionButtonHeld = false;
@@ -110,23 +110,20 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
-	private createTab(focusNewTab: boolean = true): // id?: number,
-	// name?: string,
-	// buttonsData?: SoundButtonData[]
-	void {
-		let tab = this.generateTabElement(null);
+	private createTab(name: string, focusNewTab: boolean = true): void {
+		let $tab = this.generateTabElement(null, name);
 
-		this.addDoubleClickEventToTab(tab);
+		this.addDoubleClickEventToTab($tab);
 
-		this._$tabsContainer.append(tab);
+		this._$tabsContainer.append($tab);
 
-		Logger.logDebug(`New tab created: "${tab.text()}"`);
+		let tabName = $tab.text();
 
-		if (focusNewTab) {
-			console.debug("Focusing new tab");
+		Logger.logDebug(`New tab created: "${tabName}" (id: "${$tab[0].id}")`);
 
-			// TODO: select new tab as active
-		}
+		let collection = this._soundButtonCollection.addNewCollection(tabName);
+
+		this._grid.addNewGrid(collection.id, focusNewTab);
 
 		this.updateTabListOverflow();
 	}
@@ -136,7 +133,7 @@ class CollectionTabs {
 		name?: string
 	): JQuery<HTMLButtonElement> {
 		if (!id) {
-			id = this._$tabsContainer.children("button.tab-button").length;
+			id = this._soundButtonCollection.length;
 		}
 
 		let $tab = $("<button>", {
@@ -156,7 +153,7 @@ class CollectionTabs {
 			return;
 		}
 
-		this.createTab();
+		this.createTab(null, true);
 	}
 
 	private addDoubleClickEventToTab($tab: JQuery<HTMLButtonElement>): void {

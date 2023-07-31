@@ -1,6 +1,6 @@
 abstract class MainWindow extends Main {
 	// Grid
-	private static _grid: Grid;
+	public static _grid: Grid;
 
 	/*// Grid & Buttons
 	private static _gridManager: GridManager;
@@ -11,7 +11,7 @@ abstract class MainWindow extends Main {
 	private static _buttonSwap: ButtonSwap;*/
 
 	// Collection and grid tabs
-	private static _soundButtonCollection: SoundButtonCollection;
+	public static _soundButtonCollection: SoundButtonCollection;
 	private static _collectionTabs: CollectionTabs;
 
 	// Audio

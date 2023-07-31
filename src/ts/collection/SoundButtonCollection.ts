@@ -8,6 +8,10 @@ class SoundButtonCollection {
 		return this._collections.length == 0;
 	}
 
+	public get length(): number {
+		return this._collections.length;
+	}
+
 	public addNewCollection(name: string): SoundButtonDataCollection {
 		let collection: SoundButtonDataCollection = {
 			id: this.findFirstFreeId(),
