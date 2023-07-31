@@ -35,9 +35,10 @@ class CollectionTabs {
 		this._grid = grid;
 
 		this.initTabContainerEvents();
-		this.initAddCollectionButtonEvents();
 		this.initWindowEventsForTabOverflow();
 		this.checkForEmptyTabList();
+		
+		this.initAddCollectionButtonEvents();
 
 		Logger.logDebug("Initialized!");
 	}
@@ -106,6 +107,23 @@ class CollectionTabs {
 			},
 			{ passive: false }
 		);
+
+		this._$tabsContainer.on(
+			"click",
+			`>.${CollectionTabs.TAB_CLASS}:not(.${CollectionTabs.TAB_ACTIVE_CLASS})`,
+			(e) => {
+				if (!$(e.target).is("." + CollectionTabs.TAB_CLASS)) {
+					return;
+				}
+
+				let id = parseInt(
+					(e.target.id as string).replace(CollectionTabs.TAB_ID_PREFIX, "")
+				);
+
+				this.focusTab(id);
+				this._grid.focusGrid(id);
+			}
+		);
 	}
 
 	private initWindowEventsForTabOverflow(): void {
@@ -167,7 +185,7 @@ class CollectionTabs {
 	private focusTab(id: number): void {
 		let $focusingTab = this.getTab(id);
 
-		if($focusingTab.length == 0) {
+		if ($focusingTab.length == 0) {
 			throw new ReferenceError(`Tab not found with index "${id}"`);
 		}
 
