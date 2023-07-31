@@ -2,8 +2,12 @@
  * The collection tab manager.
  */
 class CollectionTabs {
+	private static TAB_ID_PREFIX: string = "button-collection-tab-";
+	private static RENAME_INPUT_ID: string = "tab-rename-input";
+
 	private _$tabsContainer: JQuery<HTMLDivElement>;
 	private _soundButtonCollection: SoundButtonCollection;
+	private _grid: Grid;
 
 	/**
 	 * Keyboard spam prevention.
@@ -13,7 +17,8 @@ class CollectionTabs {
 
 	constructor(
 		$controlsContainer: JQuery<HTMLDivElement>,
-		soundButtonCollection: SoundButtonCollection
+		soundButtonCollection: SoundButtonCollection,
+		grid: Grid
 	) {
 		this._$tabsContainer = $controlsContainer.find(
 			"#buttons-collections"
@@ -24,6 +29,8 @@ class CollectionTabs {
 		) as JQuery<HTMLButtonElement>;
 
 		this._soundButtonCollection = soundButtonCollection;
+
+		this._grid = grid;
 
 		this.initTabContainerEvents();
 		this.initAddCollectionButtonEvents();
@@ -50,7 +57,7 @@ class CollectionTabs {
 
 				this._isAddCollectionButtonHeld = isEnterKey;
 
-				let focusNewTab = isEnterKey || (isLeftMouse && !e.shiftKey);
+				let focusNewTab = (isEnterKey || isLeftMouse) && !e.shiftKey;
 
 				this.createTab(focusNewTab);
 			})
@@ -117,7 +124,7 @@ class CollectionTabs {
 
 		if (focusNewTab) {
 			console.debug("Focusing new tab");
-			
+
 			// TODO: select new tab as active
 		}
 
@@ -132,10 +139,12 @@ class CollectionTabs {
 			id = this._$tabsContainer.children("button.tab-button").length;
 		}
 
-		let $tab = $(`<button id="button-collection-tab-${id}">`)
-			.addClass("tab-button")
-			.attr("tabindex", -1)
-			.text(name ?? `Collection ${id + 1}`) as JQuery<HTMLButtonElement>;
+		let $tab = $("<button>", {
+			id: CollectionTabs.TAB_ID_PREFIX + id,
+			class: "tab-button",
+			tabindex: -1,
+			text: name ?? `Collection ${id + 1}`,
+		}) as JQuery<HTMLButtonElement>;
 
 		return $tab;
 	}
@@ -212,7 +221,7 @@ class CollectionTabs {
 
 		let $input = $(`<input>`, {
 			type: "text",
-			id: "tab-rename-input",
+			id: CollectionTabs.RENAME_INPUT_ID,
 			value,
 			maxlength: 25,
 			style: `width: ${width}px;`,
