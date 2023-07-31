@@ -18,19 +18,19 @@ type SoundButtonDataCollection = {
 	/**
 	 * Id for the order in the tab list.
 	 */
-	id: number,
+	id: number;
 	/**
 	 * Visible name in the tab list.
 	 */
-	name: string,
+	name: string;
 	/**
 	 * To check if the collection is stored in the user's files.
 	 */
-	isCached: boolean,
+	isCached: boolean;
 	/**
 	 * The list of button data of the collection.
 	 */
-	buttons: SoundButtonData[],
+	buttons: SoundButtonData[];
 };
 
 /**
@@ -39,10 +39,9 @@ type SoundButtonDataCollection = {
 // Keep updated with "~/app/types.d.ts"
 type SoundButtonData = {
 	/**
-	 * To check if the user has changed any value of the button, in which case it will be cached.
-	 * Do not 
+	 * The position of the sound button
 	 */
-	isEdited: boolean,
+	id: number;
 	/**
 	 * The unrendered text.
 	 */
@@ -71,6 +70,12 @@ type SoundButtonData = {
 	 * Audio file path.
 	 */
 	path?: string;
+
+	/**
+	 * To check if the user has changed any value of the button, in which case it will be cached.
+	 * Do not store on the synced type.
+	 */
+	isEdited: boolean;
 };
 
 /**
