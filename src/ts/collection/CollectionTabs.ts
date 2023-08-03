@@ -122,6 +122,8 @@ class CollectionTabs {
 
 				this.focusTab(id);
 				this._grid.focusGrid(id);
+
+				this.updateTabListOverflow();
 			}
 		);
 	}
@@ -155,11 +157,11 @@ class CollectionTabs {
 
 		let collection = this._soundButtonCollection.addNewCollection(tabName);
 
+		this._grid.addNewGrid(collection.id, focusNewTab);
+
 		if (focusNewTab) {
 			this.focusTab(collection.id);
 		}
-
-		this._grid.addNewGrid(collection.id, focusNewTab);
 
 		this.updateTabListOverflow();
 	}
@@ -193,9 +195,17 @@ class CollectionTabs {
 
 		this.activeTab.removeClass(CollectionTabs.TAB_ACTIVE_CLASS);
 		$focusingTab.addClass(CollectionTabs.TAB_ACTIVE_CLASS);
+
+		this.scrollTabIntoView($focusingTab);
 	}
 
-	private checkForEmptyTabList() {
+	private scrollTabIntoView($tab: JQuery<HTMLButtonElement>): void {
+		$tab[0].scrollIntoView({ behavior: "auto", inline: "nearest" });
+		// TODO: add a an overflow container for the scrolling tab div, so there's no need to apply manually an offset.
+		// This mean that I need to apply a padding depending on the ".overflow-*" CSS class.
+	}
+
+	private checkForEmptyTabList(): void {
 		// TODO: use this method also when deleting is implemented
 
 		if (!this._soundButtonCollection.isEmpty) {
