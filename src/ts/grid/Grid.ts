@@ -98,13 +98,11 @@ class Grid {
 
 	private generateGridElement(id: number): JQuery<HTMLDivElement> {
 		let text = "grid " + id;
-		let color = (EMath.randomInt() + text).getHSL(50, 50);
 
 		let $grid = $("<div>", {
 			id: Grid.GRID_ID_PREFIX + id,
 			class: Grid.GRID_CLASS,
-			text,
-			style: "background-color: " + color,
+			text
 		}) as JQuery<HTMLDivElement>;
 
 		return $grid;
