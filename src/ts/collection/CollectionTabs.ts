@@ -257,7 +257,7 @@ class CollectionTabs {
 				value = $renameInput.val() as string;
 			}
 
-			// This also removes the input
+			// This also removes the rename input
 			this.renameTab($tab, value, !isEscapeKey);
 
 			// Re-add double click event
