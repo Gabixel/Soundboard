@@ -60,7 +60,6 @@ abstract class MainWindow extends Main {
 
 	private static setupGrid(): void {
 		this._grid = new Grid($("#buttons-grids"))
-			.setupGridGenerator()
 			.setupGridSize($("#grid-rows"), $("#grid-columns"))
 			.setupButtonSwap();
 

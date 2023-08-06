@@ -5,18 +5,11 @@ class Grid {
 
 	private _$gridsContainer: JQuery<HTMLDivElement>;
 
-	private _gridGenerator: GridGenerator;
 	private _gridSize: GridSize;
 	private _soundButtonSwap: SoundButtonSwap;
 
 	constructor($gridsContainer: JQuery<HTMLDivElement>) {
 		this._$gridsContainer = $gridsContainer;
-	}
-
-	public setupGridGenerator(): this {
-		this._gridGenerator = new GridGenerator();
-
-		return this;
 	}
 
 	public setupGridSize(
