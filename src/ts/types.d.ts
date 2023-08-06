@@ -33,7 +33,7 @@ type SoundButtonDataCollection = {
 	buttons: SoundButtonData[];
 };
 
-type SoundButtonElement = HTMLDivElement;
+type SoundButtonElement = HTMLButtonElement;
 /**
  * JQuery variant of the {@link SoundButtonElement} type.
  */
