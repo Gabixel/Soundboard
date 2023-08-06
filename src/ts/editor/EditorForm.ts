@@ -14,7 +14,7 @@ class EditorForm {
 	}
 
 	private get _$focusedFormInput(): JQuery<HTMLInputElement> {
-		return this._$form.find("input:focus") as JQuery<HTMLInputElement>;
+		return this._$form.find<HTMLInputElement>("input:focus");
 	}
 
 	constructor($form: JQuery<HTMLFormElement>) {
@@ -64,9 +64,7 @@ class EditorForm {
 			// Volume
 			.add(this.$dataInput("volume").val(buttonData.volume ?? 1))
 			// Path
-			.add(
-				this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? ""))
-			);
+			.add(this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? "")));
 		// .add($(``));
 		// $("#editor-submit").focus();
 

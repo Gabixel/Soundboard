@@ -22,13 +22,13 @@ class CollectionTabs {
 		soundButtonCollection: SoundButtonCollection,
 		grid: Grid
 	) {
-		this._$tabsContainer = $controlsContainer.find(
+		this._$tabsContainer = $controlsContainer.find<HTMLDivElement>(
 			"#buttons-collections"
-		) as JQuery<HTMLDivElement>;
+		);
 
-		this._$addCollectionButton = $controlsContainer.find(
+		this._$addCollectionButton = $controlsContainer.find<HTMLButtonElement>(
 			"#add-collection-button"
-		) as JQuery<HTMLButtonElement>;
+		);
 
 		this._soundButtonCollection = soundButtonCollection;
 
@@ -133,15 +133,15 @@ class CollectionTabs {
 	}
 
 	private get activeTab(): JQuery<HTMLButtonElement> {
-		return this._$tabsContainer.find(
+		return this._$tabsContainer.find<HTMLButtonElement>(
 			`>.${CollectionTabs.TAB_CLASS}.${CollectionTabs.TAB_ACTIVE_CLASS}`
-		) as JQuery<HTMLButtonElement>;
+		);
 	}
 
 	private getTab(id: number): JQuery<HTMLButtonElement> {
-		return this._$tabsContainer.find(
+		return this._$tabsContainer.find<HTMLButtonElement>(
 			`>#${CollectionTabs.TAB_ID_PREFIX}${id}`
-		) as JQuery<HTMLButtonElement>;
+		);
 	}
 
 	private createTab(name: string, focusNewTab: boolean = true): void {
@@ -174,12 +174,12 @@ class CollectionTabs {
 			id = this._soundButtonCollection.length;
 		}
 
-		let $tab = $("<button>", {
+		let $tab = $<HTMLButtonElement>("<button>", {
 			id: CollectionTabs.TAB_ID_PREFIX + id,
 			class: CollectionTabs.TAB_CLASS,
 			tabindex: -1,
 			text: name ?? `Collection ${id + 1}`,
-		}) as JQuery<HTMLButtonElement>;
+		});
 
 		return $tab;
 	}
@@ -275,13 +275,13 @@ class CollectionTabs {
 
 		width = Math.max(width, minTabInnerWidth);
 
-		let $input = $(`<input>`, {
+		let $input = $<HTMLInputElement>(`<input>`, {
 			type: "text",
 			id: CollectionTabs.RENAME_INPUT_ID,
 			value,
 			maxlength: 25,
 			style: `width: ${width}px;`,
-		}) as JQuery<HTMLInputElement>;
+		});
 
 		return $input;
 	}

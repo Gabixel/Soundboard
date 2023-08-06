@@ -73,15 +73,15 @@ class Grid {
 	}
 
 	private get activeGrid(): JQuery<HTMLDivElement> {
-		return this._$gridsContainer.find(
+		return this._$gridsContainer.find<HTMLDivElement>(
 			`>.${Grid.GRID_CLASS}.${Grid.GRID_ACTIVE_CLASS}`
-		) as JQuery<HTMLDivElement>;
+		);
 	}
 
 	private getGrid(id: number): JQuery<HTMLDivElement> {
-		return this._$gridsContainer.find(
+		return this._$gridsContainer.find<HTMLDivElement>(
 			`>#${Grid.GRID_ID_PREFIX}${id}`
-		) as JQuery<HTMLDivElement>;
+		);
 	}
 
 	private createGrid(id: number): void {
@@ -99,11 +99,11 @@ class Grid {
 	private generateGridElement(id: number): JQuery<HTMLDivElement> {
 		let text = "grid " + id;
 
-		let $grid = $("<div>", {
+		let $grid = $<HTMLDivElement>("<div>", {
 			id: Grid.GRID_ID_PREFIX + id,
 			class: Grid.GRID_CLASS,
-			text
-		}) as JQuery<HTMLDivElement>;
+			text,
+		});
 
 		return $grid;
 	}
