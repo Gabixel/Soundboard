@@ -13,9 +13,14 @@ class SoundButtonFactory {
 	}
 
 	private generateSoundButtonElement(): SoundButtonElementJQ {
-		let $button = $<SoundButtonElement>(
-			`<button type="button" class="soundbutton">`
-		).append(`<div class="button-theme">`);
+		let $button = $<SoundButtonElement>("<button>", {
+			type: "button",
+			class: "soundbutton",
+		}).append(
+			$("div", {
+				class: "button-theme",
+			})
+		);
 
 		return $button;
 	}
