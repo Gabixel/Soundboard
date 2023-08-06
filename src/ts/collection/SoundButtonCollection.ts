@@ -20,7 +20,7 @@ class SoundButtonCollection {
 			buttons: [],
 		};
 
-		// Add element to that index
+		// Add element to the free id
 		this._collections.splice(collection.id, 0, collection);
 
 		return collection;
