@@ -33,15 +33,27 @@ type SoundButtonDataCollection = {
 	buttons: SoundButtonData[];
 };
 
+type SoundButtonElement = HTMLDivElement;
+/**
+ * JQuery variant of the {@link SoundButtonElement} type.
+ */
+type SoundButtonElementJQ = JQuery<SoundButtonElement>;
+
 /**
  * Sound button metadata.
  */
 // Keep updated with "~/app/types.d.ts"
 type SoundButtonData = {
 	/**
-	 * The position of the sound button
+	 * To check if the user has changed any value of the button, in which case it will be cached.
+	 * Do not store this on the main.
 	 */
-	id: number;
+	isEdited: boolean;
+
+	/**
+	 * The position of the sound button.
+	 */
+	index: number;
 	/**
 	 * The unrendered text.
 	 */
@@ -70,12 +82,6 @@ type SoundButtonData = {
 	 * Audio file path.
 	 */
 	path?: string;
-
-	/**
-	 * To check if the user has changed any value of the button, in which case it will be cached.
-	 * Do not store on the synced type.
-	 */
-	isEdited: boolean;
 };
 
 /**

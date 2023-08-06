@@ -94,10 +94,6 @@ abstract class StringUtilities {
 		return new Date(date.getTime() - offset);
 	}
 
-	public static isDefined(obj: any): boolean {
-		return obj != null;
-	}
-
 	public static setupStringPrototypeExtensions(): void {
 		String.prototype.getHSL = function getHSL(
 			saturation: number = 100,

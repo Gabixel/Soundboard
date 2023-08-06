@@ -69,6 +69,7 @@ const scripts = [
 	"utility/UserInterface",
 	"utility/StringUtilities",
 
+	"soundbutton/SoundButtonFactory",
 	"soundbutton/SoundButtonSwap",
 	"soundbutton/SoundButton",
 
