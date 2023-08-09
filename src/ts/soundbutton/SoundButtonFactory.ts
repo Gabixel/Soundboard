@@ -1,6 +1,13 @@
 class SoundButtonFactory {
 	private _defaultAudioPaths: string[] = ["Clown Horn.mp3"];
 
+	// private _datafunction: SoundButtonDataFunction = {
+
+	// }
+	// private dataFunction<TKey extends keyof SoundButtonData>(key: TKey): AnyFunc {
+
+	// }
+
 	public createSoundButton(
 		index: number,
 		data?: SoundButtonData
@@ -37,6 +44,27 @@ class SoundButtonFactory {
 		// TODO
 
 		return $button;
+	}
+
+	private getData($button: JQuery<SoundButtonElement>): SoundButtonData {
+		return {
+			isEdited: !!$button.attr("data-is-edited"),
+			index: parseInt($button.css("--index")),
+			title: $button.children(".button-theme").text(),
+			color: {
+				h: parseInt($button.css("--hue")),
+				s: parseInt($button.css("--saturation")),
+				l: parseInt($button.css("--lightness")),
+			},
+			image: $button.attr("data-image"),
+			tags: $button
+				.attr("data-tags")
+				.split(" ")
+				.filter((tag) => tag.length > 0),
+			// TODO: time: null,
+			volume: parseFloat($button.attr("data-volume")),
+			path: $button.attr("data-path"),
+		};
 	}
 
 	private getDefaultData(index: number): SoundButtonData {

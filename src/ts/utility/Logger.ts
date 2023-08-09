@@ -44,7 +44,7 @@ abstract class Logger {
 			| any
 			| {
 					class: Class;
-					function?: AnyFunction;
+					function?: AnyFunc;
 			  }
 		)[]
 	): void {
@@ -73,7 +73,7 @@ abstract class Logger {
 	private static getAndStyleInfo(
 		message: string,
 		manualCallerClass?: Class,
-		manualCallerFunction?: AnyFunction
+		manualCallerFunction?: AnyFunc
 	): LoggerStyleAttributes {
 		// Create an Error object to capture the current stack trace
 		const err = new Error();
@@ -123,7 +123,7 @@ abstract class Logger {
 		// Use provided caller names
 		else {
 			callerClass = manualCallerClass?.name ?? "???";
-			callerFunction = manualCallerFunction ?? "<anonymous>";
+			callerFunction = manualCallerFunction?.name ?? "<anonymous>";
 		}
 
 		let styledAttributes = this.getStyledAttributes(

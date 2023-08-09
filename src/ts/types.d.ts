@@ -1,7 +1,7 @@
 type Class = { new (): any };
 
-type Function<T> = (...any: any[]) => T;
-type AnyFunction = AnyFunction<any>;
+type Func<T> = (...any: any[]) => T;
+type AnyFunc = Func<any>;
 
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
@@ -82,6 +82,9 @@ type SoundButtonData = {
 	 * Audio file path.
 	 */
 	path?: string;
+};
+type SoundButtonDataFunction = {
+	[Key in keyof SoundButtonData]: AnyFunc;
 };
 
 /**
