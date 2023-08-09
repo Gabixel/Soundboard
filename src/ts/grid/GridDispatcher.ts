@@ -1,4 +1,4 @@
-class Grid {
+class GridDispatcher {
 	private static GRID_ID_PREFIX: string = "buttons-grid-";
 	private static GRID_CLASS: string = "buttons-grid";
 	private static GRID_ACTIVE_CLASS: string = "active";
@@ -61,19 +61,19 @@ class Grid {
 
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		this.activeGrid.removeClass(Grid.GRID_ACTIVE_CLASS);
-		$focusingGrid.addClass(Grid.GRID_ACTIVE_CLASS);
+		this.activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
 	}
 
 	private get activeGrid(): JQuery<HTMLDivElement> {
 		return this._$gridsContainer.find<HTMLDivElement>(
-			`>.${Grid.GRID_CLASS}.${Grid.GRID_ACTIVE_CLASS}`
+			`>.${GridDispatcher.GRID_CLASS}.${GridDispatcher.GRID_ACTIVE_CLASS}`
 		);
 	}
 
 	private getGrid(id: number): JQuery<HTMLDivElement> {
 		return this._$gridsContainer.find<HTMLDivElement>(
-			`>#${Grid.GRID_ID_PREFIX}${id}`
+			`>#${GridDispatcher.GRID_ID_PREFIX}${id}`
 		);
 	}
 
@@ -93,8 +93,8 @@ class Grid {
 		let text = "grid " + id;
 
 		let $grid = $<HTMLDivElement>("<div>", {
-			id: Grid.GRID_ID_PREFIX + id,
-			class: Grid.GRID_CLASS,
+			id: GridDispatcher.GRID_ID_PREFIX + id,
+			class: GridDispatcher.GRID_CLASS,
 			text,
 		});
 

@@ -1,6 +1,6 @@
 abstract class MainWindow extends Main {
 	// Grid
-	public static _grid: Grid;
+	public static _grid: GridDispatcher;
 
 	/*// Grid & Buttons
 	private static _gridManager: GridManager;
@@ -59,7 +59,7 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupGrid(): void {
-		this._grid = new Grid($("#buttons-grids"))
+		this._grid = new GridDispatcher($("#buttons-grids"))
 			.setupGridSize($("#grid-rows"), $("#grid-columns"))
 			.setupButtonSwap();
 

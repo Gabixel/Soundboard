@@ -1,20 +1,9 @@
 class SoundButtonFactory implements ISoundButtonFactory {
-	private static DEFAULT_BUTTONDATA: SoundButtonDataNoId = {
-		isEdited: false,
-		title: "-",
-		color: { h: 0, s: 0, l: 80 },
-		image: null,
-		tags: [],
-		time: {
-			start: 0,
-			end: 0,
-			condition: "after",
-		},
-		volume: 1,
-		path: null,
-	};
+	private _defaultData: SoundButtonDataNoId;
 
-	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
+	constructor(defaultData: SoundButtonDataNoId) {
+		this._defaultData = defaultData;
+	}
 
 	public createSoundButton(
 		index: number,
@@ -53,10 +42,13 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	private sanitizeData(index: number, data?: SoundButtonData): SoundButtonData {
-		const defaultData = this.getDefaultData(index);
+		const defaultData = this._defaultData;
 
 		if (!data) {
-			return defaultData;
+			return {
+				index,
+				...defaultData,
+			};
 		}
 
 		return {
@@ -70,16 +62,5 @@ class SoundButtonFactory implements ISoundButtonFactory {
 			volume: data.volume || defaultData.volume,
 			path: data.path || defaultData.path,
 		};
-	}
-
-	private getDefaultData(index: number): SoundButtonData {
-		let initialData: SoundButtonDataNoId = SoundButtonFactory.DEFAULT_BUTTONDATA;
-
-		let data: SoundButtonData = {
-			index,
-			...initialData,
-		};
-
-		return data;
 	}
 }

@@ -9,7 +9,7 @@ class CollectionTabs {
 
 	private _$tabsContainer: JQuery<HTMLDivElement>;
 	private _soundButtonCollection: SoundButtonCollection;
-	private _grid: Grid;
+	private _grid: GridDispatcher;
 
 	/**
 	 * Keyboard spam prevention.
@@ -20,7 +20,7 @@ class CollectionTabs {
 	constructor(
 		$controlsContainer: JQuery<HTMLDivElement>,
 		soundButtonCollection: SoundButtonCollection,
-		grid: Grid
+		grid: GridDispatcher
 	) {
 		this._$tabsContainer = $controlsContainer.find<HTMLDivElement>(
 			"#buttons-collections"
