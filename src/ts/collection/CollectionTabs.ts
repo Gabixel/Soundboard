@@ -201,7 +201,7 @@ class CollectionTabs {
 
 	private scrollTabIntoView($tab: JQuery<HTMLButtonElement>): void {
 		$tab[0].scrollIntoView({ behavior: "auto", inline: "nearest" });
-		// TODO: add a an overflow container for the scrolling tab div, so there's no need to apply manually an offset.
+		// TODO: add an overflow container for the scrolling tab div, so there's no need to apply manually an offset.
 		// This mean that I need to apply a padding depending on the ".overflow-*" CSS class.
 	}
 
