@@ -43,7 +43,7 @@ type SoundButtonElementJQ = JQuery<SoundButtonElement>;
  * Sound button metadata.
  */
 // Keep updated with "~/app/types.d.ts"
-type SoundButtonData = {
+interface SoundButtonData {
 	/**
 	 * To check if the user has changed any value of the button, in which case it will be cached.
 	 * Do not store this on the main.
@@ -83,9 +83,8 @@ type SoundButtonData = {
 	 */
 	path?: string;
 };
-type SoundButtonDataFunction = {
-	[Key in keyof SoundButtonData]: AnyFunc;
-};
+
+type SoundButtonDataNoId = Omit<SoundButtonData, "index">;
 
 /**
  * Timings settings for the {@link SoundButtonData}

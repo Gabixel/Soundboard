@@ -1,12 +1,20 @@
-class SoundButtonFactory {
-	private _defaultAudioPaths: string[] = ["Clown Horn.mp3"];
+class SoundButtonFactory implements ISoundButtonFactory {
+	private static DEFAULT_BUTTONDATA: SoundButtonDataNoId = {
+		isEdited: false,
+		title: "-",
+		color: { h: 0, s: 0, l: 80 },
+		image: null,
+		tags: [],
+		time: {
+			start: 0,
+			end: 0,
+			condition: "after",
+		},
+		volume: 1,
+		path: null,
+	};
 
-	// private _datafunction: SoundButtonDataFunction = {
-
-	// }
-	// private dataFunction<TKey extends keyof SoundButtonData>(key: TKey): AnyFunc {
-
-	// }
+	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	public createSoundButton(
 		index: number,
@@ -14,7 +22,19 @@ class SoundButtonFactory {
 	): SoundButtonElementJQ {
 		let $button = this.generateSoundButtonElement();
 
-		this.applyData($button, index, data);
+		this.updateElementData($button, index, data);
+
+		return $button;
+	}
+
+	public updateElementData(
+		$button: SoundButtonElementJQ,
+		index: number,
+		data?: SoundButtonData
+	): SoundButtonElementJQ {
+		data = this.sanitizeData(index, data);
+
+		// TODO
 
 		return $button;
 	}
@@ -32,56 +52,34 @@ class SoundButtonFactory {
 		return $button;
 	}
 
-	private applyData(
-		$button: JQuery<SoundButtonElement>,
-		index: number,
-		data?: SoundButtonData
-	): SoundButtonElementJQ {
+	private sanitizeData(index: number, data?: SoundButtonData): SoundButtonData {
+		const defaultData = this.getDefaultData(index);
+
 		if (!data) {
-			data = this.getDefaultData(index);
+			return defaultData;
 		}
 
-		// TODO
-
-		return $button;
-	}
-
-	private getData($button: JQuery<SoundButtonElement>): SoundButtonData {
 		return {
-			isEdited: !!$button.attr("data-is-edited"),
-			index: parseInt($button.css("--index")),
-			title: $button.children(".button-theme").text(),
-			color: {
-				h: parseInt($button.css("--hue")),
-				s: parseInt($button.css("--saturation")),
-				l: parseInt($button.css("--lightness")),
-			},
-			image: $button.attr("data-image"),
-			tags: $button
-				.attr("data-tags")
-				.split(" ")
-				.filter((tag) => tag.length > 0),
-			// TODO: time: null,
-			volume: parseFloat($button.attr("data-volume")),
-			path: $button.attr("data-path"),
+			isEdited: true,
+			index,
+			title: data.title || defaultData.title,
+			color: data.color || defaultData.color,
+			image: data.image || defaultData.image,
+			tags: data.tags || defaultData.tags,
+			time: data.time || defaultData.time,
+			volume: data.volume || defaultData.volume,
+			path: data.path || defaultData.path,
 		};
 	}
 
 	private getDefaultData(index: number): SoundButtonData {
-		return {
-			isEdited: false,
+		let initialData: SoundButtonDataNoId = SoundButtonFactory.DEFAULT_BUTTONDATA;
+
+		let data: SoundButtonData = {
 			index,
-			title: "-",
-			color: { h: 0, s: 0, l: 80 },
-			image: null,
-			tags: [],
-			time: {
-				start: 0,
-				end: 0,
-				condition: "after",
-			},
-			volume: 1,
-			path: null,
+			...initialData,
 		};
+
+		return data;
 	}
 }
