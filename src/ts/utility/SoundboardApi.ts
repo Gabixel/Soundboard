@@ -1,3 +1,4 @@
+// TODO: don't make this a static class, but rather a singleton
 abstract class SoundboardApi {
 	public static get isProduction(): boolean {
 		return this._api.isProduction;
