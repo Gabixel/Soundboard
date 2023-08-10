@@ -5,6 +5,12 @@ class GridResizer extends EventTarget {
 	private _$rowsInput: JQuery<HTMLInputElement>;
 	private _$columnsInput: JQuery<HTMLInputElement>;
 
+	private _resizingRow: Semaphore = new Semaphore();
+	private _resizingColumn: Semaphore = new Semaphore();
+	private get _isResizing(): boolean {
+		return this._resizingRow.isLocked || this._resizingColumn.isLocked;
+	}
+
 	constructor(
 		$rowsInput: JQuery<HTMLInputElement>,
 		$columnsInput: JQuery<HTMLInputElement>,
@@ -23,25 +29,35 @@ class GridResizer extends EventTarget {
 	}
 
 	private initInputEvents(): void {
-		this._$rowsInput.on("wheel", () => {
+		this._$rowsInput
+			.add(this._$columnsInput)
+			.on("wheel", (e) => {
+				// Prevent base scrolling behavior (if chromium triggers it)
+				e.stopImmediatePropagation();
 
-		})
-		.on("change", () => {
+				// UI Scale prevention
+				if (e.ctrlKey) return;
 
-		});
-		this._$columnsInput.on("wheel", () => {
+				if (this._isResizing) return;
 
-		})
-		.on("change", () => {
+				// Update input value
+				EventFunctions.updateInputValueFromWheel(e);
+			})
+			.on("change", (e) => {
+				const elementType: "rows" | "columns" = $(e.target)
+					.attr("id")
+					.replace("grid-", "") as "rows" | "columns";
 
-		});
-	}
+				let semaphore =
+					elementType == "rows" ? this._resizingRow : this._resizingColumn;
 
-	private updateRowCount(): void {
+				if(!semaphore.lock()) {
+					return;
+				}
 
-	}
+				this.dispatchEvent(new Event(`resize-${elementType}`));
 
-	private updateColumnCount(): void {
-
+				semaphore.unlock();
+			});
 	}
 }

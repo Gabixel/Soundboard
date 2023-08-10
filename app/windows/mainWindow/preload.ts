@@ -61,6 +61,7 @@ const styles = [
 ];
 
 const scripts = [
+	"utility/Semaphore",
 	"utility/Logger",
 	"utility/JQueryFixes",
 	"utility/EMath",
