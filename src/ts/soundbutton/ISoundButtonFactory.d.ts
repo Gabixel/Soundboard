@@ -1,8 +1,8 @@
 interface ISoundButtonFactory {
-	createSoundButton(index: number, data?: SoundButtonData): SoundButtonElementJQ;
+	createSoundButton(index: number, data?: SoundButtonData): SoundButtonElementJQuery;
 	updateElementData(
-		$button: SoundButtonElementJQ,
+		$button: SoundButtonElementJQuery,
 		index: number,
 		data?: SoundButtonData
-	): SoundButtonElementJQ;
+	): SoundButtonElementJQuery;
 }

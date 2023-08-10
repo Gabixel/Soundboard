@@ -14,7 +14,7 @@ interface IAudioControls {
 
 	loop: boolean;
 
-	volume: number;
+	volume: float;
 
 	// TODO:
 	// playbackRate: number;

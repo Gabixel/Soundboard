@@ -1,3 +1,5 @@
+type float = number;
+
 type Class = { new (): any };
 
 type Func<T> = (...any: any[]) => T;
@@ -6,7 +8,7 @@ type AnyFunc = Func<any>;
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
 	src: string;
-	volume: number;
+	volume: float;
 	audioTimings: AudioTimings;
 	loop?: boolean;
 };
@@ -37,7 +39,7 @@ type SoundButtonElement = HTMLButtonElement;
 /**
  * JQuery variant of the {@link SoundButtonElement} type.
  */
-type SoundButtonElementJQ = JQuery<SoundButtonElement>;
+type SoundButtonElementJQuery = JQuery<SoundButtonElement>;
 
 /**
  * Sound button metadata.
@@ -77,12 +79,12 @@ interface SoundButtonData {
 	/**
 	 * Desired volume for the audio.
 	 */
-	volume?: number;
+	volume?: float;
 	/**
 	 * Audio file path.
 	 */
 	path?: string;
-};
+}
 
 type SoundButtonDataNoId = Omit<SoundButtonData, "index">;
 

@@ -1,14 +1,14 @@
 class SoundButtonFactory implements ISoundButtonFactory {
-	private _defaultData: SoundButtonDataNoId;
+	private _sanitizer: SoundButtonSanitizer;
 
-	constructor(defaultData: SoundButtonDataNoId) {
-		this._defaultData = defaultData;
+	constructor(sanitizer: SoundButtonSanitizer) {
+		this._sanitizer = sanitizer;
 	}
 
 	public createSoundButton(
 		index: number,
 		data?: SoundButtonData
-	): SoundButtonElementJQ {
+	): SoundButtonElementJQuery {
 		let $button = this.generateSoundButtonElement();
 
 		this.updateElementData($button, index, data);
@@ -17,18 +17,18 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	public updateElementData(
-		$button: SoundButtonElementJQ,
+		$button: SoundButtonElementJQuery,
 		index: number,
 		data?: SoundButtonData
-	): SoundButtonElementJQ {
-		data = this.sanitizeData(index, data);
+	): SoundButtonElementJQuery {
+		data = this._sanitizer.sanitizeData(index, data);
 
 		// TODO
 
 		return $button;
 	}
 
-	private generateSoundButtonElement(): SoundButtonElementJQ {
+	private generateSoundButtonElement(): SoundButtonElementJQuery {
 		let $button = $<SoundButtonElement>("<button>", {
 			type: "button",
 			class: "soundbutton",
@@ -39,28 +39,5 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		);
 
 		return $button;
-	}
-
-	private sanitizeData(index: number, data?: SoundButtonData): SoundButtonData {
-		const defaultData = this._defaultData;
-
-		if (!data) {
-			return {
-				index,
-				...defaultData,
-			};
-		}
-
-		return {
-			isEdited: true,
-			index,
-			title: data.title || defaultData.title,
-			color: data.color || defaultData.color,
-			image: data.image || defaultData.image,
-			tags: data.tags || defaultData.tags,
-			time: data.time || defaultData.time,
-			volume: data.volume || defaultData.volume,
-			path: data.path || defaultData.path,
-		};
 	}
 }

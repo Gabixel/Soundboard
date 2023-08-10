@@ -1,5 +1,5 @@
 class SoundButtonDispatcher {
-	private static DEFAULT_BUTTONDATA: SoundButtonDataNoId = {
+	private DEFAULT_BUTTONDATA: Readonly<SoundButtonDataNoId> = {
 		isEdited: false,
 		title: "-",
 		color: { h: 0, s: 0, l: 80 },

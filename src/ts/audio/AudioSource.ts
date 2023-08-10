@@ -35,11 +35,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.loop = loop;
 	}
 
-	public get volume(): number {
+	public get volume(): float {
 		return this._audio.volume;
 	}
 
-	public set volume(volume: number) {
+	public set volume(volume: float) {
 		this._audio.volume = volume;
 	}
 
