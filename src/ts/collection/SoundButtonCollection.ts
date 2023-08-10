@@ -12,12 +12,22 @@ class SoundButtonCollection {
 		return this._collections.length;
 	}
 
-	public addNewCollection(name: string): SoundButtonDataCollection {
+	constructor(existingCollections?: SoundButtonDataCollection[]) {
+		if (existingCollections) {
+			this.addExistingCollections(existingCollections);
+		}
+	}
+
+	public addNewCollection(): SoundButtonDataCollection {
+		let id = this.findFirstFreeId();
+		let name = `Collection ${id + 1}`;
+
 		let collection: SoundButtonDataCollection = {
-			id: this.findFirstFreeId(),
+			id,
 			name,
 			isCached: false,
 			buttons: [],
+			focused: false,
 		};
 
 		// Add element to the free id
@@ -28,6 +38,10 @@ class SoundButtonCollection {
 
 	public addExistingCollections(collections: SoundButtonDataCollection[]): void {
 		this._collections.push(...collections);
+	}
+
+	public getAllCollections(): SoundButtonDataCollection[] {
+		return this._collections;
 	}
 
 	public getCollection(id: number): SoundButtonDataCollection {

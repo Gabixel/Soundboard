@@ -2,10 +2,10 @@
  * The collection tab manager.
  */
 class CollectionTabs {
-	private static TAB_ID_PREFIX: string = "button-collection-tab-";
-	private static TAB_CLASS: string = "tab-button";
-	private static TAB_ACTIVE_CLASS: string = "active";
-	private static RENAME_INPUT_ID: string = "tab-rename-input";
+	private TAB_ID_PREFIX: Readonly<string> = "button-collection-tab-";
+	private TAB_CLASS: Readonly<string> = "tab-button";
+	private TAB_ACTIVE_CLASS: Readonly<string> = "active";
+	private RENAME_INPUT_ID: Readonly<string> = "tab-rename-input";
 
 	private _$tabsContainer: JQuery<HTMLDivElement>;
 	private _soundButtonCollection: SoundButtonCollection;
@@ -36,11 +36,19 @@ class CollectionTabs {
 
 		this.initTabContainerEvents();
 		this.initWindowEventsForTabOverflow();
-		this.checkForEmptyTabList();
-
 		this.initAddCollectionButtonEvents();
 
+		this.addTabsFromExistingCollections();
+
+		this.checkForEmptyTabList();
+
 		Logger.logDebug("Initialized!");
+	}
+
+	private addTabsFromExistingCollections(): void {
+		this._soundButtonCollection.getAllCollections().forEach((collection) => {
+			this.createTab(collection, collection.focused);
+		});
 	}
 
 	private initAddCollectionButtonEvents(): void {
@@ -110,15 +118,13 @@ class CollectionTabs {
 
 		this._$tabsContainer.on(
 			"click",
-			`>.${CollectionTabs.TAB_CLASS}:not(.${CollectionTabs.TAB_ACTIVE_CLASS})`,
+			`>.${this.TAB_CLASS}:not(.${this.TAB_ACTIVE_CLASS})`,
 			(e) => {
-				if (!$(e.target).is("." + CollectionTabs.TAB_CLASS)) {
+				if (!$(e.target).is("." + this.TAB_CLASS)) {
 					return;
 				}
 
-				let id = parseInt(
-					(e.target.id as string).replace(CollectionTabs.TAB_ID_PREFIX, "")
-				);
+				let id = parseInt((e.target.id as string).replace(this.TAB_ID_PREFIX, ""));
 
 				this.focusTab(id);
 				this._grid.focusGrid(id);
@@ -132,30 +138,31 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
-	private get activeTab(): JQuery<HTMLButtonElement> {
+	private get activeTab(): SoundButtonElementJQuery {
 		return this._$tabsContainer.find<HTMLButtonElement>(
-			`>.${CollectionTabs.TAB_CLASS}.${CollectionTabs.TAB_ACTIVE_CLASS}`
+			`>.${this.TAB_CLASS}.${this.TAB_ACTIVE_CLASS}`
 		);
 	}
 
-	private getTab(id: number): JQuery<HTMLButtonElement> {
+	private getTab(id: number): SoundButtonElementJQuery {
 		return this._$tabsContainer.find<HTMLButtonElement>(
-			`>#${CollectionTabs.TAB_ID_PREFIX}${id}`
+			`>#${this.TAB_ID_PREFIX}${id}`
 		);
 	}
 
-	private createTab(name: string, focusNewTab: boolean = true): void {
-		let $tab = this.generateTabElement(null, name);
+	private createTab(
+		collection: SoundButtonDataCollection = null,
+		focusNewTab: boolean = true
+	): void {
+		if (!collection) {
+			collection = this._soundButtonCollection.addNewCollection();
+		}
 
-		this.addDoubleClickEventToTab($tab);
+		let $tab = this.generateTabElement(collection.id, collection.name);
 
 		this._$tabsContainer.append($tab);
 
-		let tabName = $tab.text();
-
-		Logger.logDebug(`New tab created: "${tabName}" (id: "${$tab[0].id}")`);
-
-		let collection = this._soundButtonCollection.addNewCollection(tabName);
+		Logger.logDebug(`New tab created: "${collection.name}" (id: "${$tab[0].id}")`);
 
 		this._grid.addNewGrid(collection.id, focusNewTab);
 
@@ -163,22 +170,20 @@ class CollectionTabs {
 			this.focusTab(collection.id);
 		}
 
+		this.addDoubleClickEventToTab($tab);
+
 		this.updateTabListOverflow();
 	}
 
 	private generateTabElement(
-		id?: number,
-		name?: string
+		id: number,
+		name: string
 	): JQuery<HTMLButtonElement> {
-		if (!id) {
-			id = this._soundButtonCollection.length;
-		}
-
 		let $tab = $<HTMLButtonElement>("<button>", {
-			id: CollectionTabs.TAB_ID_PREFIX + id,
-			class: CollectionTabs.TAB_CLASS,
+			id: this.TAB_ID_PREFIX + id,
+			class: this.TAB_CLASS,
 			tabindex: -1,
-			text: name ?? `Collection ${id + 1}`,
+			text: name,
 		});
 
 		return $tab;
@@ -193,8 +198,8 @@ class CollectionTabs {
 
 		Logger.logDebug(`Focusing tab with index "${id}"`);
 
-		this.activeTab.removeClass(CollectionTabs.TAB_ACTIVE_CLASS);
-		$focusingTab.addClass(CollectionTabs.TAB_ACTIVE_CLASS);
+		this.activeTab.removeClass(this.TAB_ACTIVE_CLASS);
+		$focusingTab.addClass(this.TAB_ACTIVE_CLASS);
 
 		this.scrollTabIntoView($focusingTab);
 	}
@@ -277,7 +282,7 @@ class CollectionTabs {
 
 		let $input = $<HTMLInputElement>(`<input>`, {
 			type: "text",
-			id: CollectionTabs.RENAME_INPUT_ID,
+			id: this.RENAME_INPUT_ID,
 			value,
 			maxlength: 25,
 			style: `width: ${width}px;`,

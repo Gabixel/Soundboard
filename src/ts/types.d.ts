@@ -33,6 +33,10 @@ type SoundButtonDataCollection = {
 	 * The list of button data of the collection.
 	 */
 	buttons: SoundButtonData[];
+	/**
+	 * If the collection was the last one to be focused.
+	 */
+	focused: boolean;
 };
 
 type SoundButtonElement = HTMLButtonElement;

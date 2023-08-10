@@ -17,8 +17,10 @@ class SoundButtonDispatcher {
 	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	private _factory: SoundButtonFactory;
+	private _soundButtonCollection: SoundButtonCollection;
 
-	constructor(factory: SoundButtonFactory) {
+	constructor(factory: SoundButtonFactory, soundButtonCollection: SoundButtonCollection) {
 		this._factory = factory;
+		this._soundButtonCollection = soundButtonCollection;
 	}
 }
