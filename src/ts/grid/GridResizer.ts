@@ -1,21 +1,16 @@
 class GridResizer extends EventTarget {
-	private _rowCount: number;
+	private _rows: GridAxis;
 	public get rows(): number {
-		return this._rowCount;
+		return this._rows.value;
 	}
-
-	private _columnCount: number;
+	
+	private _columns: GridAxis;
 	public get columns(): number {
-		return this._columnCount;
+		return this._columns.value;
 	}
 
-	private _$rowsInput: JQuery<HTMLInputElement>;
-	private _$columnsInput: JQuery<HTMLInputElement>;
-
-	private _resizingRow: Semaphore = new Semaphore();
-	private _resizingColumn: Semaphore = new Semaphore();
 	private get _isResizing(): boolean {
-		return this._resizingRow.isLocked || this._resizingColumn.isLocked;
+		return this._rows.semaphore.isLocked || this._columns.semaphore.isLocked;
 	}
 
 	constructor(
@@ -26,17 +21,25 @@ class GridResizer extends EventTarget {
 	) {
 		super();
 
-		this._rowCount = rowCount;
-		this._columnCount = columnCount;
+		this._rows = {
+			name: "rows",
+			$input: $rowsInput.val(rowCount),
+			value: rowCount,
+			semaphore: new Semaphore(),
+		};
 
-		this._$rowsInput = $rowsInput.val(rowCount);
-		this._$columnsInput = $columnsInput.val(columnCount);
+		this._columns = {
+			name: "columns",
+			$input: $columnsInput.val(columnCount),
+			value: columnCount,
+			semaphore: new Semaphore(),
+		};
 
-		this.initInputEvents($rowsInput[0]);
-		this.initInputEvents($columnsInput[0]);
+		this.initInputEvents($rowsInput[0], this._rows);
+		this.initInputEvents($columnsInput[0], this._columns);
 	}
 
-	private initInputEvents(input: HTMLInputElement): void {
+	private initInputEvents(input: HTMLInputElement, gridAxis: GridAxis): void {
 		input.addEventListener(
 			"wheel",
 			(e) => {
@@ -62,20 +65,29 @@ class GridResizer extends EventTarget {
 		);
 
 		$(input).on("change", (e) => {
-			const elementType: "rows" | "columns" = $(e.target)
-				.attr("id")
-				.replace("grid-", "") as "rows" | "columns";
-
-			let semaphore =
-				elementType == "rows" ? this._resizingRow : this._resizingColumn;
-
-			if (!semaphore.lock()) {
+			if (!gridAxis.semaphore.lock()) {
 				return;
 			}
 
-			this.dispatchEvent(new Event(`resize-${elementType}`));
+			gridAxis.value = this.clampSizeValue($(e.target));
 
-			semaphore.unlock();
+			this.dispatchEvent(new Event(`resize`));
+
+			gridAxis.semaphore.unlock();
 		});
+	}
+
+	private clampSizeValue($input: JQuery<HTMLInputElement>): number {
+		const $target = $input;
+		const value = parseInt($target.val().toString());
+
+		let max = parseInt($target.attr("max").toString());
+		let min = parseInt($target.attr("min").toString());
+
+		let clampedValue = EMath.clamp(value, min, max);
+
+		$target.val(clampedValue);
+
+		return clampedValue;
 	}
 }

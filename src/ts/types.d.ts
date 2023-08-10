@@ -5,6 +5,13 @@ type Class = { new (): any };
 type Func<T> = (...any: any[]) => T;
 type AnyFunc = Func<any>;
 
+type GridAxis = {
+	name: "rows" | "columns";
+	$input: JQuery<HTMLInputElement>;
+	value: number;
+	semaphore: Semaphore;
+};
+
 type AudioEffect = "GainNode" | "BiquadFilterNode";
 type AudioSourceOptions = {
 	src: string;

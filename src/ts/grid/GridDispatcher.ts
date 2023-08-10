@@ -17,8 +17,9 @@ class GridDispatcher {
 		$columnsInput: JQuery<HTMLInputElement>
 	): this {
 		this._gridResizer = new GridResizer($rowsInput, $columnsInput);
-		$(this._gridResizer).on("resize-rows resize-columns", (_e) => {
+		$(this._gridResizer).on("resize", (_e) => {
 			this.updateGridSize();
+			console.log("resizing");
 		});
 
 		return this;
@@ -94,10 +95,13 @@ class GridDispatcher {
 
 	private generateGridElement(id: number): JQuery<HTMLDivElement> {
 		let text = "grid " + id;
+		let rows = this._gridResizer.rows;
+		let columns = this._gridResizer.columns;
 
 		let $grid = $<HTMLDivElement>("<div>", {
 			id: this.GRID_ID_PREFIX + id,
 			class: this.GRID_CLASS,
+			style: `--rows: ${rows}; --columns: ${columns};`,
 			text,
 		});
 
@@ -107,11 +111,8 @@ class GridDispatcher {
 	private updateGridSize(): void {
 		this.updateSoundButtonAmount();
 
-		let $grids = this._$gridsContainer.find<HTMLDivElement>(
-			`>.${this.GRID_CLASS}`
-		);
-
-		$grids
+		this._$gridsContainer
+			.find<HTMLDivElement>(`>.${this.GRID_CLASS}`)
 			.css("--rows", this._gridResizer.rows)
 			.css("--columns", this._gridResizer.columns);
 	}
