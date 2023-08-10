@@ -1,11 +1,11 @@
 class GridDispatcher {
-	private static GRID_ID_PREFIX: string = "buttons-grid-";
-	private static GRID_CLASS: string = "buttons-grid";
-	private static GRID_ACTIVE_CLASS: string = "active";
+	private GRID_ID_PREFIX: Readonly<string> = "buttons-grid-";
+	private GRID_CLASS: Readonly<string> = "buttons-grid";
+	private GRID_ACTIVE_CLASS: Readonly<string> = "active";
 
 	private _$gridsContainer: JQuery<HTMLDivElement>;
 
-	private _gridSize: GridResizer;
+	private _gridResizer: GridResizer;
 	private _soundButtonSwap: SoundButtonSwap;
 
 	constructor($gridsContainer: JQuery<HTMLDivElement>) {
@@ -16,7 +16,10 @@ class GridDispatcher {
 		$rowsInput: JQuery<HTMLInputElement>,
 		$columnsInput: JQuery<HTMLInputElement>
 	): this {
-		this._gridSize = new GridResizer($rowsInput, $columnsInput);
+		this._gridResizer = new GridResizer($rowsInput, $columnsInput);
+		$(this._gridResizer).on("resize-rows resize-columns", (_e) => {
+			this.updateGridSize();
+		});
 
 		return this;
 	}
@@ -61,19 +64,19 @@ class GridDispatcher {
 
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		this.activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
-		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		this.activeGrid.removeClass(this.GRID_ACTIVE_CLASS);
+		$focusingGrid.addClass(this.GRID_ACTIVE_CLASS);
 	}
 
 	private get activeGrid(): JQuery<HTMLDivElement> {
 		return this._$gridsContainer.find<HTMLDivElement>(
-			`>.${GridDispatcher.GRID_CLASS}.${GridDispatcher.GRID_ACTIVE_CLASS}`
+			`>.${this.GRID_CLASS}.${this.GRID_ACTIVE_CLASS}`
 		);
 	}
 
 	private getGrid(id: number): JQuery<HTMLDivElement> {
 		return this._$gridsContainer.find<HTMLDivElement>(
-			`>#${GridDispatcher.GRID_ID_PREFIX}${id}`
+			`>#${this.GRID_ID_PREFIX}${id}`
 		);
 	}
 
@@ -93,11 +96,27 @@ class GridDispatcher {
 		let text = "grid " + id;
 
 		let $grid = $<HTMLDivElement>("<div>", {
-			id: GridDispatcher.GRID_ID_PREFIX + id,
-			class: GridDispatcher.GRID_CLASS,
+			id: this.GRID_ID_PREFIX + id,
+			class: this.GRID_CLASS,
 			text,
 		});
 
 		return $grid;
+	}
+
+	private updateGridSize(): void {
+		this.updateSoundButtonAmount();
+
+		let $grids = this._$gridsContainer.find<HTMLDivElement>(
+			`>.${this.GRID_CLASS}`
+		);
+
+		$grids
+			.css("--rows", this._gridResizer.rows)
+			.css("--columns", this._gridResizer.columns);
+	}
+
+	private updateSoundButtonAmount(): void {
+		
 	}
 }

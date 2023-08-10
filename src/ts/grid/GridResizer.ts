@@ -1,6 +1,13 @@
 class GridResizer extends EventTarget {
 	private _rowCount: number;
+	public get rows(): number {
+		return this._rowCount;
+	}
+
 	private _columnCount: number;
+	public get columns(): number {
+		return this._columnCount;
+	}
 
 	private _$rowsInput: JQuery<HTMLInputElement>;
 	private _$columnsInput: JQuery<HTMLInputElement>;

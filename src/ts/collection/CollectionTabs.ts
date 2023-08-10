@@ -138,13 +138,13 @@ class CollectionTabs {
 		$(window).on("resize", () => this.updateTabListOverflow());
 	}
 
-	private get activeTab(): SoundButtonElementJQuery {
+	private get activeTab(): JQuery<HTMLButtonElement> {
 		return this._$tabsContainer.find<HTMLButtonElement>(
 			`>.${this.TAB_CLASS}.${this.TAB_ACTIVE_CLASS}`
 		);
 	}
 
-	private getTab(id: number): SoundButtonElementJQuery {
+	private getTab(id: number): JQuery<HTMLButtonElement> {
 		return this._$tabsContainer.find<HTMLButtonElement>(
 			`>#${this.TAB_ID_PREFIX}${id}`
 		);
@@ -162,7 +162,9 @@ class CollectionTabs {
 
 		this._$tabsContainer.append($tab);
 
-		Logger.logDebug(`New tab created: "${collection.name}" (id: "${$tab[0].id}")`);
+		Logger.logDebug(
+			`New tab created: "${collection.name}" (id: "${$tab[0].id}")`
+		);
 
 		this._grid.addNewGrid(collection.id, focusNewTab);
 
