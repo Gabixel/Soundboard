@@ -47,14 +47,13 @@ class GridResizer extends EventTarget {
 					return;
 				}
 
-				// Update input value
 				EventFunctions.updateInputValueFromWheel(e);
 			},
 			{
 				passive: false,
 			}
 		);
-		
+
 		$(input).on("change", (e) => {
 			const elementType: "rows" | "columns" = $(e.target)
 				.attr("id")
