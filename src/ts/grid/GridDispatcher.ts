@@ -5,7 +5,7 @@ class GridDispatcher {
 
 	private _$gridsContainer: JQuery<HTMLDivElement>;
 
-	private _gridSize: GridSize;
+	private _gridSize: GridResizer;
 	private _soundButtonSwap: SoundButtonSwap;
 
 	constructor($gridsContainer: JQuery<HTMLDivElement>) {
@@ -16,7 +16,7 @@ class GridDispatcher {
 		$rowsInput: JQuery<HTMLInputElement>,
 		$columnsInput: JQuery<HTMLInputElement>
 	): this {
-		this._gridSize = new GridSize($rowsInput, $columnsInput);
+		this._gridSize = new GridResizer($rowsInput, $columnsInput);
 
 		return this;
 	}
