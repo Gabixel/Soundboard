@@ -73,7 +73,7 @@ const scripts = [
 	"soundbutton/SoundButtonSwap",
 	"soundbutton/SoundButtonDispatcher",
 
-	"grid/GridSize",
+	"grid/GridResizer",
 	"grid/GridDispatcher",
 
 	"control/VolumeSlider",
