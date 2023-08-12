@@ -113,11 +113,24 @@
 			}
 
 			white-space: pre;
-			#tab-rename-input {
+
+			span,
+			input#tab-rename-input {
+				height: 1em;
+				line-height: 1em;
+				overflow: hidden;
+			}
+
+			span {
+				pointer-events: none;
+				display: inline-block;
+				vertical-align: bottom;
+			}
+
+			input#tab-rename-input {
 				padding: 0;
 				margin: 0;
 
-				height: 1em;
 				border: 0;
 
 				background: transparent;

@@ -184,9 +184,10 @@ class CollectionTabs {
 		let $tab = $<HTMLButtonElement>("<button>", {
 			id: this.TAB_ID_PREFIX + id,
 			class: this.TAB_CLASS,
-			tabindex: -1,
-			text: name,
+			tabindex: -1
 		});
+
+		this.setTabText($tab, name);
 
 		return $tab;
 	}
@@ -294,18 +295,27 @@ class CollectionTabs {
 	}
 
 	private renameTab(
-		tab: JQuery<HTMLButtonElement>,
+		$tab: JQuery<HTMLButtonElement>,
 		name: string,
 		shouldSave: boolean = true
 	): void {
-		// Destroy input and apply new text
-		tab.text(name);
+		this.setTabText($tab, name);
 
 		if (!shouldSave) {
 			return;
 		}
 
 		// TODO: rename actual collection data
+	}
+
+	private setTabText($tab: JQuery<HTMLButtonElement>, text: string): void {
+		let $span = $("<span>", {
+			text,
+		});
+
+		// Destroy existing children and apply new text
+		$tab.empty();
+		$tab.append($span);
 	}
 
 	/**
