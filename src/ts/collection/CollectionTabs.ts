@@ -336,19 +336,16 @@ class CollectionTabs {
 		const overflows = {
 			left: container.scrollLeft > 0,
 			right: leftScroll + width < scrollWidth - zoomScale,
-			onlyLeft: false,
-			onlyRight: false,
 		};
-		overflows.onlyLeft = overflows.left && !overflows.right;
-		overflows.onlyRight = !overflows.left && overflows.right;
+		const onlyLeft = overflows.left && !overflows.right;
+		const onlyRight = !overflows.left && overflows.right;
 
 		this._$tabsContainer.toggleClass(
 			"overflow-all",
 			overflows.left && overflows.right
 		);
-		
-		this._$tabsContainer.toggleClass("overflow-left", overflows.onlyLeft);
 
-		this._$tabsContainer.toggleClass("overflow-right", overflows.onlyRight);
+		this._$tabsContainer.toggleClass("overflow-left", onlyLeft);
+		this._$tabsContainer.toggleClass("overflow-right", onlyRight);
 	}
 }
