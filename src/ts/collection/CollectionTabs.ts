@@ -184,7 +184,7 @@ class CollectionTabs {
 		let $tab = $<HTMLButtonElement>("<button>", {
 			id: this.TAB_ID_PREFIX + id,
 			class: this.TAB_CLASS,
-			tabindex: -1
+			tabindex: -1,
 		});
 
 		this.setTabText($tab, name);
@@ -324,25 +324,31 @@ class CollectionTabs {
 	private updateTabListOverflow(): void {
 		let container = this._$tabsContainer[0];
 
+		const zoomOffset = 4;
+		let zoomScale =
+			zoomOffset * Math.round(parseFloat($(document.body).css("zoom")));
+
+		let leftScroll = container.scrollLeft;
+
+		let width = container.clientWidth;
+		let scrollWidth = container.scrollWidth;
+
 		const overflows = {
 			left: container.scrollLeft > 0,
-			right:
-				Math.round(container.scrollLeft) + container.clientWidth <
-				container.scrollWidth -
-					4 * Math.round(parseFloat($(document.body).css("zoom"))),
+			right: leftScroll + width < scrollWidth - zoomScale,
+			onlyLeft: false,
+			onlyRight: false,
 		};
+		overflows.onlyLeft = overflows.left && !overflows.right;
+		overflows.onlyRight = !overflows.left && overflows.right;
 
 		this._$tabsContainer.toggleClass(
 			"overflow-all",
 			overflows.left && overflows.right
 		);
-		this._$tabsContainer.toggleClass(
-			"overflow-left",
-			overflows.left && !overflows.right
-		);
-		this._$tabsContainer.toggleClass(
-			"overflow-right",
-			!overflows.left && overflows.right
-		);
+		
+		this._$tabsContainer.toggleClass("overflow-left", overflows.onlyLeft);
+
+		this._$tabsContainer.toggleClass("overflow-right", overflows.onlyRight);
 	}
 }
