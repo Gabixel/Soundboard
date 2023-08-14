@@ -21,6 +21,7 @@ class GridDispatcher {
 			this.updateGridSize();
 			console.log("resizing");
 		});
+		this.updateGridSize();
 
 		return this;
 	}
@@ -95,13 +96,10 @@ class GridDispatcher {
 
 	private generateGridElement(id: number): JQuery<HTMLDivElement> {
 		let text = "grid " + id;
-		let rows = this._gridResizer.rows;
-		let columns = this._gridResizer.columns;
 
 		let $grid = $<HTMLDivElement>("<div>", {
 			id: this.GRID_ID_PREFIX + id,
 			class: this.GRID_CLASS,
-			style: `--rows: ${rows}; --columns: ${columns};`,
 			text,
 		});
 
@@ -112,12 +110,9 @@ class GridDispatcher {
 		this.updateSoundButtonAmount();
 
 		this._$gridsContainer
-			.find<HTMLDivElement>(`>.${this.GRID_CLASS}`)
 			.css("--rows", this._gridResizer.rows)
 			.css("--columns", this._gridResizer.columns);
 	}
 
-	private updateSoundButtonAmount(): void {
-		
-	}
+	private updateSoundButtonAmount(): void {}
 }
