@@ -1,6 +1,10 @@
 abstract class MainWindow extends Main {
 	// Grid
-	public static _grid: GridDispatcher;
+	private static _grid: GridDispatcher<SoundButtonDispatcher, SoundButtonSwap>;
+
+	// Sound Buttons
+	private static _soundButtonDispatcher: SoundButtonDispatcher;
+	private static _soundButtonFactory: SoundButtonFactory;
 
 	/*// Grid & Buttons
 	private static _gridManager: GridManager;
@@ -18,14 +22,31 @@ abstract class MainWindow extends Main {
 	private static _audioPlayer: AudioPlayer;
 	private static _audioDeviceSelect: AudioDeviceSelect;
 
+	private static DEFAULT_BUTTONDATA: Readonly<SoundButtonDataNoId> = {
+		isEdited: false,
+		title: "-",
+		color: { h: 0, s: 0, l: 80 },
+		image: null,
+		tags: [],
+		time: {
+			start: 0,
+			end: 0,
+			condition: "after",
+		},
+		volume: 1,
+		path: null,
+	};
+
 	public static async initWindow() {
 		await super.init();
+
+		this.setupCollections();
+
+		this.setupSoundButtons();
 
 		this.setupGrid();
 
 		this.setupAudio();
-
-		this.setupCollections();
 
 		UiScale.setControls(
 			$("#ui-scale-slider"),
@@ -58,10 +79,25 @@ abstract class MainWindow extends Main {
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
 
+	private static setupSoundButtons(): void {
+		this._soundButtonFactory = new SoundButtonFactory(
+			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
+		);
+		this._soundButtonDispatcher = new SoundButtonDispatcher(
+			this._soundButtonFactory,
+			this._soundButtonCollection
+		);
+	}
+
 	private static setupGrid(): void {
-		this._grid = new GridDispatcher($("#buttons-grids"))
-			.setupGridSize($("#grid-rows"), $("#grid-columns"))
-			.setupButtonSwap();
+		this._grid = new GridDispatcher<SoundButtonDispatcher, SoundButtonSwap>(
+			$("#buttons-grids"),
+			this._soundButtonDispatcher,
+			new SoundButtonSwap(),
+			"buttons-grid-",
+			"buttons-grid",
+			"active"
+		).setupGridSize($("#grid-rows"), $("#grid-columns"));
 
 		/*
 		// Grid manager
@@ -116,11 +152,15 @@ abstract class MainWindow extends Main {
 				console.log("Cache finished loading");
 
 				console.log(this._soundButtonCollection.getAllCollections());
-				
+
 				this._collectionTabs = new CollectionTabs(
-					$("#buttons-collections-controls"),
 					this._soundButtonCollection,
-					this._grid
+					this._grid,
+					$("#buttons-collections-controls"),
+					"button-collection-tab-",
+					"tab-button",
+					"active",
+					"tab-rename-input"
 				);
 			});
 	}

@@ -1,4 +1,4 @@
-class SoundButtonSwap {
+class SoundButtonSwap implements IGridChildSwap {
 
 	constructor() {
 	}

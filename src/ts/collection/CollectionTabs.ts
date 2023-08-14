@@ -1,15 +1,14 @@
 /**
  * The collection tab manager.
  */
-class CollectionTabs {
-	private TAB_ID_PREFIX: Readonly<string> = "button-collection-tab-";
-	private TAB_CLASS: Readonly<string> = "tab-button";
-	private TAB_ACTIVE_CLASS: Readonly<string> = "active";
-	private RENAME_INPUT_ID: Readonly<string> = "tab-rename-input";
+class CollectionTabs extends CollectionTabsGridFactory {
+	private TAB_ID_PREFIX: Readonly<string>;
+	private TAB_CLASS: Readonly<string>;
+	private TAB_ACTIVE_CLASS: Readonly<string>;
+	private RENAME_INPUT_ID: Readonly<string>;
 
 	private _$tabsContainer: JQuery<HTMLDivElement>;
 	private _soundButtonCollection: SoundButtonCollection;
-	private _grid: GridDispatcher;
 
 	/**
 	 * Keyboard spam prevention.
@@ -18,10 +17,21 @@ class CollectionTabs {
 	private _$addCollectionButton: JQuery<HTMLButtonElement>;
 
 	constructor(
-		$controlsContainer: JQuery<HTMLDivElement>,
 		soundButtonCollection: SoundButtonCollection,
-		grid: GridDispatcher
+		gridDispatcher: GridDispatcher<any, any>,
+		$controlsContainer: JQuery<HTMLDivElement>,
+		tab_id_prefix: string,
+		tab_class: string,
+		tab_active_class: string,
+		rename_input_id: string
 	) {
+		super(gridDispatcher);
+
+		this.TAB_ID_PREFIX = tab_id_prefix;
+		this.TAB_CLASS = tab_class;
+		this.TAB_ACTIVE_CLASS = tab_active_class;
+		this.RENAME_INPUT_ID = rename_input_id;
+
 		this._$tabsContainer = $controlsContainer.find<HTMLDivElement>(
 			"#buttons-collections"
 		);
@@ -31,8 +41,6 @@ class CollectionTabs {
 		);
 
 		this._soundButtonCollection = soundButtonCollection;
-
-		this._grid = grid;
 
 		this.initTabContainerEvents();
 		this.initWindowEventsForTabOverflow();
@@ -127,7 +135,7 @@ class CollectionTabs {
 				let id = parseInt((e.target.id as string).replace(this.TAB_ID_PREFIX, ""));
 
 				this.focusTab(id);
-				this._grid.focusGrid(id);
+				super.focusGrid(id);
 
 				this.updateTabListOverflow();
 			}
@@ -166,7 +174,7 @@ class CollectionTabs {
 			`New tab created: "${collection.name}" (id: "${$tab[0].id}")`
 		);
 
-		this._grid.addNewGrid(collection.id, focusNewTab);
+		super.addNewGrid(collection.id, focusNewTab);
 
 		if (focusNewTab) {
 			this.focusTab(collection.id);

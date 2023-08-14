@@ -70,6 +70,9 @@ const scripts = [
 	"utility/UserInterface",
 	"utility/StringUtilities",
 
+	"soundbutton/SoundButtonCollectionCache",
+	"soundbutton/SoundButtonCollection",
+	"soundbutton/SoundButtonSanitizer",
 	"soundbutton/SoundButtonFactory",
 	"soundbutton/SoundButtonSwap",
 	"soundbutton/SoundButtonDispatcher",
@@ -82,8 +85,7 @@ const scripts = [
 	"control/UiScale",
 	"control/ToolbarManager",
 
-	"collection/SoundButtonCollectionCache",
-	"collection/SoundButtonCollection",
+	"collection/CollectionTabsGridFactory",
 	"collection/CollectionTabs",
 
 	"audio/AudioSource",

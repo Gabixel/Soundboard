@@ -1,15 +1,34 @@
-class GridDispatcher {
-	private GRID_ID_PREFIX: Readonly<string> = "buttons-grid-";
-	private GRID_CLASS: Readonly<string> = "buttons-grid";
-	private GRID_ACTIVE_CLASS: Readonly<string> = "active";
+class GridDispatcher<
+	ChildDispatcher extends IGridChildDispatcher,
+	ChildSwap extends IGridChildSwap
+> {
+	private GRID_ID_PREFIX: Readonly<string>;
+	private GRID_CLASS: Readonly<string>;
+	private GRID_ACTIVE_CLASS: Readonly<string>;
 
 	private _$gridsContainer: JQuery<HTMLDivElement>;
 
 	private _gridResizer: GridResizer;
-	private _soundButtonSwap: SoundButtonSwap;
 
-	constructor($gridsContainer: JQuery<HTMLDivElement>) {
+	private _childrenDispatcher: ChildDispatcher;
+	private _childrenSwap: ChildSwap;
+
+	constructor(
+		$gridsContainer: JQuery<HTMLDivElement>,
+		childrenDispatcher: ChildDispatcher,
+		childrenSwapper: ChildSwap,
+		gridIdPrefix: string,
+		gridClass: string,
+		gridActiveClass: string
+	) {
+		this.GRID_ID_PREFIX = gridIdPrefix;
+		this.GRID_CLASS = gridClass;
+		this.GRID_ACTIVE_CLASS = gridActiveClass;
+
 		this._$gridsContainer = $gridsContainer;
+
+		this._childrenDispatcher = childrenDispatcher;
+		this._childrenSwap = childrenSwapper;
 	}
 
 	public setupGridSize(
@@ -22,12 +41,6 @@ class GridDispatcher {
 			console.log("resizing");
 		});
 		this.updateGridSize();
-
-		return this;
-	}
-
-	public setupButtonSwap(): this {
-		this._soundButtonSwap = new SoundButtonSwap();
 
 		return this;
 	}
@@ -56,7 +69,7 @@ class GridDispatcher {
 
 	public focusGrid(id: number): void {
 		// Cancel possible button dragging
-		this._soundButtonSwap.cancelSwap();
+		this._childrenSwap.cancelSwap();
 
 		let $focusingGrid = this.getGrid(id);
 
