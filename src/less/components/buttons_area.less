@@ -70,6 +70,9 @@
 			margin: 0;
 			padding: (@margin + 1) @button-inner-gap (@margin - 1);
 			.set-radius(@main-radius @main-radius 0 0);
+			
+			// height: calc(1em + (@margin * 2));
+			height: 1em;
 
 			flex-shrink: 0;
 			box-sizing: content-box;
@@ -77,6 +80,9 @@
 
 			background-color: transparent;
 			color: var(--window-fg);
+
+			overflow: hidden;
+			white-space: pre;
 
 			&:nth-child(even) {
 				background-color: #ffffff21;
@@ -112,13 +118,10 @@
 				background-color: var(--buttons-grid-bg);
 			}
 
-			white-space: pre;
-
 			span,
 			input#tab-rename-input {
 				height: 1em;
 				line-height: 1em;
-				overflow: hidden;
 			}
 
 			span {
