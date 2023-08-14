@@ -1,4 +1,4 @@
-class SoundButtonDispatcher implements IGridChildDispatcher {
+class SoundButtonDispatcher<TAudioPlayer extends IAudioPlayer = IAudioPlayer> implements IGridChildDispatcher {
 	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	private _soundButtonFactory: SoundButtonFactory;

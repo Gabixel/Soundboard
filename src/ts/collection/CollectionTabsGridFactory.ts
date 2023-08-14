@@ -1,7 +1,7 @@
 abstract class CollectionTabsGridFactory {
-	private _gridDispatcher: GridDispatcher<any, any>;
+	private _gridDispatcher: GridDispatcher;
 
-	constructor(gridDispatcher: GridDispatcher<any, any>) {
+	constructor(gridDispatcher: GridDispatcher) {
 		this._gridDispatcher = gridDispatcher;
 	}
 

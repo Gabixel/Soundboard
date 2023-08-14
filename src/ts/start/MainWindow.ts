@@ -90,7 +90,7 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupGrid(): void {
-		this._grid = new GridDispatcher<SoundButtonDispatcher, SoundButtonSwap>(
+		this._grid = new GridDispatcher(
 			$("#buttons-grids"),
 			this._soundButtonDispatcher,
 			new SoundButtonSwap(),
