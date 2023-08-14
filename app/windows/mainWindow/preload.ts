@@ -75,6 +75,7 @@ const scripts = [
 	"soundbutton/SoundButtonSanitizer",
 	"soundbutton/SoundButtonFactory",
 	"soundbutton/SoundButtonSwap",
+	"soundbutton/SoundButtonAudio",
 	"soundbutton/SoundButtonDispatcher",
 
 	"grid/GridResizer",

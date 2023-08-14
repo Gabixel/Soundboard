@@ -40,13 +40,45 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		this.setupCollections();
+		this._soundButtonCollection = new SoundButtonCollection([
+			{
+				id: 0,
+				name: "cool name",
+				isCached: true,
+				buttons: [],
+				focused: true,
+			},
+			{
+				id: 1,
+				name: "another cool name",
+				isCached: true,
+				buttons: [],
+				focused: false,
+			},
+		]);
+
+		let collectionCache = new SoundButtonCollectionCache(
+			this._soundButtonCollection
+		).loadCache();
+
+		this.setupAudio();
 
 		this.setupSoundButtons();
 
 		this.setupGrid();
 
-		this.setupAudio();
+		await collectionCache;
+		console.log("Cache finished loading");
+		console.log(this._soundButtonCollection.getAllCollections());
+		this._collectionTabs = new CollectionTabs(
+			this._soundButtonCollection,
+			this._grid,
+			$("#buttons-collections-controls"),
+			"button-collection-tab-",
+			"tab-button",
+			"active",
+			"tab-rename-input"
+		);
 
 		UiScale.setControls(
 			$("#ui-scale-slider"),
@@ -85,7 +117,8 @@ abstract class MainWindow extends Main {
 		);
 		this._soundButtonDispatcher = new SoundButtonDispatcher(
 			this._soundButtonFactory,
-			this._soundButtonCollection
+			this._soundButtonCollection,
+			this._audioPlayer
 		);
 	}
 
@@ -126,43 +159,6 @@ abstract class MainWindow extends Main {
 
 		// Button swap
 		this._buttonSwap = new ButtonSwap(this._gridManager);*/
-	}
-
-	private static setupCollections(): void {
-		this._soundButtonCollection = new SoundButtonCollection([
-			{
-				id: 0,
-				name: "cool name",
-				isCached: true,
-				buttons: [],
-				focused: true,
-			},
-			{
-				id: 1,
-				name: "another cool name",
-				isCached: true,
-				buttons: [],
-				focused: false,
-			},
-		]);
-
-		new SoundButtonCollectionCache(this._soundButtonCollection)
-			.loadCache()
-			.finally(() => {
-				console.log("Cache finished loading");
-
-				console.log(this._soundButtonCollection.getAllCollections());
-
-				this._collectionTabs = new CollectionTabs(
-					this._soundButtonCollection,
-					this._grid,
-					$("#buttons-collections-controls"),
-					"button-collection-tab-",
-					"tab-button",
-					"active",
-					"tab-rename-input"
-				);
-			});
 	}
 
 	/**

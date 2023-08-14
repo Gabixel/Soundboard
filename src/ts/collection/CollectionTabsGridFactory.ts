@@ -5,11 +5,11 @@ abstract class CollectionTabsGridFactory {
 		this._gridDispatcher = gridDispatcher;
 	}
 
-	public focusGrid(id: number): void {
+	protected focusGrid(id: number): void {
 		this._gridDispatcher.focusGrid(id);
 	}
 
-	public addNewGrid(id: number, focusNewGrid: boolean = true): void {
+	protected addNewGrid(id: number, focusNewGrid: boolean = true): void {
 		this._gridDispatcher.addNewGrid(id, focusNewGrid);
 	}
 }
