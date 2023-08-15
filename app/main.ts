@@ -141,7 +141,6 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 }
 
 function createEditButtonWindow(
-	id_original: string,
 	buttonData_original: SoundButtonData,
 	screenWidth: number,
 	screenHeight: number
@@ -202,7 +201,7 @@ function createEditButtonWindow(
 		// Note: do not use `handleOnce` since the editor page can be reloaded
 		// TODO: prevent CTRL-R ?
 		ipcMain.handle("editor-request-buttondata", (_e, _args) => {
-			return { id: id_original, buttonData: buttonData_original };
+			return { buttonData: buttonData_original };
 		});
 
 		// On submit
@@ -436,7 +435,6 @@ function initIpc() {
 							label: "Edit",
 							click: () => {
 								createEditButtonWindow(
-									args.id,
 									args.buttonData,
 									primaryScreenWidth,
 									primaryScreenHeight

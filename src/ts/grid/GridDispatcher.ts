@@ -9,19 +9,30 @@ class GridDispatcher {
 
 	private _soundButtonChild: GridSoundButtonChild;
 
+	private _soundButtonEvents: SoundButtonEvents;
+
 	constructor(
 		gridResizer: GridResizer,
 		soundButtonChild: GridSoundButtonChild,
+		soundButtonEvents: SoundButtonEvents,
 		$gridsContainer: GridElementJQuery
 	) {
 		this._soundButtonChild = soundButtonChild;
 
 		this._$gridsContainer = $gridsContainer;
 
+		this.setupSoundButtonEvents(soundButtonEvents);
+
 		this.setupGridResize(gridResizer);
 	}
 
-	private setupGridResize(gridResizer: GridResizer): this {
+	private setupSoundButtonEvents(soundButtonEvents: SoundButtonEvents): void {
+		this._soundButtonEvents = soundButtonEvents;
+
+		this._soundButtonEvents.addEvents(this._$gridsContainer);
+	}
+
+	private setupGridResize(gridResizer: GridResizer): void {
 		this._gridResizer = gridResizer;
 
 		$(this._gridResizer)
@@ -30,8 +41,6 @@ class GridDispatcher {
 				console.log("resizing grids");
 			})
 			.trigger("resize");
-
-		return this;
 	}
 
 	public addGridFromCollection(
@@ -107,7 +116,7 @@ class GridDispatcher {
 	): void {
 		buttonData.forEach((data) => {
 			let [$button] = this._soundButtonChild.createSoundButton(data.index, data);
-			
+
 			$grid.append($button);
 		});
 	}

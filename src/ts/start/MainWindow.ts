@@ -3,8 +3,8 @@ abstract class MainWindow extends Main {
 	private static _gridDispatcher: GridDispatcher;
 
 	// Sound Buttons
-	private static _soundButtonEvents: SoundButtonEvents;
 	private static _soundButtonFactory: SoundButtonFactory;
+	private static _soundButtonEvents: SoundButtonEvents;
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
 
 	/*// Grid & Buttons
@@ -57,6 +57,7 @@ abstract class MainWindow extends Main {
 						index: 0,
 						isEdited: true,
 						title: "test",
+						volume: 1,
 						color: { h: 0, s: 0, l: 80 },
 						path: await this._soundButtonFactory.getRandomAudioPath(),
 					},
@@ -64,6 +65,7 @@ abstract class MainWindow extends Main {
 						index: 1,
 						isEdited: true,
 						title: "sium",
+						volume: 1,
 						color: { h: 0, s: 0, l: 80 },
 						path: await this._soundButtonFactory.getRandomAudioPath(),
 					},
@@ -127,15 +129,18 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupSoundButtons(): void {
-		this._soundButtonEvents = new SoundButtonEvents();
 		this._soundButtonFactory = new SoundButtonFactory(
 			this._soundButtonCollection,
 			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
 		);
+
+		this._soundButtonEvents = new SoundButtonEvents(
+			this._audioPlayer,
+			this._soundButtonFactory
+		);
+
 		this._soundButtonDispatcher = new SoundButtonDispatcher(
-			this._soundButtonFactory,
-			this._soundButtonEvents,
-			this._audioPlayer
+			this._soundButtonFactory
 		);
 	}
 
@@ -143,6 +148,7 @@ abstract class MainWindow extends Main {
 		this._gridDispatcher = new GridDispatcher(
 			new GridResizer($("#grid-rows"), $("#grid-columns")),
 			new GridSoundButtonChild(this._soundButtonDispatcher),
+			this._soundButtonEvents,
 			$("#buttons-grids")
 		);
 

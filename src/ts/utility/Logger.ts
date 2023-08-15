@@ -1,7 +1,7 @@
 abstract class Logger {
 	//#region Log functions
 	/** Debug-level logging (aka "Verbose"). */
-	public static logDebug(message: string, ...args: any[]): void {
+	public static logDebug(message: string, ...args: LoggerExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -10,7 +10,7 @@ abstract class Logger {
 	}
 
 	/** Info-level logging. */
-	public static logInfo(message: string, ...args: any[]): void {
+	public static logInfo(message: string, ...args: LoggerExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -19,7 +19,7 @@ abstract class Logger {
 	}
 
 	/** Warning-level logging. */
-	public static logWarn(message: string, ...args: any[]): void {
+	public static logWarn(message: string, ...args: LoggerExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -28,7 +28,7 @@ abstract class Logger {
 	}
 
 	/** Error-level logging. */
-	public static logError(message: string, ...args: any[]): void {
+	public static logError(message: string, ...args: LoggerExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -38,15 +38,9 @@ abstract class Logger {
 	//#endregion
 
 	private static configureAndSendLog(
-		logFunc: (message?: any, ...optionalParams: any[]) => void,
+		logFunc: (message?: any, ...args: LoggerExtraArgs[]) => void,
 		message: string,
-		...args: (
-			| any
-			| {
-					class: Class;
-					function?: AnyFunc;
-			  }
-		)[]
+		...args: LoggerExtraArgs[]
 	): void {
 		let manualCallerClass, manualCallerFunction;
 

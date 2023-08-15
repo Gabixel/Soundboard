@@ -146,7 +146,7 @@ namespace Color {
 type ContextMenuArgs =
 	| null
 	| (
-			| { type: "soundbutton"; id: string; buttonData: SoundButtonData }
+			| { type: "soundbutton"; buttonData: SoundButtonData }
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );
@@ -155,3 +155,10 @@ type LoggerStyleAttributes = {
 	text: string;
 	style: string[];
 };
+
+type LoggerExtraArgs =
+	| any
+	| {
+			class: Class;
+			function?: AnyFunc;
+	  };

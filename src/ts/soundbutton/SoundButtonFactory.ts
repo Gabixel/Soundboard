@@ -47,9 +47,17 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return [$button, buttonData];
 	}
 
-	public getButtonData(parsedIndex: string): SoundButtonData {
-		let { index } = this.getCompositeSoundButtonId(parsedIndex);
+	public getButtonDataByElement($button: SoundButtonElementJQuery): SoundButtonData {
+		let { index } = this.getCompositeSoundButtonId($button.attr("id"));
+		return this.getButtonDataByIndex(index);
+	}
 
+	public getButtonDataById(parsedIndex: string): SoundButtonData {
+		let { index } = this.getCompositeSoundButtonId(parsedIndex);
+		return this.getButtonDataByIndex(index);
+	}
+
+	public getButtonDataByIndex(index: number): SoundButtonData {
 		return this._soundButtonCollection.getButtonData(index);
 	}
 
@@ -61,6 +69,29 @@ class SoundButtonFactory implements ISoundButtonFactory {
 				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
 			)
 		);
+	}
+	public parseSoundButtonId(
+		index: number,
+		collection?: SoundButtonDataCollection
+	): string {
+		collection ??= this._soundButtonCollection.getActiveCollection();
+
+		return `${this.SOUNDBUTTON_ID_PREFIX}${collection.id}-${index}`;
+	}
+
+	public getCompositeSoundButtonId(parsedIndex: string): {
+		collectionId: number;
+		index: number;
+	} {
+		let [collectionId, index] = parsedIndex
+			.replace(this.SOUNDBUTTON_ID_PREFIX, "")
+			.split("-")
+			.map((id) => parseInt(id));
+
+		return {
+			collectionId,
+			index,
+		};
 	}
 
 	private generateSoundButtonElement(index: number): SoundButtonElementJQuery {
@@ -76,29 +107,5 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		);
 
 		return $button;
-	}
-
-	private parseSoundButtonId(
-		index: number,
-		collection?: SoundButtonDataCollection
-	): string {
-		collection ??= this._soundButtonCollection.getActiveCollection();
-
-		return `${this.SOUNDBUTTON_ID_PREFIX}${collection.id}-${index}`;
-	}
-
-	private getCompositeSoundButtonId(parsedIndex: string): {
-		collectionId: number;
-		index: number;
-	} {
-		let [collectionId, index] = parsedIndex
-			.replace(this.SOUNDBUTTON_ID_PREFIX, "")
-			.split("-")
-			.map((id) => parseInt(id));
-
-		return {
-			collectionId,
-			index,
-		};
 	}
 }

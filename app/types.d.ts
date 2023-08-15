@@ -2,7 +2,7 @@
 type ContextMenuArgs =
 	| null
 	| (
-			| { type: "soundbutton"; id: string; buttonData: SoundButtonData }
+			| { type: "soundbutton"; buttonData: SoundButtonData }
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );

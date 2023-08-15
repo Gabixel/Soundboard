@@ -1,16 +1,10 @@
 class SoundButtonDispatcher {
 	private _soundButtonFactory: SoundButtonFactory;
-	private _soundButtonEvents: SoundButtonEvents;
-	private _audioPlayer: IAudioPlayer;
 
 	constructor(
-		factory: SoundButtonFactory,
-		soundButtonEvents: SoundButtonEvents,
-		audioPlayer: IAudioPlayer
+		factory: SoundButtonFactory
 	) {
 		this._soundButtonFactory = factory;
-		this._soundButtonEvents = soundButtonEvents;
-		this._audioPlayer = audioPlayer;
 	}
 
 	public createSoundButton(
@@ -20,12 +14,6 @@ class SoundButtonDispatcher {
 		let [$button, data] = this._soundButtonFactory.createSoundButton(
 			index,
 			initialData
-		);
-
-		this._soundButtonEvents.addEvents(
-			$button,
-			this._soundButtonFactory,
-			this._audioPlayer
 		);
 
 		return [$button, data];

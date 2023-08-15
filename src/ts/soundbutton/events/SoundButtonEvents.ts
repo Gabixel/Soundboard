@@ -1,24 +1,32 @@
 class SoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
-	constructor() {}
+	private _audioPlayer: TAudioPlayer;
+	private _soundButtonFactory: SoundButtonFactory;
 
-	public addEvents(
-		$button: SoundButtonElementJQuery,
-		soundButtonFactory: SoundButtonFactory,
-		audioPlayer: TAudioPlayer
-	): void {
-		this.addClickEvent($button, soundButtonFactory, audioPlayer);
-		this.addContextMenuEvent($button);
-		this.addSwap($button);
+	constructor(
+		audioPlayer: TAudioPlayer,
+		soundButtonFactory: SoundButtonFactory
+	) {
+		this._audioPlayer = audioPlayer;
+		this._soundButtonFactory = soundButtonFactory;
 	}
 
-	private addClickEvent(
-		$button: SoundButtonElementJQuery,
-		soundButtonFactory: SoundButtonFactory,
-		audioPlayer: TAudioPlayer
-	) {
-		$button.on("click", (e) => {
-			const { path, volume, time } = soundButtonFactory.getButtonData(
-				$button.attr("id")
+	public addEvents($grids_container: JQuery<HTMLElement>): void {
+		this.addClickEvent($grids_container);
+		this.addContextMenuEvent($grids_container);
+		this.addSwap($grids_container);
+	}
+
+	private addClickEvent($grids_container: JQuery<HTMLElement>) {
+		// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
+
+		$grids_container.on("click", ".soundbutton", (e) => {
+			Logger.logDebug(
+				`Button "%s" clicked`,
+				$(e.target).children(".button-theme").text()
+			);
+
+			const { path, volume, time } = this._soundButtonFactory.getButtonDataById(
+				$(e.target).attr("id")
 			);
 
 			const options: AudioSourceOptions = {
@@ -29,15 +37,31 @@ class SoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 
 			const useSecondaryStorage = e.shiftKey;
 
-			audioPlayer.play(options, useSecondaryStorage);
+			this._audioPlayer.play(options, useSecondaryStorage);
 		});
 	}
 
-	private addContextMenuEvent(_$button: SoundButtonElementJQuery) {
+	private addContextMenuEvent($grids_container: JQuery<HTMLElement>) {
+		$grids_container.on("contextmenu", ".soundbutton", (e) => {
+			e.stopPropagation(); // To prevent the document's trigger
+
+			let $target = $(e.target);
+			let buttonData = this._soundButtonFactory.getButtonDataByElement($target);
+
+			let args: ContextMenuArgs = {
+				type: "soundbutton",
+				buttonData,
+			};
+
+			SoundboardApi.mainWindow.openContextMenu(args);
+		});
+	}
+
+	private addSwap(_$grids_container: JQuery<HTMLElement>) {
 		// TODO
 	}
 
-	private addSwap(_$button: SoundButtonElementJQuery) {
+	private addDragAndDropEvents(_$grids_container: JQuery<HTMLElement>) {
 		// TODO
 	}
 }
