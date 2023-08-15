@@ -1,3 +1,0 @@
-interface IGridChildSwap {
-	cancelSwap(): void;
-}

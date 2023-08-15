@@ -1,6 +1,6 @@
 abstract class MainWindow extends Main {
 	// Grid
-	private static _grid: GridDispatcher<SoundButtonDispatcher, SoundButtonSwap>;
+	private static _gridDispatcher: GridDispatcher;
 
 	// Sound Buttons
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
@@ -72,7 +72,7 @@ abstract class MainWindow extends Main {
 		console.log(this._soundButtonCollection.getAllCollections());
 		this._collectionTabs = new CollectionTabs(
 			this._soundButtonCollection,
-			this._grid,
+			this._gridDispatcher,
 			$("#buttons-collections-controls"),
 			"button-collection-tab-",
 			"tab-button",
@@ -123,7 +123,7 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupGrid(): void {
-		this._grid = new GridDispatcher(
+		this._gridDispatcher = new GridDispatcher(
 			$("#buttons-grids"),
 			this._soundButtonDispatcher,
 			new SoundButtonSwap(),

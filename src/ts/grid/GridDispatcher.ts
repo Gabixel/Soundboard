@@ -1,7 +1,4 @@
-class GridDispatcher<
-	TChildDispatcher extends IGridChildDispatcher = IGridChildDispatcher,
-	TChildSwap extends IGridChildSwap = IGridChildSwap
-> {
+class GridDispatcher {
 	private GRID_ID_PREFIX: Readonly<string>;
 	private GRID_CLASS: Readonly<string>;
 	private GRID_ACTIVE_CLASS: Readonly<string>;
@@ -10,13 +7,13 @@ class GridDispatcher<
 
 	private _gridResizer: GridResizer;
 
-	private _childrenDispatcher: TChildDispatcher;
-	private _childrenSwap: TChildSwap;
+	private _childrenDispatcher: SoundButtonDispatcher;
+	private _childrenSwap: SoundButtonSwap;
 
 	constructor(
 		$gridsContainer: JQuery<HTMLDivElement>,
-		childrenDispatcher: TChildDispatcher,
-		childrenSwapper: TChildSwap,
+		childrenDispatcher: SoundButtonDispatcher,
+		childrenSwapper: SoundButtonSwap,
 		grid_id_prefix: string,
 		grid_class: string,
 		grid_active_class: string
