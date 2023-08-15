@@ -17,13 +17,13 @@ class GridDispatcher<
 		$gridsContainer: JQuery<HTMLDivElement>,
 		childrenDispatcher: TChildDispatcher,
 		childrenSwapper: TChildSwap,
-		gridIdPrefix: string,
-		gridClass: string,
-		gridActiveClass: string
+		grid_id_prefix: string,
+		grid_class: string,
+		grid_active_class: string
 	) {
-		this.GRID_ID_PREFIX = gridIdPrefix;
-		this.GRID_CLASS = gridClass;
-		this.GRID_ACTIVE_CLASS = gridActiveClass;
+		this.GRID_ID_PREFIX = grid_id_prefix;
+		this.GRID_CLASS = grid_class;
+		this.GRID_ACTIVE_CLASS = grid_active_class;
 
 		this._$gridsContainer = $gridsContainer;
 

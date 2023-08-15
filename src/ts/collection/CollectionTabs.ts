@@ -18,7 +18,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 
 	constructor(
 		soundButtonCollection: SoundButtonCollection,
-		gridDispatcher: GridDispatcher<any, any>,
+		gridDispatcher: GridDispatcher,
 		$controlsContainer: JQuery<HTMLDivElement>,
 		tab_id_prefix: string,
 		tab_class: string,
