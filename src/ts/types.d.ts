@@ -39,7 +39,7 @@ type SoundButtonDataCollection = {
 	/**
 	 * The list of button data of the collection.
 	 */
-	buttons: SoundButtonData[];
+	buttonData: SoundButtonData[];
 	/**
 	 * If the collection was the last one to be focused.
 	 */
@@ -51,6 +51,12 @@ type SoundButtonElement = HTMLButtonElement;
  * JQuery variant of the {@link SoundButtonElement} type.
  */
 type SoundButtonElementJQuery = JQuery<SoundButtonElement>;
+
+type GridElement = HTMLDivElement;
+/**
+ * JQuery variant of the {@link GridElement} type.
+ */
+type GridElementJQuery = JQuery<GridElement>;
 
 /**
  * Sound button metadata.

@@ -5,6 +5,7 @@ abstract class MainWindow extends Main {
 	// Sound Buttons
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
 	private static _soundButtonFactory: SoundButtonFactory;
+	private static _soundButtonEvents: SoundButtonEvents;
 
 	/*// Grid & Buttons
 	private static _gridManager: GridManager;
@@ -45,14 +46,14 @@ abstract class MainWindow extends Main {
 				id: 0,
 				name: "cool name",
 				isCached: true,
-				buttons: [],
+				buttonData: [],
 				focused: true,
 			},
 			{
 				id: 1,
 				name: "another cool name",
 				isCached: true,
-				buttons: [],
+				buttonData: [],
 				focused: false,
 			},
 		]);
@@ -113,24 +114,27 @@ abstract class MainWindow extends Main {
 
 	private static setupSoundButtons(): void {
 		this._soundButtonFactory = new SoundButtonFactory(
+			this._soundButtonCollection,
 			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
 		);
 		this._soundButtonDispatcher = new SoundButtonDispatcher(
 			this._soundButtonFactory,
-			this._soundButtonCollection,
 			this._audioPlayer
 		);
 	}
 
 	private static setupGrid(): void {
 		this._gridDispatcher = new GridDispatcher(
+			new GridResizer($("#grid-rows"), $("#grid-columns")),
+			new GridSoundButtonChild(
+				this._soundButtonDispatcher,
+				this._soundButtonEvents
+			),
 			$("#buttons-grids"),
-			this._soundButtonDispatcher,
-			new SoundButtonSwap(),
 			"buttons-grid-",
 			"buttons-grid",
 			"active"
-		).setupGridSize($("#grid-rows"), $("#grid-columns"));
+		);
 
 		/*
 		// Grid manager

@@ -26,7 +26,7 @@ class SoundButtonCollection {
 			id,
 			name,
 			isCached: false,
-			buttons: [],
+			buttonData: [],
 			focused: false,
 		};
 
@@ -40,10 +40,6 @@ class SoundButtonCollection {
 		this._collections.push(...collections);
 	}
 
-	public getAllCollections(): SoundButtonDataCollection[] {
-		return this._collections;
-	}
-
 	public getCollection(id: number): SoundButtonDataCollection {
 		let collection = this._collections.filter(
 			(collection) => collection.id == id
@@ -54,6 +50,22 @@ class SoundButtonCollection {
 		}
 
 		return collection;
+	}
+
+	public getActiveCollection(): SoundButtonDataCollection {
+		let collection = this._collections.filter(
+			(collection) => collection.focused
+		)?.[0];
+
+		if (!collection) {
+			throw new ReferenceError("No collection is focused");
+		}
+
+		return collection;
+	}
+
+	public getAllCollections(): SoundButtonDataCollection[] {
+		return this._collections;
 	}
 
 	public changeName(id: number, name: string): void {

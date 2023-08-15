@@ -1,7 +1,12 @@
 class SoundButtonFactory implements ISoundButtonFactory {
+	private _soundButtonCollection: SoundButtonCollection;
 	private _sanitizer: SoundButtonSanitizer;
 
-	constructor(sanitizer: SoundButtonSanitizer) {
+	constructor(
+		soundButtonCollection: SoundButtonCollection,
+		sanitizer: SoundButtonSanitizer
+	) {
+		this._soundButtonCollection = soundButtonCollection;
 		this._sanitizer = sanitizer;
 	}
 
@@ -23,14 +28,13 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	): SoundButtonElementJQuery {
 		data = this._sanitizer.sanitizeData(index, data);
 
-		// TODO
-
 		return $button;
 	}
 
 	private generateSoundButtonElement(): SoundButtonElementJQuery {
 		let $button = $<SoundButtonElement>("<button>", {
 			type: "button",
+			id: "",
 			class: "soundbutton",
 		}).append(
 			$("div", {

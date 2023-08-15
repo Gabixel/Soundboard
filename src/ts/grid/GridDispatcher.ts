@@ -3,17 +3,16 @@ class GridDispatcher {
 	private GRID_CLASS: Readonly<string>;
 	private GRID_ACTIVE_CLASS: Readonly<string>;
 
-	private _$gridsContainer: JQuery<HTMLDivElement>;
+	private _$gridsContainer: GridElementJQuery;
 
 	private _gridResizer: GridResizer;
 
-	private _childrenDispatcher: SoundButtonDispatcher;
-	private _childrenSwap: SoundButtonSwap;
+	private _soundButtonChild: GridSoundButtonChild;
 
 	constructor(
-		$gridsContainer: JQuery<HTMLDivElement>,
-		childrenDispatcher: SoundButtonDispatcher,
-		childrenSwapper: SoundButtonSwap,
+		gridResizer: GridResizer,
+		soundButtonChild: GridSoundButtonChild,
+		$gridsContainer: GridElementJQuery,
 		grid_id_prefix: string,
 		grid_class: string,
 		grid_active_class: string
@@ -22,22 +21,22 @@ class GridDispatcher {
 		this.GRID_CLASS = grid_class;
 		this.GRID_ACTIVE_CLASS = grid_active_class;
 
+		this._soundButtonChild = soundButtonChild;
+
 		this._$gridsContainer = $gridsContainer;
 
-		this._childrenDispatcher = childrenDispatcher;
-		this._childrenSwap = childrenSwapper;
+		this.setupGridResize(gridResizer);
 	}
 
-	public setupGridSize(
-		$rowsInput: JQuery<HTMLInputElement>,
-		$columnsInput: JQuery<HTMLInputElement>
-	): this {
-		this._gridResizer = new GridResizer($rowsInput, $columnsInput);
-		$(this._gridResizer).on("resize", (_e) => {
-			this.updateGridSize();
-			console.log("resizing");
-		});
-		this.updateGridSize();
+	private setupGridResize(gridResizer: GridResizer): this {
+		this._gridResizer = gridResizer;
+
+		$(this._gridResizer)
+			.on("resize", (_e) => {
+				this.updateGridSize();
+				console.log("resizing");
+			})
+			.trigger("resize");
 
 		return this;
 	}
@@ -51,7 +50,7 @@ class GridDispatcher {
 	}
 
 	public addGridFromCollection(collection: SoundButtonDataCollection): this {
-		this.createGrid(collection.id);
+		this.createGrid(collection.id, collection.buttonData);
 
 		return this;
 	}
@@ -66,7 +65,7 @@ class GridDispatcher {
 
 	public focusGrid(id: number): void {
 		// Cancel possible button dragging
-		this._childrenSwap.cancelSwap();
+		// TODO: _soundButtonChild.cancelSwap()
 
 		let $focusingGrid = this.getGrid(id);
 
@@ -80,34 +79,53 @@ class GridDispatcher {
 		$focusingGrid.addClass(this.GRID_ACTIVE_CLASS);
 	}
 
-	private get activeGrid(): JQuery<HTMLDivElement> {
+	private get activeGrid(): GridElementJQuery {
 		return this._$gridsContainer.find<HTMLDivElement>(
 			`>.${this.GRID_CLASS}.${this.GRID_ACTIVE_CLASS}`
 		);
 	}
 
-	private getGrid(id: number): JQuery<HTMLDivElement> {
+	private getGrid(id: number): GridElementJQuery {
 		return this._$gridsContainer.find<HTMLDivElement>(
 			`>#${this.GRID_ID_PREFIX}${id}`
 		);
 	}
 
-	private createGrid(id: number): void {
+	private createGrid(id: number, buttonData?: SoundButtonData[]): void {
 		let $grid = this.generateGridElement(id);
 
 		if (this._$gridsContainer.find(`>#${$grid[0].id}`).length > 0) {
 			throw new RangeError(`Grid already exists with index "${id}"`);
 		}
 
-		this._$gridsContainer.append($grid);
+		if (buttonData) {
+			this.addButtonDataFromCollection($grid, buttonData);
+			Logger.logDebug(
+				`Retrieved grid from collection with index "${id}" and button data:\n`,
+				buttonData
+			);
+		} else {
+			Logger.logDebug(`New grid created with index "${id}"`);
+		}
 
-		Logger.logDebug(`New grid created with index "${id}"`);
+		this._$gridsContainer.append($grid);
 	}
 
-	private generateGridElement(id: number): JQuery<HTMLDivElement> {
+	private addButtonDataFromCollection(
+		$grid: GridElementJQuery,
+		buttonData: SoundButtonData[]
+	): void {
+		buttonData.forEach((data) => {
+			let $button = this._soundButtonChild.createSoundButton(data.index, data);
+
+			$grid.append($button);
+		});
+	}
+
+	private generateGridElement(id: number): GridElementJQuery {
 		let text = "grid " + id;
 
-		let $grid = $<HTMLDivElement>("<div>", {
+		let $grid = $<GridElement>("<div>", {
 			id: this.GRID_ID_PREFIX + id,
 			class: this.GRID_CLASS,
 			text,
