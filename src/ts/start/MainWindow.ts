@@ -41,7 +41,13 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		this._soundButtonCollection = new SoundButtonCollection([
+		this._soundButtonCollection = new SoundButtonCollection();
+
+		this.setupAudio();
+
+		this.setupSoundButtons();
+
+		this._soundButtonCollection.addExistingCollections([
 			{
 				id: 0,
 				name: "cool name",
@@ -50,12 +56,16 @@ abstract class MainWindow extends Main {
 					{
 						index: 0,
 						isEdited: true,
+						title: "test",
 						color: { h: 0, s: 0, l: 80 },
+						path: await this._soundButtonFactory.getRandomAudioPath(),
 					},
 					{
 						index: 1,
 						isEdited: true,
+						title: "sium",
 						color: { h: 0, s: 0, l: 80 },
+						path: await this._soundButtonFactory.getRandomAudioPath(),
 					},
 				],
 				focused: true,
@@ -72,10 +82,6 @@ abstract class MainWindow extends Main {
 		let collectionCache = new SoundButtonCollectionCache(
 			this._soundButtonCollection
 		).loadCache();
-
-		this.setupAudio();
-
-		this.setupSoundButtons();
 
 		this.setupGrid();
 

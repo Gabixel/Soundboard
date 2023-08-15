@@ -1,6 +1,4 @@
 class SoundButtonDispatcher {
-	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
-
 	private _soundButtonFactory: SoundButtonFactory;
 	private _soundButtonEvents: SoundButtonEvents;
 	private _audioPlayer: IAudioPlayer;

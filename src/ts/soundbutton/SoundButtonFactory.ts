@@ -1,6 +1,8 @@
 class SoundButtonFactory implements ISoundButtonFactory {
 	private SOUNDBUTTON_ID_PREFIX = "soundbutton-";
 
+	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
+
 	private _soundButtonCollection: SoundButtonCollection;
 	private _sanitizer: SoundButtonSanitizer;
 
@@ -26,17 +28,39 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	public updateElementData(
 		$button: SoundButtonElementJQuery,
 		index: number,
-		data?: SoundButtonData
+		buttonData?: SoundButtonData
 	): [SoundButtonElementJQuery, SoundButtonData] {
-		data = this._sanitizer.sanitizeData(index, data);
+		buttonData = this._sanitizer.sanitizeData(index, buttonData);
 
-		return [$button, data];
+		$button
+			.attr("id", this.parseSoundButtonId(index))
+			// TODO: apply image
+			.attr("data-tags", buttonData.tags.join(","))
+			// Color
+			.css("--hue", buttonData.color.h.toString())
+			.css("--saturation", buttonData.color.s.toString() + "%")
+			.css("--lightness", buttonData.color.l.toString() + "%")
+			// Title
+			.children(".button-theme")
+			.text(buttonData.title);
+
+		return [$button, buttonData];
 	}
 
 	public getButtonData(parsedIndex: string): SoundButtonData {
 		let { index } = this.getCompositeSoundButtonId(parsedIndex);
 
 		return this._soundButtonCollection.getButtonData(index);
+	}
+
+	public async getRandomAudioPath(): Promise<string> {
+		return StringUtilities.encodeFilePath(
+			await SoundboardApi.mainWindow.joinPaths(
+				SoundboardApi.global.path.root,
+				SoundboardApi.global.path.sounds,
+				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
+			)
+		);
 	}
 
 	private generateSoundButtonElement(index: number): SoundButtonElementJQuery {
@@ -46,7 +70,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 			class: "soundbutton",
 			style: `--index: ${index};`,
 		}).append(
-			$("div", {
+			$("<div>", {
 				class: "button-theme",
 			})
 		);

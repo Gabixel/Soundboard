@@ -26,7 +26,7 @@
 	}
 }
 
-#buttons-grid {
+.buttons-grid {
 	&.filtering .soundbutton {
 		&.filtered .button-theme {
 			opacity: 0.15;
@@ -223,89 +223,3 @@
 		.flex-center-all();
 	}
 }
-
-/*.soundbutton {
-	#buttons-grid:not(.has-dragging-child) &:hover,
-	#buttons-grid:not(.has-dragging-child) &.dragover {
-		// background-color: #5cb811;
-		// background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
-		background-color: var(--button-background-hover-hsl);
-	}
-
-	#buttons-grid:not(.has-dragging-child) &:active {
-		// position: relative;
-		// top: 1px;
-		background-color: var(--button-background-active-hsl);
-	}
-
-	#buttons-grid.filtering &.filtered {
-		opacity: 0.15;
-	}
-
-	#buttons-grid.filtering &:not(.filtered) {
-		animation: visual-light 3s normal;
-
-		@keyframes visual-light {
-			from {
-				box-shadow: 0 0 4px 2px #fff;
-			}
-
-			to {
-				box-shadow: 0 0 4px 2px rgb(255 255 255 / 0);
-			}
-		}
-	}
-
-	&.dragging {
-		z-index: 1;
-
-		opacity: 0.35;
-
-		box-shadow: 0 0 2px rgba(0, 0, 0, var(--alpha));
-		pointer-events: none;
-	}
-
-	&.hidden {
-		display: none;
-	}
-
-	#buttons-grid.has-dragging-child &:not(.dragging) {
-		animation: drag-choose 0.2s ease var(--opacity-delay, 0) normal;
-		opacity: 0.5;
-
-		@keyframes drag-choose {
-			from {
-				opacity: 1;
-			}
-
-			to {
-				opacity: 0.5;
-			}
-		}
-	}
-
-	#buttons-grid.has-dragging-child.filtering &:not(.filtered):not(.dragging) {
-		transition: outline .2s;
-		outline: 2px dashed #0f0;
-	}
-
-	#buttons-grid.has-dragging-child &.drop-destination,
-	#buttons-grid.has-dragging-child.filtering
-		&.drop-destination:not(.filtered):not(.dragging) {
-		transition: none;
-
-		// cursor: ;
-		opacity: 1;
-		outline: 3px solid #fff;
-	}
-
-	// &.playing {
-	// 	// outline: 1px dashed hsl(var(--hue) 100% 20% / 1);
-
-	// 	// TODO: Playing effect?
-	// }
-
-	/*&:focus {
-		outline: 3px solid var(--button-background-hover-hsl);
-	}* /
-}*/
