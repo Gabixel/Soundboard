@@ -12,4 +12,11 @@ abstract class CollectionTabsGridFactory {
 	protected addNewGrid(id: number, focusNewGrid: boolean = true): void {
 		this._gridDispatcher.addNewGrid(id, focusNewGrid);
 	}
+
+	protected addGridFromCollection(
+		collection: SoundButtonDataCollection,
+		focusNewGrid: boolean = true
+	): void {
+		this._gridDispatcher.addGridFromCollection(collection, focusNewGrid);
+	}
 }

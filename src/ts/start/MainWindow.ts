@@ -3,9 +3,9 @@ abstract class MainWindow extends Main {
 	private static _gridDispatcher: GridDispatcher;
 
 	// Sound Buttons
-	private static _soundButtonDispatcher: SoundButtonDispatcher;
-	private static _soundButtonFactory: SoundButtonFactory;
 	private static _soundButtonEvents: SoundButtonEvents;
+	private static _soundButtonFactory: SoundButtonFactory;
+	private static _soundButtonDispatcher: SoundButtonDispatcher;
 
 	/*// Grid & Buttons
 	private static _gridManager: GridManager;
@@ -46,7 +46,18 @@ abstract class MainWindow extends Main {
 				id: 0,
 				name: "cool name",
 				isCached: true,
-				buttonData: [],
+				buttonData: [
+					{
+						index: 0,
+						isEdited: true,
+						color: { h: 0, s: 0, l: 80 },
+					},
+					{
+						index: 1,
+						isEdited: true,
+						color: { h: 0, s: 0, l: 80 },
+					},
+				],
 				focused: true,
 			},
 			{
@@ -68,18 +79,15 @@ abstract class MainWindow extends Main {
 
 		this.setupGrid();
 
-		await collectionCache;
-		console.log("Cache finished loading");
-		console.log(this._soundButtonCollection.getAllCollections());
-		this._collectionTabs = new CollectionTabs(
-			this._soundButtonCollection,
-			this._gridDispatcher,
-			$("#buttons-collections-controls"),
-			"button-collection-tab-",
-			"tab-button",
-			"active",
-			"tab-rename-input"
-		);
+		Promise.all([collectionCache]).then(() => {
+			console.log("Cache finished loading");
+			console.log(this._soundButtonCollection.getAllCollections());
+			this._collectionTabs = new CollectionTabs(
+				this._soundButtonCollection,
+				this._gridDispatcher,
+				$("#buttons-collections-controls")
+			);
+		});
 
 		UiScale.setControls(
 			$("#ui-scale-slider"),
@@ -113,12 +121,14 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupSoundButtons(): void {
+		this._soundButtonEvents = new SoundButtonEvents();
 		this._soundButtonFactory = new SoundButtonFactory(
 			this._soundButtonCollection,
 			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
 		);
 		this._soundButtonDispatcher = new SoundButtonDispatcher(
 			this._soundButtonFactory,
+			this._soundButtonEvents,
 			this._audioPlayer
 		);
 	}
@@ -126,14 +136,8 @@ abstract class MainWindow extends Main {
 	private static setupGrid(): void {
 		this._gridDispatcher = new GridDispatcher(
 			new GridResizer($("#grid-rows"), $("#grid-columns")),
-			new GridSoundButtonChild(
-				this._soundButtonDispatcher,
-				this._soundButtonEvents
-			),
-			$("#buttons-grids"),
-			"buttons-grid-",
-			"buttons-grid",
-			"active"
+			new GridSoundButtonChild(this._soundButtonDispatcher),
+			$("#buttons-grids")
 		);
 
 		/*

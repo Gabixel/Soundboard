@@ -1,7 +1,7 @@
 class GridDispatcher {
-	private GRID_ID_PREFIX: Readonly<string>;
-	private GRID_CLASS: Readonly<string>;
-	private GRID_ACTIVE_CLASS: Readonly<string>;
+	private GRID_ID_PREFIX: Readonly<string> = "buttons-grid-";
+	private GRID_CLASS: Readonly<string> = "buttons-grid";
+	private GRID_ACTIVE_CLASS: Readonly<string> = "active";
 
 	private _$gridsContainer: GridElementJQuery;
 
@@ -12,15 +12,8 @@ class GridDispatcher {
 	constructor(
 		gridResizer: GridResizer,
 		soundButtonChild: GridSoundButtonChild,
-		$gridsContainer: GridElementJQuery,
-		grid_id_prefix: string,
-		grid_class: string,
-		grid_active_class: string
+		$gridsContainer: GridElementJQuery
 	) {
-		this.GRID_ID_PREFIX = grid_id_prefix;
-		this.GRID_CLASS = grid_class;
-		this.GRID_ACTIVE_CLASS = grid_active_class;
-
 		this._soundButtonChild = soundButtonChild;
 
 		this._$gridsContainer = $gridsContainer;
@@ -34,25 +27,22 @@ class GridDispatcher {
 		$(this._gridResizer)
 			.on("resize", (_e) => {
 				this.updateGridSize();
-				console.log("resizing");
+				console.log("resizing grids");
 			})
 			.trigger("resize");
 
 		return this;
 	}
 
-	public addGridsFromCollections(
-		collections: SoundButtonDataCollection[]
-	): this {
-		collections.forEach((collection) => this.addGridFromCollection(collection));
-
-		return this;
-	}
-
-	public addGridFromCollection(collection: SoundButtonDataCollection): this {
+	public addGridFromCollection(
+		collection: SoundButtonDataCollection,
+		focusNewGrid: boolean = true
+	): void {
 		this.createGrid(collection.id, collection.buttonData);
 
-		return this;
+		if (focusNewGrid) {
+			this.focusGrid(collection.id);
+		}
 	}
 
 	public addNewGrid(id: number, focusNewGrid: boolean = true): void {
@@ -98,7 +88,7 @@ class GridDispatcher {
 			throw new RangeError(`Grid already exists with index "${id}"`);
 		}
 
-		if (buttonData) {
+		if (typeof buttonData === "object" && buttonData !== null) {
 			this.addButtonDataFromCollection($grid, buttonData);
 			Logger.logDebug(
 				`Retrieved grid from collection with index "${id}" and button data:\n`,
@@ -116,19 +106,16 @@ class GridDispatcher {
 		buttonData: SoundButtonData[]
 	): void {
 		buttonData.forEach((data) => {
-			let $button = this._soundButtonChild.createSoundButton(data.index, data);
-
+			let [$button] = this._soundButtonChild.createSoundButton(data.index, data);
+			
 			$grid.append($button);
 		});
 	}
 
 	private generateGridElement(id: number): GridElementJQuery {
-		let text = "grid " + id;
-
 		let $grid = $<GridElement>("<div>", {
 			id: this.GRID_ID_PREFIX + id,
 			class: this.GRID_CLASS,
-			text,
 		});
 
 		return $grid;

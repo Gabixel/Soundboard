@@ -2,10 +2,10 @@
  * The collection tab manager.
  */
 class CollectionTabs extends CollectionTabsGridFactory {
-	private TAB_ID_PREFIX: Readonly<string>;
-	private TAB_CLASS: Readonly<string>;
-	private TAB_ACTIVE_CLASS: Readonly<string>;
-	private RENAME_INPUT_ID: Readonly<string>;
+	private TAB_ID_PREFIX: Readonly<string> = "button-collection-tab-";
+	private TAB_CLASS: Readonly<string> = "tab-button";
+	private TAB_ACTIVE_CLASS: Readonly<string> = "active";
+	private RENAME_INPUT_ID: Readonly<string> = "tab-rename-input";
 
 	private _$tabsContainer: JQuery<HTMLDivElement>;
 	private _soundButtonCollection: SoundButtonCollection;
@@ -19,18 +19,9 @@ class CollectionTabs extends CollectionTabsGridFactory {
 	constructor(
 		soundButtonCollection: SoundButtonCollection,
 		gridDispatcher: GridDispatcher,
-		$controlsContainer: JQuery<HTMLDivElement>,
-		tab_id_prefix: string,
-		tab_class: string,
-		tab_active_class: string,
-		rename_input_id: string
+		$controlsContainer: JQuery<HTMLDivElement>
 	) {
 		super(gridDispatcher);
-
-		this.TAB_ID_PREFIX = tab_id_prefix;
-		this.TAB_CLASS = tab_class;
-		this.TAB_ACTIVE_CLASS = tab_active_class;
-		this.RENAME_INPUT_ID = rename_input_id;
 
 		this._$tabsContainer = $controlsContainer.find<HTMLDivElement>(
 			"#buttons-collections"
@@ -162,7 +153,10 @@ class CollectionTabs extends CollectionTabsGridFactory {
 		collection: SoundButtonDataCollection = null,
 		focusNewTab: boolean = true
 	): void {
+		let isNewCollection = false;
+
 		if (!collection) {
+			isNewCollection = true;
 			collection = this._soundButtonCollection.addNewCollection();
 		}
 
@@ -174,7 +168,11 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			`New tab created: "${collection.name}" (id: "${$tab[0].id}")`
 		);
 
-		super.addNewGrid(collection.id, focusNewTab);
+		if (isNewCollection) {
+			super.addNewGrid(collection.id, focusNewTab);
+		} else {
+			super.addGridFromCollection(collection, focusNewTab);
+		}
 
 		if (focusNewTab) {
 			this.focusTab(collection.id);

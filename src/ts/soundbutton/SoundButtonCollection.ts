@@ -68,6 +68,22 @@ class SoundButtonCollection {
 		return this._collections;
 	}
 
+	public getButtonData(index: number, collectionId?: number): SoundButtonData {
+		collectionId ??= this.getActiveCollection().id;
+
+		let collection = this.getCollection(collectionId);
+
+		let data = collection.buttonData.filter((data) => data.index == index)?.[0];
+
+		if (!data) {
+			throw new ReferenceError(
+				`Button data not found with index "${index}" in collection "${collectionId}"`
+			);
+		}
+
+		return data;
+	}
+
 	public changeName(id: number, name: string): void {
 		let collection = this.getCollection(id);
 
