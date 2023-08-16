@@ -1,19 +1,27 @@
 class GridSoundButtonChild {
 	private _soundButtonDispatcher: SoundButtonDispatcher;
+	private _soundButtonCollectionStore: SoundButtonCollectionStore;
 
-	constructor(soundButtonDispatcher: SoundButtonDispatcher) {
+	constructor(
+		soundButtonDispatcher: SoundButtonDispatcher,
+		soundButtonCollectionStore: SoundButtonCollectionStore
+	) {
 		this._soundButtonDispatcher = soundButtonDispatcher;
+		this._soundButtonCollectionStore = soundButtonCollectionStore;
 	}
 
 	public createSoundButton(
-		index: number,
-		initialData: SoundButtonData
+		collectionId: number,
+		id: number,
+		initialData?: SoundButtonData
 	): [SoundButtonElementJQuery, SoundButtonData] {
-		let [$button, data] = this._soundButtonDispatcher.createSoundButton(
-			index,
+		let [$button, buttonData] = this._soundButtonDispatcher.createSoundButton(
+			id,
 			initialData
 		);
 
-		return [$button, data];
+		this._soundButtonCollectionStore.addButtonDataIfMissing(collectionId, buttonData);
+
+		return [$button, buttonData];
 	}
 }

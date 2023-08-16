@@ -26,7 +26,9 @@ class GridDispatcher {
 		this.setupGridResize(gridResizer);
 	}
 
-	private setupSoundButtonEvents(soundButtonEvents: GridSoundButtonEvents): void {
+	private setupSoundButtonEvents(
+		soundButtonEvents: GridSoundButtonEvents
+	): void {
 		this._soundButtonEvents = soundButtonEvents;
 
 		this._soundButtonEvents.addEvents(this._$gridsContainer);
@@ -47,7 +49,7 @@ class GridDispatcher {
 		collection: SoundButtonDataCollection,
 		focusNewGrid: boolean = true
 	): void {
-		this.createGrid(collection.id, collection.buttonData);
+		this.createGrid(collection.id, collection);
 
 		if (focusNewGrid) {
 			this.focusGrid(collection.id);
@@ -90,35 +92,66 @@ class GridDispatcher {
 		);
 	}
 
-	private createGrid(id: number, buttonData?: SoundButtonData[]): void {
+	private createGrid(id: number, collection?: SoundButtonDataCollection): void {
 		let $grid = this.generateGridElement(id);
 
 		if (this._$gridsContainer.find(`>#${$grid[0].id}`).length > 0) {
 			throw new RangeError(`Grid already exists with index "${id}"`);
 		}
 
-		if (typeof buttonData === "object" && buttonData !== null) {
-			this.addButtonDataFromCollection($grid, buttonData);
+		if (collection) {
+			this.addButtonDataFromCollection($grid, id, collection.buttonData ?? []);
 			Logger.logDebug(
-				`Retrieved grid from collection with index "${id}" and button data:\n`,
-				buttonData
+				`Retrieved grid with index "${id}"\n`,
+				"From collection: ",
+				collection
 			);
 		} else {
 			Logger.logDebug(`New grid created with index "${id}"`);
 		}
+
+		let existingButtonsId = collection?.buttonData?.map((d) => d.index) ?? [];
+
+		this.addMissingButtonsToGrid($grid, id, existingButtonsId);
 
 		this._$gridsContainer.append($grid);
 	}
 
 	private addButtonDataFromCollection(
 		$grid: GridElementJQuery,
+		gridId: number,
 		buttonData: SoundButtonData[]
 	): void {
 		buttonData.forEach((data) => {
-			let [$button] = this._soundButtonChild.createSoundButton(data.index, data);
+			let [$button] = this._soundButtonChild.createSoundButton(
+				gridId,
+				data.index,
+				data
+			);
 
 			$grid.append($button);
 		});
+	}
+
+	private addMissingButtonsToGrid(
+		$grid: GridElementJQuery,
+		gridId: number,
+		existingButtonsId: number[]
+	): void {
+		let gridWidth = this._gridResizer.columns;
+		let gridHeight = this._gridResizer.rows;
+
+		let buttonAmount = gridWidth * gridHeight;
+
+		for (let buttonId = 0; buttonId < buttonAmount; buttonId++) {
+			if (existingButtonsId.includes(buttonId)) {
+				continue;
+			}
+
+			let [$button] = this._soundButtonChild.createSoundButton(gridId, buttonId);
+
+			$grid.append($button);
+		}
 	}
 
 	private generateGridElement(id: number): GridElementJQuery {

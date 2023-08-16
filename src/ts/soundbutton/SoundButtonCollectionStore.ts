@@ -84,6 +84,18 @@ class SoundButtonCollectionStore {
 		return data;
 	}
 
+	public addButtonDataIfMissing(collectionId: number, data: SoundButtonData): void {
+		let collection = this.getCollection(collectionId);
+
+		let idAlreadyExists = collection.buttonData.some((d) => d.index == data.index);
+
+		if (idAlreadyExists) {
+			return;
+		}
+
+		collection.buttonData.push(data);
+	}
+
 	public changeName(id: number, name: string): void {
 		let collection = this.getCollection(id);
 

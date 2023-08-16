@@ -150,7 +150,10 @@ abstract class MainWindow extends Main {
 	private static setupGrid(): void {
 		this._gridDispatcher = new GridDispatcher(
 			new GridResizer($("#grid-rows"), $("#grid-columns")),
-			new GridSoundButtonChild(this._soundButtonDispatcher),
+			new GridSoundButtonChild(
+				this._soundButtonDispatcher,
+				this._soundButtonCollectionStore
+			),
 			this._soundButtonEvents,
 			$("#buttons-grids")
 		);

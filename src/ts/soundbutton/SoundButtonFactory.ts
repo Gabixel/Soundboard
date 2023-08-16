@@ -16,25 +16,27 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	public createSoundButton(
-		index: number,
-		data?: SoundButtonData
+		id: number,
+		initialButtonData?: SoundButtonData
 	): [SoundButtonElementJQuery, SoundButtonData] {
-		let $button = this.generateSoundButtonElement(index);
+		let [$button, buttonData] = this.updateElementData(
+			this.generateSoundButtonElement(id),
+			id,
+			initialButtonData
+		);
 
-		this.updateElementData($button, index, data);
-
-		return [$button, data];
+		return [$button, buttonData];
 	}
 
 	public updateElementData(
 		$button: SoundButtonElementJQuery,
-		index: number,
+		buttonId: number,
 		buttonData?: SoundButtonData
 	): [SoundButtonElementJQuery, SoundButtonData] {
-		buttonData = this._sanitizer.sanitizeData(index, buttonData);
+		buttonData = this._sanitizer.sanitizeData(buttonId, buttonData);
 
 		$button
-			.attr("id", this._idGenerator.parseSoundButtonId(index))
+			.attr("id", this._idGenerator.parseSoundButtonId(buttonId))
 			// TODO: apply image
 			.attr("data-tags", buttonData.tags.join(","))
 			// Color
