@@ -25,7 +25,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 				$(e.target).children(".button-theme").text()
 			);
 
-			const { path, volume, time } = this._soundButtonFactory.getButtonDataById(
+			const { path, volume, time } = this._soundButtonFactory.getButtonDataByParsedId(
 				$(e.target).attr("id")
 			);
 

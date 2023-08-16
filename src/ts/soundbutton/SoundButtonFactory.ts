@@ -1,15 +1,16 @@
 class SoundButtonFactory implements ISoundButtonFactory {
-	private SOUNDBUTTON_ID_PREFIX = "soundbutton-";
-
 	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
+	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
 	private _soundButtonCollection: SoundButtonCollection;
 	private _sanitizer: SoundButtonSanitizer;
 
 	constructor(
+		soundButtonIdGenerator: ISoundButtonIdGenerator,
 		soundButtonCollection: SoundButtonCollection,
 		sanitizer: SoundButtonSanitizer
 	) {
+		this._soundButtonIdGenerator = soundButtonIdGenerator;
 		this._soundButtonCollection = soundButtonCollection;
 		this._sanitizer = sanitizer;
 	}
@@ -33,7 +34,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		buttonData = this._sanitizer.sanitizeData(index, buttonData);
 
 		$button
-			.attr("id", this.parseSoundButtonId(index))
+			.attr("id", this._soundButtonIdGenerator.parseSoundButtonId(index))
 			// TODO: apply image
 			.attr("data-tags", buttonData.tags.join(","))
 			// Color
@@ -47,18 +48,23 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return [$button, buttonData];
 	}
 
-	public getButtonDataByElement($button: SoundButtonElementJQuery): SoundButtonData {
-		let { index } = this.getCompositeSoundButtonId($button.attr("id"));
-		return this.getButtonDataByIndex(index);
+	public getButtonDataByElement(
+		$button: SoundButtonElementJQuery
+	): SoundButtonData {
+		let { buttonId } = this._soundButtonIdGenerator.getCompositeSoundButtonId(
+			$button.attr("id")
+		);
+		return this.getButtonDataById(buttonId);
 	}
 
-	public getButtonDataById(parsedIndex: string): SoundButtonData {
-		let { index } = this.getCompositeSoundButtonId(parsedIndex);
-		return this.getButtonDataByIndex(index);
+	public getButtonDataByParsedId(parsedButtonId: string): SoundButtonData {
+		let { buttonId } =
+			this._soundButtonIdGenerator.getCompositeSoundButtonId(parsedButtonId);
+		return this.getButtonDataById(buttonId);
 	}
 
-	public getButtonDataByIndex(index: number): SoundButtonData {
-		return this._soundButtonCollection.getButtonData(index);
+	public getButtonDataById(id: number): SoundButtonData {
+		return this._soundButtonCollection.getButtonData(id);
 	}
 
 	public async getRandomAudioPath(): Promise<string> {
@@ -70,34 +76,10 @@ class SoundButtonFactory implements ISoundButtonFactory {
 			)
 		);
 	}
-	public parseSoundButtonId(
-		index: number,
-		collection?: SoundButtonDataCollection
-	): string {
-		collection ??= this._soundButtonCollection.getActiveCollection();
-
-		return `${this.SOUNDBUTTON_ID_PREFIX}${collection.id}-${index}`;
-	}
-
-	public getCompositeSoundButtonId(parsedIndex: string): {
-		collectionId: number;
-		index: number;
-	} {
-		let [collectionId, index] = parsedIndex
-			.replace(this.SOUNDBUTTON_ID_PREFIX, "")
-			.split("-")
-			.map((id) => parseInt(id));
-
-		return {
-			collectionId,
-			index,
-		};
-	}
 
 	private generateSoundButtonElement(index: number): SoundButtonElementJQuery {
 		let $button = $<SoundButtonElement>("<button>", {
 			type: "button",
-			id: this.parseSoundButtonId(index),
 			class: "soundbutton",
 			style: `--index: ${index};`,
 		}).append(

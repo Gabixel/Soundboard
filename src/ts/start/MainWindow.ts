@@ -7,7 +7,9 @@ abstract class MainWindow extends Main {
 	private static _soundButtonEvents: GridSoundButtonEvents;
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
 
-	/*// Grid & Buttons
+	// Grid & Buttons
+	/*
+	
 	private static _gridManager: GridManager;
 	private static _soundButtonManager: SoundButton;
 	private static _buttonFilterer: ButtonFilterer;
@@ -130,6 +132,7 @@ abstract class MainWindow extends Main {
 
 	private static setupSoundButtons(): void {
 		this._soundButtonFactory = new SoundButtonFactory(
+			new GridSoundButtonIdGenerator(this._soundButtonCollection),
 			this._soundButtonCollection,
 			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
 		);
