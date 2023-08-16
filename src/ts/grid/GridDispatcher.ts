@@ -8,18 +8,22 @@ class GridDispatcher {
 	private _gridResizer: GridResizer;
 
 	private _soundButtonChild: GridSoundButtonChild;
-
 	private _soundButtonEvents: GridSoundButtonEvents;
+
+	private _collectionStore: SoundButtonCollectionStore;
 
 	constructor(
 		gridResizer: GridResizer,
 		soundButtonChild: GridSoundButtonChild,
 		soundButtonEvents: GridSoundButtonEvents,
+		collectionStore: SoundButtonCollectionStore,
 		$gridsContainer: GridElementJQuery
 	) {
 		this._soundButtonChild = soundButtonChild;
 
 		this._$gridsContainer = $gridsContainer;
+
+		this._collectionStore = collectionStore;
 
 		this.setupSoundButtonEvents(soundButtonEvents);
 
@@ -110,7 +114,9 @@ class GridDispatcher {
 			Logger.logDebug(`New grid created with index "${id}"`);
 		}
 
-		let existingButtonsId = collection?.buttonData?.map((d) => d.index) ?? [];
+		let existingButtonsId = this._collectionStore
+			.getCollection(id)
+			.buttonData.map((data) => data.index);
 
 		this.addMissingButtonsToGrid($grid, id, existingButtonsId);
 

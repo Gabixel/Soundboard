@@ -49,7 +49,7 @@ abstract class MainWindow extends Main {
 
 		this.setupSoundButtons();
 
-		this._soundButtonCollectionStore.addExistingCollections([
+		/*this._soundButtonCollectionStore.addExistingCollections([
 			{
 				id: 0,
 				name: "cool name",
@@ -81,7 +81,7 @@ abstract class MainWindow extends Main {
 				buttonData: [],
 				focused: false,
 			},
-		]);
+		]);*/
 
 		let collectionCache = new SoundButtonCollectionCache(
 			this._soundButtonCollectionStore
@@ -155,6 +155,7 @@ abstract class MainWindow extends Main {
 				this._soundButtonCollectionStore
 			),
 			this._soundButtonEvents,
+			this._soundButtonCollectionStore,
 			$("#buttons-grids")
 		);
 
