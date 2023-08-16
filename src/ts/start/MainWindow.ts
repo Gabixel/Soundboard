@@ -6,16 +6,11 @@ abstract class MainWindow extends Main {
 	private static _soundButtonFactory: SoundButtonFactory;
 	private static _soundButtonEvents: GridSoundButtonEvents;
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
+	private static _soundButtonSanitizer: SoundButtonSanitizer;
 
-	// Grid & Buttons
-	/*
-	
-	private static _gridManager: GridManager;
-	private static _soundButtonManager: SoundButton;
-	private static _buttonFilterer: ButtonFilterer;
+	// Grid
 	private static _gridResizer: GridResizer;
-	private static _gridNavigation: GridNavigation;
-	private static _buttonSwap: ButtonSwap;*/
+	private static _gridSoundButtonIdGenerator: GridSoundButtonIdGenerator;
 
 	// Collection and grid tabs
 	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
@@ -43,11 +38,34 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		this._soundButtonCollectionStore = new SoundButtonCollectionStore();
-
 		this.setupAudio();
 
-		this.setupSoundButtons();
+		this._soundButtonCollectionStore = new SoundButtonCollectionStore();
+
+		this._gridSoundButtonIdGenerator = new GridSoundButtonIdGenerator(
+			this._soundButtonCollectionStore
+		);
+
+		this._soundButtonSanitizer = new SoundButtonSanitizer(
+			MainWindow.DEFAULT_BUTTONDATA
+		);
+
+		let collectionCache = new SoundButtonCollectionCache(
+			this._soundButtonCollectionStore
+		).loadCache();
+		
+		this._soundButtonFactory = new SoundButtonFactory(
+			this._gridSoundButtonIdGenerator,
+			this._soundButtonCollectionStore,
+			this._soundButtonSanitizer
+		);
+		this._soundButtonEvents = new GridSoundButtonEvents(
+			this._audioPlayer,
+			this._soundButtonFactory
+		);
+		this._soundButtonDispatcher = new SoundButtonDispatcher(
+			this._soundButtonFactory
+		);
 
 		/*this._soundButtonCollectionStore.addExistingCollections([
 			{
@@ -83,11 +101,18 @@ abstract class MainWindow extends Main {
 			},
 		]);*/
 
-		let collectionCache = new SoundButtonCollectionCache(
-			this._soundButtonCollectionStore
-		).loadCache();
+		this._gridResizer = new GridResizer($("#grid-rows"), $("#grid-columns"));
 
-		this.setupGrid();
+		this._gridDispatcher = new GridDispatcher(
+			this._gridResizer,
+			new GridSoundButtonChild(
+				this._soundButtonDispatcher,
+				this._soundButtonCollectionStore
+			),
+			this._soundButtonEvents,
+			this._soundButtonCollectionStore,
+			$("#buttons-grids")
+		);
 
 		Promise.all([collectionCache]).then(() => {
 			console.log("Cache finished loading");
@@ -130,64 +155,6 @@ abstract class MainWindow extends Main {
 		$(document.body).find("#soundboard").attr("style", "opacity: 1");
 	}
 
-	private static setupSoundButtons(): void {
-		this._soundButtonFactory = new SoundButtonFactory(
-			new GridSoundButtonIdGenerator(this._soundButtonCollectionStore),
-			this._soundButtonCollectionStore,
-			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
-		);
-
-		this._soundButtonEvents = new GridSoundButtonEvents(
-			this._audioPlayer,
-			this._soundButtonFactory
-		);
-
-		this._soundButtonDispatcher = new SoundButtonDispatcher(
-			this._soundButtonFactory
-		);
-	}
-
-	private static setupGrid(): void {
-		this._gridDispatcher = new GridDispatcher(
-			new GridResizer($("#grid-rows"), $("#grid-columns")),
-			new GridSoundButtonChild(
-				this._soundButtonDispatcher,
-				this._soundButtonCollectionStore
-			),
-			this._soundButtonEvents,
-			this._soundButtonCollectionStore,
-			$("#buttons-grids")
-		);
-
-		/*
-		// Grid manager
-		this._gridManager = new GridManager($("#buttons-grid"));
-
-		// Soundbutton manager
-		this._soundButtonManager = new SoundButtonManager(this._gridManager.$grid)
-			.setupClick()
-			.setupContextMenu();
-
-		// Button filterer
-		this._buttonFilterer = new ButtonFilterer(this._gridManager).setupInputs(
-			$("#filter-buttons-input"),
-			$("#clear-filter-button")
-		);
-
-		// Grid resize manager
-		this._gridResizer = await new GridResizer(
-			this._gridManager,
-			this._soundButtonManager,
-			this._buttonFilterer
-		).setInputs($("#grid-rows"), $("#grid-columns"), $("#clear-grid"));
-
-		// Arrow key movement
-		this._gridNavigation = new GridNavigation(this._gridManager);
-
-		// Button swap
-		this._buttonSwap = new ButtonSwap(this._gridManager);*/
-	}
-
 	/**
 	 * Initializes audio logic.
 	 *
@@ -216,8 +183,6 @@ abstract class MainWindow extends Main {
 			$("#audio-output-select"),
 			this._audioPlayer
 		);
-
-		// this._soundButtonManager.setupAudioPlayer(this._audioPlayer);
 	}
 }
 
