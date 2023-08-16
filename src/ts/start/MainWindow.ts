@@ -67,6 +67,7 @@ abstract class MainWindow extends Main {
 			this._soundButtonFactory
 		);
 
+		// FIXME: import/export collections
 		/*this._soundButtonCollectionStore.addExistingCollections([
 			{
 				id: 0,
