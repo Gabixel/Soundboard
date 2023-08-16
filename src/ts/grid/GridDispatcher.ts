@@ -9,12 +9,12 @@ class GridDispatcher {
 
 	private _soundButtonChild: GridSoundButtonChild;
 
-	private _soundButtonEvents: SoundButtonEvents;
+	private _soundButtonEvents: GridSoundButtonEvents;
 
 	constructor(
 		gridResizer: GridResizer,
 		soundButtonChild: GridSoundButtonChild,
-		soundButtonEvents: SoundButtonEvents,
+		soundButtonEvents: GridSoundButtonEvents,
 		$gridsContainer: GridElementJQuery
 	) {
 		this._soundButtonChild = soundButtonChild;
@@ -26,7 +26,7 @@ class GridDispatcher {
 		this.setupGridResize(gridResizer);
 	}
 
-	private setupSoundButtonEvents(soundButtonEvents: SoundButtonEvents): void {
+	private setupSoundButtonEvents(soundButtonEvents: GridSoundButtonEvents): void {
 		this._soundButtonEvents = soundButtonEvents;
 
 		this._soundButtonEvents.addEvents(this._$gridsContainer);

@@ -1,4 +1,4 @@
-class SoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
+class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	private _audioPlayer: TAudioPlayer;
 	private _soundButtonFactory: SoundButtonFactory;
 

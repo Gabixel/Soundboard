@@ -70,15 +70,15 @@ const scripts = [
 	"utility/UserInterface",
 	"utility/StringUtilities",
 
-	"soundbutton/events/SoundButtonEvents",
 	"soundbutton/SoundButtonCollectionCache",
 	"soundbutton/SoundButtonCollection",
 	"soundbutton/SoundButtonSanitizer",
 	"soundbutton/SoundButtonFactory",
 	"soundbutton/SoundButtonDispatcher",
 
-	"grid/GridResizer",
+	"grid/GridSoundButtonEvents",
 	"grid/GridSoundButtonChild",
+	"grid/GridResizer",
 	"grid/GridDispatcher",
 
 	"control/VolumeSlider",
