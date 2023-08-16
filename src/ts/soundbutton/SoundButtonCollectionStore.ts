@@ -1,7 +1,7 @@
 /**
  * The collection manager for sound buttons.
  */
-class SoundButtonCollection {
+class SoundButtonCollectionStore {
 	private _collections: SoundButtonDataCollection[] = [];
 
 	public get isEmpty(): boolean {

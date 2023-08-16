@@ -1,9 +1,9 @@
 class SoundButtonCollectionCache {
-	private _soundButtonCollection: SoundButtonCollection;
+	private _collectionStore: SoundButtonCollectionStore;
 	private _loadedCache: Promise<boolean>;
 
-	constructor(soundButtonCollection: SoundButtonCollection) {
-		this._soundButtonCollection = soundButtonCollection;
+	constructor(collectionStore: SoundButtonCollectionStore) {
+		this._collectionStore = collectionStore;
 	}
 
 	public loadCache(): Promise<void> {

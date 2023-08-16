@@ -8,7 +8,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 	private RENAME_INPUT_ID: Readonly<string> = "tab-rename-input";
 
 	private _$tabsContainer: JQuery<HTMLDivElement>;
-	private _soundButtonCollection: SoundButtonCollection;
+	private _collectionStore: SoundButtonCollectionStore;
 
 	/**
 	 * Keyboard spam prevention.
@@ -17,7 +17,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 	private _$addCollectionButton: JQuery<HTMLButtonElement>;
 
 	constructor(
-		soundButtonCollection: SoundButtonCollection,
+		soundButtonCollection: SoundButtonCollectionStore,
 		gridDispatcher: GridDispatcher,
 		$controlsContainer: JQuery<HTMLDivElement>
 	) {
@@ -31,7 +31,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			"#add-collection-button"
 		);
 
-		this._soundButtonCollection = soundButtonCollection;
+		this._collectionStore = soundButtonCollection;
 
 		this.initTabContainerEvents();
 		this.initWindowEventsForTabOverflow();
@@ -45,7 +45,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 	}
 
 	private addTabsFromExistingCollections(): void {
-		this._soundButtonCollection.getAllCollections().forEach((collection) => {
+		this._collectionStore.getAllCollections().forEach((collection) => {
 			this.createTab(collection, collection.focused);
 		});
 	}
@@ -157,7 +157,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 
 		if (!collection) {
 			isNewCollection = true;
-			collection = this._soundButtonCollection.addNewCollection();
+			collection = this._collectionStore.addNewCollection();
 		}
 
 		let $tab = this.generateTabElement(collection.id, collection.name);
@@ -222,7 +222,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 	private checkForEmptyTabList(): void {
 		// TODO: use this method also when deleting is implemented
 
-		if (!this._soundButtonCollection.isEmpty) {
+		if (!this._collectionStore.isEmpty) {
 			return;
 		}
 

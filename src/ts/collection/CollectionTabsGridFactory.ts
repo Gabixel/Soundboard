@@ -1,3 +1,6 @@
+/**
+ * Logic for creating new grids from collections.
+ */
 abstract class CollectionTabsGridFactory {
 	private _gridDispatcher: GridDispatcher;
 

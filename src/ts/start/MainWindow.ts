@@ -18,7 +18,7 @@ abstract class MainWindow extends Main {
 	private static _buttonSwap: ButtonSwap;*/
 
 	// Collection and grid tabs
-	public static _soundButtonCollection: SoundButtonCollection;
+	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
 	private static _collectionTabs: CollectionTabs;
 
 	// Audio
@@ -43,13 +43,13 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
-		this._soundButtonCollection = new SoundButtonCollection();
+		this._soundButtonCollectionStore = new SoundButtonCollectionStore();
 
 		this.setupAudio();
 
 		this.setupSoundButtons();
 
-		this._soundButtonCollection.addExistingCollections([
+		this._soundButtonCollectionStore.addExistingCollections([
 			{
 				id: 0,
 				name: "cool name",
@@ -84,16 +84,16 @@ abstract class MainWindow extends Main {
 		]);
 
 		let collectionCache = new SoundButtonCollectionCache(
-			this._soundButtonCollection
+			this._soundButtonCollectionStore
 		).loadCache();
 
 		this.setupGrid();
 
 		Promise.all([collectionCache]).then(() => {
 			console.log("Cache finished loading");
-			console.log(this._soundButtonCollection.getAllCollections());
+			console.log(this._soundButtonCollectionStore.getAllCollections());
 			this._collectionTabs = new CollectionTabs(
-				this._soundButtonCollection,
+				this._soundButtonCollectionStore,
 				this._gridDispatcher,
 				$("#buttons-collections-controls")
 			);
@@ -132,8 +132,8 @@ abstract class MainWindow extends Main {
 
 	private static setupSoundButtons(): void {
 		this._soundButtonFactory = new SoundButtonFactory(
-			new GridSoundButtonIdGenerator(this._soundButtonCollection),
-			this._soundButtonCollection,
+			new GridSoundButtonIdGenerator(this._soundButtonCollectionStore),
+			this._soundButtonCollectionStore,
 			new SoundButtonSanitizer(MainWindow.DEFAULT_BUTTONDATA)
 		);
 
