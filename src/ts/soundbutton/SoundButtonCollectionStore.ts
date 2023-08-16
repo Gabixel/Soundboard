@@ -72,6 +72,12 @@ class SoundButtonCollectionStore {
 		collection.focused = true;
 	}
 
+	public setCollectionName(id: number, name: string): void {
+		let collection = this.getCollection(id);
+
+		collection.name = name;
+	}
+
 	public getAllCollections(): SoundButtonDataCollection[] {
 		return this._collections;
 	}

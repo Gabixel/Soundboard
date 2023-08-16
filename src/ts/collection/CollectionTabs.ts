@@ -160,12 +160,14 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			collection = this._collectionStore.addNewCollection();
 		}
 
-		let $tab = this.generateTabElement(collection.id, collection.name);
+		let collectionId = collection.id;
+
+		let $tab = this.generateTabElement(collectionId, collection.name);
 
 		this._$tabsContainer.append($tab);
 
 		Logger.logDebug(
-			`New tab created: "${collection.name}" (id: "${$tab[0].id}")`
+			`New tab created: "${collection.name}" (id: "${collectionId}")`
 		);
 
 		if (focusNewTab) {
@@ -178,7 +180,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			super.addGridFromCollection(collection, focusNewTab);
 		}
 
-		this.addDoubleClickEventToTab($tab);
+		this.addDoubleClickEventToTab($tab, collectionId);
 
 		this.updateTabListOverflow();
 	}
@@ -230,20 +232,20 @@ class CollectionTabs extends CollectionTabsGridFactory {
 		this.createTab(null, true);
 	}
 
-	private addDoubleClickEventToTab($tab: JQuery<HTMLButtonElement>): void {
+	private addDoubleClickEventToTab($tab: JQuery<HTMLButtonElement>, collectionId: number): void {
 		$tab.one("dblclick", () => {
-			this.showTabRenameInput($tab);
+			this.showTabRenameInput($tab, collectionId);
 		});
 	}
 
-	private showTabRenameInput($tab: JQuery<HTMLButtonElement>): void {
+	private showTabRenameInput($tab: JQuery<HTMLButtonElement>, collectionId: number): void {
 		let name = $tab.text();
 
 		let tabInnerWidth =
 			$tab.innerWidth() - +$tab.css("padding-left").replace("px", "") * 2;
 
 		let renameInput = this.generateTabRenameInput(name, tabInnerWidth);
-		this.addEventsToTabRenameInput($tab, renameInput);
+		this.addEventsToTabRenameInput($tab, renameInput, collectionId);
 
 		$tab.empty();
 		$tab.append(renameInput);
@@ -255,7 +257,8 @@ class CollectionTabs extends CollectionTabsGridFactory {
 
 	private addEventsToTabRenameInput(
 		$tab: JQuery<HTMLButtonElement>,
-		$renameInput: JQuery<HTMLInputElement>
+		$renameInput: JQuery<HTMLInputElement>,
+		collectionId: number
 	): void {
 		$renameInput.on("blur keydown", (e) => {
 			const isBlur = e.type == "blur";
@@ -273,10 +276,10 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			}
 
 			// This also removes the rename input
-			this.renameTab($tab, value, !isEscapeKey);
+			this.renameTab($tab, value, !isEscapeKey, collectionId);
 
 			// Re-add double click event
-			this.addDoubleClickEventToTab($tab);
+			this.addDoubleClickEventToTab($tab, collectionId);
 
 			this.updateTabListOverflow();
 		});
@@ -304,7 +307,8 @@ class CollectionTabs extends CollectionTabsGridFactory {
 	private renameTab(
 		$tab: JQuery<HTMLButtonElement>,
 		name: string,
-		shouldSave: boolean = true
+		shouldSave: boolean = true,
+		collectionId: number
 	): void {
 		this.setTabText($tab, name);
 
@@ -312,7 +316,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			return;
 		}
 
-		// TODO: rename actual collection data
+		this._collectionStore.setCollectionName(collectionId, name);
 	}
 
 	private setTabText($tab: JQuery<HTMLButtonElement>, text: string): void {
