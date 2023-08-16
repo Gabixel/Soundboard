@@ -12,6 +12,13 @@
 			"path": "cmd.exe",
 			"args": ["/K", "npm run tsc-all-w"],
 			"cwd": "${workspaceFolder}"
+		},
+		"Soundboard's TypeScript compiler (PowerShell)": {
+			"path": "powershell.exe",
+			"args": ["-NoLogo", "-NoExit", "-Command", "npm run tsc-all-w"],
+			"cwd": "${workspaceFolder}"
 		}
-	}
+	},
+
+	"terminal.integrated.defaultProfile.windows": "Soundboard's TypeScript compiler (PowerShell)"
 }
