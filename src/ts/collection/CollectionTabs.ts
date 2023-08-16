@@ -164,13 +164,13 @@ class CollectionTabs extends CollectionTabsGridFactory {
 
 		this._$tabsContainer.append($tab);
 
-		if (focusNewTab) {
-			this.focusTab(collection.id);
-		}
-
 		Logger.logDebug(
 			`New tab created: "${collection.name}" (id: "${$tab[0].id}")`
 		);
+
+		if (focusNewTab) {
+			this.focusTab(collection.id);
+		}
 
 		if (isNewCollection) {
 			super.addNewGrid(collection.id, focusNewTab);
