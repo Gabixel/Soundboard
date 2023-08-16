@@ -8,11 +8,13 @@ class SoundButtonDispatcher {
 	}
 
 	public createSoundButton(
-		index: number,
+		buttonId: number,
+		collectionId: number,
 		initialData?: SoundButtonData
 	): [SoundButtonElementJQuery, SoundButtonData] {
 		let [$button, data] = this._soundButtonFactory.createSoundButton(
-			index,
+			buttonId,
+			collectionId,
 			initialData
 		);
 

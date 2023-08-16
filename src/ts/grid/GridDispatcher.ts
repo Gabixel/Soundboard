@@ -130,8 +130,8 @@ class GridDispatcher {
 	): void {
 		buttonData.forEach((data) => {
 			let [$button] = this._soundButtonChild.createSoundButton(
-				gridId,
 				data.index,
+				gridId,
 				data
 			);
 
@@ -154,7 +154,7 @@ class GridDispatcher {
 				continue;
 			}
 
-			let [$button] = this._soundButtonChild.createSoundButton(gridId, buttonId);
+			let [$button] = this._soundButtonChild.createSoundButton(buttonId, gridId);
 
 			$grid.append($button);
 		}

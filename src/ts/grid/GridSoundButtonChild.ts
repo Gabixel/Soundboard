@@ -11,12 +11,13 @@ class GridSoundButtonChild {
 	}
 
 	public createSoundButton(
+		buttonId: number,
 		collectionId: number,
-		id: number,
 		initialData?: SoundButtonData
 	): [SoundButtonElementJQuery, SoundButtonData] {
 		let [$button, buttonData] = this._soundButtonDispatcher.createSoundButton(
-			id,
+			buttonId,
+			collectionId,
 			initialData
 		);
 

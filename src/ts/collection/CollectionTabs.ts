@@ -164,6 +164,10 @@ class CollectionTabs extends CollectionTabsGridFactory {
 
 		this._$tabsContainer.append($tab);
 
+		if (focusNewTab) {
+			this.focusTab(collection.id);
+		}
+
 		Logger.logDebug(
 			`New tab created: "${collection.name}" (id: "${$tab[0].id}")`
 		);
@@ -172,10 +176,6 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			super.addNewGrid(collection.id, focusNewTab);
 		} else {
 			super.addGridFromCollection(collection, focusNewTab);
-		}
-
-		if (focusNewTab) {
-			this.focusTab(collection.id);
 		}
 
 		this.addDoubleClickEventToTab($tab);
@@ -207,6 +207,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 
 		Logger.logDebug(`Focusing tab with index "${id}"`);
 
+		this._collectionStore.setActiveCollection(id);
 		this.activeTab.removeClass(this.TAB_ACTIVE_CLASS);
 		$focusingTab.addClass(this.TAB_ACTIVE_CLASS);
 

@@ -1,5 +1,5 @@
 interface ISoundButtonIdGenerator {
-	parseSoundButtonId(buttonId: number): string;
+	parseSoundButtonId(buttonId: number, collectionId: number): string;
 	getCompositeSoundButtonId(parsedButtonId: string): object & {
 		buttonId: number;
 	};

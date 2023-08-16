@@ -58,26 +58,34 @@ class SoundButtonCollectionStore {
 		)?.[0];
 
 		if (!collection) {
-			throw new ReferenceError("No collection is focused");
+			throw new ReferenceError("No collection is active (focused)");
 		}
 
 		return collection;
+	}
+
+	public setActiveCollection(id: number): void {
+		let collection = this.getCollection(id);
+
+		this._collections.forEach((collection) => (collection.focused = false));
+
+		collection.focused = true;
 	}
 
 	public getAllCollections(): SoundButtonDataCollection[] {
 		return this._collections;
 	}
 
-	public getButtonData(index: number, collectionId?: number): SoundButtonData {
+	public getButtonData(buttonId: number, collectionId?: number): SoundButtonData {
 		collectionId ??= this.getActiveCollection().id;
 
 		let collection = this.getCollection(collectionId);
 
-		let data = collection.buttonData.filter((data) => data.index == index)?.[0];
+		let data = collection.buttonData.filter((data) => data.index == buttonId)?.[0];
 
 		if (!data) {
 			throw new ReferenceError(
-				`Button data not found with index "${index}" in collection "${collectionId}"`
+				`Button data not found with index "${buttonId}" in collection "${collectionId}"`
 			);
 		}
 
