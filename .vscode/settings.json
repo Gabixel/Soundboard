@@ -19,6 +19,5 @@
 			"cwd": "${workspaceFolder}"
 		}
 	},
-
-	"terminal.integrated.defaultProfile.windows": "Soundboard's TypeScript compiler (PowerShell)"
+	"terminal.integrated.defaultProfile.windows": "Command Prompt"
 }
