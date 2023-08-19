@@ -10,7 +10,7 @@ class SoundButtonCollectionCache {
 		return new Promise<void>((resolve) => {
 			setTimeout(() => {
 				resolve();
-			}, 2000);
+			}, 200);
 		});
 	}
 }
