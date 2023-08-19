@@ -13,6 +13,10 @@ class GridResizer extends EventTarget {
 		return this.rows * this.columns;
 	}
 
+	public get previousSize(): number {
+		return this._rows.previousValue * this._columns.previousValue;
+	}
+
 	private get _isResizing(): boolean {
 		return this._rows.semaphore.isLocked || this._columns.semaphore.isLocked;
 	}
@@ -29,6 +33,7 @@ class GridResizer extends EventTarget {
 			name: "rows",
 			$input: $rowsInput.val(rowCount),
 			value: rowCount,
+			previousValue: 0,
 			semaphore: new Semaphore(),
 		};
 
@@ -36,6 +41,7 @@ class GridResizer extends EventTarget {
 			name: "columns",
 			$input: $columnsInput.val(columnCount),
 			value: columnCount,
+			previousValue: 0,
 			semaphore: new Semaphore(),
 		};
 

@@ -106,7 +106,7 @@ abstract class MainWindow extends Main {
 
 		this._gridDispatcher = new GridDispatcher(
 			this._gridResizer,
-			new GridSoundButtonChild(
+			new GridSoundButtonChildFactory(
 				this._soundButtonDispatcher,
 				this._soundButtonCollectionStore
 			),

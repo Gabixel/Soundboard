@@ -9,6 +9,7 @@ type GridAxis = {
 	name: "rows" | "columns";
 	$input: JQuery<HTMLInputElement>;
 	value: number;
+	previousValue: number;
 	semaphore: Semaphore;
 };
 
