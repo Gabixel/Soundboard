@@ -112,7 +112,6 @@ abstract class MainWindow extends Main {
 			this._gridSoundButtonIdGenerator,
 			new GridSoundButtonEvents(
 				this._audioPlayer,
-				this._soundButtonDispatcher,
 				this._soundButtonFactory,
 				this._gridSoundButtonChildFactory
 			),
