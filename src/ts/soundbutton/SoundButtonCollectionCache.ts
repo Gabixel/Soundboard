@@ -6,7 +6,7 @@ class SoundButtonCollectionCache {
 		this._collectionStore = collectionStore;
 	}
 
-	public loadCache(): Promise<void> {
+	public async loadCache(): Promise<void> {
 		return new Promise<void>((resolve) => {
 			setTimeout(() => {
 				resolve();
