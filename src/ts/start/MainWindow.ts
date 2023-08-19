@@ -120,8 +120,6 @@ abstract class MainWindow extends Main {
 		);
 
 		Promise.all([collectionCache]).then(() => {
-			console.log("Cache finished loading");
-			console.log(this._soundButtonCollectionStore.getAllCollections());
 			this._collectionTabs = new CollectionTabs(
 				this._soundButtonCollectionStore,
 				this._gridDispatcher,
