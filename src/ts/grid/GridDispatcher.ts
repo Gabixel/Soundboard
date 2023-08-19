@@ -47,7 +47,9 @@ class GridDispatcher {
 			.on("resize", (_e) => {
 				// TODO: update grids size on active tab change instead of a single call for all grids
 				this.updateAllGridsSize();
-				console.log("resizing grids");
+				Logger.logDebug(
+					`Grids resized to ${this._gridResizer.size} buttons (${this._gridResizer.rows}×${this._gridResizer.columns})`
+				);
 			})
 			.trigger("resize");
 	}
