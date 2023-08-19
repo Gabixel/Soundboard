@@ -25,9 +25,8 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 				$(e.target).children(".button-theme").text()
 			);
 
-			const { path, volume, time } = this._soundButtonFactory.getButtonDataByParsedId(
-				$(e.target).attr("id")
-			);
+			const { path, volume, time } =
+				this._soundButtonFactory.getButtonDataByParsedId($(e.target).attr("id"));
 
 			const options: AudioSourceOptions = {
 				src: path,
@@ -57,9 +56,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 		});
 	}
 
-	private addSwap(_$grids_container: JQuery<HTMLElement>) {
-		// TODO
-	}
+	private addSwap(_$grids_container: JQuery<HTMLElement>) {}
 
 	private addDragAndDropEvents(_$grids_container: JQuery<HTMLElement>) {
 		// TODO
