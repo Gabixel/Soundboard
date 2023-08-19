@@ -12,7 +12,15 @@ class GridSoundButtonSwap {
 		childClass: string
 	) {
 		this._soundButtonDispatcher = soundButtonDispatcher;
-		
+
+		this.initMouseDownEvent($parent, childClass);
+	}
+
+	public cancelSwap(): void {
+		// TODO
+	}
+
+	private initMouseDownEvent($parent: JQuery<HTMLElement>, childClass: string) {
 		$parent.on("mousedown", `.${childClass}`, (e) => {
 			e.stopPropagation();
 			const isLeftClick = e.button === 0;

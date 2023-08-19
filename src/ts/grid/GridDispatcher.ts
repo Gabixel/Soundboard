@@ -8,7 +8,7 @@ class GridDispatcher {
 	private _gridResizer: GridResizer;
 
 	private _soundButtonChild: GridSoundButtonChildFactory;
-	private _soundButtonEvents: GridSoundButtonEvents;
+	private _gridSoundButtonEvents: GridSoundButtonEvents;
 	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
 
 	private _collectionStore: SoundButtonCollectionStore;
@@ -59,9 +59,9 @@ class GridDispatcher {
 	private setupSoundButtonEvents(
 		soundButtonEvents: GridSoundButtonEvents
 	): void {
-		this._soundButtonEvents = soundButtonEvents;
+		this._gridSoundButtonEvents = soundButtonEvents;
 
-		this._soundButtonEvents.addEvents(this._$gridsContainer);
+		this._gridSoundButtonEvents.addEvents(this._$gridsContainer);
 	}
 
 	private setupGridResize(gridResizer: GridResizer): void {
@@ -99,7 +99,7 @@ class GridDispatcher {
 
 	public focusGrid(id: number): void {
 		// Cancel possible button dragging
-		// TODO: cancelSwap()
+		this._gridSoundButtonEvents.cancelSwap()
 
 		let $focusingGrid = this.getGrid(id);
 

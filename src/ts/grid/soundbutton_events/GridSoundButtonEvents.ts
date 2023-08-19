@@ -21,6 +21,10 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 		this.addSwap($grids_container);
 	}
 
+	public cancelSwap(): void {
+		this._soundButtonSwap.cancelSwap();
+	}
+
 	private addClickEvent($grids_container: JQuery<HTMLElement>) {
 		// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
 
