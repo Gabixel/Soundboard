@@ -78,7 +78,7 @@ const scripts = [
 
 	"grid/GridSoundButtonIdGenerator",
 	"grid/GridSoundButtonEvents",
-	"grid/GridSoundButtonChild",
+	"grid/GridSoundButtonChildFactory",
 	"grid/GridResizer",
 	"grid/GridDispatcher",
 
