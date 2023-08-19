@@ -37,10 +37,8 @@ class GridSoundButtonSwap {
 	}
 
 	private resetDragData(): void {
-		this._dragState = "idle";
-
 		this._dragData = {
-			$draggedButton: null,
+			$draggedButton: this._dragData?.$draggedButton,
 			$destinationButton: null,
 			dragDelay: 0,
 			dragStartAxis: {
@@ -50,14 +48,17 @@ class GridSoundButtonSwap {
 		};
 
 		this.setDraggingButtonOffset(null);
+		this.setDraggingClasses(false);
+
+		this._dragData.$draggedButton = null;
+
+		this._dragState = "idle";
 	}
 
 	private dragUpdate(e: any): void {
 		if (this._dragState == "preparing") {
-			console.log("dragUpdate > updatePreparing");
 			this.updatePreparing(e);
 		} else if (this._dragState == "dragging") {
-			console.log("dragUpdate > updateDragging");
 			this.updateDragging(e);
 		}
 	}
@@ -71,6 +72,8 @@ class GridSoundButtonSwap {
 		if (delay <= GridSoundButtonSwap.DRAG_DELAY) {
 			return;
 		}
+
+		this.setDraggingClasses(true);
 
 		this._dragState = "dragging";
 	}
@@ -101,8 +104,6 @@ class GridSoundButtonSwap {
 					return;
 				}
 
-				console.log("preparing with mousedown");
-
 				this._dragData.$draggedButton = $(e.target);
 				this._dragData.dragStartAxis = {
 					x: e.pageX,
@@ -124,9 +125,11 @@ class GridSoundButtonSwap {
 				this.resetDragData();
 			});
 
-		this.on("mousemove", (e) => {
+		this._$parent.on("mousemove", (e) => {
 			this.dragUpdate(e);
-		}).on("mouseenter", (e) => {
+		});
+
+		this.onButton("mouseenter", (e) => {
 			if (this._dragState != "dragging") {
 				return;
 			}
@@ -138,6 +141,10 @@ class GridSoundButtonSwap {
 				.removeClass("drop-destination")
 				.removeClass("hovered");
 			$(e.target).addClass("drop-destination").addClass("hovered");
+		}).onButton("mouseleave", (e) => {
+			$(e.target).removeClass("drop-destination").removeClass("hovered");
+		}).onButton("mouseup", (e) => {
+			this._dragData.$destinationButton = $(e.target);
 		});
 	}
 
@@ -146,27 +153,36 @@ class GridSoundButtonSwap {
 			return;
 		}
 
-		console.log("trySwap");
+		if (!this._dragData.$draggedButton || !this._dragData.$destinationButton) {
+			return;
+		}
+
+		this._gridSoundButtonChildFactory.swapSoundButtons(
+			this._dragData.$draggedButton,
+			this._dragData.$destinationButton
+		);
 	}
 
 	private setDraggingButtonOffset(
 		offset: { x: number; y: number } | null
 	): void {
-		if (!this._dragData.$draggedButton) {
-			return;
-		}
-
 		if (!offset) {
-			this._dragData.$draggedButton.css("transform", "");
+			this._dragData.$draggedButton?.css("transform", "");
 		} else {
-			this._dragData.$draggedButton.css(
+			this._dragData.$draggedButton?.css(
 				"transform",
 				`translate(${offset.x}px, ${offset.y}px)`
 			);
 		}
 	}
 
-	private on<TType extends string>(
+	private setDraggingClasses(set: boolean): void {
+		this._dragData.$draggedButton?.toggleClass("dragging", set);
+
+		this._$parent.toggleClass("has-dragging-child", set);
+	}
+
+	private onButton<TType extends string>(
 		events: TType,
 		handler:
 			| JQuery.TypeEventHandler<HTMLElement, undefined, any, any, TType>

@@ -121,6 +121,8 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		$button1.css(SoundButtonDispatcher.INDEX_CSS_VAR, button2Index.buttonId);
 		$button2.css(SoundButtonDispatcher.INDEX_CSS_VAR, button1Index.buttonId);
 
+		UserInterface.swapElements($button1, $button2);
+
 		return {
 			collectionId: button1Index.collectionId,
 			dataId1: button1Index.buttonId,
