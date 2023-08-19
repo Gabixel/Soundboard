@@ -88,8 +88,8 @@ const scripts = [
 	"control/UiScale",
 	"control/ToolbarManager",
 
-	"collection/CollectionTabsGridFactory",
-	"collection/CollectionTabs",
+	"collection_tab/CollectionTabsGridFactory",
+	"collection_tab/CollectionTabs",
 
 	"audio/AudioSource",
 	"audio/AudioCouple",
