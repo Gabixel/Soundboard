@@ -98,9 +98,6 @@ class GridSoundButtonSwap {
 					return;
 				}
 
-				console.log(e.target);
-				
-
 				e.stopPropagation();
 
 				if (!EventFunctions.isLeftClick(e)) {

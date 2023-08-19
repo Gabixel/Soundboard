@@ -58,7 +58,7 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 				}
 
 				// No extra keys involved
-				if (!EventFunctions.isSubmitKey(e) && !EventFunctions.isSubmitKey(e)) {
+				if (!EventFunctions.isLeftClick(e) && !EventFunctions.isSubmitKey(e)) {
 					return;
 				}
 
