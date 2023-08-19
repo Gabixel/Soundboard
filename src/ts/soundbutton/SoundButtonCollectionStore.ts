@@ -110,6 +110,16 @@ class SoundButtonCollectionStore {
 		collection.buttonData.push(data);
 	}
 
+	public swapButtonData(collectionId: number, dataId1: number, dataId2: number): void {
+		let collection = this.getCollection(collectionId);
+
+		let data1 = this.getButtonData(dataId1, collectionId);
+		let data2 = this.getButtonData(dataId2, collectionId);
+
+		data1.index = dataId2;
+		data2.index = dataId1;
+	}
+
 	public changeName(id: number, name: string): void {
 		let collection = this.getCollection(id);
 

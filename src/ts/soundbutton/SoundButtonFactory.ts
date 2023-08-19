@@ -1,6 +1,4 @@
 class SoundButtonFactory implements ISoundButtonFactory {
-
-
 	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	private _idGenerator: ISoundButtonIdGenerator;
@@ -84,6 +82,50 @@ class SoundButtonFactory implements ISoundButtonFactory {
 				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
 			)
 		);
+	}
+
+	/**
+	 * @returns The collection id.
+	 */
+	public swapElements(
+		$button1: SoundButtonElementJQuery,
+		$button2: SoundButtonElementJQuery
+	): {
+		collectionId: number;
+		dataId1: number;
+		dataId2: number;
+	} {
+		let button1Index = this._idGenerator.getCompositeSoundButtonId(
+			$button1.attr("id")
+		);
+
+		let button2Index = this._idGenerator.getCompositeSoundButtonId(
+			$button2.attr("id")
+		);
+
+		$button1.attr(
+			"id",
+			this._idGenerator.parseSoundButtonId(
+				button2Index.buttonId,
+				button2Index.collectionId
+			)
+		);
+		$button2.attr(
+			"id",
+			this._idGenerator.parseSoundButtonId(
+				button1Index.buttonId,
+				button1Index.collectionId
+			)
+		);
+
+		$button1.css(SoundButtonDispatcher.INDEX_CSS_VAR, button2Index.buttonId);
+		$button2.css(SoundButtonDispatcher.INDEX_CSS_VAR, button1Index.buttonId);
+
+		return {
+			collectionId: button1Index.collectionId,
+			dataId1: button1Index.buttonId,
+			dataId2: button2Index.buttonId,
+		};
 	}
 
 	private generateSoundButtonElement(index: number): SoundButtonElementJQuery {

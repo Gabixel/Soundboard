@@ -15,8 +15,8 @@ class GridSoundButtonIdGenerator implements ISoundButtonIdGenerator {
 	}
 
 	public getCompositeSoundButtonId(parsedButtonId: string): {
-		collectionId: number;
 		buttonId: number;
+		collectionId: number;
 	} {
 		let [collectionId, buttonId] = parsedButtonId
 			.replace(GridSoundButtonIdGenerator.SOUNDBUTTON_ID_PREFIX, "")

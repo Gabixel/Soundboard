@@ -36,4 +36,26 @@ class SoundButtonDispatcher {
 			return aIndex - bIndex;
 		});
 	}
+
+	public updateSoundButtonData($button: SoundButtonElementJQuery, buttonId: number, data: SoundButtonData) {
+		// TODO
+		// this._soundButtonFactory.updateElementData()
+	}
+
+	public swapSoundButtons(
+		$button1: SoundButtonElementJQuery,
+		$button2: SoundButtonElementJQuery
+	): {
+		collectionId: number,
+		dataId1: number,
+		dataId2: number
+	} {
+		let swapData = this._soundButtonFactory.swapElements($button1, $button2);
+
+		 return {
+			collectionId: swapData.collectionId,
+			dataId1: swapData.dataId1,
+			dataId2: swapData.dataId2
+		};
+	}
 }
