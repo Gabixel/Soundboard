@@ -64,41 +64,6 @@ abstract class MainWindow extends Main {
 			this._soundButtonFactory
 		);
 
-		// FIXME: import/export collections
-		/*this._soundButtonCollectionStore.addExistingCollections([
-			{
-				id: 0,
-				name: "cool name",
-				isCached: true,
-				buttonData: [
-					{
-						index: 0,
-						isEdited: true,
-						title: "test",
-						volume: 1,
-						color: { h: 0, s: 0, l: 80 },
-						path: await this._soundButtonFactory.getRandomAudioPath(),
-					},
-					{
-						index: 1,
-						isEdited: true,
-						title: "sium",
-						volume: 1,
-						color: { h: 0, s: 0, l: 80 },
-						path: await this._soundButtonFactory.getRandomAudioPath(),
-					},
-				],
-				focused: true,
-			},
-			{
-				id: 1,
-				name: "another cool name",
-				isCached: true,
-				buttonData: [],
-				focused: false,
-			},
-		]);*/
-
 		this._gridResizer = new GridResizer($("#grid-rows"), $("#grid-columns"));
 
 		this._gridSoundButtonChildFactory = new GridSoundButtonChildFactory(
