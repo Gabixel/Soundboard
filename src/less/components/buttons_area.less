@@ -70,7 +70,7 @@
 			margin: 0;
 			padding: (@margin + 1) @button-inner-gap (@margin - 1);
 			.set-radius(@main-radius @main-radius 0 0);
-			
+
 			// height: calc(1em + (@margin * 2));
 			height: 1em;
 
@@ -160,6 +160,13 @@
 		.set-radius(@main-radius);
 		.hide-overflow();
 
+		&.has-dragging-child {
+			&,
+			& .soundbutton {
+				cursor: grabbing;
+			}
+		}
+
 		.buttons-grid {
 			position: absolute;
 			top: 0;
@@ -178,13 +185,6 @@
 
 			grid-template-rows: repeat(var(--rows), 1fr);
 			grid-template-columns: repeat(var(--columns), 1fr);
-
-			&.has-dragging-child {
-				&,
-				& .soundbutton {
-					cursor: grabbing;
-				}
-			}
 		}
 	}
 }
