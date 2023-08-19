@@ -37,7 +37,7 @@ class SoundButtonDispatcher {
 		});
 	}
 
-	public updateSoundButtonData($button: SoundButtonElementJQuery, buttonId: number, data: SoundButtonData) {
+	public updateSoundButtonData(_$button: SoundButtonElementJQuery, _buttonId: number, _data: SoundButtonData) {
 		// TODO
 		// this._soundButtonFactory.updateElementData()
 	}
