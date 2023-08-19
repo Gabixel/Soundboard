@@ -2,17 +2,20 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	private _audioPlayer: TAudioPlayer;
 	private _soundButtonDispatcher: SoundButtonDispatcher;
 	private _soundButtonFactory: SoundButtonFactory;
+	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
 
 	private _soundButtonSwap: GridSoundButtonSwap;
 
 	constructor(
 		audioPlayer: TAudioPlayer,
 		soundButtonDispatcher: SoundButtonDispatcher,
-		soundButtonFactory: SoundButtonFactory
+		soundButtonFactory: SoundButtonFactory,
+		gridSoundButtonChildFactory: GridSoundButtonChildFactory
 	) {
 		this._audioPlayer = audioPlayer;
 		this._soundButtonDispatcher = soundButtonDispatcher;
 		this._soundButtonFactory = soundButtonFactory;
+		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 	}
 
 	public addEvents($grids_container: JQuery<HTMLElement>): void {
@@ -75,7 +78,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 
 	private addSwap($grids_container: JQuery<HTMLElement>) {
 		this._soundButtonSwap = new GridSoundButtonSwap(
-			this._soundButtonDispatcher,
+			this._gridSoundButtonChildFactory,
 			$grids_container
 		);
 	}

@@ -11,6 +11,7 @@ abstract class MainWindow extends Main {
 	// Grid
 	private static _gridResizer: GridResizer;
 	private static _gridSoundButtonIdGenerator: GridSoundButtonIdGenerator;
+	private static _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
 
 	// Collection and grid tabs
 	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
@@ -100,17 +101,20 @@ abstract class MainWindow extends Main {
 
 		this._gridResizer = new GridResizer($("#grid-rows"), $("#grid-columns"));
 
+		this._gridSoundButtonChildFactory = new GridSoundButtonChildFactory(
+			this._soundButtonDispatcher,
+			this._soundButtonCollectionStore
+		);
+
 		this._gridDispatcher = new GridDispatcher(
 			this._gridResizer,
-			new GridSoundButtonChildFactory(
-				this._soundButtonDispatcher,
-				this._soundButtonCollectionStore
-			),
+			this._gridSoundButtonChildFactory,
 			this._gridSoundButtonIdGenerator,
 			new GridSoundButtonEvents(
 				this._audioPlayer,
 				this._soundButtonDispatcher,
-				this._soundButtonFactory
+				this._soundButtonFactory,
+				this._gridSoundButtonChildFactory
 			),
 			this._soundButtonCollectionStore,
 			$("#buttons-grids") as GridElementJQuery
