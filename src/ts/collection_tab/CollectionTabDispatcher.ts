@@ -1,7 +1,7 @@
 /**
  * The collection tab manager.
  */
-class CollectionTabs extends CollectionTabsGridFactory {
+class CollectionTabDispatcher extends CollectionTabGridFactory {
 	private TAB_ID_PREFIX: Readonly<string> = "button-collection-tab-";
 	private TAB_CLASS: Readonly<string> = "tab-button";
 	private TAB_ACTIVE_CLASS: Readonly<string> = "active";

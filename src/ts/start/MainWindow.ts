@@ -15,7 +15,7 @@ abstract class MainWindow extends Main {
 
 	// Collection and grid tabs
 	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
-	private static _collectionTabs: CollectionTabs;
+	private static _collectionTabs: CollectionTabDispatcher;
 
 	// Audio
 	private static _audioPlayer: AudioPlayer;
@@ -85,7 +85,7 @@ abstract class MainWindow extends Main {
 		);
 
 		Promise.all([collectionCache]).then(() => {
-			this._collectionTabs = new CollectionTabs(
+			this._collectionTabs = new CollectionTabDispatcher(
 				this._soundButtonCollectionStore,
 				this._gridDispatcher,
 				$("#buttons-collections-controls")

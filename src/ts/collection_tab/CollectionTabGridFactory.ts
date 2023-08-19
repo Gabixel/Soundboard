@@ -1,7 +1,7 @@
 /**
  * Logic for creating new grids from collections.
  */
-abstract class CollectionTabsGridFactory {
+abstract class CollectionTabGridFactory {
 	private _gridDispatcher: GridDispatcher;
 
 	constructor(gridDispatcher: GridDispatcher) {
