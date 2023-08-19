@@ -4,7 +4,7 @@ abstract class MainWindow extends Main {
 
 	// Sound Buttons
 	private static _soundButtonFactory: SoundButtonFactory;
-	private static _soundButtonEvents: GridSoundButtonEvents;
+	private static _gridSoundButtonEvents: GridSoundButtonEvents;
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
 	private static _soundButtonSanitizer: SoundButtonSanitizer;
 
@@ -53,15 +53,11 @@ abstract class MainWindow extends Main {
 		let collectionCache = new SoundButtonCollectionCache(
 			this._soundButtonCollectionStore
 		).loadCache();
-		
+
 		this._soundButtonFactory = new SoundButtonFactory(
 			this._gridSoundButtonIdGenerator,
 			this._soundButtonCollectionStore,
 			this._soundButtonSanitizer
-		);
-		this._soundButtonEvents = new GridSoundButtonEvents(
-			this._audioPlayer,
-			this._soundButtonFactory
 		);
 		this._soundButtonDispatcher = new SoundButtonDispatcher(
 			this._soundButtonFactory
@@ -111,7 +107,11 @@ abstract class MainWindow extends Main {
 				this._soundButtonCollectionStore
 			),
 			this._gridSoundButtonIdGenerator,
-			this._soundButtonEvents,
+			new GridSoundButtonEvents(
+				this._audioPlayer,
+				this._soundButtonDispatcher,
+				this._soundButtonFactory
+			),
 			this._soundButtonCollectionStore,
 			$("#buttons-grids") as GridElementJQuery
 		);
