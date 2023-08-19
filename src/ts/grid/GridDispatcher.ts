@@ -13,13 +13,13 @@ class GridDispatcher {
 
 	private _collectionStore: SoundButtonCollectionStore;
 
-	private get $grids(): GridElementJQuery {
+	private get _$grids(): GridElementJQuery {
 		return this._$gridsContainer.find<GridElement>(
 			`>.${GridDispatcher.GRID_CLASS}`
 		);
 	}
 
-	private get $activeGrid(): GridElementJQuery {
+	private get _$activeGrid(): GridElementJQuery {
 		return this._$gridsContainer.find<GridElement>(
 			`>.${GridDispatcher.GRID_CLASS}.${GridDispatcher.GRID_ACTIVE_CLASS}`
 		);
@@ -109,7 +109,7 @@ class GridDispatcher {
 
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		this.$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
 		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
 	}
 
@@ -203,7 +203,7 @@ class GridDispatcher {
 	}
 
 	private updateAllGridsButtonsVisibility(): void {
-		this.$grids.each((_i, grid) => {
+		this._$grids.each((_i, grid) => {
 			this.updateGridButtonsVisibility($(grid) as GridElementJQuery);
 		});
 	}
@@ -217,7 +217,7 @@ class GridDispatcher {
 	}
 
 	private updateAllGridsButtonsAmount(): void {
-		this.$grids.each((_i, grid) => {
+		this._$grids.each((_i, grid) => {
 			this.updateGridButtonsAmount($(grid) as GridElementJQuery);
 		});
 	}
