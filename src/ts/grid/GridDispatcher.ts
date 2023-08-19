@@ -98,7 +98,7 @@ class GridDispatcher {
 	}
 
 	public focusGrid(id: number): void {
-		// Cancel possible button dragging
+		// Cancel possible button swap/drag
 		this._gridSoundButtonEvents.cancelSwap()
 
 		let $focusingGrid = this.getGrid(id);

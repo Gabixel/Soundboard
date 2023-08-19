@@ -76,8 +76,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	private addSwap($grids_container: JQuery<HTMLElement>) {
 		this._soundButtonSwap = new GridSoundButtonSwap(
 			this._soundButtonDispatcher,
-			$grids_container,
-			SoundButtonDispatcher.SOUNDBUTTON_CLASS
+			$grids_container
 		);
 	}
 

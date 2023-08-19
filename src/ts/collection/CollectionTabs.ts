@@ -57,15 +57,12 @@ class CollectionTabs extends CollectionTabsGridFactory {
 					return;
 				}
 
-				const isEnterKey = e.key === "Enter" || e.key === " ";
-				const isLeftMouse = e.button === 0;
-
 				// No extra keys involved
-				if (!isEnterKey && !isLeftMouse) {
+				if (!EventFunctions.isSubmitKey(e) && !EventFunctions.isSubmitKey(e)) {
 					return;
 				}
 
-				this._isAddCollectionButtonHeld = isEnterKey;
+				this._isAddCollectionButtonHeld = EventFunctions.isSubmitKey(e);
 
 				let focusNewTab = !e.shiftKey;
 
@@ -232,13 +229,19 @@ class CollectionTabs extends CollectionTabsGridFactory {
 		this.createTab(null, true);
 	}
 
-	private addDoubleClickEventToTab($tab: JQuery<HTMLButtonElement>, collectionId: number): void {
+	private addDoubleClickEventToTab(
+		$tab: JQuery<HTMLButtonElement>,
+		collectionId: number
+	): void {
 		$tab.one("dblclick", () => {
 			this.showTabRenameInput($tab, collectionId);
 		});
 	}
 
-	private showTabRenameInput($tab: JQuery<HTMLButtonElement>, collectionId: number): void {
+	private showTabRenameInput(
+		$tab: JQuery<HTMLButtonElement>,
+		collectionId: number
+	): void {
 		let name = $tab.text();
 
 		let tabInnerWidth =

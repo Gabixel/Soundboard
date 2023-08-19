@@ -70,6 +70,14 @@ abstract class EventFunctions {
 		else return newValue;
 	}
 
+	public static isLeftClick(e: JQuery.Event): boolean {
+		return e?.button === 0;
+	}
+
+	public static isSubmitKey(e: JQuery.Event): boolean {
+		return e?.key === "Enter" || e?.key === " ";
+	}
+
 	private static getDeltaY(e: WheelEvent | JQuery.TriggeredEvent) {
 		return Math.round(
 			-((e as JQuery.TriggeredEvent).originalEvent != null
