@@ -1,4 +1,6 @@
 class SoundButtonFactory implements ISoundButtonFactory {
+
+
 	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	private _idGenerator: ISoundButtonIdGenerator;
@@ -87,8 +89,8 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	private generateSoundButtonElement(index: number): SoundButtonElementJQuery {
 		let $button = $<SoundButtonElement>("<button>", {
 			type: "button",
-			class: "soundbutton",
-			style: `--index: ${index};`,
+			class: SoundButtonDispatcher.SOUNDBUTTON_CLASS,
+			style: `${SoundButtonDispatcher.INDEX_CSS_VAR}: ${index};`,
 		}).append(
 			$("<div>", {
 				class: "button-theme",

@@ -1,7 +1,7 @@
 class GridDispatcher {
-	private GRID_ID_PREFIX: Readonly<string> = "buttons-grid-";
-	private GRID_CLASS: Readonly<string> = "buttons-grid";
-	private GRID_ACTIVE_CLASS: Readonly<string> = "active";
+	private static readonly GRID_ID_PREFIX: string = "buttons-grid-";
+	private static readonly GRID_CLASS: string = "buttons-grid";
+	private static readonly GRID_ACTIVE_CLASS: string = "active";
 
 	private _$gridsContainer: GridElementJQuery;
 
@@ -9,22 +9,24 @@ class GridDispatcher {
 
 	private _soundButtonChild: GridSoundButtonChild;
 	private _soundButtonEvents: GridSoundButtonEvents;
+	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
 
 	private _collectionStore: SoundButtonCollectionStore;
 
 	constructor(
 		gridResizer: GridResizer,
 		soundButtonChild: GridSoundButtonChild,
+		soundButtonIdGenerator: ISoundButtonIdGenerator,
 		soundButtonEvents: GridSoundButtonEvents,
 		collectionStore: SoundButtonCollectionStore,
 		$gridsContainer: GridElementJQuery
 	) {
-		this._soundButtonChild = soundButtonChild;
-
 		this._$gridsContainer = $gridsContainer;
 
-		this._collectionStore = collectionStore;
+		this._soundButtonChild = soundButtonChild;
 
+		this._collectionStore = collectionStore;
+		this._soundButtonIdGenerator = soundButtonIdGenerator;
 		this.setupSoundButtonEvents(soundButtonEvents);
 
 		this.setupGridResize(gridResizer);
@@ -43,7 +45,8 @@ class GridDispatcher {
 
 		$(this._gridResizer)
 			.on("resize", (_e) => {
-				this.updateGridSize();
+				// TODO: update grids size on active tab change instead of a single call for all grids
+				this.updateAllGridsSize();
 				console.log("resizing grids");
 			})
 			.trigger("resize");
@@ -70,7 +73,7 @@ class GridDispatcher {
 
 	public focusGrid(id: number): void {
 		// Cancel possible button dragging
-		// TODO: _soundButtonChild.cancelSwap()
+		// TODO: cancelSwap()
 
 		let $focusingGrid = this.getGrid(id);
 
@@ -80,19 +83,19 @@ class GridDispatcher {
 
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		this.activeGrid.removeClass(this.GRID_ACTIVE_CLASS);
-		$focusingGrid.addClass(this.GRID_ACTIVE_CLASS);
+		this.activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
 	}
 
 	private get activeGrid(): GridElementJQuery {
 		return this._$gridsContainer.find<HTMLDivElement>(
-			`>.${this.GRID_CLASS}.${this.GRID_ACTIVE_CLASS}`
+			`>.${GridDispatcher.GRID_CLASS}.${GridDispatcher.GRID_ACTIVE_CLASS}`
 		);
 	}
 
 	private getGrid(id: number): GridElementJQuery {
 		return this._$gridsContainer.find<HTMLDivElement>(
-			`>#${this.GRID_ID_PREFIX}${id}`
+			`>#${GridDispatcher.GRID_ID_PREFIX}${id}`
 		);
 	}
 
@@ -119,6 +122,8 @@ class GridDispatcher {
 			.buttonData.map((data) => data.index);
 
 		this.addMissingButtonsToGrid($grid, id, existingButtonsId);
+
+		this.updateGridButtonsVisibility($grid);
 
 		this._$gridsContainer.append($grid);
 	}
@@ -162,20 +167,53 @@ class GridDispatcher {
 
 	private generateGridElement(id: number): GridElementJQuery {
 		let $grid = $<GridElement>("<div>", {
-			id: this.GRID_ID_PREFIX + id,
-			class: this.GRID_CLASS,
+			id: GridDispatcher.GRID_ID_PREFIX + id,
+			class: GridDispatcher.GRID_CLASS,
 		});
 
 		return $grid;
 	}
 
-	private updateGridSize(): void {
-		this.updateSoundButtonAmount();
-
+	private updateAllGridsSize(): void {
 		this._$gridsContainer
 			.css("--rows", this._gridResizer.rows)
 			.css("--columns", this._gridResizer.columns);
+
+		this.updateAllGridsButtonsVisibility();
 	}
 
-	private updateSoundButtonAmount(): void {}
+	private updateAllGridsButtonsVisibility(): void {
+		this._$gridsContainer
+			.find(`>.${GridDispatcher.GRID_CLASS}`)
+			.each((_i, grid) => {
+				this.updateGridButtonsVisibility($(grid) as GridElementJQuery);
+			});
+	}
+
+	private updateGridButtonsVisibility($grid: GridElementJQuery): void {
+		let buttons = this.getSortedButtons($grid);
+		$(buttons).removeClass("hidden");
+
+		let overflowingButtons = buttons.slice(this._gridResizer.size);
+		$(overflowingButtons).addClass("hidden");
+	}
+
+	// // Deprecated
+	// private _updateButtonVisibility($button: SoundButtonElementJQuery): void {
+	// 	$button.toggleClass("hidden", this.isButtonOutOfRange($button));
+	// }
+
+	// private isButtonOutOfRange($button: SoundButtonElementJQuery): boolean {
+	// 	let { buttonId } = this._soundButtonIdGenerator.getCompositeSoundButtonId(
+	// 		$button[0].id
+	// 	);
+
+	// 	return buttonId < this._gridResizer.size;
+	// }
+
+	private getSortedButtons(
+		$grid: GridElementJQuery
+	): SoundButtonElementJQuery[] {
+		return this._soundButtonChild.getSortedSoundButtonElements($grid);
+	}
 }

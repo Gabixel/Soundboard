@@ -1,4 +1,7 @@
 class SoundButtonDispatcher {
+	public static readonly SOUNDBUTTON_CLASS: string = "soundbutton";
+	public static readonly INDEX_CSS_VAR: string = "--index";
+
 	private _soundButtonFactory: SoundButtonFactory;
 
 	constructor(

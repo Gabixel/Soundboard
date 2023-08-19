@@ -110,9 +110,10 @@ abstract class MainWindow extends Main {
 				this._soundButtonDispatcher,
 				this._soundButtonCollectionStore
 			),
+			this._gridSoundButtonIdGenerator,
 			this._soundButtonEvents,
 			this._soundButtonCollectionStore,
-			$("#buttons-grids")
+			$("#buttons-grids") as GridElementJQuery
 		);
 
 		Promise.all([collectionCache]).then(() => {

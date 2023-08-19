@@ -9,6 +9,10 @@ class GridResizer extends EventTarget {
 		return this._columns.value;
 	}
 
+	public get size(): number {
+		return this.rows * this.columns;
+	}
+
 	private get _isResizing(): boolean {
 		return this._rows.semaphore.isLocked || this._columns.semaphore.isLocked;
 	}

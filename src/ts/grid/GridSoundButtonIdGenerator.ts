@@ -1,5 +1,5 @@
 class GridSoundButtonIdGenerator implements ISoundButtonIdGenerator {
-	private SOUNDBUTTON_ID_PREFIX = "soundbutton-";
+	private static readonly SOUNDBUTTON_ID_PREFIX: string = "soundbutton-";
 
 	private _soundButtonCollection: SoundButtonCollectionStore;
 
@@ -11,7 +11,7 @@ class GridSoundButtonIdGenerator implements ISoundButtonIdGenerator {
 		buttonId: number,
 		collectionId: number
 	): string {
-		return `${this.SOUNDBUTTON_ID_PREFIX}${collectionId}-${buttonId}`;
+		return `${GridSoundButtonIdGenerator.SOUNDBUTTON_ID_PREFIX}${collectionId}-${buttonId}`;
 	}
 
 	public getCompositeSoundButtonId(parsedButtonId: string): {
@@ -19,7 +19,7 @@ class GridSoundButtonIdGenerator implements ISoundButtonIdGenerator {
 		buttonId: number;
 	} {
 		let [collectionId, buttonId] = parsedButtonId
-			.replace(this.SOUNDBUTTON_ID_PREFIX, "")
+			.replace(GridSoundButtonIdGenerator.SOUNDBUTTON_ID_PREFIX, "")
 			.split("-")
 			.map((id) => parseInt(id));
 
