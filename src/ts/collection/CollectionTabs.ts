@@ -119,7 +119,7 @@ class CollectionTabs extends CollectionTabsGridFactory {
 			"click",
 			`>.${this.TAB_CLASS}:not(.${this.TAB_ACTIVE_CLASS})`,
 			(e) => {
-				if (!$(e.target).is("." + this.TAB_CLASS)) {
+				if (!$(e.target).is(`.${this.TAB_CLASS}`)) {
 					return;
 				}
 
