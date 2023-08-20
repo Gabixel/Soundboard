@@ -56,7 +56,7 @@ class EditorForm {
 							"%"
 						})`
 					)
-					// It's just a placeholder
+					// The initial value is just a placeholder
 					.removeProp("value")
 			)
 			// Volume
