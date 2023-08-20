@@ -20,14 +20,15 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 		this.addClickEvent($gridsContainer);
 		this.addContextMenuEvent($gridsContainer);
 		this.addSwap($gridsContainer);
+		this.addDragAndDropEvent($gridsContainer);
 	}
 
 	public cancelSwap(): void {
 		this._gridSoundButtonSwap.cancelSwap();
 	}
 
-	private addClickEvent($grids_container: JQuery<HTMLElement>) {
-		$grids_container.on(
+	private addClickEvent($gridsContainer: JQuery<HTMLElement>) {
+		$gridsContainer.on(
 			"click",
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
 			(e) => {
@@ -53,13 +54,13 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 		);
 	}
 
-	private addContextMenuEvent($grids_container: JQuery<HTMLElement>) {
+	private addContextMenuEvent($gridsContainer: JQuery<HTMLElement>) {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory,
-			$grids_container
+			$gridsContainer
 		).handleEditEvent();
 
-		$grids_container.on(
+		$gridsContainer.on(
 			"contextmenu",
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
 			(e) => {
@@ -79,14 +80,30 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 		);
 	}
 
-	private addSwap($grids_container: JQuery<HTMLElement>) {
+	private addSwap($gridsContainer: JQuery<HTMLElement>) {
 		this._gridSoundButtonSwap = new GridSoundButtonSwap(
 			this._gridSoundButtonChildFactory,
-			$grids_container
+			$gridsContainer
 		);
 	}
 
-	private addDragAndDropEvents(_$grids_container: JQuery<HTMLElement>) {
-		// TODO
+	private addDragAndDropEvent($gridsContainer: JQuery<HTMLElement>) {
+		$gridsContainer.on(
+			"dragenter",
+			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
+			(e) => {
+				Logger.logDebug("'dragenter' triggered");
+
+				e.preventDefault();
+				e.stopPropagation();
+				e.originalEvent.dataTransfer.dropEffect = "link";
+
+				getTarget(e).addClass("file-dragover");
+			}
+		);
+
+		function getTarget(e: JQuery.DragEventBase): SoundButtonElementJQuery {
+			return $(e.target);
+		}
 	}
 }
