@@ -24,8 +24,6 @@ class EditorForm {
 		this.setupFormSubmitEvent();
 	}
 
-	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
-
 	public fillInputs(buttonId: string, buttonData: SoundButtonData): this {
 		this._parsedButtonId = buttonId;
 		this._buttonData = buttonData;
