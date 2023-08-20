@@ -43,9 +43,7 @@ abstract class MainWindow extends Main {
 
 		this._soundButtonCollectionStore = new SoundButtonCollectionStore();
 
-		this._gridSoundButtonIdGenerator = new GridSoundButtonIdGenerator(
-			this._soundButtonCollectionStore
-		);
+		this._gridSoundButtonIdGenerator = new GridSoundButtonIdGenerator();
 
 		this._soundButtonSanitizer = new SoundButtonSanitizer(
 			MainWindow.DEFAULT_BUTTONDATA

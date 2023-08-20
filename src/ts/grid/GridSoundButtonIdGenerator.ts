@@ -1,16 +1,9 @@
 class GridSoundButtonIdGenerator implements ISoundButtonIdGenerator {
 	private static readonly SOUNDBUTTON_ID_PREFIX: string = "soundbutton-";
 
-	private _soundButtonCollection: SoundButtonCollectionStore;
+	constructor() {}
 
-	constructor(_soundButtonCollection: SoundButtonCollectionStore) {
-		this._soundButtonCollection = _soundButtonCollection;
-	}
-	
-	public parseSoundButtonId(
-		buttonId: number,
-		collectionId: number
-	): string {
+	public parseSoundButtonId(buttonId: number, collectionId: number): string {
 		return `${GridSoundButtonIdGenerator.SOUNDBUTTON_ID_PREFIX}${collectionId}-${buttonId}`;
 	}
 
