@@ -37,25 +37,30 @@ class SoundButtonDispatcher {
 		});
 	}
 
-	public updateSoundButtonData(_$button: SoundButtonElementJQuery, _buttonId: number, _data: SoundButtonData) {
-		// TODO
-		// this._soundButtonFactory.updateElementData()
+	public updateSoundButton(
+		parsedId: string,
+		buttonData: SoundButtonData
+	): {
+		buttonId: number,
+		collectionId: number,
+	} {
+		return this._soundButtonFactory.updateElementDataByParsedId(parsedId, buttonData);
 	}
 
 	public swapSoundButtons(
 		$button1: SoundButtonElementJQuery,
 		$button2: SoundButtonElementJQuery
 	): {
-		collectionId: number,
-		dataId1: number,
-		dataId2: number
+		collectionId: number;
+		dataId1: number;
+		dataId2: number;
 	} {
 		let swapData = this._soundButtonFactory.swapElements($button1, $button2);
 
-		 return {
+		return {
 			collectionId: swapData.collectionId,
 			dataId1: swapData.dataId1,
-			dataId2: swapData.dataId2
+			dataId2: swapData.dataId2,
 		};
 	}
 }

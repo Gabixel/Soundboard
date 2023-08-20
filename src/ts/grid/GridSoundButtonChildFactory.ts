@@ -42,6 +42,20 @@ class GridSoundButtonChildFactory {
 		let { collectionId, dataId1, dataId2 } =
 			this._soundButtonDispatcher.swapSoundButtons($button1, $button2);
 
-		this._soundButtonCollectionStore.swapButtonData(collectionId, dataId1, dataId2);
+		this._soundButtonCollectionStore.swapButtonData(
+			collectionId,
+			dataId1,
+			dataId2
+		);
+	}
+
+	public updateSoundButton(
+		parsedId: string,
+		buttonData: SoundButtonData
+	): void {
+		let { buttonId, collectionId } =
+			this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
+
+		this._soundButtonCollectionStore.editButtonData(buttonId, collectionId, buttonData);
 	}
 }

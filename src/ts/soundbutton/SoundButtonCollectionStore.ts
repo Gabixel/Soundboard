@@ -82,37 +82,49 @@ class SoundButtonCollectionStore {
 		return this._collections;
 	}
 
-	public getButtonData(buttonId: number, collectionId?: number): SoundButtonData {
+	public getButtonData(
+		buttonId: number,
+		collectionId?: number
+	): SoundButtonData {
 		collectionId ??= this.getActiveCollection().id;
 
 		let collection = this.getCollection(collectionId);
 
-		let data = collection.buttonData.filter((data) => data.index == buttonId)?.[0];
+		let buttonData = this.findButtonData(buttonId, collectionId);
 
-		if (!data) {
+		if (!buttonData) {
 			throw new ReferenceError(
 				`Button data not found with index "${buttonId}" in collection "${collectionId}"`
 			);
 		}
 
-		return data;
+		return buttonData;
 	}
 
-	public addButtonDataIfMissing(collectionId: number, data: SoundButtonData): void {
+	public editButtonData(
+		buttonId: number,
+		collectionId: number,
+		buttonData: SoundButtonData
+	): void {
 		let collection = this.getCollection(collectionId);
 
-		let idAlreadyExists = collection.buttonData.some((d) => d.index == data.index);
+		let buttonDataIndex = this.findButtonDataIndex(buttonId, collectionId);
 
-		if (idAlreadyExists) {
-			return;
+		// TODO: can probably be suppressed
+		if (buttonDataIndex == -1) {
+			throw new ReferenceError(
+				`Button data not found with index "${buttonId}" in collection "${collectionId}"`
+			);
 		}
 
-		collection.buttonData.push(data);
+		collection.buttonData[buttonDataIndex] = buttonData;
 	}
 
-	public swapButtonData(collectionId: number, dataId1: number, dataId2: number): void {
-		let collection = this.getCollection(collectionId);
-
+	public swapButtonData(
+		collectionId: number,
+		dataId1: number,
+		dataId2: number
+	): void {
 		let data1 = this.getButtonData(dataId1, collectionId);
 		let data2 = this.getButtonData(dataId2, collectionId);
 
@@ -124,6 +136,23 @@ class SoundButtonCollectionStore {
 		let collection = this.getCollection(id);
 
 		collection.name = name;
+	}
+
+	public addButtonDataIfMissing(
+		collectionId: number,
+		data: SoundButtonData
+	): void {
+		let collection = this.getCollection(collectionId);
+
+		let idAlreadyExists = collection.buttonData.some(
+			(d) => d.index == data.index
+		);
+
+		if (idAlreadyExists) {
+			return;
+		}
+
+		collection.buttonData.push(data);
 	}
 
 	private findFirstFreeId(): number {
@@ -138,5 +167,23 @@ class SoundButtonCollectionStore {
 		}
 
 		return freeId;
+	}
+
+	private findButtonData(
+		buttonId: number,
+		collectionId: number
+	): SoundButtonData | null {
+		return this.getCollection(collectionId).buttonData.filter(
+			(data) => data.index == buttonId
+		)?.[0];
+	}
+
+	private findButtonDataIndex(
+		buttonId: number,
+		collectionId: number
+	): number {
+		return this.getCollection(collectionId).buttonData.findIndex(
+			(data) => data.index == buttonId
+		);
 	}
 }

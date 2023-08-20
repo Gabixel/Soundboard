@@ -30,6 +30,26 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return [$button, buttonData];
 	}
 
+	public updateElementDataByParsedId(
+		parsedId: string,
+		buttonData: SoundButtonData
+	): {
+		buttonId: number;
+		collectionId: number;
+	} {
+		let $button = this.getButtonElementByParsedId(parsedId);
+
+		let { buttonId, collectionId } =
+			this._idGenerator.getCompositeSoundButtonId(parsedId);
+
+		this.updateElementData($button, buttonId, collectionId, buttonData);
+
+		return {
+			buttonId,
+			collectionId,
+		};
+	}
+
 	public updateElementData(
 		$button: SoundButtonElementJQuery,
 		buttonId: number,
@@ -82,6 +102,19 @@ class SoundButtonFactory implements ISoundButtonFactory {
 				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
 			)
 		);
+	}
+
+	public getButtonElement(
+		id: number,
+		collectionId: number
+	): SoundButtonElementJQuery {
+		return this.getButtonElementByParsedId(
+			this._idGenerator.parseSoundButtonId(id, collectionId)
+		);
+	}
+
+	public getButtonElementByParsedId(parsedId: string): SoundButtonElementJQuery {
+		return $(`#${parsedId}`);
 	}
 
 	/**

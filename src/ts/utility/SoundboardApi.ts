@@ -44,7 +44,7 @@ abstract class SoundboardApi {
 		},
 
 		onButtonDataUpdate: (
-			callback: (id: string, buttonData: SoundButtonData) => void
+			callback: (parsedId: string, buttonData: SoundButtonData) => void
 		): void => {
 			this._api.onButtonDataUpdate(callback);
 		},
@@ -52,17 +52,17 @@ abstract class SoundboardApi {
 
 	public static editButtonWindow = {
 		getButtonData: async (): Promise<{
-			id: string;
+			parsedId: string;
 			buttonData: SoundButtonData;
 		}> => {
 			return this._api.getButtonData();
 		},
 
 		updateButtonData: async (
-			id: string,
+			parsedId: string,
 			buttonData: SoundButtonData
 		): Promise<void> => {
-			return this._api.updateButtonData(id, buttonData);
+			return this._api.updateButtonData(parsedId, buttonData);
 		},
 
 		onAskCompareChanges: (callback: () => void): void => {
@@ -102,11 +102,11 @@ type WindowApiBridge = {
 	 * EditButtonWindow
 	 */
 	getButtonData: () => Promise<{
-		id: string;
+		parsedId: string;
 		buttonData: SoundButtonData;
 	}>;
-	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
+	updateButtonData: (parsedId: string, buttonData: SoundButtonData) => Promise<void>;
 
 	onAskCompareChanges: (callback: () => void) => void;
-	sendCompareChanges: (id: string, buttonData: SoundButtonData) => Promise<void>;
+	sendCompareChanges: (parsedId: string, buttonData: SoundButtonData) => Promise<void>;
 };

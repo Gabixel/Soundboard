@@ -3,7 +3,8 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	private _soundButtonFactory: SoundButtonFactory;
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
 
-	private _soundButtonSwap: GridSoundButtonSwap;
+	private _gridSoundButtonSwap: GridSoundButtonSwap;
+	private _gridSoundButtonEdit: GridSoundButtonEdit;
 
 	constructor(
 		audioPlayer: TAudioPlayer,
@@ -15,23 +16,22 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 	}
 
-	public addEvents($grids_container: JQuery<HTMLElement>): void {
-		this.addClickEvent($grids_container);
-		this.addContextMenuEvent($grids_container);
-		this.addSwap($grids_container);
+	public addEvents($gridsContainer: JQuery<HTMLElement>): void {
+		this.addClickEvent($gridsContainer);
+		this.addContextMenuEvent($gridsContainer);
+		this.addSwap($gridsContainer);
 	}
 
 	public cancelSwap(): void {
-		this._soundButtonSwap.cancelSwap();
+		this._gridSoundButtonSwap.cancelSwap();
 	}
 
 	private addClickEvent($grids_container: JQuery<HTMLElement>) {
-		// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
-
 		$grids_container.on(
 			"click",
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
 			(e) => {
+				// TODO: rate-limit while holding the button with a "send" key (i.e. Enter)
 				Logger.logDebug(
 					`Button "%s" clicked`,
 					$(e.target).children(".button-theme").text()
@@ -54,6 +54,11 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	}
 
 	private addContextMenuEvent($grids_container: JQuery<HTMLElement>) {
+		this._gridSoundButtonEdit = new GridSoundButtonEdit(
+			this._gridSoundButtonChildFactory,
+			$grids_container
+		).handleEditEvent();
+
 		$grids_container.on(
 			"contextmenu",
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
@@ -65,6 +70,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 
 				let args: ContextMenuArgs = {
 					type: "soundbutton",
+					parsedId: $(e.target).attr("id"),
 					buttonData,
 				};
 
@@ -74,7 +80,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	}
 
 	private addSwap($grids_container: JQuery<HTMLElement>) {
-		this._soundButtonSwap = new GridSoundButtonSwap(
+		this._gridSoundButtonSwap = new GridSoundButtonSwap(
 			this._gridSoundButtonChildFactory,
 			$grids_container
 		);

@@ -3,9 +3,9 @@ class EditorForm {
 
 	private _$form: JQuery<HTMLFormElement>;
 
-	private _buttonId: string;
+	private _parsedButtonId: string;
 	public get buttonId(): string {
-		return this._buttonId;
+		return this._parsedButtonId;
 	}
 
 	private _buttonData: SoundButtonData;
@@ -27,7 +27,7 @@ class EditorForm {
 	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
 
 	public fillInputs(buttonId: string, buttonData: SoundButtonData): this {
-		this._buttonId = buttonId;
+		this._parsedButtonId = buttonId;
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
@@ -161,7 +161,7 @@ class EditorForm {
 
 	private submitForm(): void {
 		SoundboardApi.editButtonWindow.updateButtonData(
-			this._buttonId,
+			this._parsedButtonId,
 			this._buttonData
 		);
 	}

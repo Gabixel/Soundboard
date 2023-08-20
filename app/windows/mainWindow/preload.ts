@@ -19,8 +19,8 @@ const api: MainWindowApiBridge = {
 		ipcRenderer.invoke("join-paths", ...paths),
 
 	onButtonDataUpdate: (callback) => {
-		ipcRenderer.on("buttondata-updated", (_e, id, buttonData) => {
-			callback(id, buttonData);
+		ipcRenderer.on("buttondata-updated", (_e, parsedId, buttonData) => {
+			callback(parsedId, buttonData);
 		});
 	},
 };
@@ -76,8 +76,9 @@ const scripts = [
 	"soundbutton/SoundButtonFactory",
 	"soundbutton/SoundButtonDispatcher",
 
-	"grid/soundbutton_events/GridSoundButtonEvents",
+	"grid/soundbutton_events/GridSoundButtonEdit",
 	"grid/soundbutton_events/GridSoundButtonSwap",
+	"grid/soundbutton_events/GridSoundButtonEvents",
 	"grid/GridSoundButtonIdGenerator",
 	"grid/GridSoundButtonChildFactory",
 	"grid/GridResizer",

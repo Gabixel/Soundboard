@@ -111,11 +111,6 @@ abstract class MainWindow extends Main {
 			e.originalEvent.dataTransfer.dropEffect = "none";
 			return false;
 		});
-
-		// TODO: move somewhere else
-		// SoundboardApi.mainWindow.onButtonDataUpdate((id, buttonData) => {
-		// 	SoundButtonManager.updateButton(id, buttonData);
-		// });
 	}
 
 	// TODO: include with future loader event
