@@ -122,6 +122,8 @@ class GridSoundButtonSwap {
 					this._dragState = "dropping";
 
 					this.trySwap();
+
+					this._dragData.$draggedButton.trigger("focus");
 				}
 
 				this.resetDragData();
