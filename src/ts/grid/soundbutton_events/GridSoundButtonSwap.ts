@@ -98,11 +98,11 @@ class GridSoundButtonSwap {
 					return;
 				}
 
-				e.stopPropagation();
-
 				if (!EventFunctions.isLeftClick(e)) {
 					return;
 				}
+
+				e.stopPropagation();
 
 				this._dragData.$draggedButton = $(e.target);
 				this._dragData.dragStartAxis = {
@@ -118,9 +118,11 @@ class GridSoundButtonSwap {
 
 				e.stopPropagation();
 
-				this._dragState = "dropping";
+				if (!this._dragData.$draggedButton.is(this._dragData.$destinationButton)) {
+					this._dragState = "dropping";
 
-				this.trySwap();
+					this.trySwap();
+				}
 
 				this.resetDragData();
 			});
@@ -141,11 +143,13 @@ class GridSoundButtonSwap {
 				.removeClass("drop-destination")
 				.removeClass("hovered");
 			$(e.target).addClass("drop-destination").addClass("hovered");
-		}).onButton("mouseleave", (e) => {
-			$(e.target).removeClass("drop-destination").removeClass("hovered");
-		}).onButton("mouseup", (e) => {
-			this._dragData.$destinationButton = $(e.target);
-		});
+		})
+			.onButton("mouseleave", (e) => {
+				$(e.target).removeClass("drop-destination").removeClass("hovered");
+			})
+			.onButton("mouseup", (e) => {
+				this._dragData.$destinationButton = $(e.target);
+			});
 	}
 
 	private trySwap(): void {
@@ -156,6 +160,12 @@ class GridSoundButtonSwap {
 		if (!this._dragData.$draggedButton || !this._dragData.$destinationButton) {
 			return;
 		}
+
+		Logger.logDebug(
+			`Swapping buttons ${this._dragData.$draggedButton.attr(
+				"id"
+			)} and ${this._dragData.$destinationButton.attr("id")}`
+		);
 
 		this._gridSoundButtonChildFactory.swapSoundButtons(
 			this._dragData.$draggedButton,
