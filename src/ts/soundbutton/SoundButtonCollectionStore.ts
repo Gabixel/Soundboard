@@ -117,6 +117,7 @@ class SoundButtonCollectionStore {
 			);
 		}
 
+		// TODO: make button data a class instead of an object?
 		// TODO: add a way to reset buttons
 		buttonData.isEdited = true;
 		collection.buttonData[buttonDataIndex] = buttonData;
