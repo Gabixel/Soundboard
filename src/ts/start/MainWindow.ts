@@ -79,7 +79,8 @@ abstract class MainWindow extends Main {
 				this._gridSoundButtonChildFactory
 			),
 			this._soundButtonCollectionStore,
-			$("#buttons-grids") as GridElementJQuery
+			$("#buttons-grids") as GridElementJQuery,
+			$("#clear-grid-button")
 		);
 
 		Promise.all([collectionCache]).then(() => {

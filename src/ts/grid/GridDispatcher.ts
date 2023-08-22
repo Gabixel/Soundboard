@@ -11,7 +11,7 @@ class GridDispatcher {
 	private _gridSoundButtonEvents: GridEvents;
 	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
 
-	private _collectionStore: SoundButtonCollectionStore;
+	private _soundButtonCollectionStore: SoundButtonCollectionStore;
 
 	private get _$grids(): GridElementJQuery {
 		return this._$gridsContainer.find<GridElement>(
@@ -37,31 +37,45 @@ class GridDispatcher {
 		return parseInt(gridId);
 	}
 
+	private getGridName(id: number): string {
+		return this._soundButtonCollectionStore.getCollection(id).name;
+	}
+
 	constructor(
 		gridResizer: GridResizer,
 		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
 		soundButtonIdGenerator: ISoundButtonIdGenerator,
 		soundButtonEvents: GridEvents,
-		collectionStore: SoundButtonCollectionStore,
-		$gridsContainer: GridElementJQuery
+		soundButtonCollectionStore: SoundButtonCollectionStore,
+		$gridsContainer: GridElementJQuery,
+		$clearGridButton: JQuery<HTMLButtonElement>
 	) {
 		this._$gridsContainer = $gridsContainer;
 
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 
-		this._collectionStore = collectionStore;
+		this._soundButtonCollectionStore = soundButtonCollectionStore;
 		this._soundButtonIdGenerator = soundButtonIdGenerator;
-		this.setupSoundButtonEvents(soundButtonEvents);
+		this.setupEvents(soundButtonEvents, $clearGridButton);
 
 		this.setupGridResize(gridResizer);
 	}
 
-	private setupSoundButtonEvents(
-		soundButtonEvents: GridEvents
+	private setupEvents(
+		soundButtonEvents: GridEvents,
+		$clearGridButton: JQuery<HTMLButtonElement>
 	): void {
 		this._gridSoundButtonEvents = soundButtonEvents;
 
-		this._gridSoundButtonEvents.addEvents(this._$gridsContainer);
+		this._gridSoundButtonEvents.addSoundButtonEvents(this._$gridsContainer);
+		this._gridSoundButtonEvents.addClearButtonClickEvent($clearGridButton, () => {
+			let gridId = this.getGridId(this._$activeGrid);
+
+			// TODO: put cool yes/no buttons inside the reset one
+			window.confirm(
+				`Are you sure you want to clear the grid "${this.getGridName(gridId)}"?`
+			) && this.clearGrid(gridId);
+		});
 	}
 
 	private setupGridResize(gridResizer: GridResizer): void {
@@ -99,7 +113,7 @@ class GridDispatcher {
 
 	public focusGrid(id: number): void {
 		// Cancel possible button swap/drag
-		this._gridSoundButtonEvents.cancelSwap()
+		this._gridSoundButtonEvents.cancelSwap();
 
 		let $focusingGrid = this.getGrid(id);
 
@@ -111,6 +125,23 @@ class GridDispatcher {
 
 		this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
 		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
+	}
+
+	public clearGrid(id: number): void {
+		// Cancel possible button swap/drag
+		this._gridSoundButtonEvents.cancelSwap();
+
+		this._soundButtonCollectionStore.clearCollection(id);
+
+		let $grid = this.getGrid(id);
+
+		if ($grid.length == 0) {
+			throw new ReferenceError(`Grid not found with index "${id}"`);
+		}
+
+		$grid.empty();
+
+		this.addMissingButtonsToGrid($grid, id);
 	}
 
 	private createGrid(id: number, collection?: SoundButtonDataCollection): void {
@@ -166,7 +197,7 @@ class GridDispatcher {
 
 		gridId ??= this.getGridId($grid);
 
-		existingButtonsId ??= this._collectionStore
+		existingButtonsId ??= this._soundButtonCollectionStore
 			.getCollection(gridId)
 			.buttonData.map((data) => data.index);
 
@@ -175,7 +206,10 @@ class GridDispatcher {
 				continue;
 			}
 
-			let [$button] = this._gridSoundButtonChildFactory.createSoundButton(buttonId, gridId);
+			let [$button] = this._gridSoundButtonChildFactory.createSoundButton(
+				buttonId,
+				gridId
+			);
 
 			$grid.append($button);
 		}

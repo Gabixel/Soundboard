@@ -40,6 +40,12 @@ class SoundButtonCollectionStore {
 		this._collections.push(...collections);
 	}
 
+	public clearCollection(id: number): void {
+		let collection = this.getCollection(id);
+
+		collection.buttonData = [];
+	}
+
 	public getCollection(id: number): SoundButtonDataCollection {
 		let collection = this._collections.filter(
 			(collection) => collection.id == id

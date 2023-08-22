@@ -16,18 +16,25 @@ class GridEvents {
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 	}
 
-	public addEvents($gridsContainer: JQuery<HTMLElement>): void {
-		this.addClickEvent($gridsContainer);
-		this.addContextMenuEvent($gridsContainer);
-		this.addSwap($gridsContainer);
-		this.addDragAndDropEvent($gridsContainer);
+	public addSoundButtonEvents($gridsContainer: JQuery<HTMLElement>): void {
+		this.addSoundButtonClickEvent($gridsContainer);
+		this.addSoundButtonContextMenuEvent($gridsContainer);
+		this.addSoundButtonSwap($gridsContainer);
+		this.addSoundButtonDragAndDropEvent($gridsContainer);
+	}
+
+	public addClearButtonClickEvent(
+		$clearGridButton: JQuery<HTMLButtonElement>,
+		clickCallback: () => void
+	) {
+		$clearGridButton.on("click", clickCallback);
 	}
 
 	public cancelSwap(): void {
 		this._gridSoundButtonSwap.cancelSwap();
 	}
 
-	private addClickEvent($gridsContainer: JQuery<HTMLElement>) {
+	private addSoundButtonClickEvent($gridsContainer: JQuery<HTMLElement>) {
 		$gridsContainer.on(
 			"click",
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
@@ -54,7 +61,7 @@ class GridEvents {
 		);
 	}
 
-	private addContextMenuEvent($gridsContainer: JQuery<HTMLElement>) {
+	private addSoundButtonContextMenuEvent($gridsContainer: JQuery<HTMLElement>) {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory,
 			$gridsContainer
@@ -80,14 +87,14 @@ class GridEvents {
 		);
 	}
 
-	private addSwap($gridsContainer: JQuery<HTMLElement>) {
+	private addSoundButtonSwap($gridsContainer: JQuery<HTMLElement>) {
 		this._gridSoundButtonSwap = new GridSoundButtonSwap(
 			this._gridSoundButtonChildFactory,
 			$gridsContainer
 		);
 	}
 
-	private addDragAndDropEvent($gridsContainer: JQuery<HTMLElement>) {
+	private addSoundButtonDragAndDropEvent($gridsContainer: JQuery<HTMLElement>) {
 		$gridsContainer
 			.on("dragenter", `.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`, (e) => {
 				e.originalEvent.dataTransfer.dropEffect = "link";
