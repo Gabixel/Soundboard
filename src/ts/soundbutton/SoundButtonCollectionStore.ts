@@ -117,6 +117,8 @@ class SoundButtonCollectionStore {
 			);
 		}
 
+		// TODO: add a way to reset buttons
+		buttonData.isEdited = true;
 		collection.buttonData[buttonDataIndex] = buttonData;
 	}
 
