@@ -49,13 +49,21 @@ class GridSoundButtonChildFactory {
 		);
 	}
 
-	public updateSoundButton(
-		parsedId: string,
+	public updateSoundButtonByElement(
+		$button: SoundButtonElementJQuery,
 		buttonData: SoundButtonData
-	): void {
+	) {
+		this.updateSoundButton($button.attr("id"), buttonData);
+	}
+
+	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): void {
 		let { buttonId, collectionId } =
 			this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
 
-		this._soundButtonCollectionStore.editButtonData(buttonId, collectionId, buttonData);
+		this._soundButtonCollectionStore.editButtonData(
+			buttonId,
+			collectionId,
+			buttonData
+		);
 	}
 }

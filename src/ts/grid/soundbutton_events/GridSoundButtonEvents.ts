@@ -88,19 +88,80 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	}
 
 	private addDragAndDropEvent($gridsContainer: JQuery<HTMLElement>) {
-		$gridsContainer.on(
-			"dragenter",
-			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
-			(e) => {
-				Logger.logDebug("'dragenter' triggered");
-
-				e.preventDefault();
-				e.stopPropagation();
+		$gridsContainer
+			.on("dragenter", `.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`, (e) => {
 				e.originalEvent.dataTransfer.dropEffect = "link";
 
 				getTarget(e).addClass("file-dragover");
-			}
-		);
+
+				e.preventDefault();
+			})
+			.on("dragover", (e) => {
+				e.originalEvent.dataTransfer.dropEffect = "link";
+
+				e.preventDefault();
+			})
+			.on("drop", `.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`, (e) => {
+				const notSuccesful =
+					!e.originalEvent.dataTransfer ||
+					!e.originalEvent.dataTransfer.files.length;
+
+				if (notSuccesful) return;
+
+				let $button = getTarget(e);
+
+				$button.trigger("dragleave");
+
+				e.preventDefault();
+				e.stopPropagation();
+
+				$button.removeClass("file-dragover");
+
+				const file = e.originalEvent.dataTransfer.files[0];
+
+				const encodedPath = StringUtilities.encodeFilePath(file.path);
+
+				console.log(encodedPath);
+
+				Logger.logDebug(
+					"Audio drop successful.\n" +
+						"• Files: %O\n" +
+						"\t---------\n" +
+						"• First file: %O\n" +
+						"\t---------\n" +
+						"• First file path (encoded for browser): %O",
+					e.originalEvent.dataTransfer.files,
+					e.originalEvent.dataTransfer.files[0],
+					encodedPath
+				);
+
+				// TODO: check if file type is supported / allowed.
+				// SoundboardApi.isPathFile(path);
+
+				let data = this._soundButtonFactory.getButtonDataByElement($button);
+
+				data.path = encodedPath;
+
+				if (!data.isEdited) {
+					data.title = file.name;
+
+					// Random color from file name
+					data.color = {
+						h: StringUtilities.getHue(file.name),
+						s: 100,
+						l: data.color.l,
+					};
+				}
+
+				this._gridSoundButtonChildFactory.updateSoundButtonByElement($button, data);
+
+				e.preventDefault();
+			})
+			.on("dragleave", `.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`, (e) => {
+				getTarget(e).removeClass("file-dragover");
+
+				e.preventDefault();
+			});
 
 		function getTarget(e: JQuery.DragEventBase): SoundButtonElementJQuery {
 			return $(e.target);

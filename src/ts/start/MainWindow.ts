@@ -101,14 +101,6 @@ abstract class MainWindow extends Main {
 		$(document).on("contextmenu", () => {
 			SoundboardApi.mainWindow.openContextMenu();
 		});
-
-		// Drag over visual issue prevention(?)
-		// TODO: can probably be removed, doesn't seem to fix anything
-		$(window).on("dragover", (e) => {
-			e.preventDefault();
-			e.originalEvent.dataTransfer.dropEffect = "none";
-			return false;
-		});
 	}
 
 	// TODO: include with future loader event
