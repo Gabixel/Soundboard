@@ -121,20 +121,6 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 
 				const encodedPath = StringUtilities.encodeFilePath(file.path);
 
-				console.log(encodedPath);
-
-				Logger.logDebug(
-					"Audio drop successful.\n" +
-						"• Files: %O\n" +
-						"\t---------\n" +
-						"• First file: %O\n" +
-						"\t---------\n" +
-						"• First file path (encoded for browser): %O",
-					e.originalEvent.dataTransfer.files,
-					e.originalEvent.dataTransfer.files[0],
-					encodedPath
-				);
-
 				// TODO: check if file type is supported / allowed.
 				// SoundboardApi.isPathFile(path);
 
