@@ -1,5 +1,5 @@
-class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
-	private _audioPlayer: TAudioPlayer;
+class GridEvents {
+	private _audioPlayer: IAudioPlayer;
 	private _soundButtonFactory: SoundButtonFactory;
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
 
@@ -7,7 +7,7 @@ class GridSoundButtonEvents<TAudioPlayer extends IAudioPlayer = IAudioPlayer> {
 	private _gridSoundButtonEdit: GridSoundButtonEdit;
 
 	constructor(
-		audioPlayer: TAudioPlayer,
+		audioPlayer: IAudioPlayer,
 		soundButtonFactory: SoundButtonFactory,
 		gridSoundButtonChildFactory: GridSoundButtonChildFactory
 	) {

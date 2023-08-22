@@ -7,8 +7,8 @@ class GridDispatcher {
 
 	private _gridResizer: GridResizer;
 
-	private _soundButtonChild: GridSoundButtonChildFactory;
-	private _gridSoundButtonEvents: GridSoundButtonEvents;
+	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
+	private _gridSoundButtonEvents: GridEvents;
 	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
 
 	private _collectionStore: SoundButtonCollectionStore;
@@ -39,15 +39,15 @@ class GridDispatcher {
 
 	constructor(
 		gridResizer: GridResizer,
-		soundButtonChild: GridSoundButtonChildFactory,
+		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
 		soundButtonIdGenerator: ISoundButtonIdGenerator,
-		soundButtonEvents: GridSoundButtonEvents,
+		soundButtonEvents: GridEvents,
 		collectionStore: SoundButtonCollectionStore,
 		$gridsContainer: GridElementJQuery
 	) {
 		this._$gridsContainer = $gridsContainer;
 
-		this._soundButtonChild = soundButtonChild;
+		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 
 		this._collectionStore = collectionStore;
 		this._soundButtonIdGenerator = soundButtonIdGenerator;
@@ -57,7 +57,7 @@ class GridDispatcher {
 	}
 
 	private setupSoundButtonEvents(
-		soundButtonEvents: GridSoundButtonEvents
+		soundButtonEvents: GridEvents
 	): void {
 		this._gridSoundButtonEvents = soundButtonEvents;
 
@@ -144,7 +144,7 @@ class GridDispatcher {
 		buttonData: SoundButtonData[]
 	): void {
 		buttonData.forEach((data) => {
-			let [$button] = this._soundButtonChild.createSoundButton(
+			let [$button] = this._gridSoundButtonChildFactory.createSoundButton(
 				data.index,
 				gridId,
 				data
@@ -175,7 +175,7 @@ class GridDispatcher {
 				continue;
 			}
 
-			let [$button] = this._soundButtonChild.createSoundButton(buttonId, gridId);
+			let [$button] = this._gridSoundButtonChildFactory.createSoundButton(buttonId, gridId);
 
 			$grid.append($button);
 		}
@@ -229,6 +229,6 @@ class GridDispatcher {
 	private getSortedButtons(
 		$grid: GridElementJQuery
 	): SoundButtonElementJQuery[] {
-		return this._soundButtonChild.getSortedSoundButtonElements($grid);
+		return this._gridSoundButtonChildFactory.getSortedSoundButtonElements($grid);
 	}
 }
