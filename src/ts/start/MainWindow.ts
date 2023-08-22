@@ -76,7 +76,8 @@ abstract class MainWindow extends Main {
 			new GridEvents(
 				this._audioPlayer,
 				this._soundButtonFactory,
-				this._gridSoundButtonChildFactory
+				this._gridSoundButtonChildFactory,
+				this._gridResizer
 			),
 			this._soundButtonCollectionStore,
 			$("#buttons-grids") as GridElementJQuery,
