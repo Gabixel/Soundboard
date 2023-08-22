@@ -57,6 +57,8 @@ class GridSoundButtonChildFactory {
 	}
 
 	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): void {
+		// TODO: call collection edit before visual update when I'll expose a method to get the composite id without editing the button first
+
 		let { buttonId, collectionId } =
 			this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
 
