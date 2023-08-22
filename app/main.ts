@@ -212,14 +212,17 @@ function createEditButtonWindow(
 		});
 
 		// Check on close to see if there are unsaved changes
-		ipcMain.handle("editor-onclose-compare-changes", (_e, parsedId, buttonData) => {
-			// Should never happen
-			// if (id_original != id) { }
+		ipcMain.handle(
+			"editor-onclose-compare-changes",
+			(_e, parsedId, buttonData) => {
+				// Should never happen
+				// if (id_original != id) { }
 
-			if (shouldQuitCheckingChanges(parsedId, buttonData)) {
-				editButtonWindow.destroy();
+				if (shouldQuitCheckingChanges(parsedId, buttonData)) {
+					editButtonWindow.destroy();
+				}
 			}
-		});
+		);
 
 		editButtonWindow.show();
 	});
@@ -239,7 +242,10 @@ function createEditButtonWindow(
 		editButtonWindow = null;
 	});
 
-	function saveSoundButtonChanges(parsedId: string, buttonData: SoundButtonData): void {
+	function saveSoundButtonChanges(
+		parsedId: string,
+		buttonData: SoundButtonData
+	): void {
 		// Send updated button
 		mainWindow.webContents.send("buttondata-updated", parsedId, buttonData);
 	}
