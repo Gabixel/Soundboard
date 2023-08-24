@@ -103,6 +103,24 @@ abstract class MainWindow extends Main {
 		$(document).on("contextmenu", () => {
 			SoundboardApi.mainWindow.openContextMenu();
 		});
+
+		$(document).on("keydown", (e) => {
+			if (e.ctrlKey && e.key == "Tab") {
+				let ev = "tabchange" + (e.shiftKey ? "prev" : "next");
+				return trigger(ev);
+			}
+
+			if (e.ctrlKey && e.key == "t") {
+				return trigger("tabcreate");
+			}
+
+			return true;
+
+			function trigger(eventName: string): false {
+				$(document).trigger(eventName);
+				return false;
+			}
+		});
 	}
 
 	// TODO: include with future loader event

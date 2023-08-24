@@ -41,6 +41,17 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 
 		this.checkForEmptyTabList();
 
+		$(document).on("tabchangenext", () => {
+			this.focusNextTab();
+		});
+		$(document).on("tabchangeprev", () => {
+			this.focusPreviousTab();
+		});
+
+		$(document).on("tabcreate", () => {
+			this.createTab(null, true);
+		});
+
 		Logger.logDebug("Initialized!");
 	}
 
@@ -122,10 +133,9 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 
 				let id = parseInt((e.target.id as string).replace(this.TAB_ID_PREFIX, ""));
 
-				this.focusTab(id);
-				super.focusGrid(id);
+				this.changeTab(id);
 
-				this.updateTabListOverflow();
+				this._$addCollectionButton.trigger("focus");
 			}
 		);
 	}
@@ -197,6 +207,13 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 		return $tab;
 	}
 
+	private changeTab(id: number): void {
+		this.focusTab(id);
+		super.focusGrid(id);
+
+		this.updateTabListOverflow();
+	}
+
 	private focusTab(id: number): void {
 		let $focusingTab = this.getTab(id);
 
@@ -211,6 +228,38 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 		$focusingTab.addClass(this.TAB_ACTIVE_CLASS);
 
 		this.scrollTabIntoView($focusingTab);
+	}
+
+	private focusNextTab(): void {
+		let tabCount = this._collectionStore.length;
+
+		if (tabCount <= 1) {
+			return;
+		}
+
+		let activeId = this._collectionStore.getActiveCollection().id;
+
+		let nextId = activeId === tabCount - 1 ? 0 : activeId + 1;
+
+		Logger.logDebug(`Focusing next tab with index "${nextId}"`);
+
+		this.changeTab(nextId);
+	}
+
+	private focusPreviousTab(): void {
+		let tabCount = this._collectionStore.length;
+
+		if (tabCount <= 1) {
+			return;
+		}
+
+		let activeId = this._collectionStore.getActiveCollection().id;
+
+		let previousId = activeId === 0 ? tabCount - 1 : activeId - 1;
+
+		Logger.logDebug(`Focusing previous tab with index "${previousId}"`);
+
+		this.changeTab(previousId);
 	}
 
 	private scrollTabIntoView($tab: JQuery<HTMLButtonElement>): void {
@@ -263,6 +312,7 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 		$renameInput: JQuery<HTMLInputElement>,
 		collectionId: number
 	): void {
+		// Submit logic
 		$renameInput.on("blur keydown", (e) => {
 			const isBlur = e.type == "blur";
 			const isEnterKey = e.type == "keydown" && e.key == "Enter";
@@ -285,6 +335,8 @@ class CollectionTabDispatcher extends CollectionTabGridFactory {
 			this.addDoubleClickEventToTab($tab, collectionId);
 
 			this.updateTabListOverflow();
+
+			this._$addCollectionButton.trigger("focus");
 		});
 	}
 
