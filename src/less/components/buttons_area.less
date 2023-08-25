@@ -2,9 +2,9 @@
 @import "../utils/variables";
 
 @property --ceil {
-  syntax: '<integer>';
-  initial-value: 0;
-  inherits: true
+	syntax: "<integer>";
+	initial-value: 0;
+	inherits: true;
 }
 
 #buttons-area {
@@ -207,31 +207,32 @@
 				grid-template-rows: repeat(var(--rows), 1fr);
 				grid-template-columns: repeat(var(--columns), 1fr);
 
-				background-color: #ffffff;
-				opacity: 0.4;
+				background-color: transparent;
+				opacity: 1;
 
-				.test {
+				button.soundbutton_old {
 					order: var(--index);
-
-					background-color: #000;
 
 					animation: explosion 1.5s ease-in-out forwards;
 
 					// https://css-tricks.com/using-absolute-value-sign-rounding-and-modulo-in-css-today/
 					--ceil: calc(--index / --columns);
 
-					--test: ~"calc(((var(--rows) - var(--ceil) + 1) + 0.01) * 100% + @{grid-gap} * 3)";
+					--out-of-range: ~"calc(((var(--rows) - var(--ceil) + 1) + 0.01) * 100% + @{grid-gap} * 3)";
 
 					@keyframes explosion {
 						0% {
 							transform: translateY(0) scale(1);
+							filter: brightness(1);
 							opacity: 1;
 						}
-						65% {
+						50% {
 							opacity: 0;
+							filter: brightness(0);
 						}
 						100% {
-							transform: ~"translateY(var(--test)) scale(0.8)";
+							transform: translateY(var(--out-of-range)) scale(0.6);
+							filter: brightness(0);
 							opacity: 0;
 						}
 					}

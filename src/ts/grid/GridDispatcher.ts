@@ -125,7 +125,12 @@ class GridDispatcher {
 
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		if (this._$activeGrid.length > 0) {
+			this.clearBinBeforeFocusChange();
+
+			this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		}
+
 		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
 	}
 
@@ -146,29 +151,61 @@ class GridDispatcher {
 		this.addMissingButtonsToGrid($grid, id);
 	}
 
-	private moveChildrenToBin($grid: GridElementJQuery, id: number): void {
-		MainWindow.removeTimeout(`clear-bin-${id}`);
+	private clearBinBeforeFocusChange(): void {
+		this.clearBinByGrid(this._$activeGrid, false);
+	}
 
+	private moveChildrenToBin(
+		$grid: GridElementJQuery,
+		id: number,
+		animate = true
+	): void {
 		let $gridBin = $grid
 			.children(`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`)
 			.empty()
 			.css("--rows", this._gridResizer.rows)
-			.css("--columns", this._gridResizer.columns);
+			.css("--columns", this._gridResizer.columns) as JQuery<HTMLDivElement>;
 
 		$grid.children(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}.hidden`).remove();
 
 		$grid
 			.children(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`)
 			.removeClass(SoundButtonDispatcher.SOUNDBUTTON_CLASS)
-			.addClass("test")
+			.addClass(SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS)
 			.appendTo($gridBin);
 
-		MainWindow.addTimeout(
-			`clear-bin-${id}`,
-			setTimeout(() => {
-				$gridBin.empty();
-			}, 1500)
+		this.clearBin($gridBin, id, animate);
+	}
+
+	private clearBinByGrid($grid: GridElementJQuery, animate = true): void {
+		let gridId = this.getGridId($grid);
+
+		this.clearBin(
+			$grid.children(
+				`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`
+			) as JQuery<HTMLDivElement>,
+			gridId,
+			animate
 		);
+	}
+
+	private clearBin(
+		$gridBin: JQuery<HTMLDivElement>,
+		id: number,
+		animate = true
+	): void {
+		MainWindow.removeTimeout(`clear-bin-${id}`);
+
+		if (animate) {
+			MainWindow.addTimeout(
+				`clear-bin-${id}`,
+				setTimeout(() => {
+					$gridBin.empty();
+				}, 1500)
+			);
+		} else {
+			$gridBin.empty();
+		}
 	}
 
 	private createGrid(id: number, collection?: SoundButtonDataCollection): void {
