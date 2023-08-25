@@ -142,12 +142,16 @@ class GridSoundButtonSwap {
 
 			this._$parent
 				.find(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`)
+				.attr("tabindex", -1)
 				.removeClass("drop-destination")
 				.removeClass("hovered");
 			$(e.target).addClass("drop-destination").addClass("hovered");
 		})
 			.onButton("mouseleave", (e) => {
-				$(e.target).removeClass("drop-destination").removeClass("hovered");
+				$(e.target)
+					.removeAttr("tabindex")
+					.removeClass("drop-destination")
+					.removeClass("hovered");
 			})
 			.onButton("mouseup", (e) => {
 				this._dragData.$destinationButton = $(e.target);

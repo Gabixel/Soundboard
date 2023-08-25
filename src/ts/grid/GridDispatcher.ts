@@ -3,6 +3,8 @@ class GridDispatcher {
 	private static readonly GRID_CLASS: string = "buttons-grid";
 	private static readonly GRID_ACTIVE_CLASS: string = "active";
 
+	private static readonly GRID_BUTTON_BIN_CLASS: string = "buttons-bin";
+
 	private _$gridsContainer: GridElementJQuery;
 
 	private _gridResizer: GridResizer;
@@ -139,9 +141,34 @@ class GridDispatcher {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
 
-		$grid.empty();
+		this.moveChildrenToBin($grid, id);
 
 		this.addMissingButtonsToGrid($grid, id);
+	}
+
+	private moveChildrenToBin($grid: GridElementJQuery, id: number): void {
+		MainWindow.removeTimeout(`clear-bin-${id}`);
+
+		let $gridBin = $grid
+			.children(`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`)
+			.empty()
+			.css("--rows", this._gridResizer.rows)
+			.css("--columns", this._gridResizer.columns);
+
+		$grid.children(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}.hidden`).remove();
+
+		$grid
+			.children(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`)
+			.removeClass(SoundButtonDispatcher.SOUNDBUTTON_CLASS)
+			.addClass("test")
+			.appendTo($gridBin);
+
+		MainWindow.addTimeout(
+			`clear-bin-${id}`,
+			setTimeout(() => {
+				$gridBin.empty();
+			}, 1500)
+		);
 	}
 
 	private createGrid(id: number, collection?: SoundButtonDataCollection): void {
@@ -219,7 +246,12 @@ class GridDispatcher {
 		let $grid = $<GridElement>("<div>", {
 			id: GridDispatcher.GRID_ID_PREFIX + id,
 			class: GridDispatcher.GRID_CLASS,
-		});
+		}).append(
+			$("<div>", {
+				class: GridDispatcher.GRID_BUTTON_BIN_CLASS,
+				style: `--rows: ${this._gridResizer.rows}; --columns: ${this._gridResizer.columns};`,
+			})
+		);
 
 		return $grid;
 	}
