@@ -224,14 +224,14 @@
 
 					@keyframes explosion {
 						0% {
-							transform: translateY(0);
+							transform: translateY(0) scale(1);
 							opacity: 1;
 						}
 						65% {
 							opacity: 0;
 						}
 						100% {
-							transform: ~"translateY(var(--test))";
+							transform: ~"translateY(var(--test)) scale(0.8)";
 							opacity: 0;
 						}
 					}
@@ -254,7 +254,6 @@
 							}
 						}
 					*/
-					
 				}
 			}
 		}
