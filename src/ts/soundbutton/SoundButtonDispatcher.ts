@@ -38,30 +38,41 @@ class SoundButtonDispatcher {
 		});
 	}
 
-	public updateSoundButton(
-		parsedId: string,
-		buttonData: SoundButtonData
-	): {
-		buttonId: number,
-		collectionId: number,
-	} {
-		return this._soundButtonFactory.updateElementDataByParsedId(parsedId, buttonData);
+	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): void {
+		this._soundButtonFactory.updateElementDataByParsedId(parsedId, buttonData);
 	}
 
 	public swapSoundButtons(
 		$button1: SoundButtonElementJQuery,
 		$button2: SoundButtonElementJQuery
-	): {
-		collectionId: number;
-		dataId1: number;
-		dataId2: number;
-	} {
-		let swapData = this._soundButtonFactory.swapElements($button1, $button2);
+	): void {
+		this._soundButtonFactory.swapElements($button1, $button2);
+	}
 
-		return {
-			collectionId: swapData.collectionId,
-			dataId1: swapData.dataId1,
-			dataId2: swapData.dataId2,
-		};
+	public getSoundButtonElement(
+		buttonId: number,
+		collectionId: number
+	): SoundButtonElementJQuery {
+		return this._soundButtonFactory.getButtonElement(buttonId, collectionId);
+	}
+
+	public getSoundButtonElementByParsedId(
+		parsedId: string
+	): SoundButtonElementJQuery {
+		return this._soundButtonFactory.getButtonElementByParsedId(parsedId);
+	}
+
+	public getParsedSoundButtonId(buttonId: number, collectionId: number): string {
+		return this._soundButtonFactory.getParsedSoundButtonId(
+			buttonId,
+			collectionId
+		);
+	}
+
+	public getCompositeSoundButtonId(parsedButtonId: string): {
+		buttonId: number;
+		collectionId: number;
+	} {
+		return this._soundButtonFactory.getCompositeSoundButtonId(parsedButtonId);
 	}
 }

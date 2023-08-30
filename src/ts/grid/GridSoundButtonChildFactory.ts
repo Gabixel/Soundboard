@@ -39,14 +39,20 @@ class GridSoundButtonChildFactory {
 		$button1: SoundButtonElementJQuery,
 		$button2: SoundButtonElementJQuery
 	): void {
-		let { collectionId, dataId1, dataId2 } =
-			this._soundButtonDispatcher.swapSoundButtons($button1, $button2);
+		let { buttonId: buttonId1, collectionId } =
+			this._soundButtonDispatcher.getCompositeSoundButtonId($button1.attr("id"));
+
+		let buttonId2 = this._soundButtonDispatcher.getCompositeSoundButtonId(
+			$button2.attr("id")
+		).buttonId;
 
 		this._soundButtonCollectionStore.swapButtonData(
 			collectionId,
-			dataId1,
-			dataId2
+			buttonId1,
+			buttonId2
 		);
+
+		this._soundButtonDispatcher.swapSoundButtons($button1, $button2);
 	}
 
 	public updateSoundButtonByElement(
@@ -57,15 +63,15 @@ class GridSoundButtonChildFactory {
 	}
 
 	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): void {
-		// TODO: call collection edit before visual update when I'll expose a method to get the composite id without editing the button first
-
 		let { buttonId, collectionId } =
-			this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
+			this._soundButtonDispatcher.getCompositeSoundButtonId(parsedId);
 
 		this._soundButtonCollectionStore.editButtonData(
 			buttonId,
 			collectionId,
 			buttonData
 		);
+
+		this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
 	}
 }

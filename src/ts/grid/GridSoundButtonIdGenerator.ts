@@ -3,7 +3,7 @@ class GridSoundButtonIdGenerator implements ISoundButtonIdGenerator {
 
 	constructor() {}
 
-	public parseSoundButtonId(buttonId: number, collectionId: number): string {
+	public getParsedSoundButtonId(buttonId: number, collectionId: number): string {
 		return `${GridSoundButtonIdGenerator.SOUNDBUTTON_ID_PREFIX}${collectionId}-${buttonId}`;
 	}
 
