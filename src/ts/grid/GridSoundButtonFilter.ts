@@ -7,19 +7,39 @@ class GridSoundButtonFilter {
 		return this._$filterInput.val();
 	}
 
+	//#region Components
+
+	public $checkbox(id: string): JQuery<HTMLInputElement> {
+		return $("<input>", {
+			type: "checkbox",
+			id,
+		}).on("change", (e) => {
+			let $target = $(e.target);
+			const id = e.target.id;
+
+			console.log("triggered change to checkbox");
+
+			this.triggerConditionChange(id, $target.is("checked"));
+		}) as JQuery<HTMLInputElement>;
+	}
+
+	public $label(forId: string, text: string): JQuery<HTMLLabelElement> {
+		return $("<label>", {
+			for: forId,
+			text,
+		}) as JQuery<HTMLLabelElement>;
+	}
+
+	//#endregion
+
 	constructor(
 		$filterInput: GridFilterInput,
-		$conidtionsContainer: JQuery<HTMLDivElement>,
-		initialConditions?: GridFilterCondition[]
+		$conidtionsContainer: JQuery<HTMLDivElement>
 	) {
 		this._conditions = new Map<string, GridFilterCondition>();
 
 		this._$filterInput = $filterInput;
 		this._$conditionsContainer = $conidtionsContainer;
-
-		if (initialConditions) {
-			this.addConditions(initialConditions);
-		}
 	}
 
 	public addConditions(conditions: GridFilterCondition[]): void {
@@ -34,6 +54,19 @@ class GridSoundButtonFilter {
 		this.generateConditionElements(condition);
 	}
 
+	/**
+	 * Returns which buttons must be filtered out.
+	 * @param buttonsData The buttons to check.
+	 * @returns The buttons that **didn't** pass the filter.
+	 */
+	public getFilteredOutButtons(
+		buttonsData: SoundButtonData[]
+	): SoundButtonData[] {
+		return buttonsData.filter((buttonData) => {
+			return this.shouldFilterOutButton(buttonData);
+		});
+	}
+
 	public triggerConditionChange(id: string, isActive: boolean): void {
 		let condition = this._conditions.get(id);
 
@@ -41,7 +74,7 @@ class GridSoundButtonFilter {
 			throw new ReferenceError(`Condition not found with id "${id}"`);
 		}
 
-		condition.value = isActive;
+		condition.isActive = isActive;
 
 		// TODO: update something more?
 	}
@@ -49,7 +82,7 @@ class GridSoundButtonFilter {
 	public triggerSubConditionChange<TSubConditionValue>(
 		id: string,
 		subId: string,
-		value: GridFilterSubCondition<TSubConditionValue>
+		value: TSubConditionValue
 	): void {
 		let condition = this._conditions.get(id);
 
@@ -57,43 +90,29 @@ class GridSoundButtonFilter {
 			throw new ReferenceError(`Condition not found with id "${id}"`);
 		}
 
-		condition.subConditions.get(subId).value = value;
+		condition.data.get(subId).value = value;
 
 		// TODO: update something more?
 	}
 
+	private shouldFilterOutButton(buttonData: SoundButtonData): boolean {
+		for (const conditionId in this._conditions) {
+			const condition = this._conditions.get(conditionId);
+
+			if (!condition.isActive) {
+				continue;
+			}
+
+			if (!condition.check(buttonData)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public generateConditionElements(condition: GridFilterCondition): void {
 		this.appendCondition(condition);
-	}
-
-	public $checkbox(id: string): JQuery<HTMLInputElement> {
-		return $("<input>", {
-			type: "checkbox",
-			id,
-		})
-			.on("change", (e) => {
-				let $target = $(e.target);
-				const id = e.target.id;
-
-				console.log("triggered change to checkbox");
-
-				this.triggerConditionChange(id, $target.is("checked"));
-			})
-			.on("subchange", (e) => {
-				let $target = $(e.target);
-				const id = e.target.id;
-
-				console.log("triggered change to subcheckbox");
-
-				this.triggerConditionChange(id, $target.is("checked"));
-			}) as JQuery<HTMLInputElement>;
-	}
-
-	public $label(forId: string, text: string): JQuery<HTMLLabelElement> {
-		return $("<label>", {
-			for: forId,
-			text,
-		}) as JQuery<HTMLLabelElement>;
 	}
 
 	private appendCondition<TConditionValue = boolean>(
@@ -105,12 +124,12 @@ class GridSoundButtonFilter {
 
 		let finalLabel: JQuery[] = [this.$label(condition.id, condition.name)];
 
-		if (condition.subConditions && condition.subConditions?.size > 0) {
+		if (condition.data && condition.data?.size > 0) {
 			finalLabel.push(this.$label(condition.id, " ( "));
 
 			let index = -1;
 
-			condition.subConditions.forEach((subCondition) => {
+			condition.data.forEach((subCondition) => {
 				index++;
 
 				this.appendSubCondition(condition, subCondition, finalLabel);
@@ -132,7 +151,7 @@ class GridSoundButtonFilter {
 
 	private appendSubCondition<TConditionValue, TSubConditionValue>(
 		mainCondition: GridFilterCondition<TConditionValue>,
-		subCondition: GridFilterSubCondition<TSubConditionValue>,
+		subCondition: GridFilterData<TSubConditionValue>,
 		finalLabel: JQuery[]
 	): void {
 		finalLabel.push(

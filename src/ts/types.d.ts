@@ -164,19 +164,25 @@ type LoggerExtraArgs =
 			function?: AnyFunc;
 	  };
 
-type GridFilterCondition<TConditionValue = boolean> = {
+interface GridFilterCondition<TConditionValue = any, TDataValues = any> {
 	id: string;
 	name: string;
-	value: TConditionValue;
+	/**
+	 * If this condition is active.
+	 */
+	isActive: TConditionValue;
 	$input: JQuery<HTMLInputElement>;
 	check: Func<boolean>;
-	subConditions: Map<string, GridFilterSubCondition> | null;
+	data: Map<string, GridFilterData<TDataValues>> | null;
 };
 
-type GridFilterSubCondition<TConditionValue> = Omit<
-	GridFilterCondition<TConditionValue>,
-	"extraConditions" | "check"
->;
+interface GridFilterData<TValue = any>
+	extends Omit<
+		GridFilterCondition<any, TValue>,
+		"isActive" | "check" | "data"
+	> {
+	value: TValue;
+}
 
 interface GridFilterInput<TElement = HTMLInputElement>
 	extends JQuery<TElement> {

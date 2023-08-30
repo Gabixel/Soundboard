@@ -94,8 +94,6 @@ class SoundButtonCollectionStore {
 	): SoundButtonData {
 		collectionId ??= this.getActiveCollection().id;
 
-		let collection = this.getCollection(collectionId);
-
 		let buttonData = this.findButtonData(buttonId, collectionId);
 
 		if (!buttonData) {

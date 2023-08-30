@@ -180,28 +180,31 @@ abstract class MainWindow extends Main {
 			{
 				id: "filter-buttons.text",
 				name: "Text",
-				value: true,
+				isActive: true,
 				$input: filterer.$checkbox("filter-buttons.text"),
-				check(): boolean {
-					console.log("testing");
-					console.log(this.$input);
-
-					return true;
+				check(buttonData: SoundButtonData, filter: string): boolean {
+					return (
+						filter != null &&
+						filter.toLowerCase().includes(buttonData.title.toLowerCase())
+					);
 				},
-				subConditions: null,
+				data: null,
 			},
 			{
 				id: "filter-buttons.index",
 				name: "Index",
-				value: false,
+				isActive: false,
 				$input: filterer.$checkbox("filter-buttons.index"),
-				check(): boolean {
-					console.log("testing");
-					console.log(this.$input);
-
+				check(_buttonData: SoundButtonData, _filter: string): boolean {
+					let startIndexOffset = this.data
+						.get("filter-buttons.index.from")
+						.$input.val() as number;
 					return true;
+					// return (
+
+					// );
 				},
-				subConditions: new Map([
+				data: new Map<string, GridFilterData>([
 					[
 						"filter-buttons.index.from",
 						{
@@ -215,8 +218,13 @@ abstract class MainWindow extends Main {
 									`)
 								)
 								.on("change", (e) => {
-									$(e.target).parent().trigger("subchange");
+									filterer.triggerSubConditionChange(
+										$(e.target).parent().attr("id"),
+										"filter-buttons.index.from",
+										parseInt($(e.target).find("option:selected").val() as string)
+									);
 								}) as JQuery<HTMLInputElement>,
+							value: 1,
 						},
 					],
 				]),
