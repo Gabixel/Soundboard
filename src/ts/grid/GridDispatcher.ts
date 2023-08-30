@@ -161,9 +161,7 @@ class GridDispatcher {
 		}
 
 		let $grid = this._$activeGrid;
-		let gridId = this.getGridId($grid);
 
-		this._soundButtonCollectionStore.clearCollection(gridId);
 		this.clearBinByGrid($grid, false);
 	}
 

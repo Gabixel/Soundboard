@@ -40,7 +40,7 @@ class SoundButtonCollectionStore {
 		this._collections.push(...collections);
 	}
 
-	public clearCollection(id: number): void {
+	public clearCollectionData(id: number): void {
 		let collection = this.getCollection(id);
 
 		collection.buttonData = [];
