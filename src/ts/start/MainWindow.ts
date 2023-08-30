@@ -54,12 +54,10 @@ abstract class MainWindow extends Main {
 		this._gridSoundButtonIdGenerator = new GridSoundButtonIdGenerator();
 
 		this._gridSoundButtonFilter = new GridSoundButtonFilter(
-			$("#filter-buttons-input") as GridFilterInput
-		);
-		this.setupInitialGridFilterConditions(
-			this._gridSoundButtonFilter,
+			$("#filter-buttons-input") as GridFilterInput,
 			$("#filter-buttons-conditions")
 		);
+		this.setupInitialGridFilterConditions(this._gridSoundButtonFilter);
 
 		this._soundButtonSanitizer = new SoundButtonSanitizer(
 			MainWindow.DEFAULT_BUTTONDATA
@@ -176,126 +174,56 @@ abstract class MainWindow extends Main {
 	}
 
 	private static setupInitialGridFilterConditions(
-		filterer: GridSoundButtonFilter,
-		$conditionsContainer: JQuery<HTMLDivElement>
+		filterer: GridSoundButtonFilter
 	): void {
-		const $getCheckbox = () => {
-			return $("<input>", {
-				type: "checkbox",
-			}).on("change", (e) => {
-				let $target = $(e.target);
-				const id = e.target.id;
-
-				console.log("triggered change to checkbox");
-
-				filterer.triggerConditionChange(id, $target.is("checked"));
-			}) as JQuery<HTMLInputElement>;
-		};
-
-		const $getLabel = (forId: string, text: string) => {
-			return $("<label>", {
-				for: forId,
-				text,
-			});
-		};
-
 		let conditions: GridFilterCondition[] = [
 			{
 				id: "filter-buttons.text",
 				name: "Text",
-				isActive: true,
-				$input: $getCheckbox(),
+				value: true,
+				$input: filterer.$checkbox("filter-buttons.text"),
 				check(): boolean {
 					console.log("testing");
+					console.log(this.$input);
 
-					this.$input;
 					return true;
 				},
-				extraConditions: [],
+				subConditions: null,
 			},
 			{
 				id: "filter-buttons.index",
 				name: "Index",
-				isActive: false,
-				$input: $getCheckbox(),
+				value: false,
+				$input: filterer.$checkbox("filter-buttons.index"),
 				check(): boolean {
 					console.log("testing");
+					console.log(this.$input);
 
-					this.$input;
 					return true;
 				},
-				extraConditions: [
-					{
-						id: "filter-buttons.index.from",
-						name: "From",
-						$input: $("<select>")
-							.append(
-								$(`
-								<option value="0">0</option>
-								<option value="1" selected>1</option>
-								`)
-							)
-							.on("change", (e) => {
-								$(e.target).parent().trigger("change");
-							}) as JQuery<HTMLInputElement>,
-					},
-				],
+				subConditions: new Map([
+					[
+						"filter-buttons.index.from",
+						{
+							id: "filter-buttons.index.from",
+							name: "From",
+							$input: $("<select>", { id: "filter-buttons.index.from" })
+								.append(
+									$(`
+										<option value="0">0</option>
+										<option value="1" selected>1</option>
+									`)
+								)
+								.on("change", (e) => {
+									$(e.target).parent().trigger("subchange");
+								}) as JQuery<HTMLInputElement>,
+						},
+					],
+				]),
 			},
 		];
 
 		filterer.addConditions(conditions);
-
-		conditions.forEach((condition) => {
-			condition.$input.attr("id", condition.id);
-
-			appendCondition(condition, $conditionsContainer);
-		});
-
-		function appendCondition(
-			condition: GridFilterCondition,
-			$conditionsContainer: JQuery<HTMLDivElement>
-		): void {
-			let children: JQuery[] = [];
-
-			children.push(condition.$input);
-
-			let finalLabel: JQuery[] = [$getLabel(condition.id, condition.name)];
-
-			if (condition.extraConditions.length > 0) {
-				finalLabel.push($getLabel(condition.id, " ( "));
-
-				condition.extraConditions.forEach((subCondition, index) => {
-					appendSubCondition(condition, subCondition, finalLabel);
-
-					if (index < 1) {
-						return;
-					}
-
-					finalLabel.push($getLabel(condition.id, ", "));
-				});
-
-				finalLabel.push($getLabel(condition.id, " )"));
-			}
-
-			children.push(...finalLabel);
-
-			$conditionsContainer.append($("<div>").append(...children));
-		}
-
-		function appendSubCondition(
-			mainCondition: GridFilterCondition,
-			subCondition: GridFilterSubCondition,
-			finalLabel: JQuery[]
-		): void {
-			finalLabel.push(
-				$("<label>", {
-					for: mainCondition.$input.attr("id"),
-					text: `${subCondition.name}: `,
-				})
-			);
-
-			finalLabel.push(subCondition.$input);
-		}
 	}
 }
 
