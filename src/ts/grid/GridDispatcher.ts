@@ -123,19 +123,21 @@ class GridDispatcher {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
 
+		this.clearOngoingOperations();
+
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		if (this._$activeGrid.length > 0) {
-			let activeGridId = this.getGridId(this._$activeGrid);
-
-			this.clearOngoingOperations(activeGridId);
-
-			this.clearBinBeforeFocusChange();
-
-			this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
-		}
-
+		this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
 		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
+	}
+
+	// TODO: FILTER
+	public filterButtons(id?: number): void {
+		id ??= this.getGridId(this._$activeGrid);
+
+		let collection = this._soundButtonCollectionStore.getCollection(id);
+
+		this._gridSoundButtonFilter.getFilteredOutButtons(collection.buttonData);
 	}
 
 	public clearGrid(id: number): void {
@@ -150,15 +152,19 @@ class GridDispatcher {
 		this.addMissingButtonsToGrid($grid, id);
 	}
 
-	private clearBinBeforeFocusChange(): void {
-		this.clearBinByGrid(this._$activeGrid, false);
-	}
-
-	private clearOngoingOperations(gridId: number): void {
+	private clearOngoingOperations(): void {
 		// Cancel possible button swap/drag
 		this._gridSoundButtonEvents.cancelSwap();
 
+		if (this._$activeGrid.length < 1) {
+			return;
+		}
+
+		let $grid = this._$activeGrid;
+		let gridId = this.getGridId($grid);
+
 		this._soundButtonCollectionStore.clearCollection(gridId);
+		this.clearBinByGrid($grid, false);
 	}
 
 	private moveChildrenToBin(
