@@ -51,7 +51,6 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		$button
 			.attr("id", parsedId)
 			// TODO: apply image
-			.attr("data-tags", buttonData.tags.join(","))
 			// Color
 			.css("--hue", buttonData.color.h.toString())
 			.css("--saturation", buttonData.color.s.toString() + "%")
