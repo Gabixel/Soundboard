@@ -3,31 +3,30 @@ class SoundButtonFactory implements ISoundButtonFactory {
 
 	private _idGenerator: ISoundButtonIdGenerator;
 	private _collectionStore: SoundButtonCollectionStore;
-	private _sanitizer: SoundButtonSanitizer;
 
 	constructor(
 		idGenerator: ISoundButtonIdGenerator,
-		collectionStore: SoundButtonCollectionStore,
-		sanitizer: SoundButtonSanitizer
+		collectionStore: SoundButtonCollectionStore
 	) {
 		this._idGenerator = idGenerator;
 		this._collectionStore = collectionStore;
-		this._sanitizer = sanitizer;
 	}
 
 	public createSoundButton(
 		buttonId: number,
 		collectionId: number,
-		initialButtonData?: SoundButtonData
-	): [SoundButtonElementJQuery, SoundButtonData] {
-		let [$button, buttonData] = this.updateElementData(
-			this.generateSoundButtonElement(buttonId),
+		buttonData: SoundButtonData
+	): SoundButtonElementJQuery {
+		let $button = this.generateSoundButtonElement(buttonId);
+
+		this.updateElementData(
+			$button,
 			buttonId,
 			collectionId,
-			initialButtonData
+			buttonData
 		);
 
-		return [$button, buttonData];
+		return $button;
 	}
 
 	public updateElementDataByParsedId(
@@ -45,10 +44,8 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		$button: SoundButtonElementJQuery,
 		buttonId: number,
 		collectionId: number,
-		buttonData?: SoundButtonData
-	): [SoundButtonElementJQuery, SoundButtonData] {
-		buttonData = this._sanitizer.sanitizeData(buttonId, buttonData);
-
+		buttonData: SoundButtonData
+	): void {
 		let parsedId = this.getParsedSoundButtonId(buttonId, collectionId);
 
 		$button
@@ -62,8 +59,6 @@ class SoundButtonFactory implements ISoundButtonFactory {
 			// Title
 			.children(".button-theme")
 			.text(buttonData.title);
-
-		return [$button, buttonData];
 	}
 
 	public getButtonDataByElement(

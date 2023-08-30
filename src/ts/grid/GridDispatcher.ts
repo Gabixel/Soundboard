@@ -239,7 +239,7 @@ class GridDispatcher {
 		buttonData: SoundButtonData[]
 	): void {
 		buttonData.forEach((data) => {
-			let [$button] = this._gridSoundButtonChildFactory.createSoundButton(
+			let $button = this._gridSoundButtonChildFactory.createSoundButton(
 				data.index,
 				gridId,
 				data
@@ -270,7 +270,7 @@ class GridDispatcher {
 				continue;
 			}
 
-			let [$button] = this._gridSoundButtonChildFactory.createSoundButton(
+			let $button = this._gridSoundButtonChildFactory.createSoundButton(
 				buttonId,
 				gridId
 			);

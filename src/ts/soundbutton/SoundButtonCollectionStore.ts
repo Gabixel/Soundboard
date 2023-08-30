@@ -153,7 +153,7 @@ class SoundButtonCollectionStore {
 	): void {
 		let collection = this.getCollection(collectionId);
 
-		let idAlreadyExists = collection.buttonData.some(
+		const idAlreadyExists = collection.buttonData.some(
 			(d) => d.index == data.index
 		);
 
@@ -187,10 +187,7 @@ class SoundButtonCollectionStore {
 		)?.[0];
 	}
 
-	private findButtonDataIndex(
-		buttonId: number,
-		collectionId: number
-	): number {
+	private findButtonDataIndex(buttonId: number, collectionId: number): number {
 		return this.getCollection(collectionId).buttonData.findIndex(
 			(data) => data.index == buttonId
 		);

@@ -55,8 +55,7 @@ abstract class MainWindow extends Main {
 
 		this._soundButtonFactory = new SoundButtonFactory(
 			this._gridSoundButtonIdGenerator,
-			this._soundButtonCollectionStore,
-			this._soundButtonSanitizer
+			this._soundButtonCollectionStore
 		);
 		this._soundButtonDispatcher = new SoundButtonDispatcher(
 			this._soundButtonFactory
@@ -66,7 +65,8 @@ abstract class MainWindow extends Main {
 
 		this._gridSoundButtonChildFactory = new GridSoundButtonChildFactory(
 			this._soundButtonDispatcher,
-			this._soundButtonCollectionStore
+			this._soundButtonCollectionStore,
+			this._soundButtonSanitizer
 		);
 
 		this._gridDispatcher = new GridDispatcher(

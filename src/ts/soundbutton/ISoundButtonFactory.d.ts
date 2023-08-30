@@ -2,12 +2,12 @@ interface ISoundButtonFactory {
 	createSoundButton(
 		buttonId: number,
 		collectionId: number,
-		data?: SoundButtonData
-	): [SoundButtonElementJQuery, SoundButtonData];
+		data: SoundButtonData
+	): SoundButtonElementJQuery;
 	updateElementData(
 		$button: SoundButtonElementJQuery,
 		buttonId: number,
 		collectionId: number,
-		data?: SoundButtonData
-	): [SoundButtonElementJQuery, SoundButtonData];
+		data: SoundButtonData
+	): void;
 }

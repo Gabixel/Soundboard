@@ -12,15 +12,15 @@ class SoundButtonDispatcher {
 	public createSoundButton(
 		buttonId: number,
 		collectionId: number,
-		initialData?: SoundButtonData
-	): [SoundButtonElementJQuery, SoundButtonData] {
-		let [$button, data] = this._soundButtonFactory.createSoundButton(
+		initialData: SoundButtonData
+	): SoundButtonElementJQuery {
+		let $button = this._soundButtonFactory.createSoundButton(
 			buttonId,
 			collectionId,
 			initialData
 		);
 
-		return [$button, data];
+		return $button;
 	}
 
 	public getSortedSoundButtonElements(
