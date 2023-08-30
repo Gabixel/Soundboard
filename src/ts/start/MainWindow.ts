@@ -12,6 +12,7 @@ abstract class MainWindow extends Main {
 	private static _gridResizer: GridResizer;
 	private static _gridSoundButtonIdGenerator: GridSoundButtonIdGenerator;
 	private static _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
+	private static _gridSoundButtonFilter: GridSoundButtonFilter;
 
 	// Collection and grid tabs
 	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
@@ -39,11 +40,26 @@ abstract class MainWindow extends Main {
 	public static async initWindow() {
 		await super.init();
 
+		const UI = {
+			$gridsContainer: $("#buttons-grids") as GridElementJQuery,
+			$collectionTabsControlContainer: $(
+				"#buttons-collections-controls"
+			) as JQuery<HTMLDivElement>,
+		};
+
 		this.setupAudio();
 
 		this._soundButtonCollectionStore = new SoundButtonCollectionStore();
 
 		this._gridSoundButtonIdGenerator = new GridSoundButtonIdGenerator();
+
+		this._gridSoundButtonFilter = new GridSoundButtonFilter(
+			$("#filter-buttons-input") as GridFilterInput
+		);
+		this.setupInitialGridFilterConditions(
+			this._gridSoundButtonFilter,
+			$("#filter-buttons-conditions")
+		);
 
 		this._soundButtonSanitizer = new SoundButtonSanitizer(
 			MainWindow.DEFAULT_BUTTONDATA
@@ -72,6 +88,7 @@ abstract class MainWindow extends Main {
 		this._gridDispatcher = new GridDispatcher(
 			this._gridResizer,
 			this._gridSoundButtonChildFactory,
+			this._gridSoundButtonFilter,
 			this._gridSoundButtonIdGenerator,
 			new GridEvents(
 				this._audioPlayer,
@@ -80,7 +97,7 @@ abstract class MainWindow extends Main {
 				this._gridResizer
 			),
 			this._soundButtonCollectionStore,
-			$("#buttons-grids") as GridElementJQuery,
+			UI.$gridsContainer,
 			$("#clear-grid-button")
 		);
 
@@ -88,7 +105,7 @@ abstract class MainWindow extends Main {
 			this._collectionTabs = new CollectionTabDispatcher(
 				this._soundButtonCollectionStore,
 				this._gridDispatcher,
-				$("#buttons-collections-controls")
+				UI.$collectionTabsControlContainer
 			);
 		});
 
@@ -156,6 +173,129 @@ abstract class MainWindow extends Main {
 			$("#audio-output-select"),
 			this._audioPlayer
 		);
+	}
+
+	private static setupInitialGridFilterConditions(
+		filterer: GridSoundButtonFilter,
+		$conditionsContainer: JQuery<HTMLDivElement>
+	): void {
+		const $getCheckbox = () => {
+			return $("<input>", {
+				type: "checkbox",
+			}).on("change", (e) => {
+				let $target = $(e.target);
+				const id = e.target.id;
+
+				console.log("triggered change to checkbox");
+
+				filterer.triggerConditionChange(id, $target.is("checked"));
+			}) as JQuery<HTMLInputElement>;
+		};
+
+		const $getLabel = (forId: string, text: string) => {
+			return $("<label>", {
+				for: forId,
+				text,
+			});
+		};
+
+		let conditions: GridFilterCondition[] = [
+			{
+				id: "filter-buttons.text",
+				name: "Text",
+				isActive: true,
+				$input: $getCheckbox(),
+				check(): boolean {
+					console.log("testing");
+
+					this.$input;
+					return true;
+				},
+				extraConditions: [],
+			},
+			{
+				id: "filter-buttons.index",
+				name: "Index",
+				isActive: false,
+				$input: $getCheckbox(),
+				check(): boolean {
+					console.log("testing");
+
+					this.$input;
+					return true;
+				},
+				extraConditions: [
+					{
+						id: "filter-buttons.index.from",
+						name: "From",
+						$input: $("<select>")
+							.append(
+								$(`
+								<option value="0">0</option>
+								<option value="1" selected>1</option>
+								`)
+							)
+							.on("change", (e) => {
+								$(e.target).parent().trigger("change");
+							}) as JQuery<HTMLInputElement>,
+					},
+				],
+			},
+		];
+
+		filterer.addConditions(conditions);
+
+		conditions.forEach((condition) => {
+			condition.$input.attr("id", condition.id);
+
+			appendCondition(condition, $conditionsContainer);
+		});
+
+		function appendCondition(
+			condition: GridFilterCondition,
+			$conditionsContainer: JQuery<HTMLDivElement>
+		): void {
+			let children: JQuery[] = [];
+
+			children.push(condition.$input);
+
+			let finalLabel: JQuery[] = [$getLabel(condition.id, condition.name)];
+
+			if (condition.extraConditions.length > 0) {
+				finalLabel.push($getLabel(condition.id, " ( "));
+
+				condition.extraConditions.forEach((subCondition, index) => {
+					appendSubCondition(condition, subCondition, finalLabel);
+
+					if (index < 1) {
+						return;
+					}
+
+					finalLabel.push($getLabel(condition.id, ", "));
+				});
+
+				finalLabel.push($getLabel(condition.id, " )"));
+			}
+
+			children.push(...finalLabel);
+
+			$conditionsContainer.append($("<div>").append(...children));
+		}
+
+		function appendSubCondition(
+			mainCondition: GridFilterCondition,
+			subCondition: GridFilterSubCondition,
+			finalLabel: JQuery[]
+		): void {
+			finalLabel.push(
+				$("<label>", {
+					for: mainCondition.$input.attr("id"),
+					text: `${subCondition.name}: `,
+				})
+			);
+
+			finalLabel.push(subCondition.$input);
+		}
 	}
 }
 

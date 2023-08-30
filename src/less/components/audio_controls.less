@@ -120,33 +120,33 @@
 		}
 	}
 
-	#buttons-filter :nth-child(1) {
+	#buttons-filter #filter-container {
 		display: flex;
 		align-items: baseline;
 
-		:nth-child(2) {
+		input[type="button"] {
 			margin-left: 5px;
 		}
 	}
 
 	// Filter container
-	#buttons-filter :nth-child(2) {
+	#buttons-filter #filter-buttons-conditions {
 		display: flex;
+		flex-direction: row;
 		align-items: baseline;
 		margin-top: 2px;
+
+		white-space: pre;
 
 		div {
 			display: flex;
 			align-items: baseline;
+			white-space: inherit;
 
 			&:not(:last-child)::after {
 				content: "|";
 				margin: 0 0.5ch;
 			}
-		}
-
-		select {
-			margin-left: 0.3em;
 		}
 
 		input[type="checkbox"] {

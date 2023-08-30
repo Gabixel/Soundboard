@@ -9,6 +9,7 @@ class GridDispatcher {
 
 	private _gridResizer: GridResizer;
 
+	private _gridSoundButtonFilter: GridSoundButtonFilter;
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
 	private _gridSoundButtonEvents: GridEvents;
 	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
@@ -46,6 +47,7 @@ class GridDispatcher {
 	constructor(
 		gridResizer: GridResizer,
 		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
+		gridSoundButtonFilter: GridSoundButtonFilter,
 		soundButtonIdGenerator: ISoundButtonIdGenerator,
 		soundButtonEvents: GridEvents,
 		soundButtonCollectionStore: SoundButtonCollectionStore,
@@ -55,6 +57,7 @@ class GridDispatcher {
 		this._$gridsContainer = $gridsContainer;
 
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
+		this._gridSoundButtonFilter = gridSoundButtonFilter;
 
 		this._soundButtonCollectionStore = soundButtonCollectionStore;
 		this._soundButtonIdGenerator = soundButtonIdGenerator;
@@ -114,9 +117,6 @@ class GridDispatcher {
 	}
 
 	public focusGrid(id: number): void {
-		// Cancel possible button swap/drag
-		this._gridSoundButtonEvents.cancelSwap();
-
 		let $focusingGrid = this.getGrid(id);
 
 		if ($focusingGrid.length == 0) {
@@ -126,6 +126,10 @@ class GridDispatcher {
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
 		if (this._$activeGrid.length > 0) {
+			let activeGridId = this.getGridId(this._$activeGrid);
+
+			this.clearOngoingOperations(activeGridId);
+
 			this.clearBinBeforeFocusChange();
 
 			this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
@@ -135,11 +139,6 @@ class GridDispatcher {
 	}
 
 	public clearGrid(id: number): void {
-		// Cancel possible button swap/drag
-		this._gridSoundButtonEvents.cancelSwap();
-
-		this._soundButtonCollectionStore.clearCollection(id);
-
 		let $grid = this.getGrid(id);
 
 		if ($grid.length == 0) {
@@ -153,6 +152,13 @@ class GridDispatcher {
 
 	private clearBinBeforeFocusChange(): void {
 		this.clearBinByGrid(this._$activeGrid, false);
+	}
+
+	private clearOngoingOperations(gridId: number): void {
+		// Cancel possible button swap/drag
+		this._gridSoundButtonEvents.cancelSwap();
+
+		this._soundButtonCollectionStore.clearCollection(gridId);
 	}
 
 	private moveChildrenToBin(

@@ -147,7 +147,7 @@ namespace Color {
 type ContextMenuArgs =
 	| null
 	| (
-			| { type: "soundbutton"; parsedId: string, buttonData: SoundButtonData }
+			| { type: "soundbutton"; parsedId: string; buttonData: SoundButtonData }
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );
@@ -163,3 +163,23 @@ type LoggerExtraArgs =
 			class: Class;
 			function?: AnyFunc;
 	  };
+
+type GridFilterCondition = {
+	id: string;
+	name: string;
+	isActive: boolean;
+	$input: JQuery<HTMLInputElement>;
+	check: Func<boolean>;
+	extraConditions: GridFilterSubCondition[];
+};
+
+type GridFilterSubCondition = Omit<
+	GridFilterCondition,
+	"extraConditions" | "check" | "isActive"
+>;
+
+interface GridFilterInput<TElement = HTMLInputElement>
+	extends JQuery<TElement> {
+	val(value_function: string): this;
+	val(): string | undefined;
+}
