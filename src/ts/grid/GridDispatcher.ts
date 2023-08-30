@@ -147,13 +147,14 @@ class GridDispatcher {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
 
+		this._soundButtonCollectionStore.clearCollectionData(id);
+
 		this.moveChildrenToBin($grid, id);
 
 		this.addMissingButtonsToGrid($grid, id);
 	}
 
 	private clearOngoingOperations(): void {
-		// Cancel possible button swap/drag
 		this._gridSoundButtonEvents.cancelSwap();
 
 		if (this._$activeGrid.length < 1) {
