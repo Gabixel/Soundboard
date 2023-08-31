@@ -133,8 +133,6 @@ class GridDispatcher {
 							data.index < this._gridResizer.size
 					);
 
-				console.log(newButtonData);
-
 				this.filterButtonsWithData(newButtonData, id, false);
 			})
 			.trigger("resize");
