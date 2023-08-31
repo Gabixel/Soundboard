@@ -5,6 +5,8 @@ class GridDispatcher {
 
 	private static readonly GRID_BUTTON_BIN_CLASS: string = "buttons-bin";
 
+	private _isFiltering: boolean = false;
+
 	private _$gridsContainer: GridElementJQuery;
 
 	private _gridResizer: GridResizer;
@@ -83,10 +85,19 @@ class GridDispatcher {
 	private setupFilter(gridSoundButtonFilter: GridSoundButtonFilter): void {
 		this._gridSoundButtonFilter = gridSoundButtonFilter;
 
-		$(this._gridSoundButtonFilter).on("filter", () => {
-			console.log("test");
-			
-		});
+		$(this._gridSoundButtonFilter)
+			.on("filter", () => {
+				const wasInactive = this._isFiltering;
+
+				this._isFiltering = true;
+
+				this.filterButtons(wasInactive);
+			})
+			.on("unfilter", () => {
+				this.clearFilter(this._$activeGrid);
+
+				this._isFiltering = false;
+			});
 	}
 
 	private setupGridResize(gridResizer: GridResizer): void {
@@ -96,9 +107,13 @@ class GridDispatcher {
 			.on("resize", (_e) => {
 				// TODO: update grids size on active tab change instead of a single call for all grids
 				this.updateAllGridsSize();
+
 				Logger.logDebug(
 					`Grids resized to ${this._gridResizer.size} buttons (${this._gridResizer.rows}×${this._gridResizer.columns})`
 				);
+
+				this.clearOngoingOperations(this._$activeGrid);
+				this.resumeOngoingOperations(this._$activeGrid);
 			})
 			.trigger("resize");
 	}
@@ -123,30 +138,64 @@ class GridDispatcher {
 	}
 
 	public focusGrid(id: number): void {
+		let $currentGrid = this._$activeGrid;
 		let $focusingGrid = this.getGrid(id);
 
 		if ($focusingGrid.length == 0) {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
 
-		this.clearOngoingOperations();
-
 		Logger.logDebug(`Focusing grid with index "${id}"`);
 
-		this._$activeGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
+		$currentGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
 		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
+
+		this.clearOngoingOperations($currentGrid);
+		this.resumeOngoingOperations($focusingGrid);
 	}
 
-	// TODO: FILTER
-	public filterButtons(id?: number): void {
-		id ??= this.getGridId(this._$activeGrid);
+	private filterButtons(wasInactive: boolean, id?: number): void {
+		let $grid = this._$activeGrid;
 
-		let collection = this._soundButtonCollectionStore.getCollection(id);
+		if (id == null) {
+			if ($grid.length < 1) {
+				return;
+			}
 
-		this._gridSoundButtonFilter.getFilteredOutButtons(collection.buttonData);
+			id = this.getGridId($grid);
+		}
+
+		this._$gridsContainer.addClass("filtering");
+		this.getButtons($grid).addClass("filtered");
+
+		const collection = this._soundButtonCollectionStore.getCollection(id);
+
+		const visibleData = collection.buttonData.filter(
+			(data) => data.index < this._gridResizer.size
+		);
+
+		const filteredData =
+			this._gridSoundButtonFilter.getFilteredButtons(visibleData);
+
+		let $buttons = this._gridSoundButtonChildFactory.getSoundButtonsByData(
+			filteredData,
+			collection.id
+		);
+
+		// If filter just changed
+		if (wasInactive) {
+			$buttons.height();
+		}
+
+		$buttons.removeClass("filtered");
 	}
 
-	public clearGrid(id: number): void {
+	private clearFilter($grid: GridElementJQuery): void {
+		this.getButtons($grid).removeClass("filtered");
+		this._$gridsContainer.removeClass("filtering");
+	}
+
+	private clearGrid(id: number): void {
 		let $grid = this.getGrid(id);
 
 		if ($grid.length == 0) {
@@ -160,16 +209,27 @@ class GridDispatcher {
 		this.addMissingButtonsToGrid($grid, id);
 	}
 
-	private clearOngoingOperations(): void {
+	private clearOngoingOperations($grid?: GridElementJQuery): void {
 		this._gridSoundButtonEvents.cancelSwap();
 
-		if (this._$activeGrid.length < 1) {
+		$grid ??= this._$activeGrid;
+
+		if ($grid.length < 1) {
 			return;
 		}
 
-		let $grid = this._$activeGrid;
-
 		this.clearBinByGrid($grid, false);
+		this.clearFilter($grid);
+	}
+
+	private resumeOngoingOperations($grid?: GridElementJQuery): void {
+		$grid ??= this._$activeGrid;
+
+		if ($grid.length < 1) {
+			return;
+		}
+
+		this._gridSoundButtonFilter.triggerFilterEvent();
 	}
 
 	private moveChildrenToBin(
@@ -350,5 +410,11 @@ class GridDispatcher {
 		$grid: GridElementJQuery
 	): SoundButtonElementJQuery[] {
 		return this._gridSoundButtonChildFactory.getSortedSoundButtonElements($grid);
+	}
+
+	private getButtons($grid: GridElementJQuery): SoundButtonElementJQuery {
+		return $grid.children(
+			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`
+		) as SoundButtonElementJQuery;
 	}
 }

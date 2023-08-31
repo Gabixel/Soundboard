@@ -7,12 +7,21 @@ class GridSoundButtonFilter extends EventTarget {
 		return this._$filterInput.val();
 	}
 
+	private get hasActiveFilters(): boolean {
+		return [...this._conditions.values()].some((condition) => condition.isActive);
+	}
+
+	public get isFiltering(): boolean {
+		return this.hasActiveFilters && this.filterText.length > 0;
+	}
+
 	//#region Components
 
-	public $checkbox(id: string): JQuery<HTMLInputElement> {
+	public $checkbox(id: string, checked = false): JQuery<HTMLInputElement> {
 		return $("<input>", {
 			type: "checkbox",
 			id,
+			checked,
 		}).on("change", (e) => {
 			let $target = $(e.target);
 			const id = e.target.id;
@@ -38,7 +47,9 @@ class GridSoundButtonFilter extends EventTarget {
 
 		this._conditions = new Map<string, GridFilterCondition>();
 
-		this._$filterInput = $filterInput;
+		this._$filterInput = $filterInput.on("input", () => {
+			this.triggerFilterEvent();
+		});
 		this._$conditionsContainer = $conidtionsContainer;
 	}
 
@@ -55,16 +66,16 @@ class GridSoundButtonFilter extends EventTarget {
 	}
 
 	/**
-	 * Returns which buttons must be filtered out.
+	 * Returns which buttons pass the filter.
 	 * @param buttonsData The buttons to check.
-	 * @returns The buttons that **didn't** pass the filter.
+	 * @returns The buttons that **did** pass the filter.
 	 */
-	public getFilteredOutButtons(
+	public getFilteredButtons(
 		buttonsData: SoundButtonData[]
 	): SoundButtonData[] {
-		return buttonsData.filter((buttonData) => {
-			return this.shouldFilterOutButton(buttonData);
-		});
+		return buttonsData.filter((buttonData) =>
+			this.shouldFilterButton(buttonData)
+		);
 	}
 
 	public triggerConditionChange(id: string, isActive: boolean): void {
@@ -76,7 +87,11 @@ class GridSoundButtonFilter extends EventTarget {
 
 		condition.isActive = isActive;
 
-		this.dispatchEvent(new Event("filter"));
+		Logger.logDebug(
+			`Filter condition "${condition.id}" ${isActive ? "enabled" : "disabled"}`
+		);
+
+		this.triggerFilterEvent();
 
 		// TODO: update something more?
 	}
@@ -92,29 +107,32 @@ class GridSoundButtonFilter extends EventTarget {
 			throw new ReferenceError(`Condition not found with id "${id}"`);
 		}
 
-		condition.data.get(subId).value = value;
+		let subData = condition.data.get(subId);
+
+		subData.value = value;
+
+		Logger.logDebug(
+			`Filter condition "${condition.id}" changed: set sub-data "${subData.id}" value to:`,
+			value
+		);
 
 		if (condition.isActive) {
-			this.dispatchEvent(new Event("filter"));
+			this.triggerFilterEvent();
 		}
 
 		// TODO: update something more?
 	}
 
-	private shouldFilterOutButton(buttonData: SoundButtonData): boolean {
-		for (const conditionId in this._conditions) {
-			const condition = this._conditions.get(conditionId);
+	public triggerFilterEvent(): void {
+		this.dispatchEvent(new Event(this.isFiltering ? "filter" : "unfilter"));
+	}
 
-			if (!condition.isActive) {
-				continue;
-			}
+	private shouldFilterButton(buttonData: SoundButtonData): boolean {
+		return [...this._conditions.values()].some((condition) => {
+			let passedCheck = condition.check(buttonData, this.filterText);
 
-			if (!condition.check(buttonData)) {
-				return true;
-			}
-		}
-
-		return false;
+			return condition.isActive && passedCheck;
+		});
 	}
 
 	public generateConditionElements(condition: GridFilterCondition): void {

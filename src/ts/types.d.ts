@@ -164,21 +164,21 @@ type LoggerExtraArgs =
 			function?: AnyFunc;
 	  };
 
-interface GridFilterCondition<TConditionValue = any, TDataValues = any> {
+interface GridFilterCondition<TDataValues = any> {
 	id: string;
 	name: string;
 	/**
 	 * If this condition is active.
 	 */
-	isActive: TConditionValue;
+	isActive: boolean;
 	$input: JQuery<HTMLInputElement>;
-	check: Func<boolean>;
+	check: (buttonData: SoundButtonData, filter: string) => boolean;
 	data: Map<string, GridFilterData<TDataValues>> | null;
 };
 
 interface GridFilterData<TValue = any>
 	extends Omit<
-		GridFilterCondition<any, TValue>,
+		GridFilterCondition<TValue>,
 		"isActive" | "check" | "data"
 	> {
 	value: TValue;

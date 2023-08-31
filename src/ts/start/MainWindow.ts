@@ -181,7 +181,7 @@ abstract class MainWindow extends Main {
 				id: "filter-buttons.text",
 				name: "Text",
 				isActive: true,
-				$input: filterer.$checkbox("filter-buttons.text"),
+				$input: filterer.$checkbox("filter-buttons.text", true),
 				check(buttonData: SoundButtonData, filter: string): boolean {
 					return (
 						filter != null &&

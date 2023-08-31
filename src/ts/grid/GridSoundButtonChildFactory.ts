@@ -38,6 +38,24 @@ class GridSoundButtonChildFactory {
 		return this._soundButtonDispatcher.getSortedSoundButtonElements($grid);
 	}
 
+	public getSoundButtonsByData(
+		buttonsData: SoundButtonData[],
+		collectionId: number
+	): SoundButtonElementJQuery {
+		let $soundbuttons: SoundButtonElementJQuery = $("");
+
+		buttonsData.forEach((buttonData) => {
+			let $button = this._soundButtonDispatcher.getSoundButtonElement(
+				buttonData.index,
+				collectionId
+			);
+
+			$soundbuttons = $soundbuttons.add($button);
+		});
+
+		return $soundbuttons;
+	}
+
 	public swapSoundButtons(
 		$button1: SoundButtonElementJQuery,
 		$button2: SoundButtonElementJQuery

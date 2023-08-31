@@ -5,7 +5,8 @@
 
 // TODO: https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/
 
-button.soundbutton, button.soundbutton_old {
+button.soundbutton,
+button.soundbutton_old {
 	// Base restyle
 	.style();
 
@@ -27,14 +28,14 @@ button.soundbutton, button.soundbutton_old {
 }
 
 div:not(.buttons-bin) {
-	&.filtering button.soundbutton {
-		&.filtered .button-theme {
-			opacity: 0.15;
+	&.filtering {
+		button.soundbutton {
+			&.filtered .button-theme {
+				opacity: 0.15;
+			}
 		}
-	}
 
-	&:not(.has-dragging-child).filtering button.soundbutton {
-		&:not(.filtered) {
+		&:not(.has-dragging-child) button.soundbutton:not(.filtered) {
 			animation: visual-light 2.5s ease-in-out;
 
 			@keyframes visual-light {
@@ -47,18 +48,18 @@ div:not(.buttons-bin) {
 				}
 			}
 		}
-	}
 
-	&.has-dragging-child.filtering button.soundbutton {
-		&:not(.filtered):not(.dragging) {
-			outline: 2px dashed #0f0;
-		}
+		&.has-dragging-child.filtering button.soundbutton {
+			&:not(.filtered):not(.dragging) {
+				outline: 2px dashed #0f0;
+			}
 
-		&.drop-destination:not(.filtered) {
-			outline: 3px solid #fff;
+			&.drop-destination:not(.filtered) {
+				outline: 3px solid #fff;
 
-			.button-theme {
-				opacity: 1;
+				.button-theme {
+					opacity: 1;
+				}
 			}
 		}
 	}
