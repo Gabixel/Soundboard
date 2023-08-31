@@ -59,6 +59,38 @@ body {
 			}
 		}
 	}
+
+	.fps_loop {
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		width: 1px;
+		height: 1px;
+
+		background-color: var(--window-bg);
+
+		// animation: fps_loop 1s infinite;
+
+		@keyframes fps_loop {
+			0%,
+			100% {
+				transform: translate(0, 0);
+			}
+
+			25% {
+				transform: translate(0, 2px);
+			}
+
+			50% {
+				transform: translate(2px, 2px);
+			}
+
+			75% {
+				transform: translate(2px, 0);
+			}
+		}
+	}
 }
 
 // TODO: Reduce effect if the OS decides that.
