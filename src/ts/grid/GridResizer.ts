@@ -33,7 +33,7 @@ class GridResizer extends EventTarget {
 			name: "rows",
 			$input: $rowsInput.val(rowCount),
 			value: rowCount,
-			previousValue: 0,
+			previousValue: rowCount,
 			semaphore: new Semaphore(),
 		};
 
@@ -41,7 +41,7 @@ class GridResizer extends EventTarget {
 			name: "columns",
 			$input: $columnsInput.val(columnCount),
 			value: columnCount,
-			previousValue: 0,
+			previousValue: columnCount,
 			semaphore: new Semaphore(),
 		};
 
@@ -79,6 +79,7 @@ class GridResizer extends EventTarget {
 				return;
 			}
 
+			gridAxis.previousValue = gridAxis.value;
 			gridAxis.value = this.clampSizeValue($(e.target));
 
 			this.dispatchEvent(new Event(`resize`));

@@ -91,12 +91,12 @@ class GridDispatcher {
 
 				this._isFiltering = true;
 
-				this.filterButtons(wasInactive);
+				this.filterVisibleButtons(wasInactive);
 			})
 			.on("unfilter", () => {
-				this.clearFilter(this._$activeGrid);
-
 				this._isFiltering = false;
+
+				this.clearFilter(this._$activeGrid);
 			});
 	}
 
@@ -112,8 +112,30 @@ class GridDispatcher {
 					`Grids resized to ${this._gridResizer.size} buttons (${this._gridResizer.rows}×${this._gridResizer.columns})`
 				);
 
-				this.clearOngoingOperations(this._$activeGrid);
-				this.resumeOngoingOperations(this._$activeGrid);
+				if (!this._isFiltering) {
+					return;
+				}
+
+				let difference = this._gridResizer.size - this._gridResizer.previousSize;
+
+				if (difference <= 0) {
+					return;
+				}
+
+				let $grid = this._$activeGrid;
+				let id = this.getGridId($grid);
+
+				let newButtonData = this._soundButtonCollectionStore
+					.getCollection(id)
+					.buttonData.filter(
+						(data) =>
+							data.index >= this._gridResizer.previousSize &&
+							data.index < this._gridResizer.size
+					);
+
+				console.log(newButtonData);
+
+				this.filterButtonsWithData(newButtonData, id, false);
 			})
 			.trigger("resize");
 	}
@@ -154,32 +176,40 @@ class GridDispatcher {
 		this.resumeOngoingOperations($focusingGrid);
 	}
 
-	private filterButtons(wasInactive: boolean, id?: number): void {
+	private filterVisibleButtons(wasInactive: boolean, gridId?: number): void {
 		let $grid = this._$activeGrid;
 
-		if (id == null) {
+		if (gridId == null) {
 			if ($grid.length < 1) {
 				return;
 			}
 
-			id = this.getGridId($grid);
+			gridId = this.getGridId($grid);
 		}
 
-		this._$gridsContainer.addClass("filtering");
 		this.getButtons($grid).addClass("filtered");
+		this._$gridsContainer.addClass("filtering");
 
-		const collection = this._soundButtonCollectionStore.getCollection(id);
+		const collection = this._soundButtonCollectionStore.getCollection(gridId);
 
 		const visibleData = collection.buttonData.filter(
 			(data) => data.index < this._gridResizer.size
 		);
 
+		this.filterButtonsWithData(visibleData, gridId, wasInactive);
+	}
+
+	private filterButtonsWithData(
+		buttonsData: SoundButtonData[],
+		gridId: number,
+		wasInactive: boolean
+	): void {
 		const filteredData =
-			this._gridSoundButtonFilter.getFilteredButtons(visibleData);
+			this._gridSoundButtonFilter.getFilteredButtons(buttonsData);
 
 		let $buttons = this._gridSoundButtonChildFactory.getSoundButtonsByData(
 			filteredData,
-			collection.id
+			gridId
 		);
 
 		// If filter just changed
@@ -351,6 +381,10 @@ class GridDispatcher {
 				buttonId,
 				gridId
 			);
+
+			if(this._isFiltering) {
+				$button.addClass("filtered");
+			}
 
 			$grid.append($button);
 		}

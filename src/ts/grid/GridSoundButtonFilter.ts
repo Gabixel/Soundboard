@@ -70,9 +70,7 @@ class GridSoundButtonFilter extends EventTarget {
 	 * @param buttonsData The buttons to check.
 	 * @returns The buttons that **did** pass the filter.
 	 */
-	public getFilteredButtons(
-		buttonsData: SoundButtonData[]
-	): SoundButtonData[] {
+	public getFilteredButtons(buttonsData: SoundButtonData[]): SoundButtonData[] {
 		return buttonsData.filter((buttonData) =>
 			this.shouldFilterButton(buttonData)
 		);
@@ -127,16 +125,16 @@ class GridSoundButtonFilter extends EventTarget {
 		this.dispatchEvent(new Event(this.isFiltering ? "filter" : "unfilter"));
 	}
 
+	public generateConditionElements(condition: GridFilterCondition): void {
+		this.appendCondition(condition);
+	}
+
 	private shouldFilterButton(buttonData: SoundButtonData): boolean {
 		return [...this._conditions.values()].some((condition) => {
 			let passedCheck = condition.check(buttonData, this.filterText);
 
 			return condition.isActive && passedCheck;
 		});
-	}
-
-	public generateConditionElements(condition: GridFilterCondition): void {
-		this.appendCondition(condition);
 	}
 
 	private appendCondition<TConditionValue = boolean>(
