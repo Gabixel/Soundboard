@@ -206,14 +206,14 @@
 
 				button.soundbutton_old {
 					order: var(--index);
-					
+
 					transform-origin: center;
 
 					animation: explosion 1.5s ease-in-out forwards;
 
 					@keyframes explosion {
 						0% {
-							transform: translateY(0) scale(1) rotate(0);
+							transform: translate(0, 0) scale(1) rotate(0);
 							filter: brightness(1);
 							opacity: 1;
 						}
@@ -225,7 +225,7 @@
 							opacity: 0;
 						}
 						100% {
-							transform: translateY(300%) scale(0.6) rotate(90deg);
+							transform: translate(20px, 300px) scale(0.6) rotate(90deg);
 							filter: brightness(0);
 							opacity: 0;
 						}
