@@ -55,6 +55,7 @@ abstract class MainWindow extends Main {
 
 		this._gridSoundButtonFilter = new GridSoundButtonFilter(
 			$("#filter-buttons-input") as GridFilterInput,
+			$("#clear-filter-buttons"),
 			$("#filter-buttons-conditions")
 		);
 		this.setupInitialGridFilterConditions(this._gridSoundButtonFilter);

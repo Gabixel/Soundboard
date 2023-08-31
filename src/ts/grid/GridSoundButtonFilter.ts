@@ -1,6 +1,7 @@
 class GridSoundButtonFilter extends EventTarget {
 	private _conditions: Map<string, GridFilterCondition>;
 	private _$filterInput: GridFilterInput;
+	private _$clearButton: JQuery<HTMLButtonElement>;
 	private _$conditionsContainer: JQuery<HTMLDivElement>;
 
 	public get filterText(): string {
@@ -41,6 +42,7 @@ class GridSoundButtonFilter extends EventTarget {
 
 	constructor(
 		$filterInput: GridFilterInput,
+		$clearButton: JQuery<HTMLButtonElement>,
 		$conidtionsContainer: JQuery<HTMLDivElement>
 	) {
 		super();
@@ -50,6 +52,11 @@ class GridSoundButtonFilter extends EventTarget {
 		this._$filterInput = $filterInput.on("input", () => {
 			this.triggerFilterEvent();
 		});
+
+		this._$clearButton = $clearButton.on("click", () => {
+			this._$filterInput.val("").trigger("input");
+		});
+
 		this._$conditionsContainer = $conidtionsContainer;
 	}
 
