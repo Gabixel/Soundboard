@@ -219,7 +219,7 @@ abstract class MainWindow extends Main {
 								)
 								.on("change", (e) => {
 									filterer.triggerSubConditionChange(
-										$(e.target).parent().attr("id"),
+										"filter-buttons.index",
 										"filter-buttons.index.from",
 										parseInt($(e.target).find("option:selected").val() as string)
 									);

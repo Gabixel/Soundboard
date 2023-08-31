@@ -1,4 +1,4 @@
-class GridSoundButtonFilter {
+class GridSoundButtonFilter extends EventTarget {
 	private _conditions: Map<string, GridFilterCondition>;
 	private _$filterInput: GridFilterInput;
 	private _$conditionsContainer: JQuery<HTMLDivElement>;
@@ -17,9 +17,7 @@ class GridSoundButtonFilter {
 			let $target = $(e.target);
 			const id = e.target.id;
 
-			console.log("triggered change to checkbox");
-
-			this.triggerConditionChange(id, $target.is("checked"));
+			this.triggerConditionChange(id, $target.is(":checked"));
 		}) as JQuery<HTMLInputElement>;
 	}
 
@@ -36,6 +34,8 @@ class GridSoundButtonFilter {
 		$filterInput: GridFilterInput,
 		$conidtionsContainer: JQuery<HTMLDivElement>
 	) {
+		super();
+
 		this._conditions = new Map<string, GridFilterCondition>();
 
 		this._$filterInput = $filterInput;
@@ -76,6 +76,8 @@ class GridSoundButtonFilter {
 
 		condition.isActive = isActive;
 
+		this.dispatchEvent(new Event("filter"));
+
 		// TODO: update something more?
 	}
 
@@ -91,6 +93,10 @@ class GridSoundButtonFilter {
 		}
 
 		condition.data.get(subId).value = value;
+
+		if (condition.isActive) {
+			this.dispatchEvent(new Event("filter"));
+		}
 
 		// TODO: update something more?
 	}

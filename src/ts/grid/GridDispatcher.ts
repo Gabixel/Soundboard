@@ -55,14 +55,11 @@ class GridDispatcher {
 		$clearGridButton: JQuery<HTMLButtonElement>
 	) {
 		this._$gridsContainer = $gridsContainer;
-
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
-		this._gridSoundButtonFilter = gridSoundButtonFilter;
-
+		this.setupFilter(gridSoundButtonFilter);
 		this._soundButtonCollectionStore = soundButtonCollectionStore;
 		this._soundButtonIdGenerator = soundButtonIdGenerator;
 		this.setupEvents(soundButtonEvents, $clearGridButton);
-
 		this.setupGridResize(gridResizer);
 	}
 
@@ -80,6 +77,15 @@ class GridDispatcher {
 			window.confirm(
 				`Are you sure you want to clear the grid "${this.getGridName(gridId)}"?`
 			) && this.clearGrid(gridId);
+		});
+	}
+
+	private setupFilter(gridSoundButtonFilter: GridSoundButtonFilter): void {
+		this._gridSoundButtonFilter = gridSoundButtonFilter;
+
+		$(this._gridSoundButtonFilter).on("filter", () => {
+			console.log("test");
+			
 		});
 	}
 
