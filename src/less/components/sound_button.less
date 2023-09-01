@@ -35,30 +35,41 @@ div:not(.buttons-bin) {
 			}
 		}
 
-		&:not(.has-dragging-child) button.soundbutton:not(.filtered) {
-			animation: visual-light 2.5s ease-in-out;
-
-			@keyframes visual-light {
-				from {
-					box-shadow: 0 0 2px 2px rgb(255 255 255 / 1);
+		&:not(.has-dragging-child) {
+			button.soundbutton {
+				&.filtered {
+					transition: none;
+					box-shadow: none;
 				}
 
-				to {
-					box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
+				&:not(.filtered) {
+					animation: visual-light 2.5s ease-in-out;
+
+					@keyframes visual-light {
+						from {
+							box-shadow: 0 0 2px 2px rgb(255 255 255 / 1);
+						}
+
+						to {
+							box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
+						}
+					}
 				}
 			}
 		}
 
-		&.has-dragging-child.filtering button.soundbutton {
-			&:not(.filtered):not(.dragging) {
-				outline: 2px dashed #0f0;
-			}
+		&.has-dragging-child {
+			button.soundbutton {
+				&:not(.filtered):not(.dragging) {
+					outline: 2px dashed #0f0;
+				}
 
-			&.drop-destination:not(.filtered) {
-				outline: 3px solid #fff;
+				&.drop-destination:not(.filtered) {
+					outline: 3px solid #fff;
 
-				.button-theme {
-					opacity: 1;
+					.button-theme {
+						opacity: 1;
+					}
 				}
 			}
 		}
