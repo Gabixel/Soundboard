@@ -105,6 +105,8 @@ class GridDispatcher {
 
 		$(this._gridResizer)
 			.on("resize", (_e) => {
+				this._gridSoundButtonEvents.cancelSwap();
+
 				// TODO: update grids size on active tab change instead of a single call for all grids
 				this.updateAllGridsSize();
 
@@ -170,8 +172,8 @@ class GridDispatcher {
 		$currentGrid.removeClass(GridDispatcher.GRID_ACTIVE_CLASS);
 		$focusingGrid.addClass(GridDispatcher.GRID_ACTIVE_CLASS);
 
-		this.clearOngoingOperations($currentGrid);
-		this.resumeOngoingOperations($focusingGrid);
+		this.clearOngoingOperationsOnSwap($currentGrid);
+		this.resumeOngoingOperationsOnSwap($focusingGrid);
 	}
 
 	private filterVisibleButtons(wasInactive: boolean, gridId?: number): void {
@@ -243,7 +245,7 @@ class GridDispatcher {
 		this.addMissingButtonsToGrid($grid, id);
 	}
 
-	private clearOngoingOperations($grid?: GridElementJQuery): void {
+	private clearOngoingOperationsOnSwap($grid?: GridElementJQuery): void {
 		this._gridSoundButtonEvents.cancelSwap();
 
 		$grid ??= this._$activeGrid;
@@ -256,7 +258,7 @@ class GridDispatcher {
 		this.clearFilter($grid);
 	}
 
-	private resumeOngoingOperations($grid?: GridElementJQuery): void {
+	private resumeOngoingOperationsOnSwap($grid?: GridElementJQuery): void {
 		$grid ??= this._$activeGrid;
 
 		if ($grid.length < 1) {
@@ -284,11 +286,11 @@ class GridDispatcher {
 		const buttonsClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
 		const oldClass = SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS;
 
-		$editedButtons
-			.attr("id", "")
-			.detach()
+		// Outdate buttons and set them the bin grid position
+		this._gridSoundButtonChildFactory
+			.outdateButtonElements($editedButtons)
 			.css("--column-amount", this._gridResizer.columns)
-			.css("--index", function (_i, _value) {
+			.css("--index", function (this, _i, _value) {
 				let index = parseInt(this.style.getPropertyValue("--index"));
 				let columnAmount = parseInt(this.style.getPropertyValue("--column-amount"));
 

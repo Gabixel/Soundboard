@@ -95,4 +95,10 @@ class GridSoundButtonChildFactory {
 
 		this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
 	}
+
+	public outdateButtonElements(
+		$buttons: SoundButtonElementJQuery
+	): SoundButtonElementJQuery {
+		return $buttons.attr("id", "").detach();
+	}
 }
