@@ -63,7 +63,7 @@ class AudioOutput implements IAudioOutput {
 		return this._context.createMediaElementSource(element);
 	}
 
-	public setVolume(newVolume: number): void {
+	public setVolume(newVolume: float): void {
 		this._masterVolume.gain.value = newVolume;
 	}
 }

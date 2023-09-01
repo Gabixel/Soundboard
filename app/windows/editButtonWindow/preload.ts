@@ -9,8 +9,8 @@ const api: EditButtonWindowApiBridge = {
 	getButtonData: async (): Promise<SoundButtonData> =>
 		ipcRenderer.invoke("editor-request-buttondata"),
 
-	updateButtonData: async (id, buttonData): Promise<void> =>
-		ipcRenderer.invoke("editor-update-buttondata", id, buttonData),
+	updateButtonData: async (parsedId, buttonData): Promise<void> =>
+		ipcRenderer.invoke("editor-update-buttondata", parsedId, buttonData),
 
 	onAskCompareChanges: (callback: () => void): void => {
 		ipcRenderer.on("editor-ask-compare-changes", callback);
@@ -40,13 +40,13 @@ type EditButtonWindowApiBridge = {
 	 * Sends the updated soundbutton data to the main process
 	 * @param buttonData The new data for the soundbutton
 	 */
-	updateButtonData: (id: string, buttonData: SoundButtonData) => Promise<void>;
+	updateButtonData: (parsedId: string, buttonData: SoundButtonData) => Promise<void>;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
 
 	onAskCompareChanges: (callback: () => void) => void;
 
-	sendCompareChanges: (id: string, buttonData: SoundButtonData) => Promise<void>;
+	sendCompareChanges: (parsedId: string, buttonData: SoundButtonData) => Promise<void>;
 };
 
 const styles = [
@@ -56,7 +56,7 @@ const styles = [
 
 	"editButtonWindow",
 
-	"buttons_grid",
+	"buttons_area",
 	"sound_button",
 ];
 
@@ -66,8 +66,6 @@ const scripts = [
 	"utility/EMath",
 	"utility/SoundboardApi",
 	"utility/StringUtilities",
-
-	"grid/SoundButtonManager",
 
 	"editor/EditorForm",
 

@@ -141,14 +141,14 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 }
 
 function createEditButtonWindow(
-	id_original: string,
-	buttonData_original: SoundButtonData,
+	parsedButtonId: string,
+	originalButtonData: SoundButtonData,
 	screenWidth: number,
 	screenHeight: number
 ) {
 	if (mainWindow == null || editButtonWindow != null) return;
 
-	let name = buttonData_original.title;
+	let name = originalButtonData.title;
 
 	let title = "Edit button";
 	if (name != null) {
@@ -202,24 +202,27 @@ function createEditButtonWindow(
 		// Note: do not use `handleOnce` since the editor page can be reloaded
 		// TODO: prevent CTRL-R ?
 		ipcMain.handle("editor-request-buttondata", (_e, _args) => {
-			return { id: id_original, buttonData: buttonData_original };
+			return { parsedId: parsedButtonId, buttonData: originalButtonData };
 		});
 
 		// On submit
-		ipcMain.handleOnce("editor-update-buttondata", (_e, id, buttonData) => {
-			saveChanges(id, buttonData);
+		ipcMain.handleOnce("editor-update-buttondata", (_e, parsedId, buttonData) => {
+			saveSoundButtonChanges(parsedId, buttonData);
 			editButtonWindow.destroy();
 		});
 
 		// Check on close to see if there are unsaved changes
-		ipcMain.handle("editor-onclose-compare-changes", (_e, id, buttonData) => {
-			// Should never happen
-			// if (id_original != id) { }
+		ipcMain.handle(
+			"editor-onclose-compare-changes",
+			(_e, parsedId, buttonData) => {
+				// Should never happen
+				// if (id_original != id) { }
 
-			if (shouldQuitCheckingChanges(id, buttonData)) {
-				editButtonWindow.destroy();
+				if (shouldQuitCheckingChanges(parsedId, buttonData)) {
+					editButtonWindow.destroy();
+				}
 			}
-		});
+		);
 
 		editButtonWindow.show();
 	});
@@ -239,9 +242,12 @@ function createEditButtonWindow(
 		editButtonWindow = null;
 	});
 
-	function saveChanges(id: string, buttonData: SoundButtonData): void {
+	function saveSoundButtonChanges(
+		parsedId: string,
+		buttonData: SoundButtonData
+	): void {
 		// Send updated button
-		mainWindow.webContents.send("buttondata-updated", id, buttonData);
+		mainWindow.webContents.send("buttondata-updated", parsedId, buttonData);
 	}
 
 	function shouldQuitCheckingChanges(
@@ -249,7 +255,7 @@ function createEditButtonWindow(
 		buttonData: SoundButtonData
 	): boolean {
 		let editorHasUnsavedChanges =
-			JSON.stringify(buttonData_original) != JSON.stringify(buttonData);
+			JSON.stringify(originalButtonData) != JSON.stringify(buttonData);
 
 		if (editorHasUnsavedChanges) {
 			/**
@@ -278,7 +284,7 @@ function createEditButtonWindow(
 				// "Save and close"
 				case 2:
 					// Save changes and close
-					saveChanges(id, buttonData);
+					saveSoundButtonChanges(id, buttonData);
 				// (1) "Forget/Discard"
 				default:
 					return true;
@@ -436,7 +442,7 @@ function initIpc() {
 							label: "Edit",
 							click: () => {
 								createEditButtonWindow(
-									args.id,
+									args.parsedId,
 									args.buttonData,
 									primaryScreenWidth,
 									primaryScreenHeight

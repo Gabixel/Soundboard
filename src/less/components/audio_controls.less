@@ -92,7 +92,7 @@
 		}
 	}
 
-	#clear-grid {
+	#clear-grid-button {
 		@h: 352;
 		@s: 80%;
 		@l: 46%;
@@ -120,43 +120,44 @@
 		}
 	}
 
-	#buttons-filter :nth-child(1) {
-		display: flex;
-		align-items: baseline;
-
-		:nth-child(2) {
-			margin-left: 5px;
-		}
-	}
-
-	// Filter container
-	#buttons-filter :nth-child(2) {
-		display: flex;
-		align-items: baseline;
-		margin-top: 2px;
-
-		div {
+	#buttons-filter {
+		#filter-container {
 			display: flex;
 			align-items: baseline;
 
-			&:not(:last-child)::after {
-				content: "|";
-				margin: 0 0.5ch;
+			input[type="button"] {
+				margin-left: 5px;
 			}
 		}
 
-		select {
-			margin-left: 0.3em;
-		}
+		#filter-buttons-conditions {
+			display: flex;
+			flex-direction: row;
+			align-items: baseline;
+			margin-top: 2px;
 
-		input[type="checkbox"] {
-			align-self: center;
-			margin: 0 0.15em;
-		}
+			white-space: pre;
 
-		label {
-			&:first-child {
-				margin-right: 0.3em;
+			div {
+				display: flex;
+				align-items: baseline;
+				white-space: inherit;
+
+				&:not(:last-child)::after {
+					content: "|";
+					margin: 0 0.5ch;
+				}
+			}
+
+			input[type="checkbox"] {
+				align-self: center;
+				margin: 0 0.15em;
+			}
+
+			label {
+				&:first-child {
+					margin-right: 0.3em;
+				}
 			}
 		}
 	}

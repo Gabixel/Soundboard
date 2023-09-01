@@ -57,38 +57,37 @@ body {
 
 				background-color: #707070;
 			}
+		}
+	}
 
-			#presets-container {
-				z-index: 0;
+	.fps_loop {
+		position: absolute;
+		top: 0;
+		left: 0;
 
-				&.hidden {
-					width: 20px;
-				}
+		width: 1px;
+		height: 1px;
 
-				.open-btn {
-					--hsl-active: hsl(10, 10%, 10%);
+		background-color: var(--window-bg);
 
-					-webkit-text-stroke: 1px #fff;
+		// animation: fps_loop 1s infinite;
 
-					background-color: #707070;
-					color: #fff;
+		@keyframes fps_loop {
+			0%,
+			100% {
+				transform: translate(0, 0);
+			}
 
-					&:hover {
-						background-color: #636363;
-					}
+			25% {
+				transform: translate(0, 2px);
+			}
 
-					&:active {
-						background-color: #575757;
-					}
+			50% {
+				transform: translate(2px, 2px);
+			}
 
-					height: 100%;
-					width: calc(100% + @main-radius);
-					margin-left: calc(@main-radius * -1);
-
-					padding-left: calc(@main-radius * 1.5);
-
-					border: none;
-				}
+			75% {
+				transform: translate(2px, 0);
 			}
 		}
 	}

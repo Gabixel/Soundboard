@@ -51,6 +51,8 @@ abstract class UiScale {
 			$(document.body).stop(true, false);
 			this.setSliderValue(value);
 			$(document.body).css("zoom", value);
+
+			$(window).trigger("resize");
 		});
 	}
 
@@ -80,7 +82,12 @@ abstract class UiScale {
 					{
 						zoom: parseFloat($(e.target).val().toString()),
 					},
-					325
+					{
+						duration: 325,
+						step: () => {
+							$(window).trigger("resize");
+						},
+					}
 				);
 				Logger.logDebug(
 					"(ui scale slider click)",

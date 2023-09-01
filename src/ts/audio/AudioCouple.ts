@@ -23,11 +23,11 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		this._couple.main.loop = this._couple.playback.loop = loop;
 	}
 
-	public get volume(): number {
+	public get volume(): float {
 		return this._couple.main.volume;
 	}
 
-	public set volume(volume: number) {
+	public set volume(volume: float) {
 		this._couple.main.volume = this._couple.playback.volume = volume;
 	}
 

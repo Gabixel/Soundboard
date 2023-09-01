@@ -19,13 +19,11 @@ const api: MainWindowApiBridge = {
 		ipcRenderer.invoke("join-paths", ...paths),
 
 	onButtonDataUpdate: (callback) => {
-		ipcRenderer.on("buttondata-updated", (_e, id, buttonData) => {
-			callback(id, buttonData);
+		ipcRenderer.on("buttondata-updated", (_e, parsedId, buttonData) => {
+			callback(parsedId, buttonData);
 		});
 	},
 };
-
-
 
 // Keep updated with "~/src/ts/utility/SoundboardApi.ts"
 type MainWindowApiBridge = {
@@ -43,7 +41,9 @@ type MainWindowApiBridge = {
 	openContextMenu: (args: any) => void;
 	// isPathFile: (args: string) => boolean;
 	joinPaths: (...paths: string[]) => Promise<string>;
-	onButtonDataUpdate: (callback: (id: string, buttonData: SoundButtonData) => void) => void;
+	onButtonDataUpdate: (
+		callback: (id: string, buttonData: SoundButtonData) => void
+	) => void;
 };
 
 const styles = [
@@ -55,12 +55,13 @@ const styles = [
 
 	"toolbar",
 	"audio_controls",
-	"buttons_grid",
+	"buttons_area",
 	"sound_button",
 	"volume_slider",
 ];
 
 const scripts = [
+	"utility/Semaphore",
 	"utility/Logger",
 	"utility/JQueryFixes",
 	"utility/EMath",
@@ -69,16 +70,28 @@ const scripts = [
 	"utility/UserInterface",
 	"utility/StringUtilities",
 
-	"grid/GridManager",
-	"grid/GridResizer",
-	"grid/GridNavigation",
-	"grid/ButtonSwap",
-	"grid/ButtonFilterer",
-	"grid/SoundButtonManager",
+	"soundbutton/SoundButtonCollectionCache",
+	"soundbutton/SoundButtonCollectionStore",
+	"soundbutton/SoundButtonSanitizer",
+	"soundbutton/SoundButtonFactory",
+	"soundbutton/SoundButtonDispatcher",
 
-	"controls/VolumeSlider",
-	"controls/PresetsPanel",
-	"controls/UiScale",
+	"grid/events/GridSoundButtonEdit",
+	"grid/events/GridSoundButtonSwap",
+	"grid/events/GridEvents",
+	"grid/GridSoundButtonIdGenerator",
+	"grid/GridSoundButtonChildFactory",
+	"grid/GridSoundButtonFilter",
+	"grid/GridResizer",
+	"grid/GridDispatcher",
+
+	"control/VolumeSlider",
+	"control/PresetsPanel",
+	"control/UiScale",
+	"control/ToolbarManager",
+
+	"collection_tab/CollectionTabGridFactory",
+	"collection_tab/CollectionTabDispatcher",
 
 	"audio/AudioSource",
 	"audio/AudioCouple",
@@ -86,8 +99,6 @@ const scripts = [
 	"audio/AudioOutput",
 	"audio/AudioStore",
 	"audio/AudioPlayer",
-
-	"ToolbarManager",
 
 	"start/Main",
 	"start/MainWindow",

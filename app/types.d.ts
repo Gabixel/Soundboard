@@ -2,15 +2,20 @@
 type ContextMenuArgs =
 	| null
 	| (
-			| { type: "soundbutton"; id: string; buttonData: SoundButtonData }
+			| { type: "soundbutton"; parsedId: string, buttonData: SoundButtonData }
 			| { type: "test1"; coolThing: number }
 			| { type: "test999"; a: 1; b: 2 }
 	  );
 
 /**
- * Sound button metadata
+ * Sound button metadata.
  */
+// Keep updated with "~/src/ts/types.d.ts"
 type SoundButtonData = {
+	/**
+	 * The position of the sound button
+	 */
+	id: number;
 	/**
 	 * The unrendered text
 	 */
@@ -19,7 +24,6 @@ type SoundButtonData = {
 	 * The color (fallback if image is failing/missing)
 	 */
 	color?: Color.HSL;
-
 	/**
 	 * The background image
 	 */

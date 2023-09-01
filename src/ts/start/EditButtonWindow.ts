@@ -8,7 +8,7 @@ abstract class EditButtonWindow extends Main {
 
 		// Create editor and wait for buttonData retrieval
 		this._editorForm = new EditorForm($("#metadata-editor")).fillInputs(
-			(await buttonDataRequest).id,
+			(await buttonDataRequest).parsedId,
 			(await buttonDataRequest).buttonData
 		);
 

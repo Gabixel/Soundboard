@@ -3,9 +3,9 @@ class EditorForm {
 
 	private _$form: JQuery<HTMLFormElement>;
 
-	private _buttonId: string;
+	private _parsedButtonId: string;
 	public get buttonId(): string {
-		return this._buttonId;
+		return this._parsedButtonId;
 	}
 
 	private _buttonData: SoundButtonData;
@@ -14,7 +14,7 @@ class EditorForm {
 	}
 
 	private get _$focusedFormInput(): JQuery<HTMLInputElement> {
-		return this._$form.find("input:focus") as JQuery<HTMLInputElement>;
+		return this._$form.find<HTMLInputElement>("input:focus");
 	}
 
 	constructor($form: JQuery<HTMLFormElement>) {
@@ -24,10 +24,8 @@ class EditorForm {
 		this.setupFormSubmitEvent();
 	}
 
-	// TODO: also, clone the button data for it(?) - maybe a clone is not needed
-
 	public fillInputs(buttonId: string, buttonData: SoundButtonData): this {
-		this._buttonId = buttonId;
+		this._parsedButtonId = buttonId;
 		this._buttonData = buttonData;
 
 		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
@@ -58,15 +56,13 @@ class EditorForm {
 							"%"
 						})`
 					)
-					// It's just a placeholder
+					// The initial value is just a placeholder
 					.removeProp("value")
 			)
 			// Volume
 			.add(this.$dataInput("volume").val(buttonData.volume ?? 1))
 			// Path
-			.add(
-				this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? ""))
-			);
+			.add(this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? "")));
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -163,7 +159,7 @@ class EditorForm {
 
 	private submitForm(): void {
 		SoundboardApi.editButtonWindow.updateButtonData(
-			this._buttonId,
+			this._parsedButtonId,
 			this._buttonData
 		);
 	}

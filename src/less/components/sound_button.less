@@ -5,7 +5,9 @@
 
 // TODO: https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/
 
-.soundbutton {
+@soundbutton: ~"button.soundbutton, button.soundbutton_old";
+
+@{soundbutton} {
 	// Base restyle
 	.style();
 
@@ -26,71 +28,75 @@
 	}
 }
 
-#buttons-grid {
-	&.filtering .soundbutton {
-		&.filtered .button-theme {
-			opacity: 0.15;
+div {
+	&.filtering {
+		@{soundbutton} {
+			&.filtered .button-theme {
+				opacity: 0.15;
+			}
 		}
-	}
 
-	&:not(.has-dragging-child).filtering .soundbutton {
-		&:not(.filtered) {
-			animation: visual-light 2.5s ease-in-out;
-
-			@keyframes visual-light {
-				from {
-					box-shadow: 0 0 2px 2px rgb(255 255 255 / 1);
+		&:not(.has-dragging-child) {
+			@{soundbutton} {
+				&.filtered {
+					transition: none;
+					box-shadow: none;
 				}
 
-				to {
-					box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
+				&:not(.filtered) {
+					animation: visual-light 2.5s ease-in-out;
+
+					@keyframes visual-light {
+						from {
+							box-shadow: 0 0 2px 2px rgb(255 255 255 / 1);
+						}
+
+						to {
+							box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
+						}
+					}
+				}
+			}
+		}
+
+		&.has-dragging-child {
+			@{soundbutton} {
+				&:not(.filtered):not(.dragging) {
+					outline: 2px dashed #0f0;
+				}
+
+				&.drop-destination:not(.filtered) {
+					outline: 3px solid #fff;
+
+					.button-theme {
+						opacity: 1;
+					}
 				}
 			}
 		}
 	}
 
-	&.has-dragging-child.filtering .soundbutton {
-		&:not(.filtered):not(.dragging) {
-			outline: 2px dashed #0f0;
-		}
-
-		&.drop-destination:not(.filtered) {
-			outline: 3px solid #fff;
-
-			.button-theme {
-				opacity: 1;
-			}
-		}
-	}
-
-	&.has-dragging-child .soundbutton {
+	&.has-dragging-child @{soundbutton} {
 		.base-transition(0.2s);
 
 		&:not(.dragging) {
 			.button-theme {
 				opacity: 0.5;
 
-				animation: drag-choose 0.2s ease var(--opacity-delay, 0) normal;
+				// animation: drag-choose 0.2s ease var(--opacity-delay, 0) normal;
 
-				@keyframes drag-choose {
-					from {
-						opacity: 1;
-					}
+				// @keyframes drag-choose {
+				// 	from {
+				// 		opacity: 1;
+				// 	}
 
-					to {
-						opacity: 0.5;
-					}
-				}
+				// 	to {
+				// 		opacity: 0.5;
+				// 	}
+				// }
 			}
 
 			box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
-		}
-
-		&.hovered {
-			// .base-transition(); // This removes outline transition
-			.button-theme {
-				animation: none;
-			}
 		}
 
 		&.drop-destination,
@@ -98,6 +104,10 @@
 			outline: 3px solid #fff;
 
 			// cursor: ;
+
+			.button-theme {
+				animation: none;
+			}
 
 			&,
 			.button-theme {
@@ -124,7 +134,7 @@
 		}
 	}
 
-	&:not(.has-dragging-child) .soundbutton {
+	&:not(.has-dragging-child) @{soundbutton} {
 		&:hover .button-theme,
 		&.file-dragover .button-theme {
 			background-color: var(--button-background-hover-hsl);
@@ -197,7 +207,6 @@
 	min-height: 1px;
 
 	background: none;
-	// background-color: var(--button-background-hsl);
 
 	margin: 0;
 
@@ -223,89 +232,3 @@
 		.flex-center-all();
 	}
 }
-
-/*.soundbutton {
-	#buttons-grid:not(.has-dragging-child) &:hover,
-	#buttons-grid:not(.has-dragging-child) &.dragover {
-		// background-color: #5cb811;
-		// background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
-		background-color: var(--button-background-hover-hsl);
-	}
-
-	#buttons-grid:not(.has-dragging-child) &:active {
-		// position: relative;
-		// top: 1px;
-		background-color: var(--button-background-active-hsl);
-	}
-
-	#buttons-grid.filtering &.filtered {
-		opacity: 0.15;
-	}
-
-	#buttons-grid.filtering &:not(.filtered) {
-		animation: visual-light 3s normal;
-
-		@keyframes visual-light {
-			from {
-				box-shadow: 0 0 4px 2px #fff;
-			}
-
-			to {
-				box-shadow: 0 0 4px 2px rgb(255 255 255 / 0);
-			}
-		}
-	}
-
-	&.dragging {
-		z-index: 1;
-
-		opacity: 0.35;
-
-		box-shadow: 0 0 2px rgba(0, 0, 0, var(--alpha));
-		pointer-events: none;
-	}
-
-	&.hidden {
-		display: none;
-	}
-
-	#buttons-grid.has-dragging-child &:not(.dragging) {
-		animation: drag-choose 0.2s ease var(--opacity-delay, 0) normal;
-		opacity: 0.5;
-
-		@keyframes drag-choose {
-			from {
-				opacity: 1;
-			}
-
-			to {
-				opacity: 0.5;
-			}
-		}
-	}
-
-	#buttons-grid.has-dragging-child.filtering &:not(.filtered):not(.dragging) {
-		transition: outline .2s;
-		outline: 2px dashed #0f0;
-	}
-
-	#buttons-grid.has-dragging-child &.drop-destination,
-	#buttons-grid.has-dragging-child.filtering
-		&.drop-destination:not(.filtered):not(.dragging) {
-		transition: none;
-
-		// cursor: ;
-		opacity: 1;
-		outline: 3px solid #fff;
-	}
-
-	// &.playing {
-	// 	// outline: 1px dashed hsl(var(--hue) 100% 20% / 1);
-
-	// 	// TODO: Playing effect?
-	// }
-
-	/*&:focus {
-		outline: 3px solid var(--button-background-hover-hsl);
-	}* /
-}*/

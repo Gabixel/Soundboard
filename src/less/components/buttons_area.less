@@ -1,0 +1,232 @@
+@import "../utils/functions";
+@import "../utils/variables";
+
+#buttons-area {
+	flex-grow: 2;
+	flex-basis: 0;
+	.set-radius(@main-radius);
+	.hide-overflow();
+
+	margin-bottom: 10px;
+
+	background-image: linear-gradient(
+		var(--window-bg) 50%,
+		var(--buttons-grid-bg) 50%
+	);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+
+	#buttons-collections-controls {
+		// TODO: make toolbar tab item logic re-useable
+		@margin: 3px;
+		@button-inner-gap: 10px;
+		margin: @margin (@main-radius + 1px) 0;
+
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: stretch;
+
+		overflow: hidden;
+
+		max-width: -webkit-fill-available;
+
+		#buttons-collections {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: stretch;
+
+			overflow-x: scroll;
+			white-space: nowrap;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			&.overflow-left {
+				-webkit-mask-image: linear-gradient(to right, #00000000 0%, #ffffff 3%);
+			}
+
+			&.overflow-right {
+				-webkit-mask-image: linear-gradient(to left, #00000000 0%, #ffffff 3%);
+			}
+
+			&.overflow-all {
+				-webkit-mask-image: linear-gradient(
+					to right,
+					#00000000 0%,
+					#ffffff 3%,
+					97%,
+					#00000000 100%
+				);
+			}
+		}
+
+		button.tab-button {
+			margin: 0;
+			padding: (@margin + 1) @button-inner-gap (@margin - 1);
+			.set-radius(@main-radius @main-radius 0 0);
+
+			// height: calc(1em + (@margin * 2));
+			height: 1em;
+
+			flex-shrink: 0;
+			box-sizing: content-box;
+			min-width: 1ch;
+
+			background-color: transparent;
+			color: var(--window-fg);
+
+			overflow: hidden;
+			white-space: pre;
+
+			&:nth-child(even) {
+				background-color: #ffffff21;
+			}
+			&:nth-child(odd) {
+				background-color: #ffffff18;
+			}
+
+			&:hover,
+			&:focus-visible {
+				@color-opacity: 0.05;
+				background-image: linear-gradient(
+						to bottom,
+						rgba(0, 0, 0, @color-opacity),
+						rgba(0, 0, 0, @color-opacity)
+					),
+					linear-gradient(to bottom, var(--buttons-grid-bg), var(--buttons-grid-bg));
+			}
+
+			&:active {
+				@color-opacity: 0.05;
+				background-image: linear-gradient(
+						to bottom,
+						rgba(255, 255, 255, @color-opacity),
+						rgba(255, 255, 255, @color-opacity)
+					),
+					linear-gradient(to bottom, var(--buttons-grid-bg), var(--buttons-grid-bg));
+			}
+
+			&.active {
+				font-weight: bold;
+				background-image: none;
+				background-color: var(--buttons-grid-bg);
+			}
+
+			span,
+			input#tab-rename-input {
+				height: 1em;
+				line-height: 1em;
+			}
+
+			span {
+				pointer-events: none;
+				display: inline-block;
+				vertical-align: bottom;
+			}
+
+			input#tab-rename-input {
+				padding: 0;
+				margin: 0;
+
+				border: 0;
+
+				background: transparent;
+				color: #fff;
+
+				font-weight: bold;
+
+				&::selection {
+					background-color: var(--main-bg);
+				}
+			}
+		}
+
+		button#add-collection-button {
+			margin-left: @main-radius;
+		}
+	}
+
+	#buttons-grids {
+		flex-grow: 1;
+		width: 100%;
+
+		background-color: var(--buttons-grid-bg);
+		.set-radius(@main-radius);
+		.hide-overflow();
+
+		&.has-dragging-child {
+			&,
+			& .soundbutton {
+				cursor: grabbing;
+			}
+		}
+
+		.buttons-grid {
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			width: 100%;
+			height: 100%;
+
+			@grid-gap: 8px;
+			display: grid;
+			gap: @grid-gap;
+			padding: @grid-gap;
+			&:not(.active) {
+				display: none;
+			}
+
+			grid-template-rows: repeat(var(--rows), 1fr);
+			grid-template-columns: repeat(var(--columns), 1fr);
+
+			.buttons-bin {
+				z-index: 2;
+
+				pointer-events: none;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+
+				display: grid;
+				gap: @grid-gap;
+				padding: @grid-gap;
+
+				grid-template-rows: repeat(var(--rows), 1fr);
+				grid-template-columns: repeat(var(--columns), 1fr);
+
+				background-color: transparent;
+				opacity: 1;
+
+				button.soundbutton_old {
+					grid-row: var(--row);
+					grid-column: var(--column);
+
+					transform-origin: center;
+
+					animation: fall 1.5s ease-in-out forwards;
+
+					@keyframes fall {
+						0% {
+							transform: translate(0, 0) scale(1) rotate(0);
+							filter: opacity(1) brightness(1);
+						}
+						50% {
+							filter: opacity(0) brightness(0.35);
+						}
+						100% {
+							transform: translate(20px, 300px) scale(0.6) rotate(90deg);
+							filter: opacity(0) brightness(0);
+						}
+					}
+				}
+			}
+		}
+	}
+}

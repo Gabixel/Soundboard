@@ -1,227 +1,104 @@
-/**
- * Resize (rescale) logic for the {@link GridManager}
- */
-class GridResizer {
-	private _gridManager: GridManager;
-	private _buttonFilterer: ButtonFilterer;
-	private _soundButtonManager: SoundButtonManager;
+class GridResizer extends EventTarget {
+	private _rows: GridAxis;
+	public get rows(): number {
+		return this._rows.value;
+	}
+	
+	private _columns: GridAxis;
+	public get columns(): number {
+		return this._columns.value;
+	}
 
-	private _resizerInitialized: boolean = false;
+	public get size(): number {
+		return this.rows * this.columns;
+	}
 
-	// Semaphore for resize events
-	private resizingRow: boolean = false;
-	private resizingColumn: boolean = false;
-	private clearingGrid: boolean = false;
-	private get isResizing(): boolean {
-		return this.resizingRow || this.resizingColumn || this.clearingGrid;
+	public get previousSize(): number {
+		return this._rows.previousValue * this._columns.previousValue;
+	}
+
+	private get _isResizing(): boolean {
+		return this._rows.semaphore.isLocked || this._columns.semaphore.isLocked;
 	}
 
 	constructor(
-		gridManager: GridManager,
-		soundButtonManager: SoundButtonManager,
-		buttonFilterer: ButtonFilterer
-	) {
-		this._gridManager = gridManager;
-		this._buttonFilterer = buttonFilterer;
-		this._soundButtonManager = soundButtonManager;
-
-		Logger.logDebug("Initialized!");
-	}
-
-	/**
-	 * Initializes events for the grid resize logic
-	 */
-	public async setInputs(
 		$rowsInput: JQuery<HTMLInputElement>,
 		$columnsInput: JQuery<HTMLInputElement>,
-		$clearButton: JQuery<HTMLInputElement>
-	): Promise<this> {
-		// Initialize grid
-		this.updateAxis($rowsInput, "row");
-		this.updateAxis($columnsInput, "col");
-		await this.updateGrid();
+		rowCount: number = 3,
+		columnCount: number = 7
+	) {
+		super();
 
-		// Initialize resize events
-		// Row number input
-		$rowsInput
-			.on("wheel", (e) => {
+		this._rows = {
+			name: "rows",
+			$input: $rowsInput.val(rowCount),
+			value: rowCount,
+			previousValue: rowCount,
+			semaphore: new Semaphore(),
+		};
+
+		this._columns = {
+			name: "columns",
+			$input: $columnsInput.val(columnCount),
+			value: columnCount,
+			previousValue: columnCount,
+			semaphore: new Semaphore(),
+		};
+
+		this.initInputEvents($rowsInput[0], this._rows);
+		this.initInputEvents($columnsInput[0], this._columns);
+	}
+
+	private initInputEvents(input: HTMLInputElement, gridAxis: GridAxis): void {
+		input.addEventListener(
+			"wheel",
+			(e) => {
+				e.preventDefault();
+
+				// UI Scale prevention
+				if (e.ctrlKey) {
+					return;
+				}
+
 				// Prevent base scrolling behavior (if chromium triggers it)
 				e.stopImmediatePropagation();
 
-				// UI Scale prevention
-				if (e.ctrlKey) return;
-
-				// Prevent racing conditions when already resizing
-				if (this.isResizing) return;
-
-				// Update input value
-				EventFunctions.updateInputValueFromWheel(e);
-			})
-			.on("change", async (e) => {
-				this.resizingRow = true;
-
-				try {
-					this.updateAxis($(e.target), "row");
-					await this.updateGrid();
-				} finally {
-					this.resizingRow = false;
+				if (this._isResizing) {
+					return;
 				}
-			});
 
-		// Column number input
-		$columnsInput
-			.on("wheel", (e) => {
-				// Prevent base scrolling behavior (if chromium triggers it)
-				e.stopImmediatePropagation();
-
-				// UI Scale prevention
-				if (e.ctrlKey) return;
-
-				// Prevent racing conditions when already resizing
-				if (this.isResizing) return;
-
-				// Update input value
 				EventFunctions.updateInputValueFromWheel(e);
-			})
-			.on("change", async (e) => {
-				this.resizingColumn = true;
-
-				try {
-					this.updateAxis($(e.target), "col");
-					await this.updateGrid();
-				} finally {
-					this.resizingColumn = false;
-				}
-			});
-
-		// Reset grid input
-		$clearButton.on("click", async (_e) => {
-			// Prevent racing conditions when already resizing
-			if (this.isResizing) return;
-
-			this.clearingGrid = true;
-
-			try {
-				this._gridManager.$grid.empty();
-				this._gridManager.resetSoundButtonCount();
-				await this.updateGrid();
-			} finally {
-				this.clearingGrid = false;
+			},
+			{
+				passive: false,
 			}
+		);
+
+		$(input).on("change", (e) => {
+			if (!gridAxis.semaphore.lock()) {
+				return;
+			}
+
+			gridAxis.previousValue = gridAxis.value;
+			gridAxis.value = this.clampSizeValue($(e.target));
+
+			this.dispatchEvent(new Event(`resize`));
+
+			gridAxis.semaphore.unlock();
 		});
-
-		this._resizerInitialized = true;
-
-		return this;
 	}
 
-	private async updateGrid(): Promise<void> {
-		await this.fillEmptyCells();
-
-		this.updateVisibleButtons();
-
-		this.updateButtonFontSize();
-	}
-
-	private updateAxis($rowsOrColumnsInput: JQuery<HTMLInputElement>, axis: "row" | "col") {
-		const axisSize = this.clampGridSizeValue($rowsOrColumnsInput);
-
-		switch (axis) {
-			case "row":
-				if (this._gridManager.rows == axisSize) {
-					return;
-				}
-
-				this._gridManager.$grid.css("--rows", axisSize);
-				this._gridManager.setRows(axisSize);
-				break;
-			case "col":
-				if (this._gridManager.cols == axisSize) {
-					return;
-				}
-
-				this._gridManager.$grid.css("--columns", axisSize);
-				this._gridManager.setColumns(axisSize);
-				break;
-		}
-	}
-
-	private clampGridSizeValue($rowsOrColumnsInput: JQuery<HTMLInputElement>): number {
-		const $target = $rowsOrColumnsInput;
+	private clampSizeValue($input: JQuery<HTMLInputElement>): number {
+		const $target = $input;
 		const value = parseInt($target.val().toString());
 
-		let max = parseFloat($target.attr("max").toString());
-		let min = parseFloat($target.attr("min").toString());
+		let max = parseInt($target.attr("max").toString());
+		let min = parseInt($target.attr("min").toString());
 
 		let clampedValue = EMath.clamp(value, min, max);
 
 		$target.val(clampedValue);
 
 		return clampedValue;
-	}
-
-	private updateVisibleButtons(): void {
-		let sortedButtons = this._gridManager.$buttons
-			.toArray()
-			.sort(function (a: HTMLElement, b: HTMLElement): number {
-				const aIndex = parseInt($(a).css("--index").toString());
-				const bIndex = parseInt($(b).css("--index").toString());
-				return aIndex - bIndex;
-			});
-
-		$(sortedButtons).each((_i: number, e: HTMLElement): void => {
-			const index = parseInt($(e).css("--index").toString());
-
-			if (index >= this._gridManager.size) {
-				$(e).addClass("hidden");
-			} else {
-				$(e).removeClass("hidden");
-			}
-		});
-	}
-
-	private async fillEmptyCells(): Promise<void> {
-		if (!this._gridManager.isGridIncomplete) return;
-
-		const emptyCells = this._gridManager.size - this._gridManager.buttonCount;
-
-		for (let i = 0; i < emptyCells; i++) {
-			const $button = $(
-				SoundboardApi.isProduction || this._resizerInitialized
-				? this._soundButtonManager.generateButton(
-					// Generate all button of the same color on production
-					null,
-					this._gridManager.size + i - emptyCells
-				)
-				: await this._soundButtonManager.generateRandomButton(
-						this._gridManager.size + i - emptyCells
-				  )
-			);
-
-			// TODO: Not sure if it's better triggering the filter instead of this.
-			// In that case, all existing buttons will light again (thanks to the animation).
-			if (this._buttonFilterer.isFiltering) {
-				this._buttonFilterer.filterButton($button);
-			}
-
-			this._gridManager.$grid.append($button[0]);
-
-			this._gridManager.increaseSoundButtonCount();
-		}
-	}
-
-	// TODO: update on window resize and on ui scale change
-	private updateButtonFontSize(): void {
-		const $el = $(this._gridManager.getButtonAtIndex(0));
-
-		const minFontSize = 10; /*parseInt($(document.body).css("font-size").toString());*/
-		const maxFontSize = window.devicePixelRatio > 1 ? 24 : 16;
-
-		const minButtonSize = Math.min($el.innerHeight(), $el.innerWidth());
-		let finalSize = (minButtonSize - parseFloat($el.css("padding-top")) * 2) / 2;
-
-		finalSize = EMath.clamp(finalSize, minFontSize, maxFontSize);
-
-		this._gridManager.$grid.css("--button-font-size", finalSize + "px");
 	}
 }
