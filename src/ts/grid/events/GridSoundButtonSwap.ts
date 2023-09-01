@@ -17,6 +17,10 @@ class GridSoundButtonSwap {
 		};
 	};
 
+	private get $buttons(): SoundButtonElementJQuery {
+		return this._$parent.find<SoundButtonElement>(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`);
+	}
+
 	constructor(
 		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
 		$parent: JQuery<HTMLElement>
@@ -45,6 +49,7 @@ class GridSoundButtonSwap {
 			},
 		};
 
+		this.$buttons.removeAttr("tabindex");
 		this.setDraggingButtonOffset(null);
 		this.setDraggingClasses(false);
 
@@ -138,15 +143,13 @@ class GridSoundButtonSwap {
 
 			e.stopPropagation();
 
-			this._$parent
-				.find(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`)
+			this.$buttons
 				.attr("tabindex", -1)
 				.removeClass("drop-destination");
 			$(e.target).addClass("drop-destination");
 		})
 			.onButton("mouseleave", (e) => {
 				$(e.target)
-					.removeAttr("tabindex")
 					.removeClass("drop-destination");
 			})
 			.onButton("mouseup", (e) => {
