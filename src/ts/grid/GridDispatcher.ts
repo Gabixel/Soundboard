@@ -247,6 +247,8 @@ class GridDispatcher {
 		this.moveChildrenToBin($grid, $editedButtons, id);
 
 		this.addMissingButtonsToGrid($grid, id);
+
+		this._gridSoundButtonFilter.triggerFilterEvent();
 	}
 
 	private clearOngoingOperationsOnSwap($grid?: GridElementJQuery): void {
