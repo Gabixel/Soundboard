@@ -1,4 +1,4 @@
-class GridEvents {
+class GridEvents extends EventTarget {
 	private _audioPlayer: IAudioPlayer;
 	private _soundButtonFactory: SoundButtonFactory;
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
@@ -13,6 +13,7 @@ class GridEvents {
 		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
 		gridResizer: GridResizer
 	) {
+		super();
 		this._audioPlayer = audioPlayer;
 		this._soundButtonFactory = soundButtonFactory;
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
@@ -115,7 +116,7 @@ class GridEvents {
 						}
 
 						break;
-				}				
+				}
 
 				$(e.target).parent().find(`[style*="--index: ${tabIndex};"]`)[0]?.focus();
 			}
@@ -125,7 +126,9 @@ class GridEvents {
 	private addSoundButtonContextMenu($gridsContainer: JQuery<HTMLElement>): void {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory
-		).handleEditEvent();
+		).handleEditEvent(() => {
+			this.dispatchEvent(new Event(`buttonedit`));
+		});
 
 		$gridsContainer.on(
 			"contextmenu",
@@ -209,6 +212,8 @@ class GridEvents {
 
 				this._gridSoundButtonChildFactory.updateSoundButtonByElement($button, data);
 
+				this.dispatchEvent(new Event(`buttonedit`));
+				
 				e.preventDefault();
 			})
 			.on("dragleave", `.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`, (e) => {

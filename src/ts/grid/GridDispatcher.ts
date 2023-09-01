@@ -13,7 +13,7 @@ class GridDispatcher {
 
 	private _gridSoundButtonFilter: GridSoundButtonFilter;
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
-	private _gridSoundButtonEvents: GridEvents;
+	private _gridEvents: GridEvents;
 	private _soundButtonIdGenerator: ISoundButtonIdGenerator;
 
 	private _soundButtonCollectionStore: SoundButtonCollectionStore;
@@ -69,10 +69,10 @@ class GridDispatcher {
 		soundButtonEvents: GridEvents,
 		$clearGridButton: JQuery<HTMLButtonElement>
 	): void {
-		this._gridSoundButtonEvents = soundButtonEvents;
+		this._gridEvents = soundButtonEvents;
 
-		this._gridSoundButtonEvents.addSoundButtonEvents(this._$gridsContainer);
-		this._gridSoundButtonEvents.addClearButtonClickEvent($clearGridButton, () => {
+		this._gridEvents.addSoundButtonEvents(this._$gridsContainer);
+		this._gridEvents.addClearButtonClickEvent($clearGridButton, () => {
 			let gridId = this.getGridId(this._$activeGrid);
 
 			// TODO: put cool yes/no buttons inside the reset one
@@ -81,7 +81,7 @@ class GridDispatcher {
 			) && this.clearGrid(gridId);
 		});
 
-		SoundboardApi.mainWindow.onButtonDataUpdate((_parsedId, _buttonData) => {
+		$(this._gridEvents).on("buttonedit", () => {
 			this._gridSoundButtonFilter.triggerFilterEvent();
 		});
 	}
@@ -109,7 +109,7 @@ class GridDispatcher {
 
 		$(this._gridResizer)
 			.on("resize", (_e) => {
-				this._gridSoundButtonEvents.cancelSwap();
+				this._gridEvents.cancelSwap();
 
 				// TODO: update grids size on active tab change instead of a single call for all grids
 				this.updateAllGridsSize();
@@ -250,7 +250,7 @@ class GridDispatcher {
 	}
 
 	private clearOngoingOperationsOnSwap($grid?: GridElementJQuery): void {
-		this._gridSoundButtonEvents.cancelSwap();
+		this._gridEvents.cancelSwap();
 
 		$grid ??= this._$activeGrid;
 

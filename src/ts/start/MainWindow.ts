@@ -184,10 +184,9 @@ abstract class MainWindow extends Main {
 				isActive: true,
 				$input: filterer.$checkbox("filter-buttons.text", true),
 				check(buttonData, filter) {
-					return (
-						filter != null &&
-						filter.includes(buttonData.title.toLowerCase())
-					);
+					let text = buttonData.title.toLowerCase();
+
+					return filter.some((f) => text.includes(f.toLowerCase())) ?? false;
 				},
 				data: null,
 			},
@@ -201,7 +200,7 @@ abstract class MainWindow extends Main {
 
 					let finalIndex = buttonData.index + offset;
 
-					return filter.includes(finalIndex.toString());
+					return filter?.includes(finalIndex.toString()) ?? false;
 				},
 				data: new Map<string, GridFilterData>([
 					[
