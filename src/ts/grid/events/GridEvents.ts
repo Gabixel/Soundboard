@@ -124,15 +124,15 @@ class GridEvents {
 
 	private addSoundButtonContextMenu($gridsContainer: JQuery<HTMLElement>): void {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
-			this._gridSoundButtonChildFactory,
-			$gridsContainer
+			this._gridSoundButtonChildFactory
 		).handleEditEvent();
 
 		$gridsContainer.on(
 			"contextmenu",
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`,
 			(e) => {
-				e.stopPropagation(); // To prevent the document's trigger
+				// To prevent the document's trigger even though it's not bound, but just in case...
+				e.stopPropagation();
 
 				let $target = $(e.target);
 				let buttonData = this._soundButtonFactory.getButtonDataByElement($target);

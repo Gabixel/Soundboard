@@ -1,13 +1,8 @@
 class GridSoundButtonEdit {
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
-	private _$gridsContainer: JQuery<HTMLElement>;
 
-	constructor(
-		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
-		$gridsContainer: JQuery<HTMLElement>
-	) {
+	constructor(gridSoundButtonChildFactory: GridSoundButtonChildFactory) {
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
-		this._$gridsContainer = $gridsContainer;
 	}
 
 	public handleEditEvent(): this {
