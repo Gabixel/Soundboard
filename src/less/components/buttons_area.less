@@ -205,13 +205,14 @@
 				opacity: 1;
 
 				button.soundbutton_old {
-					order: var(--index);
+					grid-row: var(--row);
+					grid-column: var(--column);
 
 					transform-origin: center;
 
-					animation: explosion 1.5s ease-in-out forwards;
+					animation: fall 1.5s ease-in-out forwards;
 
-					@keyframes explosion {
+					@keyframes fall {
 						0% {
 							transform: translate(0, 0) scale(1) rotate(0);
 							filter: brightness(1);

@@ -230,9 +230,15 @@ class GridDispatcher {
 			throw new ReferenceError(`Grid not found with index "${id}"`);
 		}
 
+		let editedButtonsData = this._soundButtonCollectionStore.getEditedButtons(id);
+
 		this._soundButtonCollectionStore.clearCollectionData(id);
 
-		this.moveChildrenToBin($grid, id);
+		let $editedButtons = this._gridSoundButtonChildFactory
+			.getSoundButtonsByData(editedButtonsData, id)
+			.remove();
+
+		this.moveChildrenToBin($grid, $editedButtons, id);
 
 		this.addMissingButtonsToGrid($grid, id);
 	}
@@ -262,22 +268,40 @@ class GridDispatcher {
 
 	private moveChildrenToBin(
 		$grid: GridElementJQuery,
+		$editedButtons: SoundButtonElementJQuery,
 		id: number,
 		animate = true
 	): void {
-		let $gridBin = $grid
-			.children(`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`)
+		let $gridBin = $grid.find<HTMLDivElement>(
+			`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`
+		);
+
+		$gridBin
 			.empty()
 			.css("--rows", this._gridResizer.rows)
-			.css("--columns", this._gridResizer.columns) as JQuery<HTMLDivElement>;
+			.css("--columns", this._gridResizer.columns);
 
-		$grid.children(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}.hidden`).remove();
+		const buttonsClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
+		const oldClass = SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS;
 
-		$grid
-			.children(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`)
-			.removeClass(SoundButtonDispatcher.SOUNDBUTTON_CLASS)
-			.addClass(SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS)
+		$editedButtons
+			.attr("id", "")
+			.detach()
+			.css("--column-amount", this._gridResizer.columns)
+			.css("--index", function (_i, _value) {
+				let index = parseInt(this.style.getPropertyValue("--index"));
+				let columnAmount = parseInt(this.style.getPropertyValue("--column-amount"));
+
+				let floor = Math.floor(index / columnAmount) + 1;
+
+				this.style.setProperty("--row", floor.toString());
+				this.style.setProperty("--column", ((index % columnAmount) + 1).toString());
+			})
+			.removeClass(buttonsClass)
+			.addClass(oldClass)
 			.appendTo($gridBin);
+
+		$grid.children(`.${buttonsClass}`).remove();
 
 		this.clearBin($gridBin, id, animate);
 	}
@@ -380,7 +404,7 @@ class GridDispatcher {
 				gridId
 			);
 
-			if(this._isFiltering) {
+			if (this._isFiltering) {
 				$button.addClass("filtered");
 			}
 

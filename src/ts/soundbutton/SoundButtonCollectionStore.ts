@@ -58,6 +58,12 @@ class SoundButtonCollectionStore {
 		return collection;
 	}
 
+	public getEditedButtons(collectionId: number): SoundButtonData[] {
+		return this.getCollection(collectionId).buttonData.filter(
+			(data) => data.isEdited
+		);
+	}
+
 	public getActiveCollection(): SoundButtonDataCollection {
 		let collection = this._collections.filter(
 			(collection) => collection.focused
