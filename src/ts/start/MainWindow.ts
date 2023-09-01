@@ -186,7 +186,7 @@ abstract class MainWindow extends Main {
 				check(buttonData, filter) {
 					let text = buttonData.title.toLowerCase();
 
-					return filter.some((f) => text.includes(f.toLowerCase())) ?? false;
+					return filter.some((f) => text.includes(f.toLowerCase()));
 				},
 				data: null,
 			},
@@ -200,7 +200,7 @@ abstract class MainWindow extends Main {
 
 					let finalIndex = buttonData.index + offset;
 
-					return filter?.includes(finalIndex.toString()) ?? false;
+					return filter.includes(finalIndex.toString());
 				},
 				data: new Map<string, GridFilterData>([
 					[
@@ -226,6 +226,26 @@ abstract class MainWindow extends Main {
 						},
 					],
 				]),
+			},
+			{
+				id: "filter-buttons.tags",
+				name: "Tags",
+				isActive: false,
+				$input: filterer.$checkbox("filter-buttons.tags"),
+				check(buttonData, filter) {
+					return filter.some((f) => buttonData.tags?.includes(f) ?? false);
+				},
+				data: null,
+			},
+			{
+				id: "filter-buttons.path",
+				name: "Path",
+				isActive: false,
+				$input: filterer.$checkbox("filter-buttons.path"),
+				check(buttonData, filter) {
+					return filter.some((f) => buttonData.path?.includes(f) ?? false);
+				},
+				data: null,
 			},
 		];
 
