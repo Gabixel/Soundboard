@@ -80,6 +80,10 @@ class GridDispatcher {
 				`Are you sure you want to clear the grid "${this.getGridName(gridId)}"?`
 			) && this.clearGrid(gridId);
 		});
+
+		SoundboardApi.mainWindow.onButtonDataUpdate((_parsedId, _buttonData) => {
+			this._gridSoundButtonFilter.triggerFilterEvent();
+		});
 	}
 
 	private setupFilter(gridSoundButtonFilter: GridSoundButtonFilter): void {
@@ -280,6 +284,7 @@ class GridDispatcher {
 
 		$gridBin
 			.empty()
+			.toggleClass("filtering", this._isFiltering)
 			.css("--rows", this._gridResizer.rows)
 			.css("--columns", this._gridResizer.columns);
 

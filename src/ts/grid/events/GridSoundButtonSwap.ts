@@ -31,8 +31,6 @@ class GridSoundButtonSwap {
 	}
 
 	public cancelSwap(): void {
-		// TODO
-
 		this.resetDragData();
 	}
 
@@ -143,18 +141,22 @@ class GridSoundButtonSwap {
 			this._$parent
 				.find(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`)
 				.attr("tabindex", -1)
-				.removeClass("drop-destination")
-				.removeClass("hovered");
-			$(e.target).addClass("drop-destination").addClass("hovered");
+				.removeClass("drop-destination");
+			$(e.target).addClass("drop-destination");
 		})
 			.onButton("mouseleave", (e) => {
 				$(e.target)
 					.removeAttr("tabindex")
-					.removeClass("drop-destination")
-					.removeClass("hovered");
+					.removeClass("drop-destination");
 			})
 			.onButton("mouseup", (e) => {
-				this._dragData.$destinationButton = $(e.target);
+				let $target = $(e.target);
+
+				if(!$target.hasClass("drop-destination")) {
+					return;
+				}
+
+				this._dragData.$destinationButton = $target;
 			});
 	}
 

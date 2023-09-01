@@ -5,8 +5,9 @@
 
 // TODO: https://css-tricks.com/switch-font-color-for-different-backgrounds-with-css/
 
-button.soundbutton,
-button.soundbutton_old {
+@soundbutton: ~"button.soundbutton, button.soundbutton_old";
+
+@{soundbutton} {
 	// Base restyle
 	.style();
 
@@ -27,16 +28,16 @@ button.soundbutton_old {
 	}
 }
 
-div:not(.buttons-bin) {
+div {
 	&.filtering {
-		button.soundbutton {
+		@{soundbutton} {
 			&.filtered .button-theme {
 				opacity: 0.15;
 			}
 		}
 
 		&:not(.has-dragging-child) {
-			button.soundbutton {
+			@{soundbutton} {
 				&.filtered {
 					transition: none;
 					box-shadow: none;
@@ -59,7 +60,7 @@ div:not(.buttons-bin) {
 		}
 
 		&.has-dragging-child {
-			button.soundbutton {
+			@{soundbutton} {
 				&:not(.filtered):not(.dragging) {
 					outline: 2px dashed #0f0;
 				}
@@ -75,7 +76,7 @@ div:not(.buttons-bin) {
 		}
 	}
 
-	&.has-dragging-child button.soundbutton {
+	&.has-dragging-child @{soundbutton} {
 		.base-transition(0.2s);
 
 		&:not(.dragging) {
@@ -98,18 +99,15 @@ div:not(.buttons-bin) {
 			box-shadow: 0 0 2px 2px rgb(255 255 255 / 0);
 		}
 
-		&.hovered {
-			// .base-transition(); // This removes outline transition
-			.button-theme {
-				animation: none;
-			}
-		}
-
 		&.drop-destination,
 		&.drop-destination.filtered {
 			outline: 3px solid #fff;
 
 			// cursor: ;
+
+			.button-theme {
+				animation: none;
+			}
 
 			&,
 			.button-theme {
@@ -136,7 +134,7 @@ div:not(.buttons-bin) {
 		}
 	}
 
-	&:not(.has-dragging-child) button.soundbutton {
+	&:not(.has-dragging-child) @{soundbutton} {
 		&:hover .button-theme,
 		&.file-dragover .button-theme {
 			background-color: var(--button-background-hover-hsl);

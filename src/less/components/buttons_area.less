@@ -215,20 +215,14 @@
 					@keyframes fall {
 						0% {
 							transform: translate(0, 0) scale(1) rotate(0);
-							filter: brightness(1);
-							opacity: 1;
+							filter: opacity(1) brightness(1);
 						}
 						50% {
-							opacity: 0;
-						}
-						60% {
-							filter: brightness(0);
-							opacity: 0;
+							filter: opacity(0) brightness(0.35);
 						}
 						100% {
 							transform: translate(20px, 300px) scale(0.6) rotate(90deg);
-							filter: brightness(0);
-							opacity: 0;
+							filter: opacity(0) brightness(0);
 						}
 					}
 				}
