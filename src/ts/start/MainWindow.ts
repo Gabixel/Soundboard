@@ -183,10 +183,10 @@ abstract class MainWindow extends Main {
 				name: "Text",
 				isActive: true,
 				$input: filterer.$checkbox("filter-buttons.text", true),
-				check(buttonData: SoundButtonData, filter: string): boolean {
+				check(buttonData, filter) {
 					return (
 						filter != null &&
-						filter.toLowerCase().includes(buttonData.title.toLowerCase())
+						filter.includes(buttonData.title.toLowerCase())
 					);
 				},
 				data: null,
@@ -196,14 +196,12 @@ abstract class MainWindow extends Main {
 				name: "Index",
 				isActive: false,
 				$input: filterer.$checkbox("filter-buttons.index"),
-				check(_buttonData: SoundButtonData, _filter: string): boolean {
-					let startIndexOffset = this.data
-						.get("filter-buttons.index.from")
-						.$input.val() as number;
-					return true;
-					// return (
+				check(buttonData, filter, data) {
+					let offset = data.get("filter-buttons.index.from").value;
 
-					// );
+					let finalIndex = buttonData.index + offset;
+
+					return filter.includes(finalIndex.toString());
 				},
 				data: new Map<string, GridFilterData>([
 					[

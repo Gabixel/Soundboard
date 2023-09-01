@@ -137,8 +137,14 @@ class GridSoundButtonFilter extends EventTarget {
 	}
 
 	private shouldFilterButton(buttonData: SoundButtonData): boolean {
+		let splittedFilter = this.filterText.toLowerCase().trim().split(" ");
+
 		return [...this._conditions.values()].some((condition) => {
-			let passedCheck = condition.check(buttonData, this.filterText);
+			let passedCheck = condition.check(
+				buttonData,
+				splittedFilter,
+				condition.data
+			);
 
 			return condition.isActive && passedCheck;
 		});

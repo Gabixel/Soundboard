@@ -172,7 +172,11 @@ interface GridFilterCondition<TDataValues = any> {
 	 */
 	isActive: boolean;
 	$input: JQuery<HTMLInputElement>;
-	check: (buttonData: SoundButtonData, filter: string) => boolean;
+	check: (
+		buttonData: SoundButtonData,
+		filter: string[],
+		filterData: Map<string, GridFilterData>
+	) => boolean;
 	data: Map<string, GridFilterData<TDataValues>> | null;
 };
 
