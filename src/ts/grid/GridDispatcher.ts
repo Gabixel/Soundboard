@@ -260,7 +260,7 @@ class GridDispatcher {
 			return;
 		}
 
-		this.clearBinByGrid($grid, false);
+		this.clearGridBin($grid);
 		this.clearFilter($grid);
 	}
 
@@ -277,8 +277,7 @@ class GridDispatcher {
 	private moveChildrenToBin(
 		$grid: GridElementJQuery,
 		$editedButtons: SoundButtonElementJQuery,
-		id: number,
-		animate = true
+		id: number
 	): void {
 		let $gridBin = $grid.find<HTMLDivElement>(
 			`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`
@@ -312,10 +311,12 @@ class GridDispatcher {
 
 		$grid.children(`.${buttonsClass}`).remove();
 
-		this.clearBin($gridBin, id, animate);
+		let shouldAnimate = $editedButtons.length > 0;
+
+		this.clearBin($gridBin, id, shouldAnimate);
 	}
 
-	private clearBinByGrid($grid: GridElementJQuery, animate = true): void {
+	private clearGridBin($grid: GridElementJQuery): void {
 		let gridId = this.getGridId($grid);
 
 		this.clearBin(
@@ -323,7 +324,7 @@ class GridDispatcher {
 				`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`
 			) as JQuery<HTMLDivElement>,
 			gridId,
-			animate
+			false
 		);
 	}
 
