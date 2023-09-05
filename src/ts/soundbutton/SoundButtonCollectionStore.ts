@@ -98,17 +98,7 @@ class SoundButtonCollectionStore {
 		buttonId: number,
 		collectionId?: number
 	): SoundButtonData {
-		collectionId ??= this.getActiveCollection().id;
-
-		let buttonData = this.findButtonData(buttonId, collectionId);
-
-		if (!buttonData) {
-			throw new ReferenceError(
-				`Button data not found with index "${buttonId}" in collection "${collectionId}"`
-			);
-		}
-
-		return Object.assign({}, buttonData);
+		return Object.assign({}, this.getReferenceButtonData(buttonId, collectionId));
 	}
 
 	public editButtonData(
@@ -148,8 +138,8 @@ class SoundButtonCollectionStore {
 		dataId1: number,
 		dataId2: number
 	): void {
-		let data1 = this.getButtonData(dataId1, collectionId);
-		let data2 = this.getButtonData(dataId2, collectionId);
+		let data1 = this.getReferenceButtonData(dataId1, collectionId);
+		let data2 = this.getReferenceButtonData(dataId2, collectionId);
 
 		data1.index = dataId2;
 		data2.index = dataId1;
@@ -190,6 +180,23 @@ class SoundButtonCollectionStore {
 		}
 
 		return freeId;
+	}
+
+	private getReferenceButtonData(
+		buttonId: number,
+		collectionId?: number
+	): SoundButtonData {
+		collectionId ??= this.getActiveCollection().id;
+
+		let buttonData = this.findButtonData(buttonId, collectionId);
+
+		if (!buttonData) {
+			throw new ReferenceError(
+				`Button data not found with index "${buttonId}" in collection "${collectionId}"`
+			);
+		}
+
+		return buttonData;
 	}
 
 	private findButtonData(
