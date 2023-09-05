@@ -1,7 +1,9 @@
-class GridSoundButtonEdit {
+class GridSoundButtonEdit extends EventTarget {
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
 
 	constructor(gridSoundButtonChildFactory: GridSoundButtonChildFactory) {
+		super();
+
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 	}
 
@@ -13,5 +15,17 @@ class GridSoundButtonEdit {
 		});
 
 		return this;
+	}
+
+	public triggerButtonEditEvent($button: SoundButtonElementJQuery, reset: boolean = false, animateIfReset: boolean = true): void {
+		this.dispatchEvent(
+			new CustomEvent(`buttonedit`, {
+				detail: {
+					$button,
+					reset,
+					animateIfReset,
+				},
+			})
+		);
 	}
 }

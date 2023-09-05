@@ -14,6 +14,7 @@ class GridEvents extends EventTarget {
 		gridResizer: GridResizer
 	) {
 		super();
+
 		this._audioPlayer = audioPlayer;
 		this._soundButtonFactory = soundButtonFactory;
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
@@ -126,14 +127,14 @@ class GridEvents extends EventTarget {
 	private addSoundButtonContextMenu($gridsContainer: JQuery<HTMLElement>): void {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory
-		).handleEditEvent(($button, reset, animate) => {
+		).handleEditEvent((buttonData, reset, animateIfReset) => {
+			this._gridSoundButtonEdit.triggerButtonEditEvent(buttonData, reset, animateIfReset);
+		});
+
+		$(this._gridSoundButtonEdit).on("buttonedit", (e) => {
 			this.dispatchEvent(
 				new CustomEvent(`buttonedit`, {
-					detail: {
-						$button,
-						reset,
-						animate
-					},
+					detail: e.detail,
 				})
 			);
 		});
@@ -207,6 +208,8 @@ class GridEvents extends EventTarget {
 
 				data.path = encodedPath;
 
+				console.log(file);
+
 				if (!data.isEdited) {
 					data.title = file.name;
 
@@ -220,7 +223,7 @@ class GridEvents extends EventTarget {
 
 				this._gridSoundButtonChildFactory.updateSoundButtonByElement($button, data);
 
-				this.dispatchEvent(new Event(`buttonedit`));
+				this._gridSoundButtonEdit.triggerButtonEditEvent($button);
 
 				e.preventDefault();
 			})
