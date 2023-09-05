@@ -108,7 +108,7 @@ class SoundButtonCollectionStore {
 			);
 		}
 
-		return buttonData;
+		return Object.assign({}, buttonData);
 	}
 
 	public editButtonData(
