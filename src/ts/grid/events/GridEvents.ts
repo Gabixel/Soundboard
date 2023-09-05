@@ -169,6 +169,10 @@ class GridEvents extends EventTarget {
 			this._gridSoundButtonChildFactory,
 			$gridsContainer
 		);
+
+		$(this._gridSoundButtonSwap).on("buttonswap", () => {
+			this.dispatchEvent(new CustomEvent("buttonswap"));
+		});
 	}
 
 	private addSoundButtonDragAndDrop($gridsContainer: JQuery<HTMLElement>): void {

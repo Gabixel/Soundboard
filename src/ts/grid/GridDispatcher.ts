@@ -71,6 +71,10 @@ class GridDispatcher {
 	): void {
 		this._gridEvents = soundButtonEvents;
 
+		const postEvents = () => {
+			this._gridSoundButtonFilter.triggerFilterEvent();
+		};
+
 		this._gridEvents.addSoundButtonEvents(this._$gridsContainer);
 		this._gridEvents.addClearButtonClickEvent($clearGridButton, () => {
 			let gridId = this.getGridId(this._$activeGrid);
@@ -85,32 +89,36 @@ class GridDispatcher {
 			this.clearGrid(gridId);
 		});
 
-		$(this._gridEvents).on("buttonedit", (e) => {
-			// @ts-ignore
-			let reset: boolean = e.detail?.reset ?? false;
-
-			if (reset) {
+		$(this._gridEvents)
+			.on("buttonedit", (e) => {
 				// @ts-ignore
-				let $button: SoundButtonElementJQuery = e.detail.$button;
+				let reset: boolean = e.detail?.reset ?? false;
 
-				// @ts-ignore
-				const shouldAnimate: boolean = e.detail.animateIfReset;
+				if (reset) {
+					// @ts-ignore
+					let $button: SoundButtonElementJQuery = e.detail.$button;
 
-				if (this._$activeGrid.length > 0) {
-					const clearGrid = false;
+					// @ts-ignore
+					const shouldAnimate: boolean = e.detail.animateIfReset;
 
-					this.clearGridAndBin(
-						this._$activeGrid,
-						$button,
-						this.getGridId(this._$activeGrid),
-						clearGrid,
-						shouldAnimate
-					);
+					if (this._$activeGrid.length > 0) {
+						const clearGrid = false;
+
+						this.clearGridAndBin(
+							this._$activeGrid,
+							$button,
+							this.getGridId(this._$activeGrid),
+							clearGrid,
+							shouldAnimate
+						);
+					}
 				}
-			}
 
-			this._gridSoundButtonFilter.triggerFilterEvent();
-		});
+				postEvents();
+			})
+			.on("buttonswap", () => {
+				postEvents();
+			});
 	}
 
 	private setupFilter(gridSoundButtonFilter: GridSoundButtonFilter): void {
@@ -267,8 +275,10 @@ class GridDispatcher {
 
 		this._soundButtonCollectionStore.clearCollectionData(id);
 
-		let $editedButtons = this._gridSoundButtonChildFactory
-			.getSoundButtonsByData(editedButtonsData, id);
+		let $editedButtons = this._gridSoundButtonChildFactory.getSoundButtonsByData(
+			editedButtonsData,
+			id
+		);
 
 		const clearGrid = true;
 		const animateClear = true;
@@ -290,7 +300,9 @@ class GridDispatcher {
 		this.clearFilter($currentGrid);
 	}
 
-	private resumeOngoingOperationsOnSwap($focusingGrid?: GridElementJQuery): void {
+	private resumeOngoingOperationsOnSwap(
+		$focusingGrid?: GridElementJQuery
+	): void {
 		$focusingGrid ??= this._$activeGrid;
 
 		if ($focusingGrid.length < 1) {
@@ -320,7 +332,7 @@ class GridDispatcher {
 
 		if (hasClearingChildren) {
 			let shouldAnimate = hasClearingChildren && animateClear;
-			
+
 			this.moveChildrenToBin($clearingButtons, $gridBin, shouldAnimate);
 		}
 

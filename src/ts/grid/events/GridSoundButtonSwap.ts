@@ -1,4 +1,4 @@
-class GridSoundButtonSwap {
+class GridSoundButtonSwap extends EventTarget {
 	private static readonly DRAG_DELAY: number = 10;
 
 	private _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
@@ -27,6 +27,8 @@ class GridSoundButtonSwap {
 		gridSoundButtonChildFactory: GridSoundButtonChildFactory,
 		$parent: JQuery<HTMLElement>
 	) {
+		super();
+
 		this._gridSoundButtonChildFactory = gridSoundButtonChildFactory;
 
 		this._$parent = $parent;
@@ -180,6 +182,8 @@ class GridSoundButtonSwap {
 			this._dragData.$draggedButton,
 			this._dragData.$destinationButton
 		);
+
+		this.dispatchEvent(new CustomEvent("buttonswap"));
 	}
 
 	private setDraggingButtonOffset(
