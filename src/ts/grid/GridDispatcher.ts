@@ -81,7 +81,30 @@ class GridDispatcher {
 			) && this.clearGrid(gridId);
 		});
 
-		$(this._gridEvents).on("buttonedit", () => {
+		$(this._gridEvents).on("buttonedit", (e) => {
+			// @ts-ignore
+			let reset: boolean = e.detail.reset;
+
+			if (reset) {
+				// @ts-ignore
+				let $button: SoundButtonElementJQuery = e.detail.$button;
+
+				// @ts-ignore
+				const shouldAnimate: boolean = e.detail.animate;
+
+				if (this._$activeGrid.length > 0) {
+					const shouldClear = false;
+
+					this.updateGridBin(
+						this._$activeGrid,
+						$button,
+						this.getGridId(this._$activeGrid),
+						shouldClear,
+						shouldAnimate
+					);
+				}
+			}
+
 			this._gridSoundButtonFilter.triggerFilterEvent();
 		});
 	}
@@ -244,9 +267,8 @@ class GridDispatcher {
 			.getSoundButtonsByData(editedButtonsData, id)
 			.remove();
 
-		this.moveChildrenToBin($grid, $editedButtons, id);
-
-		this.addMissingButtonsToGrid($grid, id);
+		const clear = true;
+		this.updateGridBin($grid, $editedButtons, id, clear);
 
 		this._gridSoundButtonFilter.triggerFilterEvent();
 	}
@@ -260,7 +282,7 @@ class GridDispatcher {
 			return;
 		}
 
-		this.clearGridBin($grid);
+		this.clearBin(this.getGridBin($grid));
 		this.clearFilter($grid);
 	}
 
@@ -274,14 +296,15 @@ class GridDispatcher {
 		this._gridSoundButtonFilter.triggerFilterEvent();
 	}
 
-	private moveChildrenToBin(
+	private updateGridBin(
 		$grid: GridElementJQuery,
-		$editedButtons: SoundButtonElementJQuery,
-		id: number
+		$clearingButtons: SoundButtonElementJQuery,
+		id: number,
+		clear = false,
+		animateClear = true
 	): void {
-		let $gridBin = $grid.find<HTMLDivElement>(
-			`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`
-		);
+		const buttonClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
+		let $gridBin = this.getGridBin($grid);
 
 		$gridBin
 			.empty()
@@ -289,12 +312,41 @@ class GridDispatcher {
 			.css("--rows", this._gridResizer.rows)
 			.css("--columns", this._gridResizer.columns);
 
-		const buttonsClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
-		const oldClass = SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS;
+		let hasClearingChildren = $clearingButtons.length > 0;
+
+		if (hasClearingChildren) {
+			let shouldAnimate = hasClearingChildren && animateClear;
+			
+			this.moveChildrenToBin($clearingButtons, $gridBin, shouldAnimate);
+		}
+
+		if (clear) {
+			$grid.children(`.${buttonClass}`).remove();
+		}
+
+		this.addMissingButtonsToGrid($grid, id);
+	}
+
+	private moveChildrenToBin(
+		$buttons: SoundButtonElementJQuery,
+		$gridBin?: JQuery<HTMLDivElement>,
+		animate = true
+	): void {
+		if (!$gridBin) {
+			let $grid = this._$activeGrid;
+
+			if ($grid.length < 1) {
+				return;
+			}
+
+			$gridBin = this.getGridBin($grid);
+		}
+
+		const buttonClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
+		const outdateClass = SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS;
 
 		// Outdate buttons and set them the bin grid position
-		this._gridSoundButtonChildFactory
-			.outdateButtonElements($editedButtons)
+		this.outdateButtonElements($buttons)
 			.css("--column-amount", this._gridResizer.columns)
 			.css("--index", function (this, _i, _value) {
 				let index = parseInt(this.style.getPropertyValue("--index"));
@@ -305,39 +357,19 @@ class GridDispatcher {
 				this.style.setProperty("--row", floor.toString());
 				this.style.setProperty("--column", ((index % columnAmount) + 1).toString());
 			})
-			.removeClass(buttonsClass)
-			.addClass(oldClass)
+			.removeClass(buttonClass)
+			.addClass(outdateClass)
 			.appendTo($gridBin);
 
-		$grid.children(`.${buttonsClass}`).remove();
-
-		let shouldAnimate = $editedButtons.length > 0;
-
-		this.clearBin($gridBin, id, shouldAnimate);
+		this.clearBin($gridBin, animate);
 	}
 
-	private clearGridBin($grid: GridElementJQuery): void {
-		let gridId = this.getGridId($grid);
-
-		this.clearBin(
-			$grid.children(
-				`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`
-			) as JQuery<HTMLDivElement>,
-			gridId,
-			false
-		);
-	}
-
-	private clearBin(
-		$gridBin: JQuery<HTMLDivElement>,
-		id: number,
-		animate = true
-	): void {
-		MainWindow.removeTimeout(`clear-bin-${id}`);
+	private clearBin($gridBin: JQuery<HTMLDivElement>, animate = true): void {
+		MainWindow.removeTimeout(`clear-bin-animation`);
 
 		if (animate) {
 			MainWindow.addTimeout(
-				`clear-bin-${id}`,
+				`clear-bin-animation`,
 				setTimeout(() => {
 					$gridBin.empty();
 				}, 1500)
@@ -345,6 +377,10 @@ class GridDispatcher {
 		} else {
 			$gridBin.empty();
 		}
+	}
+
+	private getGridBin($grid: GridElementJQuery): JQuery<HTMLDivElement> {
+		return $grid.find<HTMLDivElement>(`.${GridDispatcher.GRID_BUTTON_BIN_CLASS}`);
 	}
 
 	private createGrid(id: number, collection?: SoundButtonDataCollection): void {
@@ -482,5 +518,11 @@ class GridDispatcher {
 		return $grid.children(
 			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`
 		) as SoundButtonElementJQuery;
+	}
+
+	private outdateButtonElements(
+		$buttons: SoundButtonElementJQuery
+	): SoundButtonElementJQuery {
+		return $buttons.attr("id", "").detach();
 	}
 }

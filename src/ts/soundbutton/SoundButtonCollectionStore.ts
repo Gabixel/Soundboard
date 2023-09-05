@@ -133,6 +133,16 @@ class SoundButtonCollectionStore {
 		collection.buttonData[buttonDataIndex] = buttonData;
 	}
 
+	public removeButtonData(buttonId: number, collectionId: number): void {
+		let collection = this.getCollection(collectionId);
+
+		let buttonDataIndex = this.findButtonDataIndex(buttonId, collectionId);
+
+		if (buttonDataIndex != -1) {
+			collection.buttonData.splice(buttonDataIndex, 1);
+		}
+	}
+
 	public swapButtonData(
 		collectionId: number,
 		dataId1: number,

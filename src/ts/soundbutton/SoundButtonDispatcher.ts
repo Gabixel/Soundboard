@@ -38,8 +38,8 @@ class SoundButtonDispatcher {
 		});
 	}
 
-	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): void {
-		this._soundButtonFactory.updateElementDataByParsedId(parsedId, buttonData);
+	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): SoundButtonElementJQuery {
+		return this._soundButtonFactory.updateElementDataByParsedId(parsedId, buttonData);
 	}
 
 	public swapSoundButtons(

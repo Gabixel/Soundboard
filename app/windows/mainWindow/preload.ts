@@ -19,8 +19,8 @@ const api: MainWindowApiBridge = {
 		ipcRenderer.invoke("join-paths", ...paths),
 
 	onButtonDataUpdate: (callback) => {
-		ipcRenderer.on("buttondata-updated", (_e, parsedId, buttonData) => {
-			callback(parsedId, buttonData);
+		ipcRenderer.on("buttondata-updated", (_e, parsedId, buttonData, reset) => {
+			callback(parsedId, buttonData, reset);
 		});
 	},
 };
@@ -42,7 +42,7 @@ type MainWindowApiBridge = {
 	// isPathFile: (args: string) => boolean;
 	joinPaths: (...paths: string[]) => Promise<string>;
 	onButtonDataUpdate: (
-		callback: (id: string, buttonData: SoundButtonData) => void
+		callback: (id: string, buttonData: SoundButtonData, reset: boolean) => void
 	) => void;
 };
 

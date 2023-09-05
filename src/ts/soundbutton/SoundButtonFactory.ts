@@ -19,12 +19,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	): SoundButtonElementJQuery {
 		let $button = this.generateSoundButtonElement(buttonId);
 
-		this.updateElementData(
-			$button,
-			buttonId,
-			collectionId,
-			buttonData
-		);
+		this.updateElementData($button, buttonId, collectionId, buttonData);
 
 		return $button;
 	}
@@ -32,12 +27,12 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	public updateElementDataByParsedId(
 		parsedId: string,
 		buttonData: SoundButtonData
-	): void {
+	): SoundButtonElementJQuery {
 		let $button = this.getButtonElementByParsedId(parsedId);
 
 		let { buttonId, collectionId } = this.getCompositeSoundButtonId(parsedId);
 
-		this.updateElementData($button, buttonId, collectionId, buttonData);
+		return this.updateElementData($button, buttonId, collectionId, buttonData);
 	}
 
 	public updateElementData(
@@ -45,10 +40,10 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		buttonId: number,
 		collectionId: number,
 		buttonData: SoundButtonData
-	): void {
+	): SoundButtonElementJQuery {
 		let parsedId = this.getParsedSoundButtonId(buttonId, collectionId);
 
-		$button
+		return $button
 			.attr("id", parsedId)
 			// TODO: apply image
 			// Color
@@ -57,7 +52,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 			.css("--lightness", buttonData.color.l.toString() + "%")
 			// Title
 			.children(".button-theme")
-			.text(buttonData.title);
+			.text(buttonData.title) as SoundButtonElementJQuery;
 	}
 
 	public getButtonDataByElement(

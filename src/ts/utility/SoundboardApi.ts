@@ -44,7 +44,7 @@ abstract class SoundboardApi {
 		},
 
 		onButtonDataUpdate: (
-			callback: (parsedId: string, buttonData: SoundButtonData) => void
+			callback: (parsedId: string, buttonData: SoundButtonData, reset: boolean) => void
 		): void => {
 			this._api.onButtonDataUpdate(callback);
 		},
@@ -95,7 +95,7 @@ type WindowApiBridge = {
 	getAppPath: () => Promise<string>;
 	joinPaths: (...paths: string[]) => Promise<string>;
 	onButtonDataUpdate: (
-		callback: (id: string, buttonData: SoundButtonData) => void
+		callback: (id: string, buttonData: SoundButtonData, reset: boolean) => void
 	) => void;
 
 	/*

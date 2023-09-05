@@ -242,14 +242,6 @@ function createEditButtonWindow(
 		editButtonWindow = null;
 	});
 
-	function saveSoundButtonChanges(
-		parsedId: string,
-		buttonData: SoundButtonData
-	): void {
-		// Send updated button
-		mainWindow.webContents.send("buttondata-updated", parsedId, buttonData);
-	}
-
 	function shouldQuitCheckingChanges(
 		id: string,
 		buttonData: SoundButtonData
@@ -333,6 +325,13 @@ function showContextMenu(
 		extraMenuItems.forEach((item, index) => {
 			menu.insert(index, item);
 		});
+		
+		menu.insert(
+			extraMenuItems.length,
+			new MenuItem({
+				type: "separator",
+			})
+		);
 	}
 
 	// TODO: ??
@@ -423,7 +422,7 @@ app.setAboutPanelOptions({
 //#region API
 
 //#region Global API
-function initIpc() {
+function initIpc(): void {
 	ipcMain.on("open-context-menu", (_e, args: ContextMenuArgs) => {
 		// console.log(event);
 		// console.log(event.sender);
@@ -454,6 +453,16 @@ function initIpc() {
 							click: () => {
 								openFileInExplorer(decodeURIComponent(args.buttonData.path ?? ""));
 							},
+						}),
+						new MenuItem({
+							type: "separator",
+						}),
+						new MenuItem({
+							label: "Clear",
+							click: () => {
+								saveSoundButtonChanges(args.parsedId, args.buttonData, true);
+							},
+							role: "delete"
 						})
 					);
 			}
@@ -476,5 +485,16 @@ function initIpc() {
 	});
 }
 //#endregion Global API
+
+//#region EditButtonWindow API
+function saveSoundButtonChanges(
+	parsedId: string,
+	buttonData: SoundButtonData,
+	reset = false
+): void {
+	// Send updated button
+	mainWindow.webContents.send("buttondata-updated", parsedId, buttonData, reset);
+}
+//#endregion
 
 //#endregion API

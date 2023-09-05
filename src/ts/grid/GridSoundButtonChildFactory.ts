@@ -83,9 +83,24 @@ class GridSoundButtonChildFactory {
 		this.updateSoundButton($button.attr("id"), buttonData);
 	}
 
-	public updateSoundButton(parsedId: string, buttonData: SoundButtonData): void {
+	public updateSoundButton(
+		parsedId: string,
+		buttonData: SoundButtonData,
+		reset = false
+	): SoundButtonElementJQuery {
 		let { buttonId, collectionId } =
 			this._soundButtonDispatcher.getCompositeSoundButtonId(parsedId);
+
+		if (reset) {
+			this._soundButtonCollectionStore.removeButtonData(buttonId, collectionId);
+
+			return this._soundButtonDispatcher.getSoundButtonElement(
+				buttonId,
+				collectionId
+			);
+		}
+
+		buttonData = this._soundButtonSanitizer.sanitizeData(buttonId, buttonData);
 
 		this._soundButtonCollectionStore.editButtonData(
 			buttonId,
@@ -93,12 +108,6 @@ class GridSoundButtonChildFactory {
 			buttonData
 		);
 
-		this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
-	}
-
-	public outdateButtonElements(
-		$buttons: SoundButtonElementJQuery
-	): SoundButtonElementJQuery {
-		return $buttons.attr("id", "").detach();
+		return this._soundButtonDispatcher.updateSoundButton(parsedId, buttonData);
 	}
 }

@@ -9,8 +9,8 @@ const api: EditButtonWindowApiBridge = {
 	getButtonData: async (): Promise<SoundButtonData> =>
 		ipcRenderer.invoke("editor-request-buttondata"),
 
-	updateButtonData: async (parsedId, buttonData): Promise<void> =>
-		ipcRenderer.invoke("editor-update-buttondata", parsedId, buttonData),
+	updateButtonData: async (parsedId, buttonData, reset): Promise<void> =>
+		ipcRenderer.invoke("editor-update-buttondata", parsedId, buttonData, reset),
 
 	onAskCompareChanges: (callback: () => void): void => {
 		ipcRenderer.on("editor-ask-compare-changes", callback);
@@ -40,7 +40,7 @@ type EditButtonWindowApiBridge = {
 	 * Sends the updated soundbutton data to the main process
 	 * @param buttonData The new data for the soundbutton
 	 */
-	updateButtonData: (parsedId: string, buttonData: SoundButtonData) => Promise<void>;
+	updateButtonData: (parsedId: string, buttonData: SoundButtonData, reset: boolean) => Promise<void>;
 	// openContextMenu: (args: object) => void;
 	// isPathFile: (args: string) => boolean;
 

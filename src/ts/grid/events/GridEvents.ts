@@ -126,8 +126,16 @@ class GridEvents extends EventTarget {
 	private addSoundButtonContextMenu($gridsContainer: JQuery<HTMLElement>): void {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory
-		).handleEditEvent(() => {
-			this.dispatchEvent(new Event(`buttonedit`));
+		).handleEditEvent(($button, reset, animate) => {
+			this.dispatchEvent(
+				new CustomEvent(`buttonedit`, {
+					detail: {
+						$button,
+						reset,
+						animate
+					},
+				})
+			);
 		});
 
 		$gridsContainer.on(
@@ -213,7 +221,7 @@ class GridEvents extends EventTarget {
 				this._gridSoundButtonChildFactory.updateSoundButtonByElement($button, data);
 
 				this.dispatchEvent(new Event(`buttonedit`));
-				
+
 				e.preventDefault();
 			})
 			.on("dragleave", `.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`, (e) => {
