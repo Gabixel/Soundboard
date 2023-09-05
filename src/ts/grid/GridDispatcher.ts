@@ -75,10 +75,13 @@ class GridDispatcher {
 		this._gridEvents.addClearButtonClickEvent($clearGridButton, () => {
 			let gridId = this.getGridId(this._$activeGrid);
 
-			// TODO: put cool yes/no buttons inside the reset one
-			window.confirm(
-				`Are you sure you want to clear the grid "${this.getGridName(gridId)}"?`
-			) && this.clearGrid(gridId);
+			// // TODO: put cool yes/no buttons inside the reset one
+			// this has been commented out because it's annoying and breaks inputs/buttons until you re-focus the entire window
+			// window.confirm(
+			// 	`Are you sure you want to clear the grid "${this.getGridName(gridId)}"?`
+			// ) && this.clearGrid(gridId);
+
+			this.clearGrid(gridId);
 		});
 
 		$(this._gridEvents).on("buttonedit", (e) => {
