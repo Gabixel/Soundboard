@@ -17,8 +17,10 @@ class GridSoundButtonSwap {
 		};
 	};
 
-	private get $buttons(): SoundButtonElementJQuery {
-		return this._$parent.find<SoundButtonElement>(`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`);
+	private get _$buttons(): SoundButtonElementJQuery {
+		return this._$parent.find<SoundButtonElement>(
+			`.${SoundButtonDispatcher.SOUNDBUTTON_CLASS}`
+		);
 	}
 
 	constructor(
@@ -49,9 +51,8 @@ class GridSoundButtonSwap {
 			},
 		};
 
-		this.$buttons.removeAttr("tabindex");
 		this.setDraggingButtonOffset(null);
-		this.setDraggingClasses(false);
+		this.setDraggingStles(false);
 
 		this._dragData.$draggedButton = null;
 
@@ -76,7 +77,7 @@ class GridSoundButtonSwap {
 			return;
 		}
 
-		this.setDraggingClasses(true);
+		this.setDraggingStles(true);
 
 		this._dragState = "dragging";
 	}
@@ -143,19 +144,16 @@ class GridSoundButtonSwap {
 
 			e.stopPropagation();
 
-			this.$buttons
-				.attr("tabindex", -1)
-				.removeClass("drop-destination");
+			this._$buttons.removeClass("drop-destination");
 			$(e.target).addClass("drop-destination");
 		})
 			.onButton("mouseleave", (e) => {
-				$(e.target)
-					.removeClass("drop-destination");
+				$(e.target).removeClass("drop-destination");
 			})
 			.onButton("mouseup", (e) => {
 				let $target = $(e.target);
 
-				if(!$target.hasClass("drop-destination")) {
+				if (!$target.hasClass("drop-destination")) {
 					return;
 				}
 
@@ -197,7 +195,13 @@ class GridSoundButtonSwap {
 		}
 	}
 
-	private setDraggingClasses(set: boolean): void {
+	private setDraggingStles(set: boolean): void {
+		if (set) {
+			this._$buttons.attr("tabindex", -1);
+		} else {
+			this._$buttons.removeAttr("tabindex");
+		}
+
 		this._dragData.$draggedButton?.toggleClass("dragging", set);
 
 		this._$parent.toggleClass("has-dragging-child", set);
