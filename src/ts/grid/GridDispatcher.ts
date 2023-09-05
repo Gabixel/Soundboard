@@ -93,7 +93,7 @@ class GridDispatcher {
 				let $button: SoundButtonElementJQuery = e.detail.$button;
 
 				// @ts-ignore
-				const shouldAnimate: boolean = e.detail?.animateIfReset ?? false;
+				const shouldAnimate: boolean = e.detail.animateIfReset;
 
 				if (this._$activeGrid.length > 0) {
 					const clearGrid = false;
