@@ -27,3 +27,7 @@ interface File {
 	path: string;
 	name: string;
 }
+
+interface NavigatorID {
+	readonly userAgentData: object;
+}

@@ -1,7 +1,7 @@
 abstract class Logger {
 	//#region Log functions
 	/** Debug-level logging (aka "Verbose"). */
-	public static logDebug(message: string, ...args: LoggerExtraArgs[]): void {
+	public static logDebug(message: string, ...args: LoggerAnyExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -10,7 +10,7 @@ abstract class Logger {
 	}
 
 	/** Info-level logging. */
-	public static logInfo(message: string, ...args: LoggerExtraArgs[]): void {
+	public static logInfo(message: string, ...args: LoggerAnyExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -19,7 +19,7 @@ abstract class Logger {
 	}
 
 	/** Warning-level logging. */
-	public static logWarn(message: string, ...args: LoggerExtraArgs[]): void {
+	public static logWarn(message: string, ...args: LoggerAnyExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -28,7 +28,7 @@ abstract class Logger {
 	}
 
 	/** Error-level logging. */
-	public static logError(message: string, ...args: LoggerExtraArgs[]): void {
+	public static logError(message: string, ...args: LoggerAnyExtraArgs[]): void {
 		if (SoundboardApi.isProduction) {
 			return;
 		}
@@ -38,22 +38,11 @@ abstract class Logger {
 	//#endregion
 
 	private static configureAndSendLog(
-		logFunc: (message?: any, ...args: LoggerExtraArgs[]) => void,
+		logFunc: (message?: any, ...args: LoggerAnyExtraArgs[]) => void,
 		message: string,
-		...args: LoggerExtraArgs[]
+		...args: LoggerAnyExtraArgs[]
 	): void {
-		let manualCallerClass, manualCallerFunction;
-
-		let lastArg = args.slice(-1)?.[0];
-		if (
-			lastArg != undefined &&
-			typeof lastArg === "object" &&
-			Object.keys(lastArg).every((key) => key === "class" || key === "function")
-		) {
-			args.splice(-1);
-			manualCallerClass = lastArg.class;
-			manualCallerFunction = lastArg.function;
-		}
+		let { manualCallerClass, manualCallerFunction } = this.getManualCallers(args);
 
 		let info = this.getAndStyleInfo(
 			message,
@@ -62,6 +51,31 @@ abstract class Logger {
 		);
 
 		logFunc(info.text, ...info.style, ...args);
+	}
+
+	private static getManualCallers(args: LoggerAnyExtraArgs[]): {
+		manualCallerClass?: Class;
+		manualCallerFunction?: AnyFunc;
+	} {
+		let manualCallerClass, manualCallerFunction;
+
+		let lastArg = args.slice(-1)?.[0];
+		if (
+			lastArg != undefined &&
+			typeof lastArg === "object" &&
+			Object.keys(lastArg).length <= 2 &&
+			Object.keys(lastArg).every((key) => key == "class" || key == "function")
+		) {
+			args.splice(-1);
+
+			manualCallerClass = lastArg.class;
+			manualCallerFunction = lastArg.function;
+		}
+
+		return {
+			manualCallerClass,
+			manualCallerFunction,
+		};
 	}
 
 	private static getAndStyleInfo(

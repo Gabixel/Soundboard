@@ -157,12 +157,15 @@ type LoggerStyleAttributes = {
 	style: string[];
 };
 
-type LoggerExtraArgs =
-	| any
-	| {
-			class: Class;
-			function?: AnyFunc;
-	  };
+type LoggerAnyExtraArgs =
+	| LoggerAnyExtraArgs
+	| (LoggerExtraArgs & any)
+	| (LoggerExtraArgs | any);
+
+type LoggerExtraArgs = {
+	class: Class;
+	function?: AnyFunc;
+};
 
 interface GridFilterCondition<TDataValues = any> {
 	id: string;
@@ -178,13 +181,10 @@ interface GridFilterCondition<TDataValues = any> {
 		filterData: Map<string, GridFilterData>
 	) => boolean;
 	data: Map<string, GridFilterData<TDataValues>> | null;
-};
+}
 
 interface GridFilterData<TValue = any>
-	extends Omit<
-		GridFilterCondition<TValue>,
-		"isActive" | "check" | "data"
-	> {
+	extends Omit<GridFilterCondition<TValue>, "isActive" | "check" | "data"> {
 	value: TValue;
 }
 

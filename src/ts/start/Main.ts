@@ -23,14 +23,14 @@ abstract class Main {
 		if (this.classExists(typeof Logger)) {
 			// Some info for debug
 			Logger.logInfo(
-				"\nUserAgent:",
-				navigator.userAgent,
 				"\nMain language:",
 				navigator.language,
 				"\nLanguages:",
 				navigator.languages,
 				"\nCookie enabled?",
 				navigator.cookieEnabled,
+				"\nUser agent data:",
+				navigator.userAgentData,
 				"\nNavigator:",
 				navigator
 			);
