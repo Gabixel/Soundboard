@@ -10,6 +10,7 @@ class GridSoundButtonEdit extends EventTarget {
 	public handleEditEvent(onUpdate: ($button: SoundButtonElementJQuery, reset: boolean, animate: boolean) => void): this {
 		SoundboardApi.mainWindow.onButtonDataUpdate((parsedId, buttonData, reset) => {
 			let $button = this._gridSoundButtonChildFactory.updateSoundButton(parsedId, buttonData, reset);
+
 			const animate = buttonData.isEdited
 			onUpdate($button, reset, animate);
 		});
@@ -17,7 +18,7 @@ class GridSoundButtonEdit extends EventTarget {
 		return this;
 	}
 
-	public triggerButtonEditEvent($button: SoundButtonElementJQuery, reset: boolean = false, animateIfReset: boolean = true): void {
+	public triggerButtonEditEvent($button: SoundButtonElementJQuery, reset: boolean = false, animateIfReset: boolean = false): void {
 		this.dispatchEvent(
 			new CustomEvent(`buttonedit`, {
 				detail: {

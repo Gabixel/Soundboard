@@ -127,9 +127,9 @@ class GridEvents extends EventTarget {
 	private addSoundButtonContextMenu($gridsContainer: JQuery<HTMLElement>): void {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory
-		).handleEditEvent((buttonData, reset, animateIfReset) => {
+		).handleEditEvent(($button, reset, animateIfReset) => {
 			this._gridSoundButtonEdit.triggerButtonEditEvent(
-				buttonData,
+				$button,
 				reset,
 				animateIfReset
 			);

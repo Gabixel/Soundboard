@@ -83,14 +83,14 @@ class GridDispatcher {
 
 		$(this._gridEvents).on("buttonedit", (e) => {
 			// @ts-ignore
-			let reset: boolean = e.detail.reset;
+			let reset: boolean = e.detail?.reset ?? false;
 
 			if (reset) {
 				// @ts-ignore
 				let $button: SoundButtonElementJQuery = e.detail.$button;
 
 				// @ts-ignore
-				const shouldAnimate: boolean = e.detail.animate;
+				const shouldAnimate: boolean = e.detail?.animateIfReset ?? false;
 
 				if (this._$activeGrid.length > 0) {
 					const clearGrid = false;
@@ -301,7 +301,7 @@ class GridDispatcher {
 		$clearingButtons: SoundButtonElementJQuery,
 		id: number,
 		clearGrid = false,
-		animateClear = true
+		animateClear = false
 	): void {
 		const buttonClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
 		let $gridBin = this.getGridBin($grid);
