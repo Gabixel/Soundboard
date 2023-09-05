@@ -212,8 +212,6 @@ class GridEvents extends EventTarget {
 
 				buttonData.path = encodedPath;
 
-				console.log(file);
-
 				if (!buttonData.isEdited) {
 					let title = file.name;
 
