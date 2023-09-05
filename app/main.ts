@@ -461,8 +461,7 @@ function initIpc(): void {
 							label: "Clear",
 							click: () => {
 								saveSoundButtonChanges(args.parsedId, args.buttonData, true);
-							},
-							role: "delete"
+							}
 						})
 					);
 			}

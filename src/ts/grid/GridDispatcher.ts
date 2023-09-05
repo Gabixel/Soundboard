@@ -93,13 +93,13 @@ class GridDispatcher {
 				const shouldAnimate: boolean = e.detail.animate;
 
 				if (this._$activeGrid.length > 0) {
-					const shouldClear = false;
+					const clearGrid = false;
 
-					this.updateGridBin(
+					this.clearGridAndBin(
 						this._$activeGrid,
 						$button,
 						this.getGridId(this._$activeGrid),
-						shouldClear,
+						clearGrid,
 						shouldAnimate
 					);
 				}
@@ -264,43 +264,43 @@ class GridDispatcher {
 		this._soundButtonCollectionStore.clearCollectionData(id);
 
 		let $editedButtons = this._gridSoundButtonChildFactory
-			.getSoundButtonsByData(editedButtonsData, id)
-			.remove();
+			.getSoundButtonsByData(editedButtonsData, id);
 
-		const clear = true;
-		this.updateGridBin($grid, $editedButtons, id, clear);
+		const clearGrid = true;
+		const animateClear = true;
+		this.clearGridAndBin($grid, $editedButtons, id, clearGrid, animateClear);
 
 		this._gridSoundButtonFilter.triggerFilterEvent();
 	}
 
-	private clearOngoingOperationsOnSwap($grid?: GridElementJQuery): void {
+	private clearOngoingOperationsOnSwap($currentGrid?: GridElementJQuery): void {
 		this._gridEvents.cancelSwap();
 
-		$grid ??= this._$activeGrid;
+		$currentGrid ??= this._$activeGrid;
 
-		if ($grid.length < 1) {
+		if ($currentGrid.length < 1) {
 			return;
 		}
 
-		this.clearBin(this.getGridBin($grid));
-		this.clearFilter($grid);
+		this.clearBin(this.getGridBin($currentGrid), false);
+		this.clearFilter($currentGrid);
 	}
 
-	private resumeOngoingOperationsOnSwap($grid?: GridElementJQuery): void {
-		$grid ??= this._$activeGrid;
+	private resumeOngoingOperationsOnSwap($focusingGrid?: GridElementJQuery): void {
+		$focusingGrid ??= this._$activeGrid;
 
-		if ($grid.length < 1) {
+		if ($focusingGrid.length < 1) {
 			return;
 		}
 
 		this._gridSoundButtonFilter.triggerFilterEvent();
 	}
 
-	private updateGridBin(
+	private clearGridAndBin(
 		$grid: GridElementJQuery,
 		$clearingButtons: SoundButtonElementJQuery,
 		id: number,
-		clear = false,
+		clearGrid = false,
 		animateClear = true
 	): void {
 		const buttonClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
@@ -320,7 +320,7 @@ class GridDispatcher {
 			this.moveChildrenToBin($clearingButtons, $gridBin, shouldAnimate);
 		}
 
-		if (clear) {
+		if (clearGrid) {
 			$grid.children(`.${buttonClass}`).remove();
 		}
 
@@ -329,19 +329,9 @@ class GridDispatcher {
 
 	private moveChildrenToBin(
 		$buttons: SoundButtonElementJQuery,
-		$gridBin?: JQuery<HTMLDivElement>,
+		$gridBin: JQuery<HTMLDivElement>,
 		animate = true
 	): void {
-		if (!$gridBin) {
-			let $grid = this._$activeGrid;
-
-			if ($grid.length < 1) {
-				return;
-			}
-
-			$gridBin = this.getGridBin($grid);
-		}
-
 		const buttonClass = SoundButtonDispatcher.SOUNDBUTTON_CLASS;
 		const outdateClass = SoundButtonDispatcher.SOUNDBUTTON_OLD_CLASS;
 
