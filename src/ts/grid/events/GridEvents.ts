@@ -128,7 +128,11 @@ class GridEvents extends EventTarget {
 		this._gridSoundButtonEdit = new GridSoundButtonEdit(
 			this._gridSoundButtonChildFactory
 		).handleEditEvent((buttonData, reset, animateIfReset) => {
-			this._gridSoundButtonEdit.triggerButtonEditEvent(buttonData, reset, animateIfReset);
+			this._gridSoundButtonEdit.triggerButtonEditEvent(
+				buttonData,
+				reset,
+				animateIfReset
+			);
 		});
 
 		$(this._gridSoundButtonEdit).on("buttonedit", (e) => {
@@ -204,24 +208,36 @@ class GridEvents extends EventTarget {
 				// TODO: check if file type is supported / allowed.
 				// SoundboardApi.isPathFile(path);
 
-				let data = this._soundButtonFactory.getButtonDataByElement($button);
+				let buttonData = this._soundButtonFactory.getButtonDataByElement($button);
 
-				data.path = encodedPath;
+				buttonData.path = encodedPath;
 
 				console.log(file);
 
-				if (!data.isEdited) {
-					data.title = file.name;
+				if (!buttonData.isEdited) {
+					let title = file.name;
+
+					if (file.type) {
+						title =
+							title.lastIndexOf(".") != -1
+								? title.substring(0, title.lastIndexOf("."))
+								: title;
+					}
+
+					buttonData.title = title;
 
 					// Random color from file name
-					data.color = {
+					buttonData.color = {
 						h: StringUtilities.getHue(file.name),
 						s: 100,
-						l: data.color.l,
+						l: buttonData.color.l,
 					};
 				}
 
-				this._gridSoundButtonChildFactory.updateSoundButtonByElement($button, data);
+				this._gridSoundButtonChildFactory.updateSoundButtonByElement(
+					$button,
+					buttonData
+				);
 
 				this._gridSoundButtonEdit.triggerButtonEditEvent($button);
 
