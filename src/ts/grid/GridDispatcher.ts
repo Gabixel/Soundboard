@@ -81,6 +81,7 @@ class GridDispatcher {
 			// 	`Are you sure you want to clear the grid "${this.getGridName(gridId)}"?`
 			// ) && this.clearGrid(gridId);
 
+			this._gridEvents.cancelSwap();
 			this.clearGrid(gridId);
 		});
 
