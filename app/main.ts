@@ -66,7 +66,7 @@ const webPreferences: Electron.WebPreferences = {
 
 	navigateOnDragDrop: false,
 
-	// todo: autoplayPolicy, just in case
+	// TODO: autoplayPolicy, just in case
 
 	webviewTag: false,
 };
