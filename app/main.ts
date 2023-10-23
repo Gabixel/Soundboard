@@ -325,7 +325,7 @@ function showContextMenu(
 		extraMenuItems.forEach((item, index) => {
 			menu.insert(index, item);
 		});
-		
+
 		menu.insert(
 			extraMenuItems.length,
 			new MenuItem({
@@ -461,7 +461,7 @@ function initIpc(): void {
 							label: "Clear",
 							click: () => {
 								saveSoundButtonChanges(args.parsedId, args.buttonData, true);
-							}
+							},
 						})
 					);
 			}
