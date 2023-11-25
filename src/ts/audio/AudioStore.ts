@@ -135,13 +135,13 @@ class AudioStore extends EventTarget {
 	}
 
 	private createAndPushCouple(
-		options?: AudioSourceSettings,
+		audioSettings?: AudioSourceSettings,
 		index?: number
 	): AudioCouple {
 		let couple = new AudioCouple(
 			this._output.main,
 			this._output.playback,
-			options,
+			audioSettings,
 			true,
 			this._recycleCopies
 		);

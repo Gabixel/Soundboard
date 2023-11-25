@@ -34,7 +34,7 @@ class AudioCouple extends EventTarget implements IAudioControls {
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
-		options?: AudioSourceSettings,
+		audioSettings?: AudioSourceSettings,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
@@ -42,8 +42,8 @@ class AudioCouple extends EventTarget implements IAudioControls {
 
 		// Audio sources
 		this._couple = {
-			main: new AudioSource(mainOutput, options, autoPlay, preserveOnEnd),
-			playback: new AudioSource(playbackOutput, options, autoPlay, preserveOnEnd),
+			main: new AudioSource(mainOutput, audioSettings, autoPlay, preserveOnEnd),
+			playback: new AudioSource(playbackOutput, audioSettings, autoPlay, preserveOnEnd),
 		};
 
 		this.initEventListeners();
