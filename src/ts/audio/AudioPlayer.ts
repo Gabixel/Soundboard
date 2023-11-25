@@ -31,7 +31,7 @@ class AudioPlayer implements IAudioPlayer {
 	private _volumeSlider: VolumeSlider;
 
 	/**
-	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22).
+	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22 / https://developer.chrome.com/blog/play-request-was-interrupted/).
 	 * Seems pretty rare, but it's nice to have.
 	 */
 	private _isAwaitingAudio: boolean = false;
