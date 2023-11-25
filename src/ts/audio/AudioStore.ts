@@ -82,7 +82,7 @@ class AudioStore extends EventTarget {
 		});
 	}
 
-	public async storeAudio(options: AudioSourceSettings): Promise<void> {
+	public async storeAudio(audioSettings: AudioSourceSettings): Promise<void> {
 		// TODO: improve checks and apply all data if it changes
 
 		// When limit is 1 and recycle is enabled
@@ -90,13 +90,13 @@ class AudioStore extends EventTarget {
 			const couple = this._audioCoupleList[0];
 
 			// TODO: update settings (i.e. timings & effects)
-			if (couple.betterSrc === options.src) {
+			if (couple.betterSrc === audioSettings.src) {
 				await couple.restart();
 			} else {
-				couple.changeTrack(options.src);
+				couple.changeTrack(audioSettings.src);
 			}
 
-			couple.volume = options.volume;
+			couple.volume = audioSettings.volume;
 			// TODO: update more data (e.g. timings and [playbackrate, in the future])
 
 			return;
@@ -107,7 +107,7 @@ class AudioStore extends EventTarget {
 
 			if (
 				!this._replaceIfMaxedOut ||
-				(this._replaceIfMaxedOut && this.foundCopyAndRestarted(options))
+				(this._replaceIfMaxedOut && this.foundCopyAndRestarted(audioSettings))
 			) {
 				return;
 			}
@@ -125,7 +125,7 @@ class AudioStore extends EventTarget {
 			replacingCouple = null;
 		}
 
-		this.createAndPushCouple(options);
+		this.createAndPushCouple(audioSettings);
 	}
 
 	public setLoop(loop: boolean) {
@@ -188,17 +188,17 @@ class AudioStore extends EventTarget {
 		return couple;
 	}
 
-	private foundCopyAndRestarted(options: AudioSourceSettings): boolean {
+	private foundCopyAndRestarted(audioSettings: AudioSourceSettings): boolean {
 		let couple: AudioCouple = null;
 
 		let coupleIndex = this._audioCoupleList.findIndex(
 			(couple) =>
 				couple != null &&
 				// Couple has same src
-				couple.betterSrc == options.src &&
+				couple.betterSrc == audioSettings.src &&
 				// Couple has same timings
 				JSON.stringify(couple.audioTimings ?? null) ==
-					JSON.stringify(options.audioTimings ?? null)
+					JSON.stringify(audioSettings.audioTimings ?? null)
 		);
 
 		if (coupleIndex >= 0) {

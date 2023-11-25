@@ -54,7 +54,7 @@ class GridEvents extends EventTarget {
 				const { path, volume, time } =
 					this._soundButtonFactory.getButtonDataByParsedId($(e.target).attr("id"));
 
-				const options: AudioSourceSettings = {
+				const audioSettings: AudioSourceSettings = {
 					src: path,
 					volume,
 					audioTimings: time,
@@ -62,7 +62,7 @@ class GridEvents extends EventTarget {
 
 				const useSecondaryStorage = e.shiftKey;
 
-				this._audioPlayer.play(options, useSecondaryStorage);
+				this._audioPlayer.play(audioSettings, useSecondaryStorage);
 			}
 		);
 	}

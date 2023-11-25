@@ -52,10 +52,10 @@ class AudioPlayer implements IAudioPlayer {
 	}
 
 	public async play(
-		settings: AudioSourceSettings,
+		audioSettings: AudioSourceSettings,
 		useSecondaryStorage: boolean
 	): Promise<void> {
-		if (settings.src == null) {
+		if (audioSettings.src == null) {
 			Logger.logDebug("Source is null, skipping");
 			return;
 		}
@@ -64,10 +64,10 @@ class AudioPlayer implements IAudioPlayer {
 			? this._storage.parallel
 			: this._storage.single;
 
-		settings.loop = !useSecondaryStorage && this._$loopButton.is(":checked");
+		audioSettings.loop = !useSecondaryStorage && this._$loopButton.is(":checked");
 
 		this._isAwaitingAudio = true;
-		await chosenStorage.storeAudio(settings);
+		await chosenStorage.storeAudio(audioSettings);
 		this._isAwaitingAudio = false;
 	}
 
