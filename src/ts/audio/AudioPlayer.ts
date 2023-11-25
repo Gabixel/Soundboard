@@ -52,10 +52,10 @@ class AudioPlayer implements IAudioPlayer {
 	}
 
 	public async play(
-		options: AudioSourceOptions,
+		settings: AudioSourceSettings,
 		useSecondaryStorage: boolean
 	): Promise<void> {
-		if (options.src == null) {
+		if (settings.src == null) {
 			Logger.logDebug("Source is null, skipping");
 			return;
 		}
@@ -64,13 +64,10 @@ class AudioPlayer implements IAudioPlayer {
 			? this._storage.parallel
 			: this._storage.single;
 
+		settings.loop = !useSecondaryStorage && this._$loopButton.is(":checked");
+
 		this._isAwaitingAudio = true;
-		await chosenStorage.storeAudio({
-			src: options.src,
-			audioTimings: options.audioTimings,
-			loop: !useSecondaryStorage && this._$loopButton.is(":checked"),
-			volume: options.volume
-		});
+		await chosenStorage.storeAudio(settings);
 		this._isAwaitingAudio = false;
 	}
 
@@ -139,10 +136,7 @@ class AudioPlayer implements IAudioPlayer {
 		// Change initial value
 		$volumeSlider.trigger("input");
 
-		Logger.logDebug(
-			"Volume slider set!\n",
-			$volumeSlider,
-		);
+		Logger.logDebug("Volume slider set!\n", $volumeSlider);
 		return this;
 	}
 

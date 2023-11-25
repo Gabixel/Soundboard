@@ -54,7 +54,7 @@ class GridEvents extends EventTarget {
 				const { path, volume, time } =
 					this._soundButtonFactory.getButtonDataByParsedId($(e.target).attr("id"));
 
-				const options: AudioSourceOptions = {
+				const options: AudioSourceSettings = {
 					src: path,
 					volume,
 					audioTimings: time,

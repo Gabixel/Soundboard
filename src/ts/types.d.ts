@@ -14,7 +14,7 @@ type GridAxis = {
 };
 
 type AudioEffect = "GainNode" | "BiquadFilterNode";
-type AudioSourceOptions = {
+type AudioSourceSettings = {
 	src: string;
 	volume: float;
 	audioTimings: AudioTimings;

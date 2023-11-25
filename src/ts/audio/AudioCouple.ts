@@ -34,7 +34,7 @@ class AudioCouple extends EventTarget implements IAudioControls {
 	constructor(
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
-		options?: AudioSourceOptions,
+		options?: AudioSourceSettings,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {

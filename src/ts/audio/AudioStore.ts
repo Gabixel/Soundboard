@@ -82,7 +82,7 @@ class AudioStore extends EventTarget {
 		});
 	}
 
-	public async storeAudio(options: AudioSourceOptions): Promise<void> {
+	public async storeAudio(options: AudioSourceSettings): Promise<void> {
 		// TODO: improve checks and apply all data if it changes
 
 		// When limit is 1 and recycle is enabled
@@ -139,7 +139,7 @@ class AudioStore extends EventTarget {
 	}
 
 	private createAndPushCouple(
-		options?: AudioSourceOptions,
+		options?: AudioSourceSettings,
 		index?: number
 	): AudioCouple {
 		let couple = new AudioCouple(
@@ -188,7 +188,7 @@ class AudioStore extends EventTarget {
 		return couple;
 	}
 
-	private foundCopyAndRestarted(options: AudioSourceOptions): boolean {
+	private foundCopyAndRestarted(options: AudioSourceSettings): boolean {
 		let couple: AudioCouple = null;
 
 		let coupleIndex = this._audioCoupleList.findIndex(

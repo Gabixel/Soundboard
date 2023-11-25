@@ -53,7 +53,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	constructor(
 		audioOutput: AudioOutput,
-		options?: AudioSourceOptions,
+		options?: AudioSourceSettings,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
