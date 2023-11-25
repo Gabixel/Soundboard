@@ -31,7 +31,7 @@ class AudioPlayer implements IAudioPlayer {
 	private _volumeSlider: VolumeSlider;
 
 	/**
-	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22).
+	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22 / https://developer.chrome.com/blog/play-request-was-interrupted/).
 	 * Seems pretty rare, but it's nice to have.
 	 */
 	private _isAwaitingAudio: boolean = false;
@@ -52,10 +52,10 @@ class AudioPlayer implements IAudioPlayer {
 	}
 
 	public async play(
-		options: AudioSourceOptions,
+		audioSettings: AudioSourceSettings,
 		useSecondaryStorage: boolean
 	): Promise<void> {
-		if (options.src == null) {
+		if (audioSettings.src == null) {
 			Logger.logDebug("Source is null, skipping");
 			return;
 		}
@@ -64,13 +64,10 @@ class AudioPlayer implements IAudioPlayer {
 			? this._storage.parallel
 			: this._storage.single;
 
+		audioSettings.loop = !useSecondaryStorage && this._$loopButton.is(":checked");
+
 		this._isAwaitingAudio = true;
-		await chosenStorage.storeAudio({
-			src: options.src,
-			audioTimings: options.audioTimings,
-			loop: !useSecondaryStorage && this._$loopButton.is(":checked"),
-			volume: options.volume
-		});
+		await chosenStorage.storeAudio(audioSettings);
 		this._isAwaitingAudio = false;
 	}
 
@@ -139,10 +136,7 @@ class AudioPlayer implements IAudioPlayer {
 		// Change initial value
 		$volumeSlider.trigger("input");
 
-		Logger.logDebug(
-			"Volume slider set!\n",
-			$volumeSlider,
-		);
+		Logger.logDebug("Volume slider set!\n", $volumeSlider);
 		return this;
 	}
 

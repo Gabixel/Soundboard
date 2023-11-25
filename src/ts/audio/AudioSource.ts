@@ -53,7 +53,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	constructor(
 		audioOutput: AudioOutput,
-		options?: AudioSourceOptions,
+		audioSettings?: AudioSourceSettings,
 		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
@@ -62,25 +62,25 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio = new Audio();
 		this._audio.preload = "metadata";
 		this._audio.autoplay = autoPlay ?? true;
-		this.loop = options?.loop ?? false;
+		this.loop = audioSettings?.loop ?? false;
 
 		this._audio.disableRemotePlayback = true;
 
 		this._audioOutput = audioOutput;
 
-		this.volume = options?.volume ?? 1;
+		this.volume = audioSettings?.volume ?? 1;
 
 		this._preserve = preserveOnEnd;
 
 		// TODO: this.setAudioTimings(options.audioTimings);
 		// for now:
-		this._audioTimings = options?.audioTimings;
+		this._audioTimings = audioSettings?.audioTimings;
 
 		this.createSourceNode();
 
 		this.initAudioEventListeners();
 
-		this.changeTrack(options?.src);
+		this.changeTrack(audioSettings?.src);
 	}
 
 	public changeTrack(src: string): void {
