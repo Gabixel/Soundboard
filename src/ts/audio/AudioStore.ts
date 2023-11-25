@@ -105,14 +105,10 @@ class AudioStore extends EventTarget {
 		if (!this.hasFreeStorage()) {
 			// TODO: log
 
-			if (
-				!this._replaceIfMaxedOut ||
-				(this._replaceIfMaxedOut && this.foundCopyAndRestarted(audioSettings))
-			) {
+			// If we don't replace, we just return
+			if (!this._replaceIfMaxedOut || this.foundCopyAndRestarted(audioSettings)) {
 				return;
 			}
-
-			// Replace is enabled and there's no existing similar audio
 
 			// Get oldest couple
 			let replacingCouple = this._audioCoupleList.shift();
