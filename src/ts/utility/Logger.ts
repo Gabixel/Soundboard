@@ -218,27 +218,15 @@ abstract class Logger {
 		};
 	}
 
+	/**
+	 * Returns the current date and time in UTC format, as a string.
+	 * @returns The current date and time in UTC format, as a string.
+	 */
 	private static getDateTime() {
-		const date = StringUtilities.UTCDate(new Date());
-
-		// Display the time in a better way
-		// TODO: improve/compact implementation
-		// Year
-		let displayTime = date.getFullYear().toString();
-		displayTime += "/";
-		// Month
-		displayTime += date.getMonth().toString().padStart(2, "0");
-		displayTime += "/";
-		// Day
-		displayTime += date.getDay().toString().padStart(2, "0");
-		displayTime += " ";
-		// Hours
-		displayTime += date.getHours().toString().padStart(2, "0");
-		// Minutes
-		displayTime += ":" + date.getMinutes().toString().padStart(2, "0");
-		// Seconds
-		displayTime += ":" + date.getSeconds().toString().padStart(2, "0");
-
+		const date = new Date();
+		const isoString = date.toISOString();
+		let displayTime = isoString.slice(0, 10) + " " + isoString.slice(11, 19);
+		displayTime = displayTime.replace(/-/g, "/");
 		return displayTime;
 	}
 }
