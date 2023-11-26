@@ -1,4 +1,4 @@
 interface IAudioDeviceSelect {
-	getDevices(): Promise<MediaDeviceInfo[]>;
+	getOutputDevices(): Promise<MediaDeviceInfo[]>;
 	setDevice(device: MediaDeviceInfo | number): void;
 }

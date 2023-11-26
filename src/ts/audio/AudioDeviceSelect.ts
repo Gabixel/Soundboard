@@ -27,7 +27,7 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 		Logger.logDebug("Initialized!");
 	}
 
-	public async getDevices(): Promise<MediaDeviceInfo[]> {
+	public async getOutputDevices(): Promise<MediaDeviceInfo[]> {
 		const allDevices = await navigator.mediaDevices.enumerateDevices();
 		return allDevices.filter(({ kind }) => kind === "audiooutput");
 	}
@@ -79,7 +79,7 @@ class AudioDeviceSelect implements IAudioDeviceSelect {
 	private async updateAll(
 		checkForDifferentArray: boolean = false
 	): Promise<void> {
-		let newDevices = await this.getDevices();
+		let newDevices = await this.getOutputDevices();
 
 		if (
 			checkForDifferentArray &&
