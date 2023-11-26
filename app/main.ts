@@ -266,6 +266,7 @@ function createEditButtonWindow(
 				noLink: true,
 			});
 
+			// Handle special operations
 			switch (prompt) {
 				// "Wait/Cancel"
 				case 0:
@@ -275,9 +276,8 @@ function createEditButtonWindow(
 				case 2:
 					// Save changes and close
 					saveSoundButtonChanges(id, buttonData);
-				// (1) "Forget/Discard"
-				default:
-					return true;
+
+				// "Forget/Discard" (case 1) can be ignored
 			}
 		}
 
