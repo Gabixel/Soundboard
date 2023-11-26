@@ -53,6 +53,9 @@ abstract class Logger {
 		logFunc(info.text, ...info.style, ...args);
 	}
 
+	/**
+	 * Tries to find the manual caller class and function (from the last argument, if it matches).
+	 */
 	private static getManualCallers(args: LoggerAnyExtraArgs[]): {
 		manualCallerClass?: Class;
 		manualCallerFunction?: AnyFunc;
