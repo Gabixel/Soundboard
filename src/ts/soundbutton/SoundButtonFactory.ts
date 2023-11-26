@@ -43,16 +43,18 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	): SoundButtonElementJQuery {
 		let parsedId = this.getParsedSoundButtonId(buttonId, collectionId);
 
-		return $button
-			.attr("id", parsedId)
-			// TODO: apply image
-			// Color
-			.css("--hue", buttonData.color.h.toString())
-			.css("--saturation", buttonData.color.s.toString() + "%")
-			.css("--lightness", buttonData.color.l.toString() + "%")
-			// Title
-			.children(".button-theme")
-			.text(buttonData.title) as SoundButtonElementJQuery;
+		return (
+			$button
+				.attr("id", parsedId)
+				// TODO: apply image
+				// Color
+				.css("--hue", buttonData.color.h.toString())
+				.css("--saturation", buttonData.color.s.toString() + "%")
+				.css("--lightness", buttonData.color.l.toString() + "%")
+				// Title
+				.children(".button-theme")
+				.text(buttonData.title) as SoundButtonElementJQuery
+		);
 	}
 
 	public getButtonDataByElement(
