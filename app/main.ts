@@ -215,9 +215,7 @@ function createEditButtonWindow(
 		ipcMain.handle(
 			"editor-onclose-compare-changes",
 			(_e, parsedId, buttonData) => {
-				// Should never happen
-				// if (id_original != id) { }
-
+				// (Should be taken for granted that `parsedButtonId === parsedId`)
 				if (shouldQuitCheckingChanges(parsedId, buttonData)) {
 					editButtonWindow.destroy();
 				}
