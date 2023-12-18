@@ -89,16 +89,6 @@ abstract class StringUtilities {
 	}
 
 	/**
-	 * Returns the date without timezone offset.
-	 *
-	 * @see {@link https://stackoverflow.com/a/39209842}
-	 */
-	public static UTCDate(date: Date): Date {
-		const offset = date.getTimezoneOffset() * 60000;
-		return new Date(date.getTime() - offset);
-	}
-
-	/**
 	 * Sets up prototype extensions for the {@link StringConstructor} interface.
 	 */
 	public static setupStringPrototypeExtensions(): void {
