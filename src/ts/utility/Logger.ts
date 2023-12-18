@@ -54,7 +54,15 @@ abstract class Logger {
 	}
 
 	/**
-	 * Tries to find the manual caller class and function (from the last argument, if it matches).
+	 * Extracts the caller class and function from the last argument, if it matches the expected structure.
+	 * The expected structure is an object with up to two properties: "class" and "function".
+	 * If the last argument matches this structure, it is removed from the `args` array and its "class" and "function" properties are returned.
+	 * If the last argument does not match this structure, undefined values are returned for both the class and the function.
+	 *
+	 * @param args - The array of arguments from which to extract the caller class and function.
+	 * @returns An object with two properties:
+	 * - `manualCallerClass` ({@link Class}): The extracted caller class, or undefined if the last argument did not match the expected structure.
+	 * - `manualCallerFunction` ({@link AnyFunc}): The extracted caller function, or undefined if the last argument did not match the expected structure.
 	 */
 	private static getManualCallers(args: LoggerAnyExtraArgs[]): {
 		manualCallerClass?: Class;
