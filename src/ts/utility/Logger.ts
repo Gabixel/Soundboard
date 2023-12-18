@@ -232,6 +232,7 @@ abstract class Logger {
 
 	/**
 	 * Returns the current date and time in UTC format, as a string.
+	 * 
 	 * @returns The current date and time in UTC format, as a string.
 	 */
 	private static getDateTime() {
