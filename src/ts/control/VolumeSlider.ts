@@ -48,7 +48,7 @@ class VolumeSlider {
 				if (e.ctrlKey) return;
 				// e.preventDefault();
 				e.stopImmediatePropagation();
-				EventFunctions.updateInputValueFromWheel(e, this._$slider, 50, ["input"]);
+				EventFunctions.updateInputValueFromWheel(e, 50, ["input"], this._$slider);
 			});
 
 		this.updateVolume();
