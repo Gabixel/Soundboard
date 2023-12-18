@@ -1,3 +1,6 @@
+/**
+ * A factory class for creating and managing sound buttons.
+ */
 class SoundButtonFactory implements ISoundButtonFactory {
 	private static _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
