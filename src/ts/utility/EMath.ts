@@ -2,22 +2,45 @@
  * Extended Math
  */
 abstract class EMath {
+	/**
+	 * Clamps a number between a minimum and maximum value.
+	 *
+	 * @param value - The value to clamp
+	 * @param min - The minimum value
+	 * @param max - The maximum value
+	 * @returns The clamped value
+	 */
 	public static clamp(value: number, min: number, max: number): number {
 		return Math.min(Math.max(value, min), max);
 	}
 
+	/**
+	 * Clamps the minmum possible value for a number.
+	 *
+	 * @param value - The value to clamp
+	 * @param min - The minimum value
+	 * @returns The clamped value
+	 */
 	public static clampMin(value: number, min: number) {
 		return Math.max(value, min);
 	}
 
+	/**
+	 * Clamps the maximum possible value for a number.
+	 *
+	 * @param value - The value to clamp
+	 * @param max - The maximum value
+	 * @returns The clamped value
+	 */
 	public static clampMax(value: number, max: number) {
 		return Math.min(value, max);
 	}
 
 	/**
 	 * Generates a random integer between `min` (inclusive) and `max` (exclusive).
+	 *
 	 * @param min - The minimum **inclusive** number
-	 * @param max - The maximum **exclusive** number
+	 * @param max - The maximum **exclusive** number. Default is 256
 	 * @returns The extracted integer
 	 */
 	public static randomInt(min: number = 0, max: number = 256): number {
@@ -29,9 +52,9 @@ abstract class EMath {
 	/**
 	 * Converts an RGB color to HSL.
 	 *
-	 * @param r	The red value
-	 * @param g	The green value
-	 * @param b	The blue value
+	 * @param r	- The `red` value
+	 * @param g	- The `green` value
+	 * @param b	- The `blue` value
 	 * @returns The HSL representation
 	 */
 	public static RGBToHSL(
@@ -81,9 +104,9 @@ abstract class EMath {
 	/**
 	 * Converts an HSL color to RGB.
 	 *
-	 * @param h The hue value
-	 * @param s The saturation value
-	 * @param l The lightness value
+	 * @param h - The `hue` value
+	 * @param s - The `saturation` value
+	 * @param l - The `lightness` value
 	 * @returns The RGB representation
 	 */
 	public static HSLToRGB(
@@ -136,7 +159,10 @@ abstract class EMath {
 
 	/**
 	 * Returns a string representation of the RGB color (without hash symbol).
+	 * 
 	 * @see {@link https://css-tricks.com/converting-color-spaces-in-javascript/}
+	 * @param hex - The hexadecimal color code to convert
+	 * @returns An array containing the RGB values [r, g, b]
 	 */
 	public static HexToRGB(hex: string): [number, number, number] {
 		let r = "0",
@@ -159,11 +185,26 @@ abstract class EMath {
 		return [+r, +g, +b];
 	}
 
+	/**
+	 * Converts a number to its corresponding hexadecimal representation.
+	 * 
+	 * @param c - The number to convert.
+	 * @returns The hexadecimal representation of the number.
+	 */
 	public static componentToHex(c: number) {
 		var hex = c.toString(16);
 		return hex.length == 1 ? "0" + hex : hex;
 	}
 
+
+	/**
+	 * Calculates the exponential value based on the initial value, decimal points, and base.
+	 * 
+	 * @param initialValue - The initial value
+	 * @param decimalPoints - The number of decimal points to round the result to. Default is 2
+	 * @param base - The base value. Default is 50
+	 * @returns The exponential value
+	 */
 	public static getExponentialValue(
 		initialValue: number,
 		decimalPoints: number = 2,
@@ -178,6 +219,7 @@ abstract class EMath {
 
 	/**
 	 * Returns a logarithmic version of the given {@link position}.
+	 *
 	 * @see {@link https://stackoverflow.com/a/846249/16804863}
 	 * @param position The position to scale logarithmically
 	 * @param minPosition The minimum position
