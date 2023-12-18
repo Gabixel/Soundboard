@@ -31,8 +31,9 @@ class AudioPlayer implements IAudioPlayer {
 	private _volumeSlider: VolumeSlider;
 
 	/**
-	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time (see https://goo.gl/LdLk22 / https://developer.chrome.com/blog/play-request-was-interrupted/).
-	 * Seems pretty rare, but it's nice to have.
+	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time.
+	 * Seems pretty rare, but it should prevent some playback issues.
+	 * @see https://goo.gl/LdLk22
 	 */
 	private _isAwaitingAudio: boolean = false;
 
@@ -190,8 +191,6 @@ class AudioPlayer implements IAudioPlayer {
 	}
 
 	private setPlayPauseButton(isPlaying: boolean): void {
-		// console.log("audio icon should update");
-
 		this._$playToggleButton
 			.children("i")
 			.toggleClass("fa-pause", isPlaying)
