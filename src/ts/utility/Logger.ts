@@ -44,7 +44,7 @@ abstract class Logger {
 	): void {
 		let { manualCallerClass, manualCallerFunction } = this.getManualCallers(args);
 
-		let info = this.getAndStyleInfo(
+		let info = this.getStyledInfo(
 			message,
 			manualCallerClass,
 			manualCallerFunction
@@ -93,7 +93,7 @@ abstract class Logger {
 		};
 	}
 
-	private static getAndStyleInfo(
+	private static getStyledInfo(
 		message: string,
 		manualCallerClass?: Class,
 		manualCallerFunction?: AnyFunc
@@ -135,9 +135,9 @@ abstract class Logger {
 				callerClass = caller.slice(0, dotIndex);
 				callerFunction = caller.slice(dotIndex + 1);
 
-				// if(callerFunction === "<anonymous>") {
-				// 	callerFunction = "👻";
-				// }
+				/*if(callerFunction === "<anonymous>") {
+					callerFunction = "👻";
+				}*/
 			}
 
 			// Get only the script file from the file path
