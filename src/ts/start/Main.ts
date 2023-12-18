@@ -100,7 +100,6 @@ abstract class Main {
 			);
 		};
 
-		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event
 		window.onunhandledrejection = (e) => {
 			// Don't print default error
 			e.preventDefault();
