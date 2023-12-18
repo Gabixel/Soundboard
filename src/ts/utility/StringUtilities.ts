@@ -1,6 +1,9 @@
 abstract class StringUtilities {
 	/**
-	 * Encodes the passed path (i.e. adding percentages, etc.)
+	 * Encodes a file path by replacing backslashes with forward slashes and encoding special characters.
+	 *
+	 * @param path - The file path to encode
+	 * @returns The encoded path
 	 */
 	public static encodeFilePath(path: string): string {
 		// Local files (at least on Windows) have backslashes instead of forward slashes. This causes problems since JS treats them as escaping characters.
@@ -9,18 +12,10 @@ abstract class StringUtilities {
 			.replace(/%3A/g, ":"); // Decode colons
 	}
 
-	// TODO: not sure if it's necessary to use
-	// /**
-	//  * Decodes the passed path (i.e. removing percentages, etc.)
-	//  */
-	// public static decodeFilePath(path: string): string {
-	// 	return decodeURIComponent(path);
-	// }
-
 	/**
 	 * Returns an `hsl()` function as a string.
 	 *
-	 * @param str The string that will be converted to a hue value
+	 * @param str The string that will be use to extract a hue value
 	 * @param saturation The saturation level
 	 * @param lightness The lightness level
 	 */
@@ -36,8 +31,8 @@ abstract class StringUtilities {
 	 * Returns the hue value for a given string.
 	 * This can be used for HSL colors.
 	 *
-	 * @param str The string to convert.
-	 * @returns The hue value.
+	 * @param str - The string to convert
+	 * @returns The hue value
 	 */
 	public static getHue(str: string): number {
 		const hash = this.getHash(str);
@@ -49,11 +44,11 @@ abstract class StringUtilities {
 	}
 
 	/**
-	 * Converts a string to an hash code.
+	 * Calculates the hash value of a given string.
 	 *
 	 * @see {@link https://stackoverflow.com/a/7616484/16804863}
-	 * @param str The string to convert
-	 * @returns The hash code
+	 * @param str - The string to calculate the hash for
+	 * @returns The hash value of the string
 	 */
 	public static getHash(str: string) {
 		let hash = 0;
@@ -69,7 +64,12 @@ abstract class StringUtilities {
 	}
 
 	/**
-	 * Returns a string representation of the RGB color (without hash symbol).
+	 * Converts RGB color values to a hexadecimal string representation.
+	 *
+	 * @param r - The red component value (0-255)
+	 * @param g - The green component value (0-255)
+	 * @param b - The blue component value (0-255)
+	 * @returns The hexadecimal representation of the RGB color
 	 */
 	public static RGBToHex(r: number, g: number, b: number): string {
 		return (
@@ -78,7 +78,11 @@ abstract class StringUtilities {
 	}
 
 	/**
-	 * Returns a string representation of the RGB color (without hash symbol).
+	 * Converts HSL color values to a hexadecimal color string.
+	 * @param h - The hue value (0-360)
+	 * @param s - The saturation value (0-1)
+	 * @param l - The lightness value (0-1)
+	 * @returns The hexadecimal color string
 	 */
 	public static HSLToHex(h: number, s: number, l: number): string {
 		return StringUtilities.RGBToHex(...EMath.HSLToRGB(h, s, l));
@@ -94,6 +98,9 @@ abstract class StringUtilities {
 		return new Date(date.getTime() - offset);
 	}
 
+	/**
+	 * Sets up prototype extensions for the {@link StringConstructor} interface.
+	 */
 	public static setupStringPrototypeExtensions(): void {
 		String.prototype.getHSL = function getHSL(
 			saturation: number = 100,
