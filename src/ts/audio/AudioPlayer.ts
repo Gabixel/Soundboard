@@ -4,22 +4,22 @@
 class AudioPlayer implements IAudioPlayer {
 	private _output: {
 		/**
-		 * The primary output. It should go to the (hopefully) virtual output so that it can be redirected to virtual inputs.
+		 * The primary output. It should go to the desired output, usually a virtual one to allow loopback to a virtual input.
 		 */
 		main: AudioOutput;
 		/**
-		 * The secondary output. It should do, as the name implies, _play back_ the audio to the user to hear it playing.
+		 * The secondary output. It should do, as the name implies, play *back* the audio to the user to hear it playing.
 		 */
 		playback: AudioOutput;
 	};
 
 	private _storage: {
 		/**
-		 * First (single) storage is limited to 1 audio.
+		 * Primary (single) storage. It's limited to 1 audio.
 		 */
 		single: AudioStore;
 		/**
-		 * Second (parallel) storage is unlimited.
+		 * Secondary (parallel) storage. It has no limit.
 		 */
 		parallel: AudioStore;
 	};
