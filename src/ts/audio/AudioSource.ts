@@ -45,6 +45,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	/**
 	 * Audio timings settings.
+	 * // TODO: still unused.
 	 */
 	private _audioTimings: AudioTimings;
 	public get audioTimings(): AudioTimings {
