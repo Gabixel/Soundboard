@@ -33,6 +33,7 @@ class AudioPlayer implements IAudioPlayer {
 	/**
 	 * Used when we're trying to play/resume the audio, to prevent any pause/end during that time.
 	 * Seems pretty rare, but it should prevent some playback issues.
+	 * 
 	 * @see https://goo.gl/LdLk22
 	 */
 	private _isAwaitingAudio: boolean = false;
