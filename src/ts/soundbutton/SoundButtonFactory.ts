@@ -26,12 +26,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	/**
-	 * Creates a JQuery sound button element with the specified button ID, collection ID, and button data.
-	 *
-	 * @param buttonId - The ID of the button
-	 * @param collectionId - The ID of the collection
-	 * @param buttonData - The data for the button
-	 * @returns The created JQuery button
+	 * @inheritdoc
 	 */
 	public createSoundButton(
 		buttonId: number,
@@ -64,13 +59,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	/**
-	 * Updates the data of a JQuery sound button.
-	 *
-	 * @param $button - The JQuery button element to update
-	 * @param buttonId - The ID of the button
-	 * @param collectionId - The ID of the collection
-	 * @param buttonData - The data to update the button with
-	 * @returns The updated button object
+	 * @inheritdoc
 	 */
 	public updateElementData(
 		$button: SoundButtonElementJQuery,
