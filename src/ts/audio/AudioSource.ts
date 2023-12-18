@@ -84,6 +84,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this.changeTrack(audioSettings?.src);
 	}
 
+	// TODO: newTimings?: AudioTimings
 	public changeTrack(src: string): void {
 		if (this._destroyed) {
 			return;
@@ -174,12 +175,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return this._audio.ended;
 	}
 
-	// public changeTrack(
-	// 	src: string,
-	// 	keepPreviousTimings?: boolean,
-	// 	newTimings?: AudioTimings
-	// ): void {}
-
+	// TODO: effects/filters
 	// public applyFilters(filters???): this {
 
 	// }
