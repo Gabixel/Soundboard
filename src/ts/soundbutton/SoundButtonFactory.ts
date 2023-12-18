@@ -1,8 +1,18 @@
 class SoundButtonFactory implements ISoundButtonFactory {
-	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
+	private static _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	private _idGenerator: ISoundButtonIdGenerator;
 	private _collectionStore: SoundButtonCollectionStore;
+
+	public static async getRandomAudioPath(): Promise<string> {
+		return StringUtilities.encodeFilePath(
+			await SoundboardApi.mainWindow.joinPaths(
+				SoundboardApi.global.path.root,
+				SoundboardApi.global.path.sounds,
+				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
+			)
+		);
+	}
 
 	constructor(
 		idGenerator: ISoundButtonIdGenerator,
@@ -12,6 +22,14 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		this._collectionStore = collectionStore;
 	}
 
+	/**
+	 * Creates a JQuery sound button element with the specified button ID, collection ID, and button data.
+	 *
+	 * @param buttonId - The ID of the button
+	 * @param collectionId - The ID of the collection
+	 * @param buttonData - The data for the button
+	 * @returns The created JQuery button
+	 */
 	public createSoundButton(
 		buttonId: number,
 		collectionId: number,
@@ -24,6 +42,13 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return $button;
 	}
 
+	/**
+	 * Updates the element data of a sound button identified by its parsed ID.
+	 *
+	 * @param parsedId - The parsed ID of the sound button
+	 * @param buttonData - The updated data for the sound button
+	 * @returns The updated sound button object
+	 */
 	public updateElementDataByParsedId(
 		parsedId: string,
 		buttonData: SoundButtonData
@@ -35,6 +60,15 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return this.updateElementData($button, buttonId, collectionId, buttonData);
 	}
 
+	/**
+	 * Updates the data of a JQuery sound button.
+	 *
+	 * @param $button - The JQuery button element to update
+	 * @param buttonId - The ID of the button
+	 * @param collectionId - The ID of the collection
+	 * @param buttonData - The data to update the button with
+	 * @returns The updated button object
+	 */
 	public updateElementData(
 		$button: SoundButtonElementJQuery,
 		buttonId: number,
@@ -57,6 +91,12 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		);
 	}
 
+	/**
+	 * Retrieves the {@link SoundButtonData} associated with the given JQuery sound button.
+	 *
+	 * @param $button - The JQuery button representing the sound button
+	 * @returns The {@link SoundButtonData} associated with the JQuery button
+	 */
 	public getButtonDataByElement(
 		$button: SoundButtonElementJQuery
 	): SoundButtonData {
@@ -64,23 +104,25 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return this.getButtonDataById(buttonId);
 	}
 
+	/**
+	 * Retrieves the {@link SoundButtonData} for a given (**parsed**) button ID
+	 *
+	 * @param parsedButtonId - The parsed button ID
+	 * @returns The {@link SoundButtonData} for the specified button ID.
+	 */
 	public getButtonDataByParsedId(parsedButtonId: string): SoundButtonData {
 		let { buttonId } = this.getCompositeSoundButtonId(parsedButtonId);
 		return this.getButtonDataById(buttonId);
 	}
 
+	/**
+	 * Retrieves the {@link SoundButtonData} associated with the specified button ID (in the currently active collection).
+	 *
+	 * @param id - The button ID from the currently active collection
+	 * @returns The {@link SoundButtonData} object
+	 */
 	public getButtonDataById(id: number): SoundButtonData {
 		return this._collectionStore.getButtonData(id);
-	}
-
-	public async getRandomAudioPath(): Promise<string> {
-		return StringUtilities.encodeFilePath(
-			await SoundboardApi.mainWindow.joinPaths(
-				SoundboardApi.global.path.root,
-				SoundboardApi.global.path.sounds,
-				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
-			)
-		);
 	}
 
 	public getButtonElement(
