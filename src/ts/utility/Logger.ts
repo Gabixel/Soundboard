@@ -71,11 +71,15 @@ abstract class Logger {
 		let manualCallerClass, manualCallerFunction;
 
 		let lastArg = args.slice(-1)?.[0];
+		let lastArgKeys = Object.keys(lastArg ?? {});
+
+		// Check for the expected structure
 		if (
 			lastArg != undefined &&
 			typeof lastArg === "object" &&
-			Object.keys(lastArg).length <= 2 &&
-			Object.keys(lastArg).every((key) => key == "class" || key == "function")
+			lastArgKeys.length > 0 &&
+			lastArgKeys.length <= 2 &&
+			lastArgKeys.every((key) => key == "class" || key == "function")
 		) {
 			args.splice(-1);
 
