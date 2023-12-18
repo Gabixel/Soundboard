@@ -16,22 +16,22 @@ abstract class EMath {
 
 	/**
 	 * Generates a random integer between `min` (inclusive) and `max` (exclusive).
-	 * @param min - The minimum inclusive number
-	 * @param max - The maximum exclusive number
-	 * @returns The random integer
+	 * @param min - The minimum **inclusive** number
+	 * @param max - The maximum **exclusive** number
+	 * @returns The extracted integer
 	 */
 	public static randomInt(min: number = 0, max: number = 256): number {
 		min = Math.ceil(min);
 		max = Math.floor(max);
-		return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+		return Math.floor(Math.random() * (max - min) + min);
 	}
 
 	/**
-	 * Converts an RGB color value to HSL.
+	 * Converts an RGB color to HSL.
 	 *
-	 * @param r	The red color value
-	 * @param g	The green color value
-	 * @param b	The blue color value
+	 * @param r	The red value
+	 * @param g	The green value
+	 * @param b	The blue value
 	 * @returns The HSL representation
 	 */
 	public static RGBToHSL(
@@ -79,11 +79,11 @@ abstract class EMath {
 	}
 
 	/**
-	 * Converts an HSL color value to RGB.
+	 * Converts an HSL color to RGB.
 	 *
-	 * @param h The hue
-	 * @param s The saturation
-	 * @param l The lightness
+	 * @param h The hue value
+	 * @param s The saturation value
+	 * @param l The lightness value
 	 * @returns The RGB representation
 	 */
 	public static HSLToRGB(
@@ -136,7 +136,7 @@ abstract class EMath {
 
 	/**
 	 * Returns a string representation of the RGB color (without hash symbol).
-	 * @author https://css-tricks.com/converting-color-spaces-in-javascript/
+	 * @see {@link https://css-tricks.com/converting-color-spaces-in-javascript/}
 	 */
 	public static HexToRGB(hex: string): [number, number, number] {
 		let r = "0",
