@@ -191,11 +191,5 @@ abstract class EMath {
 		const scale = (maxRes - minRes) / (maxPos - minPos);
 
 		return Math.exp(minRes + scale * (pos - minPos));
-		// return (Math.log(pos) - minRes) / scale + maxPos;
-
-		// return (
-		// 	(Math.log(maxRes - minRes) / Math.log(maxPos - minPos)) * (pos - minPos) +
-		// 	minRes
-		// );
 	}
 }
