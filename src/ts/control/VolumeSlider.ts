@@ -46,7 +46,6 @@ class VolumeSlider {
 			.on("wheel", { passive: true }, (e) => {
 				// Update volume slider on scroll (only when CTRL key is not active)
 				if (e.ctrlKey) return;
-				// e.preventDefault();
 				e.stopImmediatePropagation();
 				EventFunctions.updateInputValueFromWheel(e, 50, ["input"], this._$slider);
 			});
