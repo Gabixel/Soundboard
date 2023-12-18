@@ -176,20 +176,28 @@ abstract class EMath {
 		);
 	}
 
+	/**
+	 * Returns a logarithmic version of the given {@link position}.
+	 * @see {@link https://stackoverflow.com/a/846249/16804863}
+	 * @param position The position to scale logarithmically
+	 * @param minPosition The minimum position
+	 * @param maxPosition The maximum position
+	 * @param minResult The minimum logarithmic result
+	 * @param maxResult The maximum logarithmic result
+	 * @returns The scaled value
+	 */
 	public static logarithmicValue(
-		pos: number,
-		minPos: number = 0,
-		maxPos: number = 100,
-		minRes: number = 0,
-		maxRes: number = 1
+		position: number,
+		minPosition: number = 0,
+		maxPosition: number = 100,
+		minResult: number = 0,
+		maxResult: number = 1
 	): number {
-		// Return a logarithmic version of the value (https://stackoverflow.com/questions/846221/logarithmic-slider)
+		minResult = Math.log(minResult);
+		maxResult = Math.log(maxResult);
 
-		minRes = Math.log(minRes);
-		maxRes = Math.log(maxRes);
+		const scale = (maxResult - minResult) / (maxPosition - minPosition);
 
-		const scale = (maxRes - minRes) / (maxPos - minPos);
-
-		return Math.exp(minRes + scale * (pos - minPos));
+		return Math.exp(minResult + scale * (position - minPosition));
 	}
 }
