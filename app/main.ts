@@ -1,12 +1,4 @@
-import {
-	app,
-	systemPreferences,
-	ipcMain,
-	session,
-	screen,
-	shell,
-	dialog,
-} from "electron";
+import { app, ipcMain, screen, shell, dialog } from "electron";
 import { BrowserWindow, Menu, MenuItem } from "electron";
 import path from "path";
 import fileSystem from "fs/promises";
@@ -57,7 +49,7 @@ const webPreferences: Electron.WebPreferences = {
 	nodeIntegrationInWorker: false,
 	nodeIntegrationInSubFrames: false,
 
-	// FIXME: Can probably be removed as TS no longer recognizes this
+	// TODO: Can probably be removed as TS no longer recognizes this
 	// @ts-ignore
 	enableRemoteModule: false, // https://stackoverflow.com/a/59888788/16804863
 
@@ -292,25 +284,8 @@ function createEditButtonWindow(
 	);
 }
 
-function showContextMenu(
-	_x: number,
-	_y: number,
-	extraMenuItems: MenuItem[] = []
-) {
+function showContextMenu(extraMenuItems: MenuItem[] = []) {
 	const menu = Menu.buildFromTemplate([
-		/*{
-				label: "Help",
-				submenu: [
-					{
-						label: "About",
-						click: () => {},
-					},
-					{
-						label: "Help",
-						click: () => {},
-					},
-				],
-			},*/
 		{
 			label: "nothing to see here 👀",
 			enabled: false,
@@ -318,7 +293,7 @@ function showContextMenu(
 		},
 	]);
 
-	// Add exra items (if present)
+	// Add extra items (if present)
 	if (extraMenuItems != null && extraMenuItems.length > 0) {
 		extraMenuItems.forEach((item, index) => {
 			menu.insert(index, item);
@@ -332,11 +307,8 @@ function showContextMenu(
 		);
 	}
 
-	// TODO: ??
 	menu.popup({
 		window: mainWindow,
-		// x: x,
-		// y: y,
 	});
 }
 
@@ -390,6 +362,7 @@ app.whenReady().then(() => {
 
 // Quit stuff
 app.on("will-quit", () => {
+	// TODO: saving stuff
 	// console.log(app.getPath("documents"));
 });
 
@@ -411,7 +384,7 @@ app.setAboutPanelOptions({
 	version: "1.0",
 	credits: undefined,
 	authors: ["Gabixel"],
-	website: undefined,
+	website: "https://github.com/Gabixel/Soundboard",
 	iconPath: undefined,
 });
 
@@ -422,10 +395,6 @@ app.setAboutPanelOptions({
 //#region Global API
 function initIpc(): void {
 	ipcMain.on("open-context-menu", (_e, args: ContextMenuArgs) => {
-		// console.log(event);
-		// console.log(event.sender);
-		// console.log(args);
-
 		const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
 		const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
 
@@ -465,9 +434,9 @@ function initIpc(): void {
 			}
 		}
 
-		// showContextMenu(extraMenu, e.x, e.y);
-		showContextMenu(null, null, extraMenuItems);
+		showContextMenu(extraMenuItems);
 	});
+
 	// TODO:
 	// .on("is-path-file", async (_e, args) => {
 	// 	console.log(await fileSystem.lstat(args));
