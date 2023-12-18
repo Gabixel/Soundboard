@@ -6,7 +6,6 @@ abstract class EventFunctions {
 	 * @param stepValue - The step value for incrementing or decrementing the input value. Defaults to 1
 	 * @param postTriggers - An array of post triggers to call after updating the input value. Defaults to ["change"]
 	 * @param $targetInput - The target input JQuery element. If not proivded, the target gets retrieved {@link e from the event} parameter
-	 * @returns {void}
 	 */
 	public static updateInputValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,
