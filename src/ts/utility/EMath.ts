@@ -1,5 +1,5 @@
 /**
- * Extended Math
+ * A class for custom extended math functions.
  */
 abstract class EMath {
 	/**
@@ -52,9 +52,9 @@ abstract class EMath {
 	/**
 	 * Converts an RGB color to HSL.
 	 *
-	 * @param r	- The `red` value
-	 * @param g	- The `green` value
-	 * @param b	- The `blue` value
+	 * @param r - The `red` value
+	 * @param g - The `green` value
+	 * @param b - The `blue` value
 	 * @returns The HSL representation
 	 */
 	public static RGBToHSL(
