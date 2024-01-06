@@ -2,6 +2,7 @@
 module.exports = {
 	packagerConfig: {},
 	rebuildConfig: {},
+	// See https://www.electronforge.io/config/makers
 	makers: [
 		{
 			name: "@electron-forge/maker-squirrel",
