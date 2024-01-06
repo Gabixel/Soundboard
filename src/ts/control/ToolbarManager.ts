@@ -1,3 +1,4 @@
+// TODO: working and functional toolbar
 class ToolbarManager {
 	readonly menu: HTMLElement;
 	readonly container: HTMLElement;
@@ -7,9 +8,11 @@ class ToolbarManager {
 		this.menu = document.getElementById("toolbar");
 		this.menu.style.display = "none";
 	}
+
 	/**
-	 * Add a menu item to the menu
-	 * @param item - the menu item to add
+	 * Adds an element to the menu.
+	 * 
+	 * @param item - The element to add.
 	 */
 	addMenuItem(item: HTMLElement): void {
 		this.menu.appendChild(item);

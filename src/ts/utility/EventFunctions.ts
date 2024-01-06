@@ -41,9 +41,9 @@ abstract class EventFunctions {
 	/**
 	 * Retrieves the updated input value from a wheel event.
 	 *
-	 * @param e - The wheel event or triggered event
-	 * @param stepValue - The step value to increment or decrement the input value. Default is 1
-	 * @returns The updated input value
+	 * @param e - The wheel event or triggered event.
+	 * @param stepValue - The step value to increment or decrement the input value. Default is 1.
+	 * @returns The updated input value.
 	 */
 	public static getUpdatedInputValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,
@@ -70,11 +70,11 @@ abstract class EventFunctions {
 	/**
 	 * Calculates the updated value based on the wheel event and the current value.
 	 * 
-	 * @param e - The wheel event or triggered event
-	 * @param currentValue - The current value
-	 * @param stepValue - The step value to be multiplied with the delta
-	 * @param clamp - Optional range to clamp the new value
-	 * @returns The updated value
+	 * @param e - The wheel or triggered event.
+	 * @param currentValue - The current value.
+	 * @param stepValue - The step value to be multiplied with the delta.
+	 * @param clamp - Optional range to clamp the new value.
+	 * @returns The updated value.
 	 */
 	public static getUpdatedValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,

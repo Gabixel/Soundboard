@@ -55,9 +55,9 @@ abstract class Logger {
 
 	/**
 	 * Extracts the caller class and function from the last argument, if it matches the expected structure.
-	 * The expected structure is an object with up to two properties: "class" and "function".
+	 * The expected structure is an object containing at least one of these two property names: "class" and "function".
 	 * If the last argument matches this structure, it is removed from the `args` array and its "class" and "function" properties are returned.
-	 * If the last argument does not match this structure, undefined values are returned for both the class and the function.
+	 * If the last argument does not match this structure, undefined values are returned for both the "class" and the "function".
 	 *
 	 * @param args - The array of arguments from which to extract the caller class and function.
 	 * @returns An object with two properties:
@@ -232,8 +232,6 @@ abstract class Logger {
 
 	/**
 	 * Returns the current date and time in UTC format, as a string.
-	 * 
-	 * @returns The current date and time in UTC format, as a string.
 	 */
 	private static getDateTime() {
 		const date = new Date();

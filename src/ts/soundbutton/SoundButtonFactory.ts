@@ -43,9 +43,9 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	/**
 	 * Updates the element data of a soundbutton identified by its parsed ID.
 	 *
-	 * @param parsedId - The parsed ID of the soundbutton
-	 * @param buttonData - The updated data for the soundbutton
-	 * @returns The updated soundbutton object
+	 * @param parsedId - The parsed ID of the soundbutton.
+	 * @param buttonData - The updated data for the soundbutton.
+	 * @returns The updated soundbutton object.
 	 */
 	public updateElementDataByParsedId(
 		parsedId: string,
@@ -86,8 +86,8 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	/**
 	 * Retrieves the {@link SoundButtonData} associated with the given jQuery soundbutton.
 	 *
-	 * @param $button - The jQuery button representing the soundbutton
-	 * @returns The {@link SoundButtonData} associated with the jQuery button
+	 * @param $button - The jQuery button representing the soundbutton.
+	 * @returns The {@link SoundButtonData} associated with the jQuery button.
 	 */
 	public getButtonDataByElement(
 		$button: SoundButtonElementJQuery
@@ -99,7 +99,7 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	/**
 	 * Retrieves the {@link SoundButtonData} for a given (**parsed**) button ID
 	 *
-	 * @param parsedButtonId - The parsed button ID
+	 * @param parsedButtonId - The parsed button ID.
 	 * @returns The {@link SoundButtonData} for the specified button ID.
 	 */
 	public getButtonDataByParsedId(parsedButtonId: string): SoundButtonData {
@@ -110,8 +110,8 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	/**
 	 * Retrieves the {@link SoundButtonData} associated with the specified button ID (in the currently active collection).
 	 *
-	 * @param id - The button ID from the currently active collection
-	 * @returns The {@link SoundButtonData} object
+	 * @param id - The button ID from the currently active collection.
+	 * @returns The {@link SoundButtonData} object.
 	 */
 	public getButtonDataById(id: number): SoundButtonData {
 		return this._collectionStore.getButtonData(id);
@@ -142,7 +142,10 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	/**
-	 * @returns The collection id.
+	 * Swaps the position of two soundbutton.
+	 * 
+	 * @param $button1 - The first soundbutton element.
+	 * @param $button2 - The second soundbutton element.
 	 */
 	public swapElements(
 		$button1: SoundButtonElementJQuery,
