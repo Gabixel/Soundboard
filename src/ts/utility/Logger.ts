@@ -44,7 +44,7 @@ abstract class Logger {
 	): void {
 		let { manualCallerClass, manualCallerFunction } = this.getManualCallers(args);
 
-		let info = this.getAndStyleInfo(
+		let info = this.getStyledInfo(
 			message,
 			manualCallerClass,
 			manualCallerFunction
@@ -54,7 +54,15 @@ abstract class Logger {
 	}
 
 	/**
-	 * Tries to find the manual caller class and function (from the last argument, if it matches).
+	 * Extracts the caller class and function from the last argument, if it matches the expected structure.
+	 * The expected structure is an object containing at least one of these two property names: "class" and "function".
+	 * If the last argument matches this structure, it is removed from the `args` array and its "class" and "function" properties are returned.
+	 * If the last argument does not match this structure, undefined values are returned for both the "class" and the "function".
+	 *
+	 * @param args - The array of arguments from which to extract the caller class and function.
+	 * @returns An object with two properties:
+	 * - `manualCallerClass` ({@link Class}): The extracted caller class, or undefined if the last argument did not match the expected structure.
+	 * - `manualCallerFunction` ({@link AnyFunc}): The extracted caller function, or undefined if the last argument did not match the expected structure.
 	 */
 	private static getManualCallers(args: LoggerAnyExtraArgs[]): {
 		manualCallerClass?: Class;
@@ -85,7 +93,7 @@ abstract class Logger {
 		};
 	}
 
-	private static getAndStyleInfo(
+	private static getStyledInfo(
 		message: string,
 		manualCallerClass?: Class,
 		manualCallerFunction?: AnyFunc
@@ -127,9 +135,9 @@ abstract class Logger {
 				callerClass = caller.slice(0, dotIndex);
 				callerFunction = caller.slice(dotIndex + 1);
 
-				// if(callerFunction === "<anonymous>") {
-				// 	callerFunction = "👻";
-				// }
+				/*if(callerFunction === "<anonymous>") {
+					callerFunction = "👻";
+				}*/
 			}
 
 			// Get only the script file from the file path
@@ -224,7 +232,6 @@ abstract class Logger {
 
 	/**
 	 * Returns the current date and time in UTC format, as a string.
-	 * @returns The current date and time in UTC format, as a string.
 	 */
 	private static getDateTime() {
 		const date = new Date();

@@ -45,6 +45,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	/**
 	 * Audio timings settings.
+	 * // TODO: still unused.
 	 */
 	private _audioTimings: AudioTimings;
 	public get audioTimings(): AudioTimings {
@@ -83,6 +84,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this.changeTrack(audioSettings?.src);
 	}
 
+	// TODO: newTimings?: AudioTimings
 	public changeTrack(src: string): void {
 		if (this._destroyed) {
 			return;
@@ -138,7 +140,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		if (!this._betterSrc) {
-			console.log("Audio has no src, seekTo has been prevented");
+			Logger.logError("Audio has no src, seekTo has been prevented");
 
 			return this;
 		}
@@ -173,12 +175,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return this._audio.ended;
 	}
 
-	// public changeTrack(
-	// 	src: string,
-	// 	keepPreviousTimings?: boolean,
-	// 	newTimings?: AudioTimings
-	// ): void {}
-
+	// TODO: effects/filters
 	// public applyFilters(filters???): this {
 
 	// }

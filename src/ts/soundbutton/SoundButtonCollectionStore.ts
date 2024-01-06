@@ -1,5 +1,5 @@
 /**
- * The collection manager for sound buttons.
+ * The collection manager for soundbuttons.
  */
 class SoundButtonCollectionStore {
 	private _collections: SoundButtonDataCollection[] = [];

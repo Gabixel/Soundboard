@@ -77,7 +77,6 @@ abstract class Main {
 	}
 
 	private static initUncaughtExceptionsHandler() {
-		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/error_event
 		window.onerror = (
 			event: Event | string,
 			source?: string,
@@ -100,7 +99,6 @@ abstract class Main {
 			);
 		};
 
-		// See https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event
 		window.onunhandledrejection = (e) => {
 			// Don't print default error
 			e.preventDefault();

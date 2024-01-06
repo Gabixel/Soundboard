@@ -36,9 +36,11 @@ type EditButtonWindowApiBridge = {
 	 */
 
 	getButtonData: () => Promise<SoundButtonData>;
+
 	/**
-	 * Sends the updated soundbutton data to the main process
-	 * @param buttonData The new data for the soundbutton
+	 * Sends the updated soundbutton data to the main process.
+	 * 
+	 * @param buttonData The new data for the soundbutton.
 	 */
 	updateButtonData: (parsedId: string, buttonData: SoundButtonData, reset: boolean) => Promise<void>;
 	// openContextMenu: (args: object) => void;

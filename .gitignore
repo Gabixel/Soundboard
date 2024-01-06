@@ -403,15 +403,12 @@ FodyWeavers.xsd
 # CSS generated files
 src/css/
 
-# JavaScript generated files
+# JavaScript generated files (+ .d.ts + .map output files)
 src/js/
 app/main.js
 app/**/preload.js
 
-# JavaScript + .d.ts + .map output files
-src/js
-
-# TSConfig
+# TSConfig build info
 tsconfig.tsbuildinfo
 
 # Electron Forge output

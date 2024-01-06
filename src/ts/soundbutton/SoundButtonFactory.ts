@@ -1,8 +1,21 @@
+/**
+ * A factory class for creating and managing soundbuttons.
+ */
 class SoundButtonFactory implements ISoundButtonFactory {
-	private _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
+	private static _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
 
 	private _idGenerator: ISoundButtonIdGenerator;
 	private _collectionStore: SoundButtonCollectionStore;
+
+	public static async getRandomAudioPath(): Promise<string> {
+		return StringUtilities.encodeFilePath(
+			await SoundboardApi.mainWindow.joinPaths(
+				SoundboardApi.global.path.root,
+				SoundboardApi.global.path.sounds,
+				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
+			)
+		);
+	}
 
 	constructor(
 		idGenerator: ISoundButtonIdGenerator,
@@ -12,6 +25,9 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		this._collectionStore = collectionStore;
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public createSoundButton(
 		buttonId: number,
 		collectionId: number,
@@ -24,6 +40,13 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return $button;
 	}
 
+	/**
+	 * Updates the element data of a soundbutton identified by its parsed ID.
+	 *
+	 * @param parsedId - The parsed ID of the soundbutton.
+	 * @param buttonData - The updated data for the soundbutton.
+	 * @returns The updated soundbutton object.
+	 */
 	public updateElementDataByParsedId(
 		parsedId: string,
 		buttonData: SoundButtonData
@@ -35,6 +58,9 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return this.updateElementData($button, buttonId, collectionId, buttonData);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public updateElementData(
 		$button: SoundButtonElementJQuery,
 		buttonId: number,
@@ -57,6 +83,12 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		);
 	}
 
+	/**
+	 * Retrieves the {@link SoundButtonData} associated with the given jQuery soundbutton.
+	 *
+	 * @param $button - The jQuery button representing the soundbutton.
+	 * @returns The {@link SoundButtonData} associated with the jQuery button.
+	 */
 	public getButtonDataByElement(
 		$button: SoundButtonElementJQuery
 	): SoundButtonData {
@@ -64,23 +96,25 @@ class SoundButtonFactory implements ISoundButtonFactory {
 		return this.getButtonDataById(buttonId);
 	}
 
+	/**
+	 * Retrieves the {@link SoundButtonData} for a given (**parsed**) button ID
+	 *
+	 * @param parsedButtonId - The parsed button ID.
+	 * @returns The {@link SoundButtonData} for the specified button ID.
+	 */
 	public getButtonDataByParsedId(parsedButtonId: string): SoundButtonData {
 		let { buttonId } = this.getCompositeSoundButtonId(parsedButtonId);
 		return this.getButtonDataById(buttonId);
 	}
 
+	/**
+	 * Retrieves the {@link SoundButtonData} associated with the specified button ID (in the currently active collection).
+	 *
+	 * @param id - The button ID from the currently active collection.
+	 * @returns The {@link SoundButtonData} object.
+	 */
 	public getButtonDataById(id: number): SoundButtonData {
 		return this._collectionStore.getButtonData(id);
-	}
-
-	public async getRandomAudioPath(): Promise<string> {
-		return StringUtilities.encodeFilePath(
-			await SoundboardApi.mainWindow.joinPaths(
-				SoundboardApi.global.path.root,
-				SoundboardApi.global.path.sounds,
-				this._defaultAudioPaths[EMath.randomInt(0, this._defaultAudioPaths.length)]
-			)
-		);
 	}
 
 	public getButtonElement(
@@ -108,7 +142,10 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	/**
-	 * @returns The collection id.
+	 * Swaps the position of two soundbutton.
+	 * 
+	 * @param $button1 - The first soundbutton element.
+	 * @param $button2 - The second soundbutton element.
 	 */
 	public swapElements(
 		$button1: SoundButtonElementJQuery,

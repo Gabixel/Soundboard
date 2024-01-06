@@ -1,5 +1,5 @@
 /**
- * The collection tab manager.
+ * Logic for applying tab functionality to the collection tab container.
  */
 class CollectionTabDispatcher extends CollectionTabGridFactory {
 	private TAB_ID_PREFIX: Readonly<string> = "button-collection-tab-";

@@ -1,11 +1,19 @@
 abstract class EventFunctions {
+	/**
+	 * Updates the input value based on the wheel event.
+	 *
+	 * @param e - The wheel event or triggered event
+	 * @param stepValue - The step value for incrementing or decrementing the input value. Defaults to 1
+	 * @param postTriggers - An array of post triggers to call after updating the input value. Defaults to ["change"]
+	 * @param $targetInput - The target input JQuery element. If not proivded, the target gets retrieved {@link e from the event} parameter
+	 */
 	public static updateInputValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,
-		$targetInput: JQuery<HTMLInputElement> = null,
 		stepValue: number = 1,
-		postTriggers: string[] = ["change"]
+		postTriggers: string[] = ["change"],
+		$targetInput?: JQuery<HTMLInputElement>
 	): void {
-		if (!this.shouldDoEvent(e)) {
+		if (!this.canUpdateInput(e)) {
 			return;
 		}
 
@@ -30,6 +38,13 @@ abstract class EventFunctions {
 		});
 	}
 
+	/**
+	 * Retrieves the updated input value from a wheel event.
+	 *
+	 * @param e - The wheel event or triggered event.
+	 * @param stepValue - The step value to increment or decrement the input value. Default is 1.
+	 * @returns The updated input value.
+	 */
 	public static getUpdatedInputValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,
 		stepValue: number = 1
@@ -37,11 +52,10 @@ abstract class EventFunctions {
 		let $target = $(e.target);
 		let currentValue = parseFloat($target.val().toString());
 
-		if (!this.shouldDoEvent(e)) {
+		if (!this.canUpdateInput(e)) {
 			return currentValue;
 		}
 
-		// e.preventDefault();
 		e.stopPropagation();
 
 		let delta = this.getDeltaY(e);
@@ -53,13 +67,22 @@ abstract class EventFunctions {
 		return EMath.clamp(newValue, min, max);
 	}
 
+	/**
+	 * Calculates the updated value based on the wheel event and the current value.
+	 * 
+	 * @param e - The wheel or triggered event.
+	 * @param currentValue - The current value.
+	 * @param stepValue - The step value to be multiplied with the delta.
+	 * @param clamp - Optional range to clamp the new value.
+	 * @returns The updated value.
+	 */
 	public static getUpdatedValueFromWheel(
 		e: WheelEvent | JQuery.TriggeredEvent,
 		currentValue: number,
 		stepValue: number = 1,
-		clamp: [number, number] | null = undefined
+		clamp?: [number, number]
 	): number {
-		if (!this.shouldDoEvent(e)) {
+		if (!this.canUpdateInput(e)) {
 			return currentValue;
 		}
 
@@ -86,7 +109,7 @@ abstract class EventFunctions {
 		);
 	}
 
-	private static shouldDoEvent(e: WheelEvent | JQuery.TriggeredEvent): boolean {
+	private static canUpdateInput(e: WheelEvent | JQuery.TriggeredEvent): boolean {
 		if ($(e.target).attr("disabled")) {
 			return false;
 		}

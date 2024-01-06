@@ -28,7 +28,8 @@ class EditorForm {
 		this._parsedButtonId = buttonId;
 		this._buttonData = buttonData;
 
-		// FIXME: windows popup seems to focus this first input on launch. not sure if it's because of the devtool
+		// FIXME: windows popup seems to focus this first input on launch.
+		// in some unknown cases. not sure if it's because of the devtool
 		this.$input()
 			// Title
 			.add(this.$dataInput("title").val(buttonData.title))
@@ -69,10 +70,16 @@ class EditorForm {
 		return this;
 	}
 
+	/**
+	 * Triggers a `blur` event in case an input is still focused
+	 * (since when closing the window it doesn't unfocus,
+	 * which could result in data loss with the `change` event logic)
+	 */
 	public unfocusInputs(): void {
-		// Trigger blur event in case an input is still focused (since when closing the window it doesn't unfocus, which could result in data loss with the current `change` event logic)
 		this._$focusedFormInput.trigger("blur");
 	}
+
+	//#region Input setup
 
 	private setupInputsEvents(): void {
 		// TODO: make every element call a function to update the preview
@@ -118,6 +125,7 @@ class EditorForm {
 			// Apply path (from file picker)
 			this.updateProperty("path", StringUtilities.encodeFilePath(path));
 		});
+		// File picker (text input)
 		this.$dataInput("path").on("change", (e) => {
 			// TODO: warn if it's invalid?
 			let path = e.target.value;
@@ -131,7 +139,8 @@ class EditorForm {
 	}
 
 	private setupFormSubmitEvent(): void {
-		// Prevent default submit feature (since even a text input can trigger this by pressing "enter" for example)
+		// Prevent default submit feature
+		// (since even a single text input can trigger this by pressing "enter")
 		this._$form.on("submit", (e) => e.preventDefault());
 
 		// Use a specific button for submit
@@ -147,7 +156,7 @@ class EditorForm {
 		});
 
 		// Submit when pressing enter on text inputs
-		$('input[type="text"]').on("keydown", (e) => {
+		$("input[type='text']").on("keydown", (e) => {
 			if (e.key != "Enter") {
 				return;
 			}
@@ -156,6 +165,8 @@ class EditorForm {
 			$submitButton.trigger("click");
 		});
 	}
+
+	//#endregion
 
 	private submitForm(): void {
 		SoundboardApi.editButtonWindow.updateButtonData(
@@ -174,14 +185,14 @@ class EditorForm {
 	}
 
 	/**
-	 * Returns the {@link JQuery<HTMLInputElement>} version of the selector.
+	 * Returns the {@link JQuery<HTMLInputElement> jQuery} version of the selector.
 	 */
 	private $input(selector?: string): JQuery<HTMLInputElement> {
 		return $(selector);
 	}
 
 	/**
-	 * Returns the {@link JQuery<HTMLInputElement>} of a key in {@link SoundButtonData}.
+	 * Returns the {@link JQuery<HTMLInputElement> jQuery} of a key in {@link SoundButtonData}.
 	 */
 	private $dataInput<TKey extends keyof SoundButtonData>(
 		data: TKey

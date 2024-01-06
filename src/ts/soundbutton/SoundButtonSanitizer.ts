@@ -1,3 +1,6 @@
+/**
+ * Class responsible for sanitizing soundbutton data.
+ */
 class SoundButtonSanitizer {
 	private _defaultData: SoundButtonDataNoId;
 
@@ -7,6 +10,7 @@ class SoundButtonSanitizer {
 	private MAX_SATURATION: Readonly<number> = 100;
 	private MAX_LIGHTNESS: Readonly<number> = 100;
 
+	// TODO: audio timings
 	private MAX_TIME: Readonly<number> = 600;
 
 	private MAX_VOLUME: Readonly<float> = 2;
