@@ -1,6 +1,6 @@
 /**
- * A class responsible for managing sound buttons.
- * It provides methods for creating, updating, and retrieving sound buttons.
+ * A class responsible for managing soundbuttons.
+ * It provides methods for creating, updating, and retrieving soundbuttons.
  */
 class SoundButtonDispatcher {
 	public static readonly SOUNDBUTTON_CLASS: string = "soundbutton";

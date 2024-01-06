@@ -2,7 +2,7 @@ abstract class MainWindow extends Main {
 	// Grid
 	private static _gridDispatcher: GridDispatcher;
 
-	// Sound Buttons
+	// SoundButton
 	private static _soundButtonFactory: SoundButtonFactory;
 	private static _gridSoundButtonEvents: GridEvents;
 	private static _soundButtonDispatcher: SoundButtonDispatcher;

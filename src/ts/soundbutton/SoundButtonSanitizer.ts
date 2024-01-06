@@ -1,5 +1,5 @@
 /**
- * Class responsible for sanitizing sound button data.
+ * Class responsible for sanitizing soundbutton data.
  */
 class SoundButtonSanitizer {
 	private _defaultData: SoundButtonDataNoId;

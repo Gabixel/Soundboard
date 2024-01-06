@@ -174,14 +174,14 @@ class EditorForm {
 	}
 
 	/**
-	 * Returns the {@link JQuery<HTMLInputElement>} version of the selector.
+	 * Returns the {@link JQuery<HTMLInputElement> jQuery} version of the selector.
 	 */
 	private $input(selector?: string): JQuery<HTMLInputElement> {
 		return $(selector);
 	}
 
 	/**
-	 * Returns the {@link JQuery<HTMLInputElement>} of a key in {@link SoundButtonData}.
+	 * Returns the {@link JQuery<HTMLInputElement> jQuery} of a key in {@link SoundButtonData}.
 	 */
 	private $dataInput<TKey extends keyof SoundButtonData>(
 		data: TKey

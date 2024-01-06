@@ -1,5 +1,5 @@
 /**
- * A factory class for creating and managing sound buttons.
+ * A factory class for creating and managing soundbuttons.
  */
 class SoundButtonFactory implements ISoundButtonFactory {
 	private static _defaultAudioPaths: Readonly<string[]> = ["Clown Horn.mp3"];
@@ -41,11 +41,11 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	/**
-	 * Updates the element data of a sound button identified by its parsed ID.
+	 * Updates the element data of a soundbutton identified by its parsed ID.
 	 *
-	 * @param parsedId - The parsed ID of the sound button
-	 * @param buttonData - The updated data for the sound button
-	 * @returns The updated sound button object
+	 * @param parsedId - The parsed ID of the soundbutton
+	 * @param buttonData - The updated data for the soundbutton
+	 * @returns The updated soundbutton object
 	 */
 	public updateElementDataByParsedId(
 		parsedId: string,
@@ -84,10 +84,10 @@ class SoundButtonFactory implements ISoundButtonFactory {
 	}
 
 	/**
-	 * Retrieves the {@link SoundButtonData} associated with the given JQuery sound button.
+	 * Retrieves the {@link SoundButtonData} associated with the given jQuery soundbutton.
 	 *
-	 * @param $button - The JQuery button representing the sound button
-	 * @returns The {@link SoundButtonData} associated with the JQuery button
+	 * @param $button - The jQuery button representing the soundbutton
+	 * @returns The {@link SoundButtonData} associated with the jQuery button
 	 */
 	public getButtonDataByElement(
 		$button: SoundButtonElementJQuery
