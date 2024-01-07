@@ -107,20 +107,21 @@ interface SoundButtonData {
 type SoundButtonDataNoId = Omit<SoundButtonData, "index">;
 
 /**
- * Timings settings for the {@link SoundButtonData}
+ * Timings settings for the {@link SoundButtonData}.
  */
 type AudioTimings = {
 	/**
-	 * Start time (in milliseconds)
+	 * Start time (in milliseconds).
 	 */
 	start: number;
 	/**
-	 * End time (in milliseconds)
+	 * End time (in milliseconds).
 	 */
 	end: number;
-	// TODO: better explanation of 'condition'
 	/**
-	 * Ending condition
+	 * Ending condition for the audio. Possible values:
+	 * - `"at"`: the audio will stop at the {@link AudioTimings.end `end`} timestamp
+	 * - `"after"`: the audio will stop after N milliseconds from the start time (using the {@link AudioTimings.end `end`} time as duration)
 	 */
 	condition: "at" | "after";
 };
