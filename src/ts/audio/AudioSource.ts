@@ -96,12 +96,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		this._audio.src = src;
+		this._audio.load();
 
 		if (audioTimings) {
 			this.setAudioTimings(audioTimings);
 		}
-
-		this._audio.load();
 	}
 
 	// TODO: effects/filters
@@ -111,13 +110,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private setAudioTimings(audioTimings: AudioTimings): void {
 		this._audioTimings = audioTimings;
-		this.seekTo(audioTimings.start / 1000);
-		Logger.logDebug(
-			"Audio timings set",
-			audioTimings,
-			"\nAudio time:",
-			this._audio.currentTime
-		);
+
+		Logger.logDebug("Audio timings set", audioTimings);
+
+		this.seekTo(audioTimings.start);
 	}
 
 	public async play(): Promise<void> {
@@ -153,25 +149,44 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return this;
 	}
 
-	public seekTo(time: number): this {
+	/**
+	 * @inheritdoc
+	 */
+	public seekTo(time: number): boolean {
 		if (this._destroyed) {
 			Logger.logError("Can't seekTo: audio is destroyed");
 
-			return this;
+			return false;
 		}
 
 		if (!this._betterSrc) {
 			Logger.logError("Audio has no src, seekTo has been prevented");
 
-			return this;
+			return false;
 		}
 
-		this._audio.currentTime = time;
-		return this;
+		const duration = this._audio.duration * 1000;
+		
+		if (duration < time) {
+			Logger.logError(
+				"Can't seek to a time greater than the audio duration",
+				"\nAudio duration:",
+				new Date(duration).toISOString().slice(11, -1),
+				"\n     Seek time:",
+				new Date(time).toISOString().slice(11, -1)
+			);
+
+			return false;
+		}
+
+		Logger.logDebug("Seeking to", new Date(time).toISOString().slice(11, -1));
+
+		this._audio.currentTime = time / 1000;
+		return true;
 	}
 
 	public async restart(): Promise<void> {
-		this.seekTo((this._audioTimings?.start ?? 0) / 1000);
+		this.seekTo(this._audioTimings?.start ?? 0);
 		await this.play();
 	}
 

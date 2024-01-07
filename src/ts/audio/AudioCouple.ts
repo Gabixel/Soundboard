@@ -77,9 +77,16 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		return this;
 	}
 
-	public seekTo(time: number): void {
-		this._couple.main.seekTo(time);
-		this._couple.playback.seekTo(time);
+	/**
+	 * @inheritdoc
+	 */
+	public seekTo(time: number): boolean {
+		let seeked = false;
+
+		seeked = this._couple.main.seekTo(time);
+		seeked = this._couple.playback.seekTo(time);
+
+		return seeked;
 	}
 
 	public async restart(): Promise<void> {
