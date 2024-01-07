@@ -107,7 +107,7 @@ interface SoundButtonData {
 type SoundButtonDataNoId = Omit<SoundButtonData, "index">;
 
 /**
- * Timings settings for the {@link SoundButtonData}.
+ * Timings settings for {@link SoundButtonData}.
  */
 type AudioTimings = {
 	/**

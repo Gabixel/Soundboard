@@ -45,16 +45,22 @@ class AudioCouple extends EventTarget implements IAudioControls {
 
 		this._couple = {
 			main: new AudioSource(mainOutput, audioSettings, autoPlay, preserveOnEnd),
-			playback: new AudioSource(playbackOutput, audioSettings, autoPlay, preserveOnEnd),
+			playback: new AudioSource(
+				playbackOutput,
+				audioSettings,
+				autoPlay,
+				preserveOnEnd
+			),
 		};
 
 		this.initEventListeners();
 	}
 
-	public changeTrack(src: string): void {
-		// TODO: update timings, etc.
-		this._couple.main.changeTrack(src);
-		this._couple.playback.changeTrack(src);
+	public changeTrack(src?: string, audioTimings?: AudioTimings): void {
+		// TODO: update effects
+		// TODO: improve how to pass settings
+		this._couple.main.changeTrack(src, audioTimings);
+		this._couple.playback.changeTrack(src, audioTimings);
 	}
 
 	public async play(): Promise<void> {

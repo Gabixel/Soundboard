@@ -45,7 +45,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	/**
 	 * Audio timings settings.
-	 * // TODO: still unused.
 	 */
 	private _audioTimings: AudioTimings;
 	public get audioTimings(): AudioTimings {
@@ -62,9 +61,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._audio = new Audio();
 		this._audio.preload = "metadata";
+		// TODO: can probably remove autoplay logic and manually decide when to start playing
 		this._audio.autoplay = autoPlay ?? true;
 		this.loop = audioSettings?.loop ?? false;
 
+		// Prevent audio logic from breaking because of external playback controls
 		this._audio.disableRemotePlayback = true;
 
 		this._audioOutput = audioOutput;
@@ -73,19 +74,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._preserve = preserveOnEnd;
 
-		// TODO: this.setAudioTimings(options.audioTimings);
-		// for now:
-		this._audioTimings = audioSettings?.audioTimings;
-
 		this.createSourceNode();
 
 		this.initAudioEventListeners();
 
-		this.changeTrack(audioSettings?.src);
+		this.changeTrack(audioSettings?.src, audioSettings?.audioTimings);
 	}
 
-	// TODO: newTimings?: AudioTimings
-	public changeTrack(src: string): void {
+	// TODO: update audio timings (and future settings) passing logic
+	public changeTrack(src?: string, audioTimings?: AudioTimings): void {
 		if (this._destroyed) {
 			return;
 		}
@@ -93,10 +90,29 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._canPlayCurrentSource = "maybe";
 
 		this._betterSrc = src ?? undefined;
-		if (this._betterSrc) {
-			this._audio.src = src;
-			this._audio.load();
+
+		if (!this._betterSrc) {
+			return;
 		}
+
+		this._audio.src = src;
+
+		if (audioTimings) {
+			this.setAudioTimings(audioTimings);
+		}
+
+		this._audio.load();
+	}
+
+	// TODO: effects/filters
+	// public applyFilters(filters???): this {
+
+	// }
+
+	private setAudioTimings(audioTimings: AudioTimings): void {
+		this._audioTimings = audioTimings;
+		this.seekTo(audioTimings.start / 1000);
+		Logger.logDebug("Audio timings set", audioTimings, "\nAudio time:", this._audio.currentTime);
 	}
 
 	public async play(): Promise<void> {
@@ -150,7 +166,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async restart(): Promise<void> {
-		this.seekTo(0);
+		this.seekTo((this._audioTimings?.start ?? 0) / 1000);
 		await this.play();
 	}
 
@@ -174,16 +190,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 	public get ended(): boolean {
 		return this._audio.ended;
 	}
-
-	// TODO: effects/filters
-	// public applyFilters(filters???): this {
-
-	// }
-
-	// TODO: y' know.. timings
-	// private setAudioTimings(audioTimings: AudioTimings): void {
-	// 	this._audioTimings = audioTimings;
-	// }
 
 	private createSourceNode(): void {
 		// Generate source node
@@ -209,7 +215,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				this.triggerEvent("error");
 			})
 			.on("ended", () => {
-				Logger.logDebug("Audio source ended");
+				Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
 
 				if (!this._preserve) {
 					this.destroy();
