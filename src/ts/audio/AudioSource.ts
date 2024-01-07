@@ -112,7 +112,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private setAudioTimings(audioTimings: AudioTimings): void {
 		this._audioTimings = audioTimings;
 		this.seekTo(audioTimings.start / 1000);
-		Logger.logDebug("Audio timings set", audioTimings, "\nAudio time:", this._audio.currentTime);
+		Logger.logDebug(
+			"Audio timings set",
+			audioTimings,
+			"\nAudio time:",
+			this._audio.currentTime
+		);
 	}
 
 	public async play(): Promise<void> {
@@ -202,7 +207,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private initAudioEventListeners(): void {
 		$(this._audio)
 			.on("error", (e) => {
-				Logger.logError("Audio source error", e);
+				Logger.logError(
+					"Audio source error",
+					"\nOriginal event:\n",
+					e.originalEvent,
+					"\njQuery event:\n",
+					e
+				);
 
 				if (!this._preserve) {
 					Logger.logDebug("Destroying audio source");
