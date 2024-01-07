@@ -7,21 +7,6 @@ abstract class MainWindow extends Main {
 	private static _gridSoundButtonEvents: GridEvents;
 	private static _soundButtonDispatcher: SoundButtonDispatcher;
 	private static _soundButtonSanitizer: SoundButtonSanitizer;
-
-	// Grid
-	private static _gridResizer: GridResizer;
-	private static _gridSoundButtonIdGenerator: GridSoundButtonIdGenerator;
-	private static _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
-	private static _gridSoundButtonFilter: GridSoundButtonFilter;
-
-	// Collection and grid tabs
-	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
-	private static _collectionTabs: CollectionTabDispatcher;
-
-	// Audio
-	private static _audioPlayer: AudioPlayer;
-	private static _audioDeviceSelect: AudioDeviceSelect;
-
 	private static DEFAULT_BUTTONDATA: Readonly<SoundButtonDataNoId> = {
 		isEdited: false,
 		title: "-",
@@ -36,6 +21,20 @@ abstract class MainWindow extends Main {
 		volume: 1,
 		path: null,
 	};
+
+	// Grid
+	private static _gridResizer: GridResizer;
+	private static _gridSoundButtonIdGenerator: GridSoundButtonIdGenerator;
+	private static _gridSoundButtonChildFactory: GridSoundButtonChildFactory;
+	private static _gridSoundButtonFilter: GridSoundButtonFilter;
+
+	// Collection and grid tabs
+	public static _soundButtonCollectionStore: SoundButtonCollectionStore;
+	private static _collectionTabs: CollectionTabDispatcher;
+
+	// Audio
+	private static _audioPlayer: AudioPlayer;
+	private static _audioDeviceSelect: AudioDeviceSelect;
 
 	public static async initWindow() {
 		await super.init();
