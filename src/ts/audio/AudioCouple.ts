@@ -2,6 +2,9 @@
  * Contains two {@link AudioSource} instances, one for **primary and**, the other, **for secondary output**.
  */
 class AudioCouple extends EventTarget implements IAudioControls {
+	/**
+	 * The audio sources.
+	 */
 	private _couple: {
 		main: AudioSource;
 		playback: AudioSource;
@@ -40,7 +43,6 @@ class AudioCouple extends EventTarget implements IAudioControls {
 	) {
 		super();
 
-		// Audio sources
 		this._couple = {
 			main: new AudioSource(mainOutput, audioSettings, autoPlay, preserveOnEnd),
 			playback: new AudioSource(playbackOutput, audioSettings, autoPlay, preserveOnEnd),
