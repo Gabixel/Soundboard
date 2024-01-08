@@ -232,7 +232,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public get playing(): boolean {
-		return !this._destroyed || (!this._audio.paused && !this._audio.ended);
+		return !this._destroyed && !this._audio.paused && !this._audio.ended;
 	}
 
 	public get paused(): boolean {
