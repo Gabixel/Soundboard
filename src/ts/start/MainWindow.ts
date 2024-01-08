@@ -120,7 +120,7 @@ abstract class MainWindow extends Main {
 			e.preventDefault();
 			SoundboardApi.mainWindow.openContextMenu();
 		});
-		
+
 		$(document).on("keydown", (e) => {
 			if (e.ctrlKey && e.key == "Tab") {
 				let ev = "tabchange" + (e.shiftKey ? "prev" : "next");
@@ -137,11 +137,6 @@ abstract class MainWindow extends Main {
 				$(document).trigger(eventName);
 				return false;
 			}
-		});
-
-		// This prevents a new window from opening when a file is randomly dropped on the page
-		$(document).on("drop", (e) => {
-			e.preventDefault();
 		});
 	}
 
