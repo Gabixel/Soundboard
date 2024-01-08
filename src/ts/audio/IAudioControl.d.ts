@@ -3,12 +3,12 @@
  */
 interface IAudioControls {
 	/**
-	 * Audio source.
+	 * The audio source.
 	 */
 	betterSrc: string;
 
 	/**
-	 * TODO: Audio timings settings.
+	 * Audio timings settings.
 	 */
 	audioTimings: AudioTimings;
 
@@ -50,9 +50,6 @@ interface IAudioControls {
 
 	playing: boolean;
 
-	/**
-	 * If the audio is currently paused or not.
-	 */
 	paused: boolean;
 
 	ended: boolean;
