@@ -219,7 +219,9 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async end(): Promise<void> {
-		if (!this._destroyed) {
+		let needsToEnd = !this._destroyed && !this.paused;
+
+		if (needsToEnd) {
 			this.pause();
 			this.seekTo(this._audio.duration);
 		}
