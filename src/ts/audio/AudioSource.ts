@@ -209,7 +209,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return true;
 	}
 
-	public async restart(): Promise<void> {
+	public async restart(autoplay = true): Promise<void> {
 		if (this._destroyed) {
 			this._outputLogs && Logger.logError("Can't restart: audio is destroyed");
 			return;
@@ -217,7 +217,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		let seeked = this.trySeekingToTimingsStart();
 
-		if (seeked) {
+		if (seeked && autoplay) {
 			await this.play();
 		}
 	}

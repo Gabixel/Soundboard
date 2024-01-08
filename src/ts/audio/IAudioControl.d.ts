@@ -46,7 +46,7 @@ interface IAudioControls {
 	 */
 	seekTo(time: number): boolean;
 
-	restart(): Promise<void>;
+	restart(autoplay: boolean): Promise<void>;
 
 	playing: boolean;
 

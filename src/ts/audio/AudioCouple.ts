@@ -87,9 +87,9 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		return seeked;
 	}
 
-	public async restart(): Promise<void> {
-		await this._couple.main.restart();
-		await this._couple.playback.restart();
+	public async restart(autoplay = true): Promise<void> {
+		await this._couple.main.restart(autoplay);
+		await this._couple.playback.restart(autoplay);
 	}
 
 	public async end(): Promise<void> {
