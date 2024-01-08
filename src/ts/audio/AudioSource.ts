@@ -124,8 +124,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioTimings = audioTimings;
 
 		Logger.logDebug("Audio timings set", audioTimings);
-
-		this.seekTo(audioTimings.start);
 	}
 
 	public async play(): Promise<void> {
@@ -213,13 +211,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async end(): Promise<void> {
-		if (this._destroyed) {
-			Logger.logError("Can't end: audio is destroyed");
-			return;
+		if (!this._destroyed) {
+			this.pause();
+			this.seekTo(this._audio.duration);
 		}
-
-		this.pause();
-		this.seekTo(this._audio.duration);
 
 		$(this._audio).trigger("ended", {
 			forced: true,
@@ -227,15 +222,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public get playing(): boolean {
-		return !this._audio.paused && !this._audio.ended;
+		return !this._destroyed || (!this._audio.paused && !this._audio.ended);
 	}
 
 	public get paused(): boolean {
-		return this._audio.paused;
+		return this._destroyed || this._audio.paused;
 	}
 
 	public get ended(): boolean {
-		return this._audio.ended;
+		return this._destroyed || this._audio.ended;
 	}
 
 	/**
@@ -284,13 +279,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			if (!this._preserve) {
 				this.destroy();
-				return;
 			}
 
 			if (this.loop && !args.forced) {
 				Logger.logDebug("Restarting...");
 				this.restart();
-				return;
+				return; // Don't treat it as ended
 			}
 
 			this.triggerEvent("ended");
