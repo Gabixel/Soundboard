@@ -54,15 +54,20 @@ class AudioSource extends EventTarget implements IAudioControls {
 	constructor(
 		audioOutput: AudioOutput,
 		audioSettings?: AudioSourceSettings,
-		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
 		super();
 
 		this._audio = new Audio();
-		this._audio.preload = "metadata";
-		// TODO: can probably remove autoplay logic and manually decide when to start playing
-		this._audio.autoplay = autoPlay ?? true;
+
+		// TODO: used to be "metadata" but now it's "none" since
+		// this only seems to be useful during **the page** load.
+		// can probably be removed or stay like this, not sure
+		this._audio.preload = "none";
+
+		this._audio.autoplay = false;
+
+		// TODO: remove
 		this.loop = audioSettings?.loop ?? false;
 
 		// Prevent audio logic from breaking because of external playback controls
@@ -75,7 +80,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._preserve = preserveOnEnd;
 
 		this.createSourceNode();
-
 		this.initAudioEventListeners();
 
 		this.changeTrack(audioSettings?.src, audioSettings?.audioTimings);
@@ -86,6 +90,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 		if (this._destroyed) {
 			return;
 		}
+
+		this.pause();
 
 		this._canPlayCurrentSource = "maybe";
 
@@ -104,9 +110,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	// TODO: effects/filters
-	// public applyFilters(filters???): this {
-
-	// }
+	// public applyFilters(filters???): this { }
 
 	private setAudioTimings(audioTimings: AudioTimings): void {
 		this._audioTimings = audioTimings;
@@ -149,9 +153,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return this;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public seekTo(time: number): boolean {
 		if (this._destroyed) {
 			Logger.logError("Can't seekTo: audio is destroyed");
@@ -165,8 +166,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
+		// TODO:
+		console.log("duration: ", this._audio.duration);
+		console.log("currentTime: ", this._audio.currentTime);
+		console.log("volume: ", this._audio.volume);
+
 		const duration = this._audio.duration * 1000;
-		
+
 		if (duration < time) {
 			Logger.logError(
 				"Can't seek to a time greater than the audio duration",
@@ -182,12 +188,16 @@ class AudioSource extends EventTarget implements IAudioControls {
 		Logger.logDebug("Seeking to", new Date(time).toISOString().slice(11, -1));
 
 		this._audio.currentTime = time / 1000;
+
 		return true;
 	}
 
 	public async restart(): Promise<void> {
-		this.seekTo(this._audioTimings?.start ?? 0);
-		await this.play();
+		let seeked = this.seekTo(this._audioTimings?.start ?? 0);
+
+		if (seeked) {
+			await this.play();
+		}
 	}
 
 	public end(): this {
@@ -219,58 +229,78 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
+	//#region Audio events
+
 	private initAudioEventListeners(): void {
-		$(this._audio)
-			.on("error", (e) => {
-				Logger.logError(
-					"Audio source error",
-					"\nOriginal event:\n",
-					e.originalEvent,
-					"\njQuery event:\n",
-					e
-				);
+		$(this._audio).on("error", (e) => {
+			Logger.logError(
+				"Audio source error",
+				"\nOriginal event:\n",
+				e.originalEvent,
+				"\njQuery event:\n",
+				e
+			);
 
-				if (!this._preserve) {
-					Logger.logDebug("Destroying audio source");
+			if (!this._preserve) {
+				Logger.logDebug("Destroying audio source");
 
-					this.destroy();
-				} else {
-					this._canPlayCurrentSource = "";
-				}
+				this.destroy();
+			} else {
+				this._canPlayCurrentSource = "";
+			}
 
-				this.triggerEvent("error");
-			})
-			.on("ended", () => {
-				Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
+			this.triggerEvent("error");
+		});
 
-				if (!this._preserve) {
-					this.destroy();
-				}
+		$(this._audio).on("ended", () => {
+			Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
 
-				this.triggerEvent("ended");
-			})
-			.on("pause", () => {
-				// Don't trigger pause event if the audio has ended
-				if (this.ended) {
-					return;
-				}
+			if (!this._preserve) {
+				this.destroy();
+			}
 
-				this.triggerEvent("pause");
-			})
-			.on("canplay", () => {
-				Logger.logDebug("Audio source can play");
+			this.triggerEvent("ended");
+		});
 
-				this.triggerEvent("canplay");
-			});
+		$(this._audio).on("pause", () => {
+			// Don't trigger pause event if the audio has ended
+			if (this.ended) {
+				return;
+			}
+
+			this.triggerEvent("pause");
+		});
+
+		$(this._audio).on("canplay", () => {
+			Logger.logDebug("Audio source can play");
+
+			this.triggerEvent("canplay");
+		});
+
+		$(this._audio).on("suspend", () => {
+			Logger.logDebug("Audio source suspended");
+
+			this.triggerEvent("suspend");
+		});
+
+		$(this._audio).on("loadedmetadata", () => {
+			Logger.logDebug("Audio source loaded metadata");
+
+			this.restart();
+
+			this.triggerEvent("loadedmetadata");
+		});
 	}
 
 	private destroyAudioEventListeners(): void {
-		$(this._audio).off("error ended pause canplay");
+		$(this._audio).off("error ended pause canplay suspend loadedmetadata");
 	}
 
 	private triggerEvent(eventName: string): void {
 		this.dispatchEvent(new Event(eventName));
 	}
+
+	//#endregion
 
 	/**
 	 * Dispose logic.

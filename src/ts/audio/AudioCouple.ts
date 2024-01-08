@@ -38,19 +38,13 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
 		audioSettings?: AudioSourceSettings,
-		autoPlay?: boolean,
 		preserveOnEnd?: boolean
 	) {
 		super();
 
 		this._couple = {
-			main: new AudioSource(mainOutput, audioSettings, autoPlay, preserveOnEnd),
-			playback: new AudioSource(
-				playbackOutput,
-				audioSettings,
-				autoPlay,
-				preserveOnEnd
-			),
+			main: new AudioSource(mainOutput, audioSettings, preserveOnEnd),
+			playback: new AudioSource(playbackOutput, audioSettings, preserveOnEnd),
 		};
 
 		this.initEventListeners();
@@ -77,14 +71,11 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		return this;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public seekTo(time: number): boolean {
 		let seeked = false;
 
 		seeked = this._couple.main.seekTo(time);
-		seeked = this._couple.playback.seekTo(time);
+		seeked = this._couple.playback.seekTo(time) == seeked && seeked;
 
 		return seeked;
 	}
@@ -123,6 +114,8 @@ class AudioCouple extends EventTarget implements IAudioControls {
 			.on("ended", () => this.dispatchEvent(new Event("ended")))
 			.on("pause", () => this.dispatchEvent(new Event("pause")))
 			.on("resume", () => this.dispatchEvent(new Event("resume")))
-			.on("canplay", () => this.dispatchEvent(new Event("canplay")));
+			.on("canplay", () => this.dispatchEvent(new Event("canplay")))
+			.on("suspend", () => this.dispatchEvent(new Event("suspend")))
+			.on("loadedmetadata", () => this.dispatchEvent(new Event("loadedmetadata")));
 	}
 }

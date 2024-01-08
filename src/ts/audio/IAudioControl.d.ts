@@ -40,7 +40,7 @@ interface IAudioControls {
 
 	/**
 	 * Seeks to a specific timestamp in the audio.
-	 * 
+	 *
 	 * @param time Time (in milliseconds).
 	 * @returns `true` whether the audio was seeked to the specified time. `false` otherwise.
 	 */
