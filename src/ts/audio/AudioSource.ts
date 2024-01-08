@@ -7,7 +7,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private _audioOutput: AudioOutput;
 
 	/**
-	 * If we want to preserve this source on end (for re-use). Else, use {@link _destroyed}.
+	 * If we want to preserve this source on end (for re-use).
+	 * Else, {@link _destroyed} gets used.
+	 *
+	 * **Note**: {@link AudioSource.loop `loop`} is ignored if this is `false`.
 	 */
 	private _preserve: boolean;
 
@@ -16,7 +19,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private _destroyed: boolean = false;
 
 	/**
-	 * Audio source. This is the "better" version because we can detect if it's "undefined", while the native {@link Audio}'s doesn't have control of that.
+	 * Audio source. This is the "better" version because we can detect if it's "undefined",
+	 * while the native {@link HTMLMediaElement} {@link HTMLMediaElement.src `src`} doesn't.
 	 */
 	private _betterSrc: string;
 	public get betterSrc(): string {
@@ -65,9 +69,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 		// can probably be removed or stay like this, not sure
 		this._audio.preload = "none";
 
+		// We don't want the audio to start playing automatically.
+		// This is because we need to preload the metadata first,
+		// so we're autoplaying it manually.
 		this._audio.autoplay = false;
 
-		// TODO: remove
+		this._preserve = preserveOnEnd;
+
 		this.loop = audioSettings?.loop ?? false;
 
 		// Prevent audio logic from breaking because of external playback controls
@@ -76,8 +84,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput = audioOutput;
 
 		this.volume = audioSettings?.volume ?? 1;
-
-		this._preserve = preserveOnEnd;
 
 		this.createSourceNode();
 		this.initAudioEventListeners();
