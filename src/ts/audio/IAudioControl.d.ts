@@ -31,12 +31,12 @@ interface IAudioControls {
 	/**
 	 * Pauses the audio.
 	 */
-	pause(): this;
+	pause(): void;
 
 	/**
 	 * Forcibly ends the audio (if there's a source file).
 	 */
-	end(): void;
+	end(): Promise<void>;
 
 	/**
 	 * Seeks to a specific timestamp in the audio.
@@ -46,7 +46,7 @@ interface IAudioControls {
 	 */
 	seekTo(time: number): boolean;
 
-	restart(): void;
+	restart(): Promise<void>;
 
 	playing: boolean;
 

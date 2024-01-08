@@ -27,16 +27,16 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return this._betterSrc;
 	}
 
+	private _loop: boolean;
 	public get loop(): boolean {
-		return this._audio.loop;
+		return this._loop;
 	}
-
 	public set loop(loop: boolean) {
 		if (loop && !this._preserve) {
 			throw new ReferenceError("Can't loop audio if 'preserve' is not enabled");
 		}
 
-		this._audio.loop = loop;
+		this._loop = loop;
 	}
 
 	public get volume(): float {
@@ -202,13 +202,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 	}
 
-	public end(): this {
+	public async end(): Promise<void> {
+		await this.restart();
+
 		this.pause();
-		this.seekTo(0);
 
-		$(this._audio).trigger("ended");
-
-		return this;
+		$(this._audio).trigger("ended", {
+			forced: true,
+		});
 	}
 
 	public get playing(): boolean {
@@ -254,11 +255,17 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("error");
 		});
 
-		$(this._audio).on("ended", () => {
+		$(this._audio).on("ended", (_e, args = { forced: false }) => {
 			Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
 
 			if (!this._preserve) {
 				this.destroy();
+			}
+
+			if (this.loop && !args.forced) {
+				Logger.logDebug("Restarting...");
+				this.restart();
+				return;
 			}
 
 			this.triggerEvent("ended");
