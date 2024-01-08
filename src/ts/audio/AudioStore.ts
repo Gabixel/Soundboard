@@ -92,10 +92,9 @@ class AudioStore extends EventTarget {
 			// TODO: update and check settings (i.e. timings & effects)
 			if (
 				couple.betterSrc === audioSettings.src &&
-				// TODO: tidy up this mess (also for allowing more settings)
-				couple.audioTimings?.start === audioSettings.audioTimings?.start &&
-				couple.audioTimings?.end === audioSettings.audioTimings?.end &&
-				couple.audioTimings?.condition === audioSettings.audioTimings?.condition
+				// Couple has same timings
+				JSON.stringify(couple.audioTimings ?? null) ==
+					JSON.stringify(audioSettings.audioTimings ?? null)
 			) {
 				await couple.restart();
 			} else {
@@ -148,7 +147,6 @@ class AudioStore extends EventTarget {
 			this._output.main,
 			this._output.playback,
 			audioSettings,
-			true,
 			this._recycleCopies
 		);
 
