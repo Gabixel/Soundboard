@@ -44,7 +44,7 @@ class AudioCouple extends EventTarget implements IAudioControls {
 
 		this._couple = {
 			main: new AudioSource(mainOutput, audioSettings, preserveOnEnd),
-			playback: new AudioSource(playbackOutput, audioSettings, preserveOnEnd),
+			playback: new AudioSource(playbackOutput, audioSettings, preserveOnEnd, false),
 		};
 
 		this.initEventListeners();

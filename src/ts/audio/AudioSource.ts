@@ -6,6 +6,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _audioOutput: AudioOutput;
 
+	private _outputLogs: boolean;
+
 	/**
 	 * If we want to preserve this source on end (for re-use).
 	 * Else, {@link _destroyed} gets used.
@@ -16,7 +18,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private _canPlayCurrentSource: CanPlayTypeResult = "";
 
-	private _destroyed: boolean = false;
+	private _destroyed: boolean;
 
 	/**
 	 * Audio source. This is the "better" version because we can detect if it's "undefined",
@@ -58,9 +60,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 	constructor(
 		audioOutput: AudioOutput,
 		audioSettings?: AudioSourceSettings,
-		preserveOnEnd?: boolean
+		preserveOnEnd?: boolean,
+		outputLogs: boolean = true
 	) {
 		super();
+
+		this._outputLogs = outputLogs;
 
 		this._audio = new Audio();
 
@@ -94,7 +99,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	// TODO: update audio timings (and future settings) passing logic
 	public changeTrack(src?: string, audioTimings?: AudioTimings): void {
 		if (this._destroyed) {
-			Logger.logError("Can't changeTrack: audio is destroyed");
+			this._outputLogs && Logger.logError("Can't changeTrack: audio is destroyed");
 			return;
 		}
 
@@ -105,7 +110,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._betterSrc = src ?? undefined;
 
 		if (!this._betterSrc) {
-			Logger.logDebug("Invalid/Empty audio source");
+			this._outputLogs && Logger.logDebug("Invalid/Empty audio source");
 			return;
 		}
 
@@ -123,25 +128,27 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private setAudioTimings(audioTimings: AudioTimings): void {
 		this._audioTimings = audioTimings;
 
-		Logger.logDebug("Audio timings set", audioTimings);
+		this._outputLogs && Logger.logDebug("Audio timings set", audioTimings);
 	}
 
 	public async play(): Promise<void> {
 		if (this._destroyed) {
-			Logger.logError("Can't resume: audio is destroyed");
+			this._outputLogs && Logger.logError("Can't resume: audio is destroyed");
 			return;
 		}
 
 		if (!this._betterSrc) {
-			Logger.logDebug("Audio has no src, play has been prevented");
+			this._outputLogs &&
+				Logger.logDebug("Audio has no src, play has been prevented");
 
 			return;
 		}
 
 		if (!this._canPlayCurrentSource) {
-			Logger.logDebug(
-				"Audio source is unavailable, unsupported or has been prevented due to an error"
-			);
+			this._outputLogs &&
+				Logger.logDebug(
+					"Audio source is unavailable, unsupported or has been prevented due to an error"
+				);
 
 			return;
 		}
@@ -151,7 +158,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public pause(): void {
 		if (this._destroyed) {
-			Logger.logError("Can't pause: audio is destroyed");
+			this._outputLogs && Logger.logError("Can't pause: audio is destroyed");
 			return;
 		}
 
@@ -160,12 +167,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public seekTo(time: number): boolean {
 		if (this._destroyed) {
-			Logger.logError("Can't seekTo: audio is destroyed");
+			this._outputLogs && Logger.logError("Can't seekTo: audio is destroyed");
 			return false;
 		}
 
 		if (!this._betterSrc) {
-			Logger.logError("Audio has no src, seekTo has been prevented");
+			this._outputLogs &&
+				Logger.logError("Audio has no src, seekTo has been prevented");
 
 			return false;
 		}
@@ -174,23 +182,26 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// TODO: not sure if safeguarding is needed
 		if (isNaN(duration)) {
-			Logger.logError("Can't seek until the audio has loaded metadata");
+			this._outputLogs &&
+				Logger.logError("Can't seek until the audio has loaded metadata");
 			return false;
 		}
 		// TODO: here as well
 		if (duration < time) {
-			Logger.logError(
-				"Can't seek to a time greater than the audio duration",
-				"\nAudio duration:",
-				new Date(duration).toISOString().slice(11, -1),
-				"\n     Seek time:",
-				new Date(time).toISOString().slice(11, -1)
-			);
+			this._outputLogs &&
+				Logger.logError(
+					"Can't seek to a time greater than the audio duration",
+					"\nAudio duration:",
+					new Date(duration).toISOString().slice(11, -1),
+					"\n     Seek time:",
+					new Date(time).toISOString().slice(11, -1)
+				);
 
 			return false;
 		}
 
-		Logger.logDebug("Seeking to", new Date(time).toISOString().slice(11, -1));
+		this._outputLogs &&
+			Logger.logDebug("Seeking to", new Date(time).toISOString().slice(11, -1));
 
 		this._audio.currentTime = time / 1000;
 
@@ -199,7 +210,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public async restart(): Promise<void> {
 		if (this._destroyed) {
-			Logger.logError("Can't restart: audio is destroyed");
+			this._outputLogs && Logger.logError("Can't restart: audio is destroyed");
 			return;
 		}
 
@@ -255,16 +266,17 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private initAudioEventListeners(): void {
 		$(this._audio).on("error", (e) => {
-			Logger.logError(
-				"Audio source error",
-				"\nOriginal event:\n",
-				e.originalEvent,
-				"\njQuery event:\n",
-				e
-			);
+			this._outputLogs &&
+				Logger.logError(
+					"Audio source error",
+					"\nOriginal event:\n",
+					e.originalEvent,
+					"\njQuery event:\n",
+					e
+				);
 
 			if (!this._preserve) {
-				Logger.logDebug("Destroying audio source");
+				this._outputLogs && Logger.logDebug("Destroying audio source");
 
 				this.destroy();
 			} else {
@@ -275,14 +287,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		$(this._audio).on("ended", (_e, args = { forced: false }) => {
-			Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
+			this._outputLogs &&
+				Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
 
 			if (!this._preserve) {
 				this.destroy();
 			}
 
 			if (this.loop && !args.forced) {
-				Logger.logDebug("Restarting...");
+				this._outputLogs && Logger.logDebug("Restarting...");
 				this.restart();
 				return; // Don't treat it as ended
 			}
@@ -300,19 +313,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		$(this._audio).on("canplay", () => {
-			Logger.logDebug("Audio source can play");
+			this._outputLogs && Logger.logDebug("Audio source can play");
 
 			this.triggerEvent("canplay");
 		});
 
 		$(this._audio).on("suspend", () => {
-			Logger.logDebug("Audio source suspended");
+			this._outputLogs && Logger.logDebug("Audio source suspended");
 
 			this.triggerEvent("suspend");
 		});
 
 		$(this._audio).on("loadedmetadata", () => {
-			Logger.logDebug("Audio source loaded metadata");
+			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
 			this.restart();
 
