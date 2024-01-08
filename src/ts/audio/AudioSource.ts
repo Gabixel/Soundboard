@@ -150,14 +150,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.play();
 	}
 
-	public pause(): this {
+	public pause(): void {
 		if (this._destroyed) {
-			return this;
+			return;
 		}
 
 		this._audio.pause();
-
-		return this;
 	}
 
 	public seekTo(time: number): boolean {
@@ -175,6 +173,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		const duration = this._audio.duration * 1000;
 
+		// TODO: not sure if safeguarding is needed
+		if (isNaN(duration)) {
+			Logger.logError("Can't seek until the audio has loaded metadata");
+			return false;
+		}
+		// TODO: here as well
 		if (duration < time) {
 			Logger.logError(
 				"Can't seek to a time greater than the audio duration",
@@ -195,7 +199,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async restart(): Promise<void> {
-		let seeked = this.seekTo(this._audioTimings?.start ?? 0);
+		let seeked = this.trySeekingToTimingsStart();
 
 		if (seeked) {
 			await this.play();
@@ -222,6 +226,16 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public get ended(): boolean {
 		return this._audio.ended;
+	}
+
+	/**
+	 * Tries seeking to the specific point in time provided by the {@link audioTimings} if declared (and valid).
+	 * Else, it seeks to the start of the audio.
+	 *
+	 * @returns `true` if the audio seeked successfully. `false` otherwise.
+	 */
+	private trySeekingToTimingsStart(): boolean {
+		return this.seekTo(this._audioTimings?.start ?? 0);
 	}
 
 	private createSourceNode(): void {
