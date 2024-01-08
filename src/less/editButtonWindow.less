@@ -13,8 +13,8 @@ body {
 	transition-duration: 0.25s;
 	transition-timing-function: linear;
 
-	input[type="text"] {
-		background: transparent;
+	input[type="text"],
+	input[type="number"] {
 		border-bottom: 1px solid #fff;
 		color: #fff;
 
@@ -28,6 +28,7 @@ body {
 	}
 
 	input[type="text"],
+	input[type="number"],
 	input[type="color"] {
 		background-color: rgb(255 255 255 / 0.1);
 	}
@@ -46,6 +47,15 @@ body {
 		border-bottom: 1px solid #fff;
 		&:focus-within {
 			border-bottom-color: @focus-color;
+		}
+	}
+
+	input[type="number"] {
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			// margin: 0;
+			// padding: 0;
 		}
 	}
 

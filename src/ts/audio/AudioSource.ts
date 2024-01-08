@@ -81,7 +81,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// We don't want the audio to start playing automatically.
 		// This is because we need to preload the metadata first,
-		// so we're autoplaying it manually.
+		// so we're autoplaying it manually
 		this._audio.autoplay = false;
 
 		this._preserve = preserveOnEnd;
