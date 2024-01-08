@@ -172,11 +172,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
-		// TODO:
-		console.log("duration: ", this._audio.duration);
-		console.log("currentTime: ", this._audio.currentTime);
-		console.log("volume: ", this._audio.volume);
-
 		const duration = this._audio.duration * 1000;
 
 		if (duration < time) {
