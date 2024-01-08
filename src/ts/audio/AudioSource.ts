@@ -94,6 +94,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	// TODO: update audio timings (and future settings) passing logic
 	public changeTrack(src?: string, audioTimings?: AudioTimings): void {
 		if (this._destroyed) {
+			Logger.logError("Can't changeTrack: audio is destroyed");
 			return;
 		}
 
@@ -152,6 +153,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public pause(): void {
 		if (this._destroyed) {
+			Logger.logError("Can't pause: audio is destroyed");
 			return;
 		}
 
@@ -161,7 +163,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 	public seekTo(time: number): boolean {
 		if (this._destroyed) {
 			Logger.logError("Can't seekTo: audio is destroyed");
-
 			return false;
 		}
 
@@ -199,6 +200,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async restart(): Promise<void> {
+		if (this._destroyed) {
+			Logger.logError("Can't restart: audio is destroyed");
+			return;
+		}
+
 		let seeked = this.trySeekingToTimingsStart();
 
 		if (seeked) {
@@ -207,9 +213,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async end(): Promise<void> {
-		await this.restart();
+		if (this._destroyed) {
+			Logger.logError("Can't end: audio is destroyed");
+			return;
+		}
 
 		this.pause();
+		this.seekTo(this._audio.duration);
 
 		$(this._audio).trigger("ended", {
 			forced: true,
@@ -274,6 +284,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			if (!this._preserve) {
 				this.destroy();
+				return;
 			}
 
 			if (this.loop && !args.forced) {
