@@ -104,6 +104,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._betterSrc = src ?? undefined;
 
 		if (!this._betterSrc) {
+			Logger.logDebug("Invalid/Empty audio source");
 			return;
 		}
 
