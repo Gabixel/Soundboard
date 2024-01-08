@@ -56,6 +56,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 	public get audioTimings(): AudioTimings {
 		return this._audioTimings;
 	}
+	public set audioTimings(audioTimings: AudioTimings) {
+		this._audioTimings = audioTimings;
+
+		this._outputLogs && Logger.logDebug("Audio timings set to", audioTimings);
+	}
 
 	constructor(
 		audioOutput: AudioOutput,
@@ -90,14 +95,16 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this.volume = audioSettings?.volume ?? 1;
 
+		this.audioTimings = audioSettings.audioTimings;
+
 		this.createSourceNode();
 		this.initAudioEventListeners();
 
-		this.changeTrack(audioSettings?.src, audioSettings?.audioTimings);
+		this.changeTrack(audioSettings?.src);
 	}
 
 	// TODO: update audio timings (and future settings) passing logic
-	public changeTrack(src?: string, audioTimings?: AudioTimings): void {
+	public changeTrack(src?: string): void {
 		if (this._destroyed) {
 			this._outputLogs && Logger.logError("Can't changeTrack: audio is destroyed");
 			return;
@@ -108,10 +115,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._canPlayCurrentSource = "maybe";
 
 		this._betterSrc = src ?? undefined;
-
-		if (audioTimings) {
-			this.setAudioTimings(audioTimings);
-		}
 
 		if (!this._betterSrc) {
 			this._outputLogs && Logger.logDebug("Invalid/Empty audio source");
@@ -124,12 +127,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	// TODO: effects/filters
 	// public applyFilters(filters???): this { }
-
-	private setAudioTimings(audioTimings: AudioTimings): void {
-		this._audioTimings = audioTimings;
-
-		this._outputLogs && Logger.logDebug("Audio timings set", audioTimings);
-	}
 
 	public async play(): Promise<void> {
 		if (this._destroyed) {

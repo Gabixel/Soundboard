@@ -89,20 +89,15 @@ class AudioStore extends EventTarget {
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
 
-			// TODO: update and check settings (i.e. timings & effects)
-			if (
-				couple.betterSrc === audioSettings.src &&
-				// Couple has same timings
-				JSON.stringify(couple.audioTimings ?? null) ==
-					JSON.stringify(audioSettings.audioTimings ?? null)
-			) {
+			if (couple.betterSrc === audioSettings.src) {
 				await couple.restart();
 			} else {
-				couple.changeTrack(audioSettings.src, audioSettings.audioTimings);
+				couple.changeTrack(audioSettings.src);
 			}
 
 			couple.volume = audioSettings.volume;
-			// TODO: update more data (e.g. timings and [playbackrate, in the future])
+			couple.audioTimings = audioSettings.audioTimings;
+			// TODO: update more data (e.g. effects & playbackrate, in the future)
 
 			return;
 		}

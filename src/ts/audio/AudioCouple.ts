@@ -18,6 +18,10 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		return this._couple.main.audioTimings;
 	}
 
+	public set audioTimings(audioTimings: AudioTimings) {
+		this._couple.main.audioTimings = audioTimings;
+	}
+
 	public get loop(): boolean {
 		return this._couple.main.loop;
 	}
@@ -44,17 +48,20 @@ class AudioCouple extends EventTarget implements IAudioControls {
 
 		this._couple = {
 			main: new AudioSource(mainOutput, audioSettings, preserveOnEnd),
-			playback: new AudioSource(playbackOutput, audioSettings, preserveOnEnd, false),
+			playback: new AudioSource(
+				playbackOutput,
+				audioSettings,
+				preserveOnEnd,
+				false
+			),
 		};
 
 		this.initEventListeners();
 	}
 
-	public changeTrack(src?: string, audioTimings?: AudioTimings): void {
-		// TODO: update effects
-		// TODO: improve how to pass settings
-		this._couple.main.changeTrack(src, audioTimings);
-		this._couple.playback.changeTrack(src, audioTimings);
+	public changeTrack(src?: string): void {
+		this._couple.main.changeTrack(src);
+		this._couple.playback.changeTrack(src);
 	}
 
 	public async play(): Promise<void> {
