@@ -109,6 +109,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._betterSrc = src ?? undefined;
 
+		if (audioTimings) {
+			this.setAudioTimings(audioTimings);
+		}
+
 		if (!this._betterSrc) {
 			this._outputLogs && Logger.logDebug("Invalid/Empty audio source");
 			return;
@@ -116,10 +120,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._audio.src = src;
 		this._audio.load();
-
-		if (audioTimings) {
-			this.setAudioTimings(audioTimings);
-		}
 	}
 
 	// TODO: effects/filters
