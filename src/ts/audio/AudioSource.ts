@@ -150,7 +150,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		this._audio.play();
+		if (this.ended) {
+			await this.restart();
+		} else {
+			await this._audio.play();
+		}
 	}
 
 	public pause(): void {
@@ -219,13 +223,17 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public async end(): Promise<void> {
-		let needsToEnd = !this._destroyed && !this.paused;
+		let needsToEnd = !this._destroyed && !this.ended;
 
 		if (needsToEnd) {
 			this.pause();
+			// We seek at the end, so that the provided `ended` variable returns `true`.
+			// We'll reset it to the desired timing later thanks to this.
 			this.seekTo(this._audio.duration);
 		}
 
+		// Seeking at the end while the audio is paused
+		// doesn't trigger the `ended` event by itself.
 		$(this._audio).trigger("ended", {
 			forced: true,
 		});
@@ -296,7 +304,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 			if (this.loop && !args.forced) {
 				this._outputLogs && Logger.logDebug("Restarting...");
 				this.restart();
-				return; // Don't treat it as ended
+				// Don't treat it as ended since we're starting
+				return;
 			}
 
 			this.triggerEvent("ended");
