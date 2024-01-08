@@ -187,6 +187,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				Logger.logError("Can't seek until the audio has loaded metadata");
 			return false;
 		}
+		
 		// TODO: here as well
 		if (duration < time) {
 			this._outputLogs &&
@@ -234,6 +235,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// Seeking at the end while the audio is paused
 		// doesn't trigger the `ended` event by itself.
+		// We also need to specify that it was forced.
 		$(this._audio).trigger("ended", {
 			forced: true,
 		});
