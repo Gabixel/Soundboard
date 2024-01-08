@@ -95,7 +95,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this.volume = audioSettings?.volume ?? 1;
 
-		this.audioTimings = audioSettings.audioTimings;
+		this.audioTimings = audioSettings?.audioTimings;
 
 		this.createSourceNode();
 		this.initAudioEventListeners();

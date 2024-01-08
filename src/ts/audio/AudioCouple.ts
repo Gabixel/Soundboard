@@ -17,9 +17,9 @@ class AudioCouple extends EventTarget implements IAudioControls {
 	public get audioTimings(): AudioTimings {
 		return this._couple.main.audioTimings;
 	}
-
 	public set audioTimings(audioTimings: AudioTimings) {
 		this._couple.main.audioTimings = audioTimings;
+		this._couple.playback.audioTimings = audioTimings;
 	}
 
 	public get loop(): boolean {
