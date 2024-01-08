@@ -58,7 +58,8 @@ const webPreferences: Electron.WebPreferences = {
 
 	navigateOnDragDrop: false,
 
-	// TODO: autoplayPolicy, just in case
+	// For playing audio automatically
+	autoplayPolicy: "no-user-gesture-required",
 
 	webviewTag: false,
 };
