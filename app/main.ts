@@ -135,9 +135,7 @@ function createMainWindow(screenWidth: number, screenHeight: number) {
 
 function createEditButtonWindow(
 	parsedButtonId: string,
-	originalButtonData: SoundButtonData,
-	screenWidth: number,
-	screenHeight: number
+	originalButtonData: SoundButtonData
 ) {
 	if (mainWindow == null || editButtonWindow != null) return;
 
@@ -148,11 +146,11 @@ function createEditButtonWindow(
 		title += ` "${name}"`;
 	}
 
-	let width = 400;
-	let height = 300;
+	let width = 600;
+	let height = 450;
 
-	width = Math.min(width, screenWidth / 2);
-	height = Math.min(height, screenHeight / 2);
+	let minWidth = 400;
+	let minHeight = 300;
 
 	const screenBounds = screen.getDisplayMatching(mainWindow.getBounds()).bounds;
 
@@ -165,17 +163,14 @@ function createEditButtonWindow(
 		width,
 		height,
 
-		minWidth: width,
-		minHeight: height,
-
-		maxWidth: width * 2,
-		maxHeight: height * 2, // TODO: unsure if max size is nice
+		minWidth,
+		minHeight,
 
 		frame: true,
 		transparent: false,
 
-		x: screenBounds.x + (screenBounds.width - width) / 2,
-		y: screenBounds.y + (screenBounds.height - height) / 2,
+		x: screenBounds.x + (screenBounds.width - Math.max(width, minWidth)) / 2,
+		y: screenBounds.y + (screenBounds.height - Math.max(height, minHeight)) / 2,
 
 		autoHideMenuBar: !isProduction,
 		maximizable: false,
@@ -396,9 +391,6 @@ app.setAboutPanelOptions({
 //#region Global API
 function initIpc(): void {
 	ipcMain.on("open-context-menu", (_e, args: ContextMenuArgs) => {
-		const primaryScreenWidth = screen.getPrimaryDisplay().workAreaSize.width;
-		const primaryScreenHeight = screen.getPrimaryDisplay().workAreaSize.height;
-
 		let extraMenuItems: MenuItem[] = [];
 
 		if (args != null) {
@@ -408,12 +400,7 @@ function initIpc(): void {
 						new MenuItem({
 							label: "Edit",
 							click: () => {
-								createEditButtonWindow(
-									args.parsedId,
-									args.buttonData,
-									primaryScreenWidth,
-									primaryScreenHeight
-								);
+								createEditButtonWindow(args.parsedId, args.buttonData);
 							},
 						}),
 						new MenuItem({
