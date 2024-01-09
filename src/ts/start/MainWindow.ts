@@ -16,7 +16,7 @@ abstract class MainWindow extends Main {
 		time: {
 			start: 0,
 			end: 0,
-			condition: "after",
+			condition: "at",
 		},
 		volume: 1,
 		path: null,
