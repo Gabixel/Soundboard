@@ -65,11 +65,11 @@ class EditorForm {
 			// Path
 			.add(this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? "")))
 			// Audio timings
-			.add(this.$dataInput("time-start").val((buttonData.time?.start ?? 0) / 1000))
-			.add(this.$dataInput("time-end").val((buttonData.time?.end ?? 0) / 1000))
+			.add(this.$dataInput("time-start").val((buttonData.time?.start || 0) / 1000))
+			.add(this.$dataInput("time-end").val((buttonData.time?.end || 0) / 1000))
 			.add(
 				this.$dataInput("time-condition").val(buttonData.time?.condition ?? "at")
-			);
+			).trigger("change");
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -150,23 +150,23 @@ class EditorForm {
 			let startTime = e.target.value;
 
 			// TODO: better recyclable code
-			let updated = Object.assign({}, this._buttonData.time);
-			updated.start = parseFloat(startTime) * 1000;
+			let updated = { ...this._buttonData.time };
+			updated.start = parseFloat(startTime) * 1000 || 0;
 
 			this.updateProperty("time", updated);
 		});
 		this.$dataInput("time-end").on("change", (e) => {
 			let endTime = e.target.value;
 
-			let updated = Object.assign({}, this._buttonData.time);
-			updated.end = parseFloat(endTime) * 1000;
+			let updated = { ...this._buttonData.time };
+			updated.end = parseFloat(endTime) * 1000 || 0;
 
 			this.updateProperty("time", updated);
 		});
 		this.$dataInput("time-condition").on("change", (e) => {
 			let condition = e.target.value;
 
-			let updated = Object.assign({}, this._buttonData.time);
+			let updated = { ...this._buttonData.time };
 			updated.condition = condition as SoundButtonData["time"]["condition"];
 
 			// Apply path data (from text input)
