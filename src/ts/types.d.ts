@@ -194,3 +194,22 @@ interface GridFilterInput<TElement = HTMLInputElement>
 	val(value_function: string): this;
 	val(): string | undefined;
 }
+
+type FlattenKeysBlackList = "color";
+
+type FlattenKeys<T> = T extends object
+	? {
+			[K in keyof T & string]: K extends FlattenKeysBlackList
+				? `${K & string}`
+				: K extends string
+				? `${K & string}${string &
+						(T[K] extends any[]
+							? ""
+							: T[K] extends object
+							? `-${FlattenKeys<T[K]>}`
+							: "")}`
+				: never;
+	  }[keyof T & string]
+	: never;
+
+type FlattenedSoundButtonDataKeys = FlattenKeys<SoundButtonData>;

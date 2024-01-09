@@ -63,7 +63,13 @@ class EditorForm {
 			// Volume
 			.add(this.$dataInput("volume").val(buttonData.volume ?? 1))
 			// Path
-			.add(this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? "")));
+			.add(this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? "")))
+			// Audio timings
+			.add(this.$dataInput("time-start").val((buttonData.time?.start ?? 0) / 1000))
+			.add(this.$dataInput("time-end").val((buttonData.time?.end ?? 0) / 1000))
+			.add(
+				this.$dataInput("time-condition").val(buttonData.time?.condition ?? "at")
+			);
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -125,6 +131,7 @@ class EditorForm {
 			// Apply path (from file picker)
 			this.updateProperty("path", StringUtilities.encodeFilePath(path));
 		});
+
 		// File picker (text input)
 		this.$dataInput("path").on("change", (e) => {
 			// TODO: warn if it's invalid?
@@ -135,6 +142,35 @@ class EditorForm {
 				"path",
 				path.length === 0 ? null : StringUtilities.encodeFilePath(path)
 			);
+		});
+
+		// Audio timings
+		this.$dataInput("time-start").on("change", (e) => {
+			// TODO: warn if it's invalid?
+			let startTime = e.target.value;
+
+			// TODO: better recyclable code
+			let updated = Object.assign({}, this._buttonData.time);
+			updated.start = parseFloat(startTime) * 1000;
+
+			this.updateProperty("time", updated);
+		});
+		this.$dataInput("time-end").on("change", (e) => {
+			let endTime = e.target.value;
+
+			let updated = Object.assign({}, this._buttonData.time);
+			updated.end = parseFloat(endTime) * 1000;
+
+			this.updateProperty("time", updated);
+		});
+		this.$dataInput("time-condition").on("change", (e) => {
+			let condition = e.target.value;
+
+			let updated = Object.assign({}, this._buttonData.time);
+			updated.condition = condition as SoundButtonData["time"]["condition"];
+
+			// Apply path data (from text input)
+			this.updateProperty("time", updated);
 		});
 	}
 
@@ -194,7 +230,7 @@ class EditorForm {
 	/**
 	 * Returns the {@link JQuery<HTMLInputElement> jQuery} of a key in {@link SoundButtonData}.
 	 */
-	private $dataInput<TKey extends keyof SoundButtonData>(
+	private $dataInput<TKey extends FlattenedSoundButtonDataKeys>(
 		data: TKey
 	): JQuery<HTMLInputElement> {
 		// TODO: probably needs to be changed if there will be more complex input elements
