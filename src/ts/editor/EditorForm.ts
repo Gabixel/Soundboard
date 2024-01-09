@@ -192,7 +192,7 @@ class EditorForm {
 		});
 
 		// Submit when pressing enter on text inputs
-		$("input[type='text']").on("keydown", (e) => {
+		$("input[type='text'], input[type='number']").on("keydown", (e) => {
 			if (e.key != "Enter") {
 				return;
 			}
