@@ -21,7 +21,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private _destroyed: boolean;
 
 	/**
-	 * Audio source. This is the "better" version because we can detect if it's "undefined",
+	 * Audio source. This is the "better" version because we can detect if it's `undefined`,
 	 * while the native {@link HTMLMediaElement} {@link HTMLMediaElement.src `src`} doesn't.
 	 */
 	private _betterSrc: string;
@@ -187,7 +187,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				Logger.logError("Can't seek until the audio has loaded metadata");
 			return false;
 		}
-		
+
 		// TODO: here as well
 		if (duration < time) {
 			this._outputLogs &&

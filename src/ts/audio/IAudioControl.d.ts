@@ -3,7 +3,7 @@
  */
 interface IAudioControls {
 	/**
-	 * The audio source.
+	 * Custom audio source handling.
 	 */
 	betterSrc: string;
 
