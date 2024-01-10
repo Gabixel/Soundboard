@@ -165,7 +165,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.pause();
 	}
 
-	public seekTo(time: number): boolean {
+	public seekTo(time: number, isMilliseconds: boolean = true): boolean {
 		if (this._destroyed) {
 			this._outputLogs && Logger.logError("Can't seekTo: audio is destroyed");
 			return false;
@@ -178,7 +178,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
-		const duration = this._audio.duration * 1000;
+		if (isMilliseconds) {
+			time /= 1000;
+		}
+
+		const duration = this._audio.duration;
 
 		// TODO: not sure if safeguarding is needed
 		if (isNaN(duration)) {
@@ -202,9 +206,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		this._outputLogs &&
-			Logger.logDebug("Seeking to", new Date(time).toISOString().slice(11, -1));
+			Logger.logDebug(
+				`Seeking to ${new Date(time * 1000).toISOString().slice(11, -1)} (${time}ms)`
+			);
 
-		this._audio.currentTime = time / 1000;
+		this._audio.currentTime = time;
 
 		return true;
 	}
@@ -226,10 +232,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 		let needsToEnd = !this._destroyed && !this.ended;
 
 		if (needsToEnd) {
-			this.pause();
+			// this.pause();
 			// We seek at the end, so that the provided `ended` variable returns `true`.
 			// We'll reset it to the desired timing later thanks to this.
-			this.seekTo(this._audio.duration);
+			this.seekTo(Math.ceil(this._audio.duration), false);
 		}
 
 		// Seeking at the end while the audio is paused
@@ -352,7 +358,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("error");
 		});
 
-		$(this._audio).on("ended", (_e, args = { forced: false }) => {
+		$(this._audio).on("ended", async (_e, args = { forced: false }) => {
 			this._outputLogs &&
 				Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
 
@@ -362,7 +368,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			if (this.loop && !args.forced) {
 				this._outputLogs && Logger.logDebug("Restarting...");
-				this.restart();
+				await this.restart();
 				// Don't treat it as ended since we're starting
 				return;
 			}

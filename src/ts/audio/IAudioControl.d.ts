@@ -41,10 +41,11 @@ interface IAudioControls {
 	/**
 	 * Seeks to a specific timestamp in the audio.
 	 *
-	 * @param time Time (in milliseconds).
-	 * @returns `true` whether the audio was seeked to the specified time. `false` otherwise.
+	 * @param time The timestamp.
+	 * @param isMilliseconds Whether the timestamp is in milliseconds or not (to adapt the value).
+	 * @returns `true` whether the audio has seeked to the specified time. `false` otherwise.
 	 */
-	seekTo(time: number): boolean;
+	seekTo(time: number, isMilliseconds: boolean): boolean;
 
 	restart(autoplay: boolean): Promise<void>;
 
