@@ -65,11 +65,14 @@ class EditorForm {
 			// Path
 			.add(this.$dataInput("path").val(decodeURIComponent(buttonData.path ?? "")))
 			// Audio timings
-			.add(this.$dataInput("time-start").val((buttonData.time?.start || 0) / 1000))
-			.add(this.$dataInput("time-end").val((buttonData.time?.end || 0) / 1000))
+			.add(
+				this.$dataInput("time-start").val((buttonData.time?.start || 0) * 0.001)
+			)
+			.add(this.$dataInput("time-end").val((buttonData.time?.end || 0) * 0.001))
 			.add(
 				this.$dataInput("time-condition").val(buttonData.time?.condition ?? "at")
 			)
+			// Triggers for initial visual updates
 			.trigger("change")
 			.trigger("input");
 		// .add($(``));
@@ -124,7 +127,7 @@ class EditorForm {
 				$("#label-volume").text(`${volume * 100}%`);
 			});
 
-		// File picker
+		// File picker (button)
 		this.$input("#button-path-file").on("change", (e) => {
 			// TODO: check if valid?
 			let path = e.target.files[0].path;
@@ -144,6 +147,9 @@ class EditorForm {
 		this.$dataInput("path").on("change", (e) => {
 			// TODO: warn if it's invalid?
 			let path = e.target.value;
+
+			// Remove hash (to prevent the usage of Media Fragment)
+			path = path.replace(/#.*/, "");
 
 			// Apply path data (from text input)
 			this.updateProperty(
@@ -234,7 +240,7 @@ class EditorForm {
 	}
 
 	/**
-	 * Returns the {@link JQuery<HTMLInputElement> jQuery} version of the selector.
+	 * Returns the {@link JQuery<HTMLInputElement> jQuery} version of the given selector.
 	 */
 	private $input(selector?: string): JQuery<HTMLInputElement> {
 		return $(selector);

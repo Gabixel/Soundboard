@@ -121,21 +121,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		// Media Fragment URI
-		// we know that if the user changes button but has
-		// the same src could cause an unsynced src value
-		// since it keeps the previous hash (if it was added),
-		// which is surely bad, but not catastrophic.
-		// TODO: update Media Fragment hash on new button click with same src
-		if (this.audioTimings) {
-			src += `#t=${this.audioTimings.start * 0.001}`;
-
-			// TODO: base the end on condition
-			if (this.audioTimings.end > this.audioTimings.start) {
-				src += `,${this.audioTimings.end * 0.001}`;
-			}
-		}
-
 		this._audio.src = src;
 		this._audio.load();
 	}
