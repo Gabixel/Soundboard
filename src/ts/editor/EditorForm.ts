@@ -169,7 +169,6 @@ class EditorForm {
 			let updated = { ...this._buttonData.time };
 			updated.condition = condition as SoundButtonData["time"]["condition"];
 
-			// Apply path data (from text input)
 			this.updateProperty("time", updated);
 		});
 	}
