@@ -400,9 +400,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		$(this._audio).on("timeupdate", async (e) => {
-			this._outputLogs && Logger.logWarn("Time update");
-
-			if (this.ended) {
+			if (this.ended || this.paused) {
 				this._timeUpdateSemaphore.unlock();
 				return;
 			}
@@ -433,7 +431,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		$(this._audio).on("loadedmetadata", async () => {
 			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
-			// Start the audio right whenmeta data is loaded.
+			// Start the audio right when meta data is loaded.
 			// Buffering is expected in some scenarios.
 			await this.restart();
 
