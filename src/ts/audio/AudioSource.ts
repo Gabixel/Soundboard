@@ -296,7 +296,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
-		const currentTime = Math.trunc(this._audio.currentTime * 1000);
+		const currentTime = this._audio.currentTime * 1000;
 
 		const start = this._audioTimings.start;
 		const end = this._audioTimings.end;
