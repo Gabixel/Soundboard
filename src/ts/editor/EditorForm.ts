@@ -69,7 +69,9 @@ class EditorForm {
 			.add(this.$dataInput("time-end").val((buttonData.time?.end || 0) / 1000))
 			.add(
 				this.$dataInput("time-condition").val(buttonData.time?.condition ?? "at")
-			).trigger("change");
+			)
+			.trigger("change")
+			.trigger("input");
 		// .add($(``));
 		// $("#editor-submit").focus();
 
@@ -109,12 +111,18 @@ class EditorForm {
 				this.updateProperty("color", { h: hsl[0], s: hsl[1], l: hsl[2] });
 			});
 
-		this.$dataInput("volume").on("change", (e) => {
-			let volume = parseFloat(e.target.value);
+		this.$dataInput("volume")
+			.on("change", (e) => {
+				let volume = parseFloat(e.target.value);
 
-			// Apply volume
-			this.updateProperty("volume", volume);
-		});
+				// Apply volume
+				this.updateProperty("volume", volume);
+			})
+			.on("input", (e) => {
+				let volume = parseFloat(e.target.value);
+
+				$("#label-volume").text(`${volume * 100}%`);
+			});
 
 		// File picker
 		this.$input("#button-path-file").on("change", (e) => {
@@ -145,23 +153,25 @@ class EditorForm {
 		});
 
 		// Audio timings
-		this.$dataInput("time-start").on("change", (e) => {
+		this.$dataInput("time-start").on("change input", (e) => {
 			// TODO: warn if it's invalid?
-			let startTime = e.target.value;
-
 			// TODO: better recyclable code
+			let newValue = parseFloat(e.target.value) * 1000 || 0;
+
 			let updated = { ...this._buttonData.time };
-			updated.start = parseFloat(startTime) * 1000 || 0;
+			updated.start = newValue;
 
 			this.updateProperty("time", updated);
+			$(e.target).val((newValue * 0.001).toFixed(3));
 		});
-		this.$dataInput("time-end").on("change", (e) => {
-			let endTime = e.target.value;
+		this.$dataInput("time-end").on("change input", (e) => {
+			let newValue = parseFloat(e.target.value) * 1000 || 0;
 
 			let updated = { ...this._buttonData.time };
-			updated.end = parseFloat(endTime) * 1000 || 0;
+			updated.end = newValue;
 
 			this.updateProperty("time", updated);
+			$(e.target).val((newValue * 0.001).toFixed(3));
 		});
 		this.$dataInput("time-condition").on("change", (e) => {
 			let condition = e.target.value;
@@ -191,7 +201,11 @@ class EditorForm {
 		});
 
 		// Submit when pressing enter on text inputs
-		$("input[type='text'], input[type='number']").on("keydown", (e) => {
+		$(`
+			input[type='text'],
+			input[type='number'],
+			input[type='range']
+		`).on("keydown", (e) => {
 			if (e.key != "Enter") {
 				return;
 			}
@@ -201,7 +215,7 @@ class EditorForm {
 		});
 	}
 
-	//#endregion
+	//#endregion Input setup
 
 	private submitForm(): void {
 		SoundboardApi.editButtonWindow.updateButtonData(
