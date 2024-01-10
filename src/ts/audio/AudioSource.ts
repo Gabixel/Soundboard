@@ -237,7 +237,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			// this.pause();
 			// We seek at the end, so that the provided `ended` variable returns `true`.
 			// We'll reset it to the desired timing later thanks to this.
-			this.seekTo(Math.ceil(this._audio.duration), false);
+			this.seekTo(this._audio.duration, false);
 		}
 
 		// Seeking at the end while the audio is paused
