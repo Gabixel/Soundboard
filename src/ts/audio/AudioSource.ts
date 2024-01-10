@@ -349,17 +349,33 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("suspend");
 		});
 
-		$(this._audio).on("loadedmetadata", () => {
+		$(this._audio).on("loadeddata", () => {
 			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
 			this.restart();
+
+			this.triggerEvent("loadeddata");
+		});
+
+		$(this._audio).on("loadedmetadata", () => {
+			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
 			this.triggerEvent("loadedmetadata");
 		});
 	}
 
 	private destroyAudioEventListeners(): void {
-		$(this._audio).off("error ended pause canplay suspend loadedmetadata");
+		$(this._audio).off(
+			[
+				"error",
+				"ended",
+				"pause",
+				"canplay",
+				"suspend",
+				"loadeddata",
+				"loadedmetadata",
+			].join(" ")
+		);
 	}
 
 	private triggerEvent(eventName: string): void {

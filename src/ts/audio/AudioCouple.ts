@@ -111,8 +111,6 @@ class AudioCouple extends EventTarget implements IAudioControls {
 
 	private initEventListeners(): void {
 		this.setEventsTo(this._couple.main);
-		// this.setEventsTo(this._source.playback);
-		$(this._couple.playback).on("error", () => {});
 	}
 
 	private setEventsTo(source: AudioSource) {
@@ -123,6 +121,7 @@ class AudioCouple extends EventTarget implements IAudioControls {
 			.on("resume", () => this.dispatchEvent(new Event("resume")))
 			.on("canplay", () => this.dispatchEvent(new Event("canplay")))
 			.on("suspend", () => this.dispatchEvent(new Event("suspend")))
+			.on("loadeddata", () => this.dispatchEvent(new Event("loadeddata")))
 			.on("loadedmetadata", () => this.dispatchEvent(new Event("loadedmetadata")));
 	}
 }
