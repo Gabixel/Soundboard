@@ -316,7 +316,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				break;
 
 			case "after":
-				// Audio started before starting point (in case of a forced end)
+				// Audio started before starting point
 				if (currentTime < start) {
 					return true;
 				}
