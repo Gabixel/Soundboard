@@ -103,7 +103,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this.changeTrack(audioSettings?.src);
 	}
 
-	// TODO: update audio timings (and future settings) passing logic
 	public changeTrack(src?: string): void {
 		if (this._destroyed) {
 			this._outputLogs && Logger.logError("Can't changeTrack: audio is destroyed");
@@ -271,6 +270,64 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
+	private a: any;
+
+	private async onTimeUpdate(
+		_e: JQuery.TriggeredEvent<
+			HTMLAudioElement,
+			undefined,
+			HTMLAudioElement,
+			HTMLAudioElement
+		>
+	): Promise<boolean> {
+		if (!this._audio) {
+			return false;
+		}
+
+		if (!this._audioTimings) {
+			return false;
+		}
+
+		const currentTime = Math.trunc(this._audio.currentTime * 1000);
+
+		const start = this._audioTimings.start;
+		const end = this._audioTimings.end;
+		const condition = this._audioTimings.condition;
+
+		switch (condition) {
+			case "at":
+				// Ending condition is invalid
+				if (end <= start) {
+					return true;
+				}
+
+				if (currentTime < end) {
+					return true;
+				}
+
+				break;
+
+			case "after":
+				// Audio started before starting point (in case of a forced end)
+				if (currentTime < start) {
+					return true;
+				}
+
+				const remainingTime = currentTime - start;
+
+				// We didn't reach the end yet
+				if (remainingTime < end) {
+					return true;
+				}
+
+			default:
+				return false;
+		}
+
+		await this.end();
+		return false;
+	}
+
 	//#region Audio events
 
 	private initAudioEventListeners(): void {
@@ -340,6 +397,16 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("loadeddata");
 		});
 
+		$(this._audio).on("timeupdate", async (e) => {
+			let shouldPropagate = await this.onTimeUpdate(e);
+
+			if (!shouldPropagate) {
+				return;
+			}
+
+			this.triggerEvent("timeupdate");
+		});
+
 		$(this._audio).on("loadedmetadata", () => {
 			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
@@ -369,7 +436,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this.dispatchEvent(new Event(eventName));
 	}
 
-	//#endregion
+	//#endregion Audio events
 
 	/**
 	 * Dispose logic.
