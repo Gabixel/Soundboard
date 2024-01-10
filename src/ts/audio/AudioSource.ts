@@ -335,7 +335,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		$(this._audio).on("loadeddata", () => {
-			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
+			this._outputLogs && Logger.logDebug("Audio source loaded data");
 
 			this.restart();
 
