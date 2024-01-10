@@ -192,7 +192,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		// TODO: here as well
-		if (duration < time * 1000) {
+		if (duration < time) {
 			this._outputLogs &&
 				Logger.logError(
 					"Can't seek to a time greater than the audio duration",
@@ -234,7 +234,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		let needsToEnd = !this._destroyed && !this.ended;
 
 		if (needsToEnd) {
-			// this.pause();
+			this.pause();
 			// We seek at the end, so that the provided `ended` variable returns `true`.
 			// We'll reset it to the desired timing later thanks to this.
 			this.seekTo(this._audio.duration, false);
