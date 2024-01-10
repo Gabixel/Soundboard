@@ -399,12 +399,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("suspend");
 		});
 
-		$(this._audio).on("loadeddata", () => {
-			this._outputLogs && Logger.logDebug("Audio source loaded data");
-
-			this.triggerEvent("loadeddata");
-		});
-
 		$(this._audio).on("timeupdate", async (e) => {
 			this._outputLogs && Logger.logWarn("Time update");
 
@@ -428,6 +422,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 			}
 
 			this.triggerEvent("timeupdate");
+		});
+
+		$(this._audio).on("loadeddata", () => {
+			this._outputLogs && Logger.logDebug("Audio source loaded data");
+
+			this.triggerEvent("loadeddata");
 		});
 
 		$(this._audio).on("loadedmetadata", async () => {
