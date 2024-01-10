@@ -121,6 +121,7 @@ class AudioCouple extends EventTarget implements IAudioControls {
 			.on("resume", () => this.dispatchEvent(new Event("resume")))
 			.on("canplay", () => this.dispatchEvent(new Event("canplay")))
 			.on("suspend", () => this.dispatchEvent(new Event("suspend")))
+			.on("timeupdate", () => this.dispatchEvent(new Event("timeupdate")))
 			.on("loadeddata", () => this.dispatchEvent(new Event("loadeddata")))
 			.on("loadedmetadata", () => this.dispatchEvent(new Event("loadedmetadata")));
 	}

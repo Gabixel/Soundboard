@@ -8,6 +8,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private _outputLogs: boolean;
 
+	private _timeUpdateSemaphore = new Semaphore();
+
 	/**
 	 * If we want to preserve this source on end (for re-use).
 	 * Else, {@link _destroyed} gets used.
@@ -404,7 +406,22 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		$(this._audio).on("timeupdate", async (e) => {
+			this._outputLogs && Logger.logWarn("Time update");
+
+			if (this.ended) {
+				this._timeUpdateSemaphore.unlock();
+				return;
+			}
+
+			if (this._timeUpdateSemaphore.isLocked) {
+				return;
+			}
+
+			this._timeUpdateSemaphore.lock();
+
 			let shouldPropagate = await this.onTimeUpdate(e);
+
+			this._timeUpdateSemaphore.unlock();
 
 			if (!shouldPropagate) {
 				return;
@@ -432,6 +449,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				"pause",
 				"canplay",
 				"suspend",
+				"timeupdate",
 				"loadeddata",
 				"loadedmetadata",
 			].join(" ")
