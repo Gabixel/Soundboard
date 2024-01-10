@@ -278,8 +278,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
-	private a: any;
-
 	private async onTimeUpdate(
 		_e: JQuery.TriggeredEvent<
 			HTMLAudioElement,
