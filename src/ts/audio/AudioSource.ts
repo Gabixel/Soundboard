@@ -407,12 +407,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("timeupdate");
 		});
 
-		$(this._audio).on("loadedmetadata", () => {
+		$(this._audio).on("loadedmetadata", async () => {
 			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
 			// Start the audio right whenmeta data is loaded.
 			// Buffering is expected in some scenarios.
-			this.restart();
+			await this.restart();
 
 			this.triggerEvent("loadedmetadata");
 		});
