@@ -162,7 +162,7 @@ class EditorForm {
 				let path = e.target.value;
 
 				// Remove hash on paste
-				path = path.replace(/#.*/, "");
+				path = path.replace(/#/g, "");
 
 				$(e.target).val(path).trigger("change");
 			})
