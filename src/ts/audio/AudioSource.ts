@@ -192,14 +192,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		// TODO: here as well
-		if (duration < time) {
+		if (duration < time * 1000) {
 			this._outputLogs &&
 				Logger.logError(
 					"Can't seek to a time greater than the audio duration",
 					"\nAudio duration:",
-					new Date(duration).toISOString().slice(11, -1),
+					new Date(duration * 1000).toISOString().slice(11, -1),
 					"\n     Seek time:",
-					new Date(time).toISOString().slice(11, -1)
+					new Date(time * 1000).toISOString().slice(11, -1)
 				);
 
 			return false;
@@ -207,7 +207,9 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._outputLogs &&
 			Logger.logDebug(
-				`Seeking to ${new Date(time * 1000).toISOString().slice(11, -1)} (${time}ms)`
+				`Seeking to ${new Date(time * 1000)
+					.toISOString()
+					.slice(11, -1)} (${time}ms)`
 			);
 
 		this._audio.currentTime = time;
