@@ -144,19 +144,34 @@ class EditorForm {
 		});
 
 		// File picker (text input)
-		this.$dataInput("path").on("change", (e) => {
-			// TODO: warn if it's invalid?
-			let path = e.target.value;
+		this.$dataInput("path")
+			.on("change", (e) => {
+				// TODO: warn if it's invalid?
+				let path = e.target.value;
 
-			// Remove hash (to prevent the usage of Media Fragment)
-			path = path.replace(/#.*/, "");
+				// Remove hash (to prevent the usage of Media Fragment)
+				path = path.replace(/#.*/, "");
 
-			// Apply path data (from text input)
-			this.updateProperty(
-				"path",
-				path.length === 0 ? null : StringUtilities.encodeFilePath(path)
-			);
-		});
+				// Apply path data (from text input)
+				this.updateProperty(
+					"path",
+					path.length === 0 ? null : StringUtilities.encodeFilePath(path)
+				);
+			})
+			.on("input", (e) => {
+				let path = e.target.value;
+
+				// Remove hash on paste
+				path = path.replace(/#.*/, "");
+
+				$(e.target).val(path).trigger("change");
+			})
+			.on("keypress", (e) => {
+				// Prevent hash even more
+				if (e.key === "#") {
+					e.preventDefault();
+				}
+			});
 
 		// Audio timings
 		this.$dataInput("time-start").on("change input", (e) => {
