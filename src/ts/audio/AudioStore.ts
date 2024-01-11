@@ -117,7 +117,7 @@ class AudioStore extends EventTarget {
 			$(replacingCouple).off("ended error canplay");
 
 			// Dispose old couple
-			await replacingCouple.end();
+			replacingCouple.end();
 			replacingCouple = null;
 		}
 
@@ -180,7 +180,7 @@ class AudioStore extends EventTarget {
 			})
 			.on("pause", () => {
 				Logger.logDebug("Audio paused at index " + index);
-				
+
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			});
