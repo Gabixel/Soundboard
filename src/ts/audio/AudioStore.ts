@@ -19,7 +19,7 @@ class AudioStore extends EventTarget {
 	private _replaceIfMaxedOut: boolean;
 
 	/**
-	 * Can be use to re-use the same audio source (if the limit is 1), or the oldest identical from the list (2 or more).
+	 * Can be used to recycle the same audio source (if the limit is 1), or the oldest identical from the list (2 or more).
 	 */
 	private _recycleCopies: boolean;
 
@@ -156,7 +156,9 @@ class AudioStore extends EventTarget {
 			.on("ended error", () => {
 				if (!this._recycleCopies) {
 					// Remove if ended or if something goes wrong (only when we don't keep the audio)
-					Logger.logDebug("Audio ended at index " + index);
+					Logger.logDebug(
+						`Audio ended at index ${index} (storage limit: ${this._storageLimit})`
+					);
 					this._audioCoupleList[index] = null;
 				}
 
@@ -178,6 +180,9 @@ class AudioStore extends EventTarget {
 			})
 			.on("pause", () => {
 				Logger.logDebug("Audio paused at index " + index);
+				
+				// Trigger storage state change event
+				this.dispatchEvent(new Event("playstatechange"));
 			});
 
 		return couple;
