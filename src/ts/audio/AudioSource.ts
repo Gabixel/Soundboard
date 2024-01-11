@@ -131,13 +131,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public async play(): Promise<void> {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't resume: audio is destroyed");
+			this._outputLogs && Logger.logError("Can't play/resume: audio is destroyed");
 			return;
 		}
 
 		if (!this._betterSrc) {
-			this._outputLogs &&
-				Logger.logDebug("Audio has no src, play has been prevented");
+			this._outputLogs && Logger.logDebug("Can't play/resume: audio has no src");
 
 			return;
 		}
@@ -145,7 +144,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		if (!this._canPlayCurrentSource) {
 			this._outputLogs &&
 				Logger.logDebug(
-					"Audio source is unavailable, unsupported or has been prevented due to an error"
+					"Can't play/resume: audio source is unavailable, unsupported or has been prevented due to an error"
 				);
 
 			return;
@@ -180,28 +179,41 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
-		if (isMilliseconds) {
-			time /= 1000;
+		if (!this._canPlayCurrentSource) {
+			this._outputLogs &&
+				Logger.logDebug(
+					"Can't seekTo: audio source is unavailable, unsupported or has been prevented due to an error"
+				);
+
+			return false;
 		}
 
-		const duration = this._audio.duration;
+		const duration = this._audio.duration * 1000; // 1.500s -> 1500ms
 
-		// TODO: not sure if safeguarding is needed
 		if (isNaN(duration)) {
 			this._outputLogs &&
 				Logger.logError("Can't seek until the audio has loaded metadata");
 			return false;
 		}
 
-		// TODO: here as well
+		// 1500ms - yes
+		// 1.500s - no - this is used by audio
+
+		if (!isMilliseconds) {
+			time *= 1000; // 1.500s -> 1500ms
+			isMilliseconds = true;
+		}
+
+		// Math.round(time);
+
 		if (duration < time) {
 			this._outputLogs &&
 				Logger.logError(
 					"Can't seek to a time greater than the audio duration",
-					"\nAudio duration:",
-					new Date(duration * 1000).toISOString().slice(11, -1),
 					"\n     Seek time:",
-					new Date(time * 1000).toISOString().slice(11, -1)
+					new Date(time).toISOString().slice(11, -1),
+					"\nAudio duration:",
+					new Date(duration).toISOString().slice(11, -1)
 				);
 
 			return false;
@@ -209,12 +221,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._outputLogs &&
 			Logger.logDebug(
-				`Seeking to ${new Date(time * 1000)
-					.toISOString()
-					.slice(11, -1)} (${time}ms)`
+				`Seeking to ${new Date(time).toISOString().slice(11, -1)} (${time}ms)`
 			);
 
-		this._audio.currentTime = time;
+		this._audio.currentTime = isMilliseconds ? time * 0.001 : time;
 
 		return true;
 	}
@@ -228,7 +238,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 		let seeked = this.trySeekingToTimingsStart();
 
 		if (seeked && autoplay) {
-			await this.play();
+			// await this.play();
+			this._audio.load();
 		}
 	}
 
@@ -391,6 +402,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("canplay");
 		});
 
+		// TODO: check if this is needed
 		$(this._audio).on("suspend", () => {
 			this._outputLogs && Logger.logDebug("Audio source suspended");
 
@@ -408,9 +420,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			}
 
 			this._timeUpdateSemaphore.lock();
-
 			let shouldPropagate = await this.onTimeUpdate(e);
-
 			this._timeUpdateSemaphore.unlock();
 
 			if (!shouldPropagate) {
@@ -429,7 +439,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		$(this._audio).on("loadedmetadata", async () => {
 			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
-			// Start the audio right when metadata is loaded.
+			// Start the audio right when metadata loaded.
 			// Buffering is expected in some scenarios.
 			await this.restart();
 
@@ -479,5 +489,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio = null;
 
 		this._audioOutput = null;
+
+		this._canPlayCurrentSource = "";
 	}
 }
