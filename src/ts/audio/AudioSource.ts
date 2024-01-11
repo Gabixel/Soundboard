@@ -290,19 +290,23 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
-	private async onTimeUpdate(
+	private onTimeUpdate(
 		_e: JQuery.TriggeredEvent<
 			HTMLAudioElement,
 			undefined,
 			HTMLAudioElement,
 			HTMLAudioElement
 		>
-	): Promise<boolean> {
+	): boolean {
 		if (!this._audio) {
 			return false;
 		}
 
 		if (!this._audioTimings) {
+			return false;
+		}
+
+		if (this._destroyed) {
 			return false;
 		}
 
@@ -342,7 +346,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				return false;
 		}
 
-		await this.end();
+		this.end();
 		return false;
 	}
 
@@ -415,7 +419,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			if (!this._timeUpdateSemaphore.isLocked) {
 				this._timeUpdateSemaphore.lock();
-				let shouldPropagate = await this.onTimeUpdate(e);
+				let shouldPropagate = this.onTimeUpdate(e);
 				this._timeUpdateSemaphore.unlock();
 
 				if (!shouldPropagate) {
