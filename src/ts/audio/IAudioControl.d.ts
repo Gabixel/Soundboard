@@ -36,7 +36,7 @@ interface IAudioControls {
 	/**
 	 * Forcibly ends the audio (if there's a source file).
 	 */
-	end(): Promise<void>;
+	end(): void;
 
 	/**
 	 * Seeks to a specific timestamp in the audio.

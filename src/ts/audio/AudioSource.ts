@@ -232,7 +232,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 	}
 
-	public async end(): Promise<void> {
+	public end(): void {
 		let needsToEnd = !this._destroyed && !this.ended;
 
 		if (needsToEnd) {
@@ -350,8 +350,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 				);
 
 			if (!this._preserve) {
-				this._outputLogs && Logger.logDebug("Destroying audio source");
-
 				this.destroy();
 			} else {
 				this._canPlayCurrentSource = "";
