@@ -298,7 +298,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			HTMLAudioElement
 		>
 	): boolean {
-		if (!this._audio) {
+		if (this._destroyed) {
 			return false;
 		}
 
@@ -306,7 +306,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
-		if (this._destroyed) {
+		if (!this._audio) {
 			return false;
 		}
 
