@@ -106,7 +106,10 @@ class AudioStore extends EventTarget {
 			// TODO: log
 
 			// If we don't replace, we just return
-			if (!this._replaceIfMaxedOut || this.foundCopyAndRestarted(audioSettings)) {
+			if (
+				!this._replaceIfMaxedOut ||
+				(await this.foundCopyAndRestarted(audioSettings))
+			) {
 				return;
 			}
 
@@ -188,7 +191,9 @@ class AudioStore extends EventTarget {
 		return couple;
 	}
 
-	private foundCopyAndRestarted(audioSettings: AudioSourceSettings): boolean {
+	private async foundCopyAndRestarted(
+		audioSettings: AudioSourceSettings
+	): Promise<boolean> {
 		let couple: AudioCouple = null;
 
 		let coupleIndex = this._audioCoupleList.findIndex(
@@ -208,7 +213,7 @@ class AudioStore extends EventTarget {
 			this._audioCoupleList.push(couple);
 		}
 
-		couple?.restart();
+		await couple?.restart();
 
 		return couple != undefined;
 	}
