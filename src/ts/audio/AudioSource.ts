@@ -354,13 +354,20 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private initAudioEventListeners(): void {
 		$(this._audio).on("error", (e) => {
+			const errorCode = this._audio.error ? this._audio.error.code : "<none>";
+
 			this._outputLogs &&
 				Logger.logError(
 					"Audio source error",
-					"\nOriginal event:\n",
+					`\n'${this._audio.error.message}'`,
+					"\nCode:",
+					errorCode,
+					"\nOriginal event:",
 					e.originalEvent,
-					"\njQuery event:\n",
-					e
+					"\njQuery event:",
+					e,
+					"\nAudio error object:",
+					this._audio.error
 				);
 
 			if (!this._preserve) {
