@@ -238,8 +238,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		let seeked = this.trySeekingToTimingsStart();
 
 		if (seeked && autoplay) {
-			// await this.play();
-			this._audio.load();
+			await this.play();
 		}
 	}
 
