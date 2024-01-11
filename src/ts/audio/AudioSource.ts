@@ -464,6 +464,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 	 * Dispose logic.
 	 */
 	private destroy(): void {
+		if (this._destroyed) {
+			return;
+		}
+
+		this._outputLogs && Logger.logDebug("Disposing audio source");
+
 		this._destroyed = true;
 
 		this.destroyAudioEventListeners();
