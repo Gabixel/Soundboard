@@ -410,7 +410,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		$(this._audio).on("timeupdate", async (e) => {
 			if (this.ended || this.paused) {
-				this._timeUpdateSemaphore.unlock();
 				return;
 			}
 
