@@ -371,7 +371,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			if (this.loop && !args.forced) {
 				this._outputLogs && Logger.logDebug("Restarting...");
 				await this.restart();
-				// Don't treat it as ended since we're starting
+				// Don't treat it as ended since we're restarting
 				return;
 			}
 
@@ -431,7 +431,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		$(this._audio).on("loadedmetadata", async () => {
 			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
 
-			// Start the audio right when meta data is loaded.
+			// Start the audio right when metadata is loaded.
 			// Buffering is expected in some scenarios.
 			await this.restart();
 
