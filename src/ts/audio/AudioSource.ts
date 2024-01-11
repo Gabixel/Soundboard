@@ -415,16 +415,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 				return;
 			}
 
-			if (this._timeUpdateSemaphore.isLocked) {
-				return;
-			}
+			if (!this._timeUpdateSemaphore.isLocked) {
+				this._timeUpdateSemaphore.lock();
+				let shouldPropagate = await this.onTimeUpdate(e);
+				this._timeUpdateSemaphore.unlock();
 
-			this._timeUpdateSemaphore.lock();
-			let shouldPropagate = await this.onTimeUpdate(e);
-			this._timeUpdateSemaphore.unlock();
-
-			if (!shouldPropagate) {
-				return;
+				if (!shouldPropagate) {
+					return;
+				}
 			}
 
 			this.triggerEvent("timeupdate");
