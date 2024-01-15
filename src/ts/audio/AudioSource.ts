@@ -347,7 +347,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private initAudioEventListeners(): void {
 		$(this._audio).on("error", (e) => {
-			const errorCode = this._audio.error ? this._audio.error.code : "<none>";
+			const errorCode = this._audio.error ? this._audio.error.code : 0;
+
+			// TODO: handle per-error issues. See the commented code for an example.
+			// // If there's a network-level error,
+			// // we try to prevent errors in the audio playability.
+			// if (errorCode === this._audio.error.MEDIA_ERR_NETWORK) {
+			//  // ...
+			// 	return;
+			// }
 
 			this._outputLogs &&
 				Logger.logError(
