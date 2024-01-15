@@ -31,3 +31,7 @@ interface File {
 interface NavigatorID {
 	readonly userAgentData: object;
 }
+
+interface MediaError {
+	[key: string]: any;
+}

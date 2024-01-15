@@ -345,9 +345,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	//#region Audio events
 
+	private getAudioErrorName(errorCode: number): string {
+		const keys = Object.keys(Object.getPrototypeOf(this._audio.error)).filter(
+			(key) => key.includes("MEDIA_ERR")
+		);
+
+		return keys.find((key) => this._audio.error[key] === errorCode) ?? "unknown";
+	}
+
 	private initAudioEventListeners(): void {
 		$(this._audio).on("error", (e) => {
 			const errorCode = this._audio.error ? this._audio.error.code : 0;
+
+			const errorName = this.getAudioErrorName(errorCode);
 
 			// TODO: handle per-error issues. See the commented code for an example.
 			// // If there's a network-level error,
@@ -363,6 +373,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 					`\n'${this._audio.error.message}'`,
 					"\nCode:",
 					errorCode,
+					`(${errorName})`,
 					"\nOriginal event:",
 					e.originalEvent,
 					"\njQuery event:",
