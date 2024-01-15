@@ -173,8 +173,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		if (!this._betterSrc) {
-			this._outputLogs &&
-				Logger.logWarn("Can't seekTo: audio has no src");
+			this._outputLogs && Logger.logWarn("Can't seekTo: audio has no src");
 
 			return false;
 		}
