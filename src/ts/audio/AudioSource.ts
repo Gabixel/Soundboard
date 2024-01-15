@@ -247,8 +247,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.seekTo(this._audio.duration, false);
 		}
 
-		// Seeking at the end while the audio is paused
-		// doesn't trigger the `ended` event by itself.
+		// Seeking at the end while the audio is paused doesn't trigger the `ended` event by itself.
 		// We also need to specify that it was forced.
 		$(this._audio).trigger("ended", {
 			forced: true,
