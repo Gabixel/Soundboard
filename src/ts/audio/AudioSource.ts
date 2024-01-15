@@ -51,6 +51,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.volume = volume;
 	}
 
+	public get duration(): float {
+		return this._audio.duration;
+	}
+
+	public get currentTime(): float {
+		return this._audio.currentTime;
+	}
+
 	/**
 	 * Audio timings settings.
 	 */
@@ -137,7 +145,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		if (!this._betterSrc) {
 			this._outputLogs && Logger.logDebug("Can't play/resume: audio has no src");
-
 			return;
 		}
 
@@ -146,7 +153,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 				Logger.logDebug(
 					"Can't play/resume: audio source is unavailable, unsupported or has been prevented due to an error"
 				);
-
 			return;
 		}
 
@@ -174,7 +180,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		if (!this._betterSrc) {
 			this._outputLogs && Logger.logWarn("Can't seekTo: audio has no src");
-
 			return false;
 		}
 
@@ -183,11 +188,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 				Logger.logError(
 					"Can't seekTo: audio source is unavailable, unsupported or has been prevented due to an error"
 				);
-
 			return false;
 		}
 
-		const duration = this._audio.duration * 1000; // 1.500s -> 1500ms
+		const duration = this.duration * 1000; // 1.500s -> 1500ms
 
 		if (isNaN(duration)) {
 			this._outputLogs &&
@@ -229,6 +233,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
+		if (!this._betterSrc) {
+			this._outputLogs && Logger.logDebug("Can't restart: audio has no src");
+			return;
+		}
+
+		if (!this._canPlayCurrentSource) {
+			this._outputLogs &&
+				Logger.logError(
+					"Can't restart: audio source is unavailable, unsupported or has been prevented due to an error"
+				);
+			return;
+		}
+
 		let seeked = this.trySeekingToTimingsStart();
 
 		if (seeked && autoplay) {
@@ -236,15 +253,39 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 	}
 
-	public end(): void {
-		let needsToEnd = !this._destroyed && !this.ended;
-
-		if (needsToEnd) {
-			this.pause();
-			// We seek at the end, so that the provided `ended` variable returns `true`.
-			// We'll reset it to the desired timing later thanks to this.
-			this.seekTo(this._audio.duration, false);
+	public async end(): Promise<void> {
+		if (this._destroyed) {
+			this._outputLogs && Logger.logError("Can't end: audio is destroyed");
+			return;
 		}
+
+		if (!this._betterSrc) {
+			this._outputLogs && Logger.logDebug("Can't end: audio has no src");
+			return;
+		}
+
+		if (!this._canPlayCurrentSource) {
+			this._outputLogs &&
+				Logger.logError(
+					"Can't end: audio source is unavailable, unsupported or has been prevented due to an error"
+				);
+			return;
+		}
+
+		let needsToEnd =
+			!this._destroyed &&
+			!this.ended &&
+			!isNaN(this.duration) &&
+			this.currentTime < this.duration;
+
+		if (!needsToEnd) {
+			return;
+		}
+		
+		// We seek at the end, so that the provided `ended` variable quickly becomes `true`.
+		// We'll reset it to the desired timing later thanks to this.
+		this.seekTo(this._audio.duration, false);
+		this.paused && (await this.play());
 
 		// Seeking at the end while the audio is paused doesn't trigger the `ended` event by itself.
 		// We also need to specify that it was forced.
@@ -283,14 +324,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
-	private onTimeUpdate(
+	private async onTimeUpdate(
 		_e: JQuery.TriggeredEvent<
 			HTMLAudioElement,
 			undefined,
 			HTMLAudioElement,
 			HTMLAudioElement
 		>
-	): boolean {
+	): Promise<boolean> {
 		if (this._destroyed) {
 			return false;
 		}
@@ -339,7 +380,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				return false;
 		}
 
-		this.end();
+		await this.end();
 		return false;
 	}
 
@@ -438,7 +479,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			if (!this._timeUpdateSemaphore.isLocked) {
 				this._timeUpdateSemaphore.lock();
-				let shouldPropagate = this.onTimeUpdate(e);
+				let shouldPropagate = await this.onTimeUpdate(e);
 				this._timeUpdateSemaphore.unlock();
 
 				if (!shouldPropagate) {

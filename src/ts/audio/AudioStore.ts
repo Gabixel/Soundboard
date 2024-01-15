@@ -120,7 +120,7 @@ class AudioStore extends EventTarget {
 			$(replacingCouple).off("ended error canplay");
 
 			// Dispose old couple
-			replacingCouple.end();
+			await replacingCouple.end();
 			replacingCouple = null;
 		}
 
