@@ -24,7 +24,7 @@ interface IAudioControls {
 	changeTrack(src: string): void;
 
 	/**
-	 * Starts the audio (if there's a source file).
+	 * Starts/Resumes the audio (if there's a source file).
 	 */
 	play(): Promise<void>;
 
