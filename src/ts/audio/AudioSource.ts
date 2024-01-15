@@ -388,7 +388,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	private getAudioErrorName(errorCode: number): string {
 		const keys = Object.keys(Object.getPrototypeOf(this._audio.error)).filter(
-			(key) => key.includes("MEDIA_ERR")
+			(key) => key.startsWith("MEDIA_ERR")
 		);
 
 		return keys.find((key) => this._audio.error[key] === errorCode) ?? "unknown";
