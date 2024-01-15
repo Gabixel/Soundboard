@@ -281,7 +281,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		if (!needsToEnd) {
 			return;
 		}
-		
+
 		// We seek at the end, so that the provided `ended` variable quickly becomes `true`.
 		// We'll reset it to the desired timing later thanks to this.
 		this.seekTo(this._audio.duration, false);
@@ -412,7 +412,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				Logger.logError(
 					"Audio source error",
 					`\n'${this._audio.error.message}'`,
-					"\nCode:",
+					"\nError code:",
 					errorCode,
 					`(${errorName})`,
 					"\nOriginal event:",
