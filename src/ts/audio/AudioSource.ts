@@ -196,15 +196,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return false;
 		}
 
-		// 1500ms - yes
-		// 1.500s - no - this is used by audio
-
 		if (!isMilliseconds) {
 			time *= 1000; // 1.500s -> 1500ms
 			isMilliseconds = true;
 		}
-
-		// Math.round(time);
 
 		if (duration < time) {
 			this._outputLogs &&
