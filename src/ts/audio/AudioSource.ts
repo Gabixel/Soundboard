@@ -174,14 +174,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		if (!this._betterSrc) {
 			this._outputLogs &&
-				Logger.logError("Can't seekTo: audio has no src");
+				Logger.logWarn("Can't seekTo: audio has no src");
 
 			return false;
 		}
 
 		if (!this._canPlayCurrentSource) {
 			this._outputLogs &&
-				Logger.logDebug(
+				Logger.logError(
 					"Can't seekTo: audio source is unavailable, unsupported or has been prevented due to an error"
 				);
 
@@ -192,7 +192,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		if (isNaN(duration)) {
 			this._outputLogs &&
-				Logger.logError("Can't seek until the audio has loaded metadata");
+				Logger.logDebug("Can't seek until the audio has loaded metadata");
 			return false;
 		}
 
