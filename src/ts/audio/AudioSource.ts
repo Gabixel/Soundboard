@@ -2,6 +2,9 @@
  * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
  */
 class AudioSource extends EventTarget implements IAudioControls {
+	/**
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+	 */
 	private _audio: HTMLAudioElement;
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _audioOutput: AudioOutput;
