@@ -87,21 +87,21 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this._audio = new Audio();
 
-		// TODO: used to be "metadata" but now it's "none" since
-		// this only seems to be useful during **the page** load.
-		// can probably be removed or stay like this, not sure
+		// TODO: Used to be "metadata" but now it's "none" since
+		// this only seems to be useful during the page **load**.
+		// Can probably be removed, but still not sure.
 		this._audio.preload = "none";
 
 		// We don't want the audio to start playing automatically.
 		// This is because we need to preload the metadata first,
-		// so we're autoplaying it manually
+		// so we're autoplaying it manually after that.
 		this._audio.autoplay = false;
 
 		this._preserve = preserveOnEnd;
 
 		this.loop = audioSettings?.loop ?? false;
 
-		// Prevent audio logic from breaking because of external playback controls
+		// Prevent external playback controls
 		this._audio.disableRemotePlayback = true;
 
 		this._audioOutput = audioOutput;
