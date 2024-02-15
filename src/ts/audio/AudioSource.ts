@@ -397,6 +397,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return keys.find((key) => this._audio.error[key] === errorCode) ?? "unknown";
 	}
 
+	/**
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio#events
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#events
+	 */
 	private initAudioEventListeners(): void {
 		$(this._audio).on("error", (e) => {
 			const errorCode = this._audio.error ? this._audio.error.code : 0;
@@ -413,7 +417,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			this._outputLogs &&
 				Logger.logError(
-					"Audio source error",
+					"Audio error",
 					`\n'${this._audio.error.message}'`,
 					"\nError code:",
 					errorCode,
@@ -435,9 +439,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("error");
 		});
 
+		// Playback has stopped because the end of the media was reached
 		$(this._audio).on("ended", async (_e, args = { forced: false }) => {
 			this._outputLogs &&
-				Logger.logDebug("Audio source ended. Time:", this._audio.currentTime);
+				Logger.logDebug("Audio ended. Time:", this._audio.currentTime);
 
 			if (!this._preserve) {
 				this.destroy();
@@ -453,28 +458,35 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("ended");
 		});
 
+		// Playback has been paused
 		$(this._audio).on("pause", () => {
 			// Don't trigger pause event if the audio has ended
 			if (this.ended) {
 				return;
 			}
 
+			this._outputLogs && Logger.logDebug("Audio paused");
+
 			this.triggerEvent("pause");
 		});
 
+		// The browser can play the media, but estimates that not enough data has been loaded
+		// to play the media up to its end without having to stop for further buffering of content
 		$(this._audio).on("canplay", () => {
-			this._outputLogs && Logger.logDebug("Audio source can play");
+			this._outputLogs && Logger.logDebug("Audio can play");
 
 			this.triggerEvent("canplay");
 		});
 
 		// TODO: check if this is needed
+		// Media data loading has been suspended
 		$(this._audio).on("suspend", () => {
-			this._outputLogs && Logger.logDebug("Audio source suspended");
+			this._outputLogs && Logger.logDebug("Audio suspended");
 
 			this.triggerEvent("suspend");
 		});
 
+		// The time indicated by the `currentTime` attribute has been updated
 		$(this._audio).on("timeupdate", async (e) => {
 			if (this.ended || this.paused) {
 				return;
@@ -493,20 +505,75 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("timeupdate");
 		});
 
+		// The first frame of the media has finished loading
 		$(this._audio).on("loadeddata", () => {
-			this._outputLogs && Logger.logDebug("Audio source loaded data");
+			this._outputLogs && Logger.logDebug("Audio loaded first frame data");
 
 			this.triggerEvent("loadeddata");
 		});
 
+		// The metadata has been loaded
 		$(this._audio).on("loadedmetadata", async () => {
-			this._outputLogs && Logger.logDebug("Audio source loaded metadata");
+			this._outputLogs && Logger.logDebug("Audio loaded metadata");
 
 			// Start the audio right when metadata loaded.
 			// Buffering is expected in some scenarios.
 			await this.restart();
 
 			this.triggerEvent("loadedmetadata");
+		});
+
+		// Fired when the browser has started to load the resource
+		$(this._audio).on("loadstart", () => {
+			this._outputLogs && Logger.logDebug("Audio started loading data");
+		});
+
+		// The user agent is trying to fetch media data, but data is unexpectedly not forthcoming
+		$(this._audio).on("stalled", () => {
+			this._outputLogs &&
+				Logger.logWarn("Audio stalled (but still trying to play)");
+		});
+
+		// The media has become empty; for example,
+		// this event is sent if the media has already been loaded (or partially loaded),
+		// and the `HTMLMediaElement.load` method is called to reload it
+		$(this._audio).on("emptied", () => {
+			this._outputLogs && Logger.logDebug("Audio emptied");
+		});
+
+		// The rendering of an `OfflineAudioContext` is terminated
+		$(this._audio).on("complete", () => {
+			this._outputLogs && Logger.logDebug("Audio rendering completed");
+		});
+
+		// The `duration` attribute has been updated
+		$(this._audio).on("durationchange", () => {
+			this._outputLogs && Logger.logWarn("Audio duration changed");
+		});
+
+		// A seek operation completed
+		$(this._audio).on("seeked", () => {
+			this._outputLogs && Logger.logDebug("Audio successfully seeked");
+		});
+
+		// A seek operation began
+		$(this._audio).on("seeking", () => {
+			this._outputLogs && Logger.logDebug("Audio is seeking");
+		});
+
+		// Playback has stopped because of a temporary lack of data
+		$(this._audio).on("waiting", () => {
+			this._outputLogs && Logger.logWarn("Audio is waiting for more data");
+		});
+
+		// The resource was not fully loaded, but not as the result of an error
+		$(this._audio).on("abort", () => {
+			this._outputLogs && Logger.logWarn("Audio aborted");
+		});
+
+		// Fired periodically as the browser loads a resource
+		$(this._audio).on("progress", () => {
+			this._outputLogs && Logger.logDebug("Audio load progressed");
 		});
 	}
 
