@@ -432,7 +432,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// Playback has stopped because the end of the media was reached
 		$(this._audio).on("ended", async (e, args = { forced: false }) => {
-			eventDebug(e, "Audio ended. Time:", this._audio.currentTime);
+			eventDebug(e, "Audio ended");
 
 			// TODO: revisit destroy logic
 			if (!this._preserve) {
@@ -594,7 +594,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			message: string,
 			...optionalParams: any[]
 		) => {
-			this.logDebug(`["${e.type}" event] ${message}`, ...optionalParams);
+			this.logDebug(`("${e.type}" event) ${message}`, ...optionalParams);
 		};
 
 		const eventWarn = (
@@ -626,6 +626,20 @@ class AudioSource extends EventTarget implements IAudioControls {
 				"loadeddata",
 				"loadedmetadata",
 				"abort",
+				// Non-dispatched/unused ones:
+				"canplaythrough",
+				"loadstart",
+				"stalled",
+				"emptied",
+				"complete",
+				"durationchange",
+				"seeked",
+				"seeking",
+				"waiting",
+				"progress",
+				"play",
+				"playing",
+				"ratechange",
 			].join(" ")
 		);
 	}
@@ -691,11 +705,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	private getAdditionalAudioData(): string {
-		return `Ready state: ${this._audio.readyState} (${this.getAudioReadyState(
-			this._audio.readyState
-		)}) | Network state: ${this._audio.networkState} (${this.getAudioNetworkState(
-			this._audio.networkState
-		)})`;
+		return this._destroyed
+			? "<audio destroyed>"
+			: `Ready state: ${this._audio.readyState} (${this.getAudioReadyState(
+					this._audio.readyState
+			  )}) | Network state: ${
+					this._audio.networkState
+			  } (${this.getAudioNetworkState(
+					this._audio.networkState
+			  )}) | Current time: ${this._audio.currentTime}`;
 	}
 
 	private getAudioErrorName(errorCode: number): string {
