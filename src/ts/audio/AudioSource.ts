@@ -137,7 +137,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		let filename = parts[parts.length - 1];
 
 		this.logDebug(`Changing audio source to "${decodeURIComponent(filename)}"`);
-		
+
 		this._audio.src = src;
 		this._audio.load();
 	}
@@ -564,6 +564,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 		// The resource was not fully loaded, but not as the result of an error
 		$(this._audio).on("abort", () => {
 			this.logWarn("Audio aborted");
+
+			this.triggerEvent("abort");
 		});
 
 		// Fired periodically as the browser loads a resource
@@ -583,6 +585,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				"timeupdate",
 				"loadeddata",
 				"loadedmetadata",
+				"abort",
 			].join(" ")
 		);
 	}

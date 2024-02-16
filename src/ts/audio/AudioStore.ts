@@ -119,8 +119,8 @@ class AudioStore extends EventTarget {
 			// Get oldest couple
 			let replacingCouple = this._audioCoupleList.shift();
 
-			// Remove remove events
-			$(replacingCouple).off("ended error canplay");
+			// Remove events
+			this.unmountCoupleEvents(replacingCouple);
 
 			// Dispose old couple
 			await replacingCouple.end();
@@ -164,12 +164,18 @@ class AudioStore extends EventTarget {
 		}
 
 		$(couple)
-			.on("ended error", () => {
+			.on("ended error abort", (e) => {
 				if (!this._recycleCopies) {
-					// Remove if ended or if something goes wrong (only when we don't keep the audio)
-					Logger.logDebug(
-						`Audio ended at index ${index} (storage limit: ${this._storageLimit})`
-					);
+					const message = `Audio '${e.type}' event at index ${index} (storage: '${this._storageName ?? "[no name]"}', limit: ${this._storageLimit > 0 ? this._storageLimit : "unlimited"}). Removing from list...`;
+					e.type == "ended"
+						? Logger.logDebug(message)
+						: e.type == "error"
+						? Logger.logError(message)
+						: Logger.logWarn(message);
+
+					this.unmountCoupleEvents(this._audioCoupleList[index]);
+
+					// Remove if ended or if something went wrong (only when we don't keep the audio)
 					this._audioCoupleList[index] = null;
 				}
 
@@ -184,10 +190,7 @@ class AudioStore extends EventTarget {
 					this._audioCoupleList.length = 0;
 				}
 			})
-			.on("canplay", () => {
-				this.dispatchEvent(new Event("playstatechange"));
-			})
-			.on("pause", () => {
+			.on("canplay pause suspend", () => {
 				this.dispatchEvent(new Event("playstatechange"));
 			});
 
@@ -246,5 +249,9 @@ class AudioStore extends EventTarget {
 		) => unknown
 	): boolean {
 		return this._audioCoupleList.some(predicate, this);
+	}
+
+	private unmountCoupleEvents(couple: AudioCouple): void {
+		$(couple).off("ended error abort canplay pause suspend");
 	}
 }
