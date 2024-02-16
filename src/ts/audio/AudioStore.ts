@@ -92,7 +92,8 @@ class AudioStore extends EventTarget {
 		if (this._storageLimit == 1 && this._recycleCopies) {
 			const couple = this._audioCoupleList[0];
 
-			// TODO: update more data (e.g. effects & playbackrate, in the future)
+			// FIXME: this logic feels wrong. it's probably better to pass stuff elsewhere
+			// TODO: as per previous TODO, update more data (e.g. effects & playbackrate, in the future)
 			couple.volume = audioSettings.volume;
 			couple.audioTimings = audioSettings.audioTimings;
 
