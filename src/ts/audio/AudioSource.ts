@@ -412,7 +412,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 			// 	return;
 			// }
 
-			this.logError(
+			eventError(
+				e,
 				"Audio error",
 				`\nError: '${this._audio.error.message}'`,
 				`\nError code: ${errorCode} (${errorName})`,
@@ -434,15 +435,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		// Playback has stopped because the end of the media was reached
-		$(this._audio).on("ended", async (_e, args = { forced: false }) => {
-			this.logDebug("Audio ended. Time:", this._audio.currentTime);
+		$(this._audio).on("ended", async (e, args = { forced: false }) => {
+			eventDebug(e, "Audio ended. Time:", this._audio.currentTime);
 
 			if (!this._preserve) {
 				this.destroy();
 			}
 
 			if (this.loop && !args.forced) {
-				this.logDebug("Restarting...");
+				eventDebug(e, "Restarting...");
 				await this.restart();
 				// Don't treat it as ended since we're restarting
 				return;
@@ -452,35 +453,35 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		// Playback has been paused
-		$(this._audio).on("pause", () => {
+		$(this._audio).on("pause", (e) => {
 			// Don't trigger pause event if the audio has ended
 			if (this.ended) {
 				return;
 			}
 
-			this.logDebug("Audio paused");
+			eventDebug(e, "Audio paused");
 
 			this.triggerEvent("pause");
 		});
 
 		// The browser can play the media, but estimates that not enough data has been loaded
 		// to play the media up to its end without having to stop for further buffering of content
-		$(this._audio).on("canplay", () => {
-			this.logDebug("Audio can play (non-buffering not guaranteed)");
+		$(this._audio).on("canplay", (e) => {
+			eventDebug(e, "Audio can play (non-buffering not guaranteed)");
 
 			this.triggerEvent("canplay");
 		});
 
 		// The browser estimates it can play the media up to its end
 		// without stopping for content buffering
-		$(this._audio).on("canplaythrough", () => {
-			this.logDebug("Audio can play through the end (estimated by the browser)");
+		$(this._audio).on("canplaythrough", (e) => {
+			eventDebug(e, "Audio can play through the end (estimated by the browser)");
 		});
 
 		// TODO: check if this is needed
 		// Media data loading has been suspended
-		$(this._audio).on("suspend", () => {
-			this.logDebug("Audio suspended");
+		$(this._audio).on("suspend", (e) => {
+			eventDebug(e, "Audio suspended");
 
 			this.triggerEvent("suspend");
 		});
@@ -505,15 +506,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		// The first frame of the media has finished loading
-		$(this._audio).on("loadeddata", () => {
-			this.logDebug("Audio loaded first frame data");
+		$(this._audio).on("loadeddata", (e) => {
+			eventDebug(e, "Audio loaded first frame data");
 
 			this.triggerEvent("loadeddata");
 		});
 
 		// The metadata has been loaded
-		$(this._audio).on("loadedmetadata", async () => {
-			this.logDebug("Audio loaded metadata");
+		$(this._audio).on("loadedmetadata", async (e) => {
+			eventDebug(e, "Audio loaded metadata");
 
 			// Start the audio right when metadata loaded.
 			// Buffering is expected in some scenarios.
@@ -523,73 +524,97 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		// Fired when the browser has started to load the resource
-		$(this._audio).on("loadstart", () => {
-			this.logDebug("Audio started loading data");
+		$(this._audio).on("loadstart", (e) => {
+			eventDebug(e, "Audio started loading data");
 		});
 
 		// The user agent is trying to fetch media data, but data is unexpectedly not forthcoming
-		$(this._audio).on("stalled", () => {
-			this.logWarn("Audio stalled (but still trying to play)");
+		$(this._audio).on("stalled", (e) => {
+			eventWarn(e, "Audio stalled (but still trying to play)");
 		});
 
 		// The media has become empty; for example,
 		// this event is sent if the media has already been loaded (or partially loaded),
 		// and the `HTMLMediaElement.load` method is called to reload it
-		$(this._audio).on("emptied", () => {
-			this.logDebug("Audio emptied");
+		$(this._audio).on("emptied", (e) => {
+			eventDebug(e, "Audio emptied");
 		});
 
 		// The rendering of an `OfflineAudioContext` is terminated
-		$(this._audio).on("complete", () => {
-			this.logDebug("Audio rendering completed");
+		$(this._audio).on("complete", (e) => {
+			eventDebug(e, "Audio rendering completed");
 		});
 
 		// The `duration` attribute has been updated
-		$(this._audio).on("durationchange", () => {
-			this.logWarn("Audio duration changed");
+		$(this._audio).on("durationchange", (e) => {
+			eventWarn(e, "Audio duration changed");
 		});
 
 		// A seek operation completed
-		$(this._audio).on("seeked", () => {
-			this.logDebug("Audio seeked successfully");
+		$(this._audio).on("seeked", (e) => {
+			eventDebug(e, "Audio seeked successfully");
 		});
 
 		// A seek operation began
-		$(this._audio).on("seeking", () => {
-			this.logDebug("Audio is seeking");
+		$(this._audio).on("seeking", (e) => {
+			eventDebug(e, "Audio is seeking");
 		});
 
 		// Playback has stopped because of a temporary lack of data
-		$(this._audio).on("waiting", () => {
-			this.logWarn("Audio is waiting for more data");
+		$(this._audio).on("waiting", (e) => {
+			eventWarn(e, "Audio is waiting for more data");
 		});
 
 		// The resource was not fully loaded, but not as the result of an error
-		$(this._audio).on("abort", () => {
-			this.logWarn("Audio aborted");
+		$(this._audio).on("abort", (e) => {
+			eventWarn(e, "Audio aborted");
 
 			this.triggerEvent("abort");
 		});
 
 		// Fired periodically as the browser loads a resource
-		$(this._audio).on("progress", () => {
-			this.logDebug("Audio load progressed");
+		$(this._audio).on("progress", (e) => {
+			eventDebug(e, "Audio load progressed");
 		});
 
 		// Playback has begun
-		$(this._audio).on("play", () => {
-			this.logDebug("Audio play");
+		$(this._audio).on("play", (e) => {
+			eventDebug(e, "Audio play");
 		});
 
 		// Playback is ready to start after having been paused or delayed due to lack of data
-		$(this._audio).on("playing", () => {
-			this.logDebug("Audio playing");
+		$(this._audio).on("playing", (e) => {
+			eventDebug(e, "Audio playing");
 		});
 
 		// The playback rate has changed
-		$(this._audio).on("ratechange", () => {
-			this.logDebug("Audio playback rate changed");
+		$(this._audio).on("ratechange", (e) => {
+			eventDebug(e, "Audio playback rate changed");
 		});
+
+		const eventDebug = (
+			e: JQuery.Event,
+			message: string,
+			...optionalParams: any[]
+		) => {
+			this.logDebug(`["${e.type}" event] ${message}`, ...optionalParams);
+		};
+
+		const eventWarn = (
+			e: JQuery.Event,
+			message: string,
+			...optionalParams: any[]
+		) => {
+			this.logWarn(`["${e.type}" event] ${message}`, ...optionalParams);
+		};
+
+		const eventError = (
+			e: JQuery.Event,
+			message: string,
+			...optionalParams: any[]
+		) => {
+			this.logError(`["${e.type}" event] ${message}`, ...optionalParams);
+		};
 	}
 
 	private destroyAudioEventListeners(): void {
