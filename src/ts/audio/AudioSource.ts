@@ -267,7 +267,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		if (!this._canPlayCurrentSource) {
-			this.logError(
+			this.logWarn(
 				"Can't end: audio source is unavailable, unsupported or has been prevented due to an error"
 			);
 			return;
