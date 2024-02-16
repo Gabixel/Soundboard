@@ -132,7 +132,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		let parts = this._betterSrc.split("\\");
 		let filename = parts[parts.length - 1];
-
 		this.logDebug(`Changing audio source to "${decodeURIComponent(filename)}"`);
 
 		this._audio.src = src;
@@ -282,10 +281,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		let needsToEnd =
-			!this._destroyed &&
-			!this.ended &&
-			!isNaN(this.duration) &&
-			this.currentTime < this.duration;
+			!this.ended && !isNaN(this.duration) && this.currentTime < this.duration;
 
 		if (!needsToEnd) {
 			return;
@@ -438,12 +434,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 		$(this._audio).on("ended", async (e, args = { forced: false }) => {
 			eventDebug(e, "Audio ended. Time:", this._audio.currentTime);
 
+			// TODO: revisit destroy logic
 			if (!this._preserve) {
 				this.destroy();
 			}
 
 			if (this.loop && !args.forced) {
-				eventDebug(e, "Restarting...");
+				eventDebug(e, "Restarting loop...");
 				await this.restart();
 				// Don't treat it as ended since we're restarting
 				return;
