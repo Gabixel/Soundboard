@@ -173,7 +173,6 @@ class AudioStore extends EventTarget {
 					this._audioCoupleList[index] = null;
 				}
 
-				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 
 				// Clear array if it's all null
@@ -186,11 +185,9 @@ class AudioStore extends EventTarget {
 				}
 			})
 			.on("canplay", () => {
-				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			})
 			.on("pause", () => {
-				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			});
 
