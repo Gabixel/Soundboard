@@ -54,12 +54,31 @@ abstract class Logger {
 	}
 
 	/**
+	 * Checks if the provided object matches the expected structure
+	 * for manual callers (i.e. it only contains a "function" and/or a "class" key).
+	 * @param obj The object to check.
+	 * @returns `true` if the object matches the expected structure, `false` otherwise.
+	 * @see {@link getManualCallers}
+	 */
+	public static isObjectForManualCallers(obj?: object): boolean {
+		let objKeys = Object.keys(obj ?? {});
+
+		return (
+			obj != undefined &&
+			typeof obj === "object" &&
+			objKeys.length > 0 &&
+			objKeys.length <= 2 &&
+			objKeys.every((key) => key == "class" || key == "function")
+		);
+	}
+
+	/**
 	 * Extracts the caller class and function from the last argument, if it matches the expected structure.
 	 * The expected structure is an object containing at least one of these two property names: "class" and "function".
 	 * If the last argument matches this structure, it is removed from the `args` array and its "class" and "function" properties are returned.
 	 * If the last argument does not match this structure, undefined values are returned for both the "class" and the "function".
 	 *
-	 * @param args - The array of arguments from which to extract the caller class and function.
+	 * @param args The array of arguments from which to extract the caller class and function.
 	 * @returns An object with two properties:
 	 * - `manualCallerClass` ({@link Class}): The extracted caller class, or undefined if the last argument did not match the expected structure.
 	 * - `manualCallerFunction` ({@link AnyFunc}): The extracted caller function, or undefined if the last argument did not match the expected structure.
@@ -71,16 +90,9 @@ abstract class Logger {
 		let manualCallerClass, manualCallerFunction;
 
 		let lastArg = args.slice(-1)?.[0];
-		let lastArgKeys = Object.keys(lastArg ?? {});
 
 		// Check for the expected structure
-		if (
-			lastArg != undefined &&
-			typeof lastArg === "object" &&
-			lastArgKeys.length > 0 &&
-			lastArgKeys.length <= 2 &&
-			lastArgKeys.every((key) => key == "class" || key == "function")
-		) {
+		if (Logger.isObjectForManualCallers(lastArg)) {
 			args.splice(-1);
 
 			manualCallerClass = lastArg.class;
@@ -122,6 +134,7 @@ abstract class Logger {
 
 		let callerClass, callerFunction, callerFile;
 
+		// TODO: give priority to manual caller names
 		if (match) {
 			const [, caller, filePath] = match;
 			const dotIndex = caller.indexOf(".");

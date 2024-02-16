@@ -413,10 +413,8 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 			this.logError(
 				"Audio error",
-				`\n'${this._audio.error.message}'`,
-				"\nError code:",
-				errorCode,
-				`(${errorName})`,
+				`\nError: '${this._audio.error.message}'`,
+				`\nError code: ${errorCode} (${errorName})`,
 				"\nOriginal event:",
 				e.originalEvent,
 				"\njQuery event:",
@@ -631,9 +629,24 @@ class AudioSource extends EventTarget implements IAudioControls {
 		message: string,
 		...optionalParams: any[]
 	): [string, ...any] {
+		const additionalAudioData = "\nAudio data: " + this.getAdditionalAudioData();
+
+		// We add the audio data before the last optional element if it's used for logger magic
+		if (optionalParams.length > 0) {
+			const lastParamIndex = optionalParams.length - 1;
+			const lastParam = optionalParams[lastParamIndex];
+
+			if (Logger.isObjectForManualCallers(lastParam)) {
+				optionalParams.splice(lastParamIndex, 0, additionalAudioData);
+			} else {
+				optionalParams.push(additionalAudioData + "\n");
+			}
+		} else {
+			optionalParams = [additionalAudioData];
+		}
+
 		return [
 			`${this._logsPrefix ? this._logsPrefix + " " : ""}${message}`,
-			"\n" + this.getAdditionalAudioData(),
 			...optionalParams,
 		];
 	}
