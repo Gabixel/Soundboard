@@ -304,7 +304,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public get ended(): boolean {
-		return this._destroyed || this._audio.ended;
+		return this._destroyed || this._audio.ended || this._betterSrc === undefined;
 	}
 
 	/**
@@ -376,7 +376,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 				if (remainingTime < end) {
 					return true;
 				}
-
 			default:
 				return false;
 		}
