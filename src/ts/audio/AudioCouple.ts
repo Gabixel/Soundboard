@@ -88,7 +88,8 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		let seeked = false;
 
 		seeked = this._couple.main.seekTo(time, isMilliseconds);
-		seeked = this._couple.playback.seekTo(time, isMilliseconds) == seeked && seeked;
+		seeked =
+			this._couple.playback.seekTo(time, isMilliseconds) == seeked && seeked;
 
 		return seeked;
 	}
