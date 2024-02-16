@@ -1,5 +1,6 @@
 /**
- * The actual audio, containing a {@link HTMLAudioElement} connected to an {@link AudioContext}.
+ * The actual audio, which contains an {@link HTMLAudioElement} linked to
+ * an {@link AudioContext}, along with {@link AudioTimings} (and more to come).
  */
 class AudioSource extends EventTarget implements IAudioControls {
 	/**
