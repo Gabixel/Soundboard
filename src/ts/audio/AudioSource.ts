@@ -280,17 +280,16 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		let needsToEnd =
-			!this.ended && !isNaN(this.duration) && this.currentTime < this.duration;
+		let needsToForceEnd =
+			!this.ended && // ended also checks if the src is undefined
+			!isNaN(this.duration) &&
+			this.currentTime < this.duration;
 
-		if (!needsToEnd) {
+		if (!needsToForceEnd) {
 			return;
 		}
 
-		// We seek at the end, so that the provided `ended` variable quickly becomes `true`.
-		// We'll reset it to the desired timing later thanks to this.
-		this.seekTo(this._audio.duration, false);
-		this.paused && (await this.play());
+		this.clearAudioSrc();
 
 		// Seeking at the end while the audio is paused doesn't trigger the `ended` event by itself.
 		// We also need to specify that it was forced.
