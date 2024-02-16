@@ -701,15 +701,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	private getAudioErrorName(errorCode: number): string {
-		const keys = Object.keys(Object.getPrototypeOf(this._audio.error)).filter(
-			(key) => key.startsWith("MEDIA_ERR")
-		);
+		const proto = Object.getPrototypeOf(this._audio.error);
 
-		return (
-			keys.find(
-				(key) => Object.getPrototypeOf(this._audio.error)[key] === errorCode
-			) ?? "unknown"
-		);
+		const keys = Object.keys(proto).filter((key) => key.startsWith("MEDIA_ERR"));
+
+		return keys.find((key) => proto[key] === errorCode) ?? "unknown";
 	}
 
 	/**
