@@ -292,8 +292,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		this.clearAudioSrc();
 
-		// Seeking at the end while the audio is paused doesn't trigger the `ended` event by itself.
-		// We also need to specify that it was forced.
+		// Clearing the src won't fire the ended event by itself,
+		// so we need to trigger it manually.
+		// This also allows us to include a flag to indicate that
+		// the end was forced, to prevent some logic (like looping) from firing.
 		$(this._audio).trigger("ended", {
 			forced: true,
 		});
@@ -564,6 +566,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// The resource was not fully loaded, but not as the result of an error
 		$(this._audio).on("abort", (e) => {
+			// An abort event is inevitable when the source is emptied and the audio was not finished
+			if (!this._betterSrc) {
+				return;
+			}
+
 			eventWarn(e, "Audio aborted");
 
 			this.triggerEvent("abort");
