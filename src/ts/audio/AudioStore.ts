@@ -3,6 +3,7 @@
  */
 class AudioStore extends EventTarget {
 	private _storageLimit: number;
+	private _storageName: string = "";
 	private _audioCoupleList: AudioCouple[] = [];
 
 	private _output: {
@@ -41,11 +42,13 @@ class AudioStore extends EventTarget {
 			 *  This removes the `replaceIfMaxedOut` option if enabled.
 			 */
 			recycleIfSingle?: boolean;
-		}
+		},
+		storageName: string = ""
 	) {
 		super();
 
 		this._storageLimit = storageLimit;
+		this._storageName = storageName;
 
 		this._recycleCopies = options?.recycleIfSingle ?? storageLimit == 1;
 
@@ -146,12 +149,10 @@ class AudioStore extends EventTarget {
 			this._output.playback,
 			audioSettings,
 			this._recycleCopies,
-			// Prefix with index (if parallel)
-			`[${this._storageLimit == 1 ? "Primary" : "Parallel"} Audio List` +
-				(this._storageLimit == 1
-					? ""
-					: ` (index: ${index ?? this._audioCoupleList.length})`) +
-				"]"
+			// Prefix with index
+			`[${this._storageName} Audio Store (index: ${
+				index ?? this._audioCoupleList.length
+			})]`
 		);
 
 		// TODO: better explain
@@ -189,8 +190,6 @@ class AudioStore extends EventTarget {
 				this.dispatchEvent(new Event("playstatechange"));
 			})
 			.on("pause", () => {
-				Logger.logDebug("Audio paused at index " + index);
-
 				// Trigger storage state change event
 				this.dispatchEvent(new Event("playstatechange"));
 			});
