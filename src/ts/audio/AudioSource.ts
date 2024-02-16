@@ -473,6 +473,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 			this.triggerEvent("canplay");
 		});
 
+		// The browser estimates it can play the media up to its end
+		// without stopping for content buffering
+		$(this._audio).on("canplaythrough", () => {
+			this.logDebug("Audio can play through the end (estimated by the browser)");
+		});
+
 		// TODO: check if this is needed
 		// Media data loading has been suspended
 		$(this._audio).on("suspend", () => {
