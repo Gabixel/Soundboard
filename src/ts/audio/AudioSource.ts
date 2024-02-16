@@ -393,6 +393,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	//#region Audio events
+
 	/**
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio#events
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#events
@@ -550,7 +551,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// A seek operation completed
 		$(this._audio).on("seeked", () => {
-			this.logDebug("Audio successfully seeked");
+			this.logDebug("Audio seeked successfully");
 		});
 
 		// A seek operation began
@@ -573,6 +574,21 @@ class AudioSource extends EventTarget implements IAudioControls {
 		// Fired periodically as the browser loads a resource
 		$(this._audio).on("progress", () => {
 			this.logDebug("Audio load progressed");
+		});
+
+		// Playback has begun
+		$(this._audio).on("play", () => {
+			this.logDebug("Audio play");
+		});
+
+		// Playback is ready to start after having been paused or delayed due to lack of data
+		$(this._audio).on("playing", () => {
+			this.logDebug("Audio playing");
+		});
+
+		// The playback rate has changed
+		$(this._audio).on("ratechange", () => {
+			this.logDebug("Audio playback rate changed");
 		});
 	}
 
@@ -671,6 +687,9 @@ class AudioSource extends EventTarget implements IAudioControls {
 		);
 	}
 
+	/**
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
+	 */
 	private getAudioReadyState(readyState: number): string {
 		const proto = Object.getPrototypeOf(HTMLAudioElement);
 
@@ -679,6 +698,9 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return keys.find((key) => proto[key] === readyState) ?? "unknown";
 	}
 
+	/**
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/networkState
+	 */
 	private getAudioNetworkState(networkState: number): string {
 		const proto = Object.getPrototypeOf(HTMLAudioElement);
 
