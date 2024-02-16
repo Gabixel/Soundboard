@@ -146,9 +146,15 @@ class AudioStore extends EventTarget {
 			this._output.playback,
 			audioSettings,
 			this._recycleCopies,
-			`[${this._storageLimit == 1 ? "Primary" : "Parallel"} Audio List]`
+			// Prefix with index (if parallel)
+			`[${this._storageLimit == 1 ? "Primary" : "Parallel"} Audio List` +
+				(this._storageLimit == 1
+					? ""
+					: ` (index: ${index ?? this._audioCoupleList.length})`) +
+				"]"
 		);
 
+		// TODO: better explain
 		// Store new index
 		if (!index) {
 			index = this._audioCoupleList.push(couple) - 1;
