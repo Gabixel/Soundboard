@@ -15,7 +15,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	/**
 	 * If we want to preserve this source on end (for re-use).
-	 * Else, {@link _destroyed} gets used.
+	 * Else, {@link _destroyed} is used.
 	 *
 	 * **Note**: {@link AudioSource.loop `loop`} is ignored if this is `false`.
 	 */
@@ -62,9 +62,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 		return this._audio.currentTime;
 	}
 
-	/**
-	 * Audio timings settings.
-	 */
 	private _audioTimings: AudioTimings;
 	public get audioTimings(): AudioTimings {
 		return this._audioTimings;
@@ -604,7 +601,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		this.logDebug("Disposing audio source");
+		this.logDebug("Disposing audio source...");
 
 		this._destroyed = true;
 
