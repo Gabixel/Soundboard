@@ -299,15 +299,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public get playing(): boolean {
-		return !this._destroyed && !this._audio.paused && !this._audio.ended;
+		return !this._audio.paused && !this._audio.ended && !this._destroyed;
 	}
 
 	public get paused(): boolean {
-		return !this._destroyed && this._audio.paused;
+		return this._audio.paused && !this._destroyed;
 	}
 
 	public get ended(): boolean {
-		return this._destroyed || this._audio.ended || this._betterSrc === undefined;
+		return this._audio.ended || this._betterSrc === undefined || this._destroyed;
 	}
 
 	/**
