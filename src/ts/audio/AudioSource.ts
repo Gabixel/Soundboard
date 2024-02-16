@@ -176,7 +176,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.pause();
 	}
 
-	public seekTo(time: number, isMilliseconds: boolean = true): boolean {
+	/**
+	 * @inheritDoc
+	 */
+	public seekTo(seekTime: number, isMilliseconds: boolean = true): boolean {
 		if (this._destroyed) {
 			this.logError("Can't seekTo: audio is destroyed");
 			return false;
@@ -202,15 +205,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		if (!isMilliseconds) {
-			time *= 1000; // 1.500s -> 1500ms
+			seekTime *= 1000; // 1.500s -> 1500ms
 			isMilliseconds = true;
 		}
 
-		if (duration < time) {
+		if (duration < seekTime) {
 			this.logError(
 				"Can't seek to a time greater than the audio duration",
 				"\n     Seek time:",
-				new Date(time).toISOString().slice(11, -1),
+				new Date(seekTime).toISOString().slice(11, -1),
 				"\nAudio duration:",
 				new Date(duration).toISOString().slice(11, -1)
 			);
@@ -219,10 +222,10 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		this.logDebug(
-			`Seeking to ${new Date(time).toISOString().slice(11, -1)} (${time}ms)`
+			`Seeking to ${new Date(seekTime).toISOString().slice(11, -1)} (${seekTime}ms)`
 		);
 
-		this._audio.currentTime = isMilliseconds ? time * 0.001 : time;
+		this._audio.currentTime = isMilliseconds ? seekTime * 0.001 : seekTime;
 
 		return true;
 	}
