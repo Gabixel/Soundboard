@@ -282,21 +282,15 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		let needsToForceEnd =
-			!this.ended && // ended also checks if the src is undefined
-			!isNaN(this.duration) &&
-			this.currentTime < this.duration;
+			!this.ended && !isNaN(this.duration) && this.currentTime < this.duration;
 
 		if (!needsToForceEnd) {
 			return;
 		}
 
+		// Clearing the src won't trigger the "ended" event,
+		// but it's okay since an "abort" event is called instead.
 		this.clearAudioSrc();
-
-		// Seeking at the end while the audio is paused doesn't trigger the `ended` event by itself.
-		// We also need to specify that it was forced.
-		$(this._audio).trigger("ended", {
-			forced: true,
-		});
 	}
 
 	public get playing(): boolean {
@@ -431,7 +425,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		});
 
 		// Playback has stopped because the end of the media was reached
-		$(this._audio).on("ended", async (e, args = { forced: false }) => {
+		$(this._audio).on("ended", async (e) => {
 			eventDebug(e, "Audio ended");
 
 			// TODO: revisit destroy logic
@@ -439,7 +433,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				this.destroy();
 			}
 
-			if (this.loop && !args.forced) {
+			if (this.loop) {
 				eventDebug(e, "Restarting loop...");
 				await this.restart();
 				// Don't treat it as ended since we're restarting
