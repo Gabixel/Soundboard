@@ -678,6 +678,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			const lastParam = optionalParams[lastParamIndex];
 
 			if (Logger.isObjectForManualCallers(lastParam)) {
+				// This logic adds the audio data before the last object
 				optionalParams.splice(lastParamIndex, 0, additionalAudioData);
 			} else {
 				optionalParams.push(additionalAudioData + "\n");

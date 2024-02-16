@@ -16,8 +16,7 @@ interface IAudioControls {
 
 	volume: float;
 
-	// TODO:
-	// playbackRate: number;
+	// TODO: playbackRate: number;
 
 	// TODO: effects
 
