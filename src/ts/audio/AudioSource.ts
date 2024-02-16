@@ -176,6 +176,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.pause();
 	}
 
+	private clearAudioSrc(): void {
+		this._betterSrc = undefined;
+		this._audio.removeAttribute("src");
+		this._audio.load();
+	}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -222,7 +228,9 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		this.logDebug(
-			`Seeking to ${new Date(seekTime).toISOString().slice(11, -1)} (${seekTime}ms)`
+			`Seeking to ${new Date(seekTime)
+				.toISOString()
+				.slice(11, -1)} (${seekTime}ms)`
 		);
 
 		this._audio.currentTime = isMilliseconds ? seekTime * 0.001 : seekTime;
@@ -385,15 +393,6 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	//#region Audio events
-
-	private getAudioErrorName(errorCode: number): string {
-		const keys = Object.keys(Object.getPrototypeOf(this._audio.error)).filter(
-			(key) => key.startsWith("MEDIA_ERR")
-		);
-
-		return keys.find((key) => this._audio.error[key] === errorCode) ?? "unknown";
-	}
-
 	/**
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio#events
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement#events
@@ -626,15 +625,66 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._canPlayCurrentSource = "";
 	}
 
+	//#region Logger improvements
+
+	private getLogData(
+		message: string,
+		...optionalParams: any[]
+	): [string, ...any] {
+		return [
+			`${this._logsPrefix ? this._logsPrefix + " " : ""}${message}`,
+			"\n" + this.getAdditionalAudioData(),
+			...optionalParams,
+		];
+	}
+
+	private getAdditionalAudioData(): string {
+		return `Ready state: ${this._audio.readyState} (${this.getAudioReadyState(
+			this._audio.readyState
+		)}) | Network state: ${this._audio.networkState} (${this.getAudioNetworkState(
+			this._audio.networkState
+		)})`;
+	}
+
+	private getAudioErrorName(errorCode: number): string {
+		const keys = Object.keys(Object.getPrototypeOf(this._audio.error)).filter(
+			(key) => key.startsWith("MEDIA_ERR")
+		);
+
+		return (
+			keys.find(
+				(key) => Object.getPrototypeOf(this._audio.error)[key] === errorCode
+			) ?? "unknown"
+		);
+	}
+
+	private getAudioReadyState(readyState: number): string {
+		const proto = Object.getPrototypeOf(HTMLAudioElement);
+
+		const keys = Object.keys(proto).filter((key) => key.startsWith("HAVE_"));
+
+		return keys.find((key) => proto[key] === readyState) ?? "unknown";
+	}
+
+	private getAudioNetworkState(networkState: number): string {
+		const proto = Object.getPrototypeOf(HTMLAudioElement);
+
+		const keys = Object.keys(proto).filter((key) => key.startsWith("NETWORK_"));
+
+		return keys.find((key) => proto[key] === networkState) ?? "unknown";
+	}
+
 	private logDebug(message: string, ...optionalParams: any[]): void {
-		Logger.logDebug(`${this._logsPrefix} ${message}`, ...optionalParams);
+		Logger.logDebug(...this.getLogData(message, ...optionalParams));
 	}
 
 	private logWarn(message: string, ...optionalParams: any[]): void {
-		Logger.logWarn(`${this._logsPrefix} ${message}`, ...optionalParams);
+		Logger.logWarn(...this.getLogData(message, ...optionalParams));
 	}
 
 	private logError(message: string, ...optionalParams: any[]): void {
-		Logger.logError(`${this._logsPrefix} ${message}`, ...optionalParams);
+		Logger.logError(...this.getLogData(message, ...optionalParams));
 	}
+
+	//#endregion Logger improvements
 }
