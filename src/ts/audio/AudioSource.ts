@@ -133,6 +133,11 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
+		let parts = this._betterSrc.split("\\");
+		let filename = parts[parts.length - 1];
+
+		this.logDebug(`Changing audio source to "${decodeURIComponent(filename)}"`);
+		
 		this._audio.src = src;
 		this._audio.load();
 	}
