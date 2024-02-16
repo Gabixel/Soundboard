@@ -42,17 +42,23 @@ class AudioCouple extends EventTarget implements IAudioControls {
 		mainOutput: AudioOutput,
 		playbackOutput: AudioOutput,
 		audioSettings?: AudioSourceSettings,
-		preserveOnEnd?: boolean
+		preserveOnEnd?: boolean,
+		logsPrefix: string = ""
 	) {
 		super();
 
 		this._couple = {
-			main: new AudioSource(mainOutput, audioSettings, preserveOnEnd),
+			main: new AudioSource(
+				mainOutput,
+				audioSettings,
+				preserveOnEnd,
+				`${logsPrefix} [♪ Main]`
+			),
 			playback: new AudioSource(
 				playbackOutput,
 				audioSettings,
 				preserveOnEnd,
-				false
+				`${logsPrefix} [♪ Playback]`
 			),
 		};
 

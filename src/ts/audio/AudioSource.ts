@@ -9,7 +9,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	private _sourceNode: MediaElementAudioSourceNode;
 	private _audioOutput: AudioOutput;
 
-	private _outputLogs: boolean;
+	private _logsPrefix: string = "";
 
 	private _timeUpdateSemaphore = new Semaphore();
 
@@ -72,18 +72,18 @@ class AudioSource extends EventTarget implements IAudioControls {
 	public set audioTimings(audioTimings: AudioTimings) {
 		this._audioTimings = audioTimings;
 
-		this._outputLogs && Logger.logDebug("Audio timings set to", audioTimings);
+		this.logDebug("Audio timings set to", audioTimings);
 	}
 
 	constructor(
 		audioOutput: AudioOutput,
 		audioSettings?: AudioSourceSettings,
 		preserveOnEnd?: boolean,
-		outputLogs: boolean = true
+		logsPrefix: string = ""
 	) {
 		super();
 
-		this._outputLogs = outputLogs;
+		this._logsPrefix = logsPrefix;
 
 		this._audio = new Audio();
 
@@ -118,7 +118,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public changeTrack(src?: string): void {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't changeTrack: audio is destroyed");
+			this.logError("Can't changeTrack: audio is destroyed");
 			return;
 		}
 
@@ -129,7 +129,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._betterSrc = src ?? undefined;
 
 		if (!this._betterSrc) {
-			this._outputLogs && Logger.logDebug("Invalid/Empty audio source");
+			this.logDebug("Invalid/Empty audio source");
 			return;
 		}
 
@@ -142,20 +142,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public async play(): Promise<void> {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't play/resume: audio is destroyed");
+			this.logError("Can't play/resume: audio is destroyed");
 			return;
 		}
 
 		if (!this._betterSrc) {
-			this._outputLogs && Logger.logDebug("Can't play/resume: audio has no src");
+			this.logDebug("Can't play/resume: audio has no src");
 			return;
 		}
 
 		if (!this._canPlayCurrentSource) {
-			this._outputLogs &&
-				Logger.logDebug(
-					"Can't play/resume: audio source is unavailable, unsupported or has been prevented due to an error"
-				);
+			this.logDebug(
+				"Can't play/resume: audio source is unavailable, unsupported or has been prevented due to an error"
+			);
 			return;
 		}
 
@@ -168,7 +167,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public pause(): void {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't pause: audio is destroyed");
+			this.logError("Can't pause: audio is destroyed");
 			return;
 		}
 
@@ -177,28 +176,26 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public seekTo(time: number, isMilliseconds: boolean = true): boolean {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't seekTo: audio is destroyed");
+			this.logError("Can't seekTo: audio is destroyed");
 			return false;
 		}
 
 		if (!this._betterSrc) {
-			this._outputLogs && Logger.logWarn("Can't seekTo: audio has no src");
+			this.logWarn("Can't seekTo: audio has no src");
 			return false;
 		}
 
 		if (!this._canPlayCurrentSource) {
-			this._outputLogs &&
-				Logger.logError(
-					"Can't seekTo: audio source is unavailable, unsupported or has been prevented due to an error"
-				);
+			this.logError(
+				"Can't seekTo: audio source is unavailable, unsupported or has been prevented due to an error"
+			);
 			return false;
 		}
 
 		const duration = this.duration * 1000; // 1.500s -> 1500ms
 
 		if (isNaN(duration)) {
-			this._outputLogs &&
-				Logger.logDebug("Can't seek until the audio has loaded metadata");
+			this.logDebug("Can't seek until the audio has loaded metadata");
 			return false;
 		}
 
@@ -208,22 +205,20 @@ class AudioSource extends EventTarget implements IAudioControls {
 		}
 
 		if (duration < time) {
-			this._outputLogs &&
-				Logger.logError(
-					"Can't seek to a time greater than the audio duration",
-					"\n     Seek time:",
-					new Date(time).toISOString().slice(11, -1),
-					"\nAudio duration:",
-					new Date(duration).toISOString().slice(11, -1)
-				);
+			this.logError(
+				"Can't seek to a time greater than the audio duration",
+				"\n     Seek time:",
+				new Date(time).toISOString().slice(11, -1),
+				"\nAudio duration:",
+				new Date(duration).toISOString().slice(11, -1)
+			);
 
 			return false;
 		}
 
-		this._outputLogs &&
-			Logger.logDebug(
-				`Seeking to ${new Date(time).toISOString().slice(11, -1)} (${time}ms)`
-			);
+		this.logDebug(
+			`Seeking to ${new Date(time).toISOString().slice(11, -1)} (${time}ms)`
+		);
 
 		this._audio.currentTime = isMilliseconds ? time * 0.001 : time;
 
@@ -232,20 +227,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public async restart(autoplay = true): Promise<void> {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't restart: audio is destroyed");
+			this.logError("Can't restart: audio is destroyed");
 			return;
 		}
 
 		if (!this._betterSrc) {
-			this._outputLogs && Logger.logDebug("Can't restart: audio has no src");
+			this.logDebug("Can't restart: audio has no src");
 			return;
 		}
 
 		if (!this._canPlayCurrentSource) {
-			this._outputLogs &&
-				Logger.logError(
-					"Can't restart: audio source is unavailable, unsupported or has been prevented due to an error"
-				);
+			this.logError(
+				"Can't restart: audio source is unavailable, unsupported or has been prevented due to an error"
+			);
 			return;
 		}
 
@@ -258,20 +252,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 	public async end(): Promise<void> {
 		if (this._destroyed) {
-			this._outputLogs && Logger.logError("Can't end: audio is destroyed");
+			this.logError("Can't end: audio is destroyed");
 			return;
 		}
 
 		if (!this._betterSrc) {
-			this._outputLogs && Logger.logDebug("Can't end: audio has no src");
+			this.logDebug("Can't end: audio has no src");
 			return;
 		}
 
 		if (!this._canPlayCurrentSource) {
-			this._outputLogs &&
-				Logger.logError(
-					"Can't end: audio source is unavailable, unsupported or has been prevented due to an error"
-				);
+			this.logError(
+				"Can't end: audio source is unavailable, unsupported or has been prevented due to an error"
+			);
 			return;
 		}
 
@@ -415,20 +408,19 @@ class AudioSource extends EventTarget implements IAudioControls {
 			// 	return;
 			// }
 
-			this._outputLogs &&
-				Logger.logError(
-					"Audio error",
-					`\n'${this._audio.error.message}'`,
-					"\nError code:",
-					errorCode,
-					`(${errorName})`,
-					"\nOriginal event:",
-					e.originalEvent,
-					"\njQuery event:",
-					e,
-					"\nAudio error object:",
-					this._audio.error
-				);
+			this.logError(
+				"Audio error",
+				`\n'${this._audio.error.message}'`,
+				"\nError code:",
+				errorCode,
+				`(${errorName})`,
+				"\nOriginal event:",
+				e.originalEvent,
+				"\njQuery event:",
+				e,
+				"\nAudio error object:",
+				this._audio.error
+			);
 
 			if (!this._preserve) {
 				this.destroy();
@@ -441,15 +433,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// Playback has stopped because the end of the media was reached
 		$(this._audio).on("ended", async (_e, args = { forced: false }) => {
-			this._outputLogs &&
-				Logger.logDebug("Audio ended. Time:", this._audio.currentTime);
+			this.logDebug("Audio ended. Time:", this._audio.currentTime);
 
 			if (!this._preserve) {
 				this.destroy();
 			}
 
 			if (this.loop && !args.forced) {
-				this._outputLogs && Logger.logDebug("Restarting...");
+				this.logDebug("Restarting...");
 				await this.restart();
 				// Don't treat it as ended since we're restarting
 				return;
@@ -465,7 +456,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				return;
 			}
 
-			this._outputLogs && Logger.logDebug("Audio paused");
+			this.logDebug("Audio paused");
 
 			this.triggerEvent("pause");
 		});
@@ -473,7 +464,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		// The browser can play the media, but estimates that not enough data has been loaded
 		// to play the media up to its end without having to stop for further buffering of content
 		$(this._audio).on("canplay", () => {
-			this._outputLogs && Logger.logDebug("Audio can play");
+			this.logDebug("Audio can play");
 
 			this.triggerEvent("canplay");
 		});
@@ -481,7 +472,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		// TODO: check if this is needed
 		// Media data loading has been suspended
 		$(this._audio).on("suspend", () => {
-			this._outputLogs && Logger.logDebug("Audio suspended");
+			this.logDebug("Audio suspended");
 
 			this.triggerEvent("suspend");
 		});
@@ -507,14 +498,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// The first frame of the media has finished loading
 		$(this._audio).on("loadeddata", () => {
-			this._outputLogs && Logger.logDebug("Audio loaded first frame data");
+			this.logDebug("Audio loaded first frame data");
 
 			this.triggerEvent("loadeddata");
 		});
 
 		// The metadata has been loaded
 		$(this._audio).on("loadedmetadata", async () => {
-			this._outputLogs && Logger.logDebug("Audio loaded metadata");
+			this.logDebug("Audio loaded metadata");
 
 			// Start the audio right when metadata loaded.
 			// Buffering is expected in some scenarios.
@@ -525,55 +516,54 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// Fired when the browser has started to load the resource
 		$(this._audio).on("loadstart", () => {
-			this._outputLogs && Logger.logDebug("Audio started loading data");
+			this.logDebug("Audio started loading data");
 		});
 
 		// The user agent is trying to fetch media data, but data is unexpectedly not forthcoming
 		$(this._audio).on("stalled", () => {
-			this._outputLogs &&
-				Logger.logWarn("Audio stalled (but still trying to play)");
+			this.logWarn("Audio stalled (but still trying to play)");
 		});
 
 		// The media has become empty; for example,
 		// this event is sent if the media has already been loaded (or partially loaded),
 		// and the `HTMLMediaElement.load` method is called to reload it
 		$(this._audio).on("emptied", () => {
-			this._outputLogs && Logger.logDebug("Audio emptied");
+			this.logDebug("Audio emptied");
 		});
 
 		// The rendering of an `OfflineAudioContext` is terminated
 		$(this._audio).on("complete", () => {
-			this._outputLogs && Logger.logDebug("Audio rendering completed");
+			this.logDebug("Audio rendering completed");
 		});
 
 		// The `duration` attribute has been updated
 		$(this._audio).on("durationchange", () => {
-			this._outputLogs && Logger.logWarn("Audio duration changed");
+			this.logWarn("Audio duration changed");
 		});
 
 		// A seek operation completed
 		$(this._audio).on("seeked", () => {
-			this._outputLogs && Logger.logDebug("Audio successfully seeked");
+			this.logDebug("Audio successfully seeked");
 		});
 
 		// A seek operation began
 		$(this._audio).on("seeking", () => {
-			this._outputLogs && Logger.logDebug("Audio is seeking");
+			this.logDebug("Audio is seeking");
 		});
 
 		// Playback has stopped because of a temporary lack of data
 		$(this._audio).on("waiting", () => {
-			this._outputLogs && Logger.logWarn("Audio is waiting for more data");
+			this.logWarn("Audio is waiting for more data");
 		});
 
 		// The resource was not fully loaded, but not as the result of an error
 		$(this._audio).on("abort", () => {
-			this._outputLogs && Logger.logWarn("Audio aborted");
+			this.logWarn("Audio aborted");
 		});
 
 		// Fired periodically as the browser loads a resource
 		$(this._audio).on("progress", () => {
-			this._outputLogs && Logger.logDebug("Audio load progressed");
+			this.logDebug("Audio load progressed");
 		});
 	}
 
@@ -606,7 +596,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		this._outputLogs && Logger.logDebug("Disposing audio source");
+		this.logDebug("Disposing audio source");
 
 		this._destroyed = true;
 
@@ -621,5 +611,17 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput = null;
 
 		this._canPlayCurrentSource = "";
+	}
+
+	private logDebug(message: string, ...optionalParams: any[]): void {
+		Logger.logDebug(`${this._logsPrefix} ${message}`, ...optionalParams);
+	}
+
+	private logWarn(message: string, ...optionalParams: any[]): void {
+		Logger.logWarn(`${this._logsPrefix} ${message}`, ...optionalParams);
+	}
+
+	private logError(message: string, ...optionalParams: any[]): void {
+		Logger.logError(`${this._logsPrefix} ${message}`, ...optionalParams);
 	}
 }

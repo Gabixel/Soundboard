@@ -145,7 +145,8 @@ class AudioStore extends EventTarget {
 			this._output.main,
 			this._output.playback,
 			audioSettings,
-			this._recycleCopies
+			this._recycleCopies,
+			`[${this._storageLimit == 1 ? "Primary" : "Parallel"} Audio List]`
 		);
 
 		// Store new index
