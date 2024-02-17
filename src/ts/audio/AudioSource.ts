@@ -437,7 +437,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		$(this._audio).on("ended", async (e, args = { forced: false }) => {
 			eventDebug(e, "Audio ended");
 
-			// TODO: revisit destroy logic
+			// TODO: revisit destroy logic (and rename to "dispose"?)
 			if (!this._preserve) {
 				this.destroy();
 			}
