@@ -431,14 +431,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 				this._audio.error
 			);
 
+			this.triggerEvent("error");
+
 			if (!this._preserve) {
 				this.destroy();
 			} else {
 				this._canPlayCurrentSource = "";
 				this.clearAudioSrc();
 			}
-
-			this.triggerEvent("error");
 		});
 
 		// Playback has stopped because the end of the media was reached
