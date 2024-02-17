@@ -290,7 +290,9 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		let needsToForceEnd = !isNaN(this.duration);
+		// We only care if there's audio, even if it's ended,
+		// because we want to completely wipe out the audio source.
+		let needsToForceEnd = this._betterSrc || !isNaN(this.duration);
 
 		if (!needsToForceEnd) {
 			return;
