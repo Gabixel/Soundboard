@@ -318,7 +318,12 @@ class AudioSource extends EventTarget implements IAudioControls {
 	}
 
 	public get ended(): boolean {
-		return this._audio.ended || this._betterSrc === undefined || this._destroyed;
+		return (
+			this._audio.ended ||
+			this._betterSrc === undefined ||
+			isNaN(this._audio.duration) ||
+			this._destroyed
+		);
 	}
 
 	/**
