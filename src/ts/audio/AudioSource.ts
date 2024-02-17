@@ -435,6 +435,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 				this.destroy();
 			} else {
 				this._canPlayCurrentSource = "";
+				this.clearAudioSrc();
 			}
 
 			this.triggerEvent("error");
