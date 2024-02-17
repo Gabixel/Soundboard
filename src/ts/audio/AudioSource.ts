@@ -290,14 +290,13 @@ class AudioSource extends EventTarget implements IAudioControls {
 			return;
 		}
 
-		let needsToForceEnd =
-			!this.ended && // ended also checks if the src is undefined
-			!isNaN(this.duration) &&
-			this.currentTime < this.duration;
+		let needsToForceEnd = !isNaN(this.duration);
 
 		if (!needsToForceEnd) {
 			return;
 		}
+
+		this.logDebug("Ending audio...");
 
 		this.clearAudioSrc();
 
@@ -548,7 +547,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// The `duration` attribute has been updated
 		$(this._audio).on("durationchange", (e) => {
-			eventWarn(e, "Audio duration changed");
+			eventDebug(e, "Audio duration changed");
 		});
 
 		// A seek operation completed
@@ -563,7 +562,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 
 		// Playback has stopped because of a temporary lack of data
 		$(this._audio).on("waiting", (e) => {
-			eventWarn(e, "Audio is waiting for more data");
+			eventDebug(e, "Audio is waiting for more data");
 		});
 
 		// The resource was not fully loaded, but not as the result of an error
