@@ -176,6 +176,14 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audio.pause();
 	}
 
+	/**
+	 * There's no real way to "stop" an audio in JavaScript.
+	 * Best/Easiest way to simulate it is to clear the `src` attribute,
+	 * but we have to do it the hard way, using `removeAttribute`,
+	 * or we will get a {@link MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED `MEDIA_ERR_SRC_NOT_SUPPORTED`} error back.
+	 * 
+	 * @see https://stackoverflow.com/a/39529112/16804863
+	 */
 	private clearAudioSrc(): void {
 		this._betterSrc = undefined;
 		this._audio.removeAttribute("src");
