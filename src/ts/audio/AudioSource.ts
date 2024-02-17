@@ -22,6 +22,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 	 */
 	private _preserve: boolean;
 
+	// TODO: revisit CanPlayTypeResult logic
 	private _canPlayCurrentSource: CanPlayTypeResult = "";
 
 	private _destroyed: boolean;
