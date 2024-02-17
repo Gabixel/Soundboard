@@ -339,14 +339,7 @@ class AudioSource extends EventTarget implements IAudioControls {
 		this._audioOutput.connectNode(this._sourceNode);
 	}
 
-	private async onTimeUpdate(
-		_e: JQuery.TriggeredEvent<
-			HTMLAudioElement,
-			undefined,
-			HTMLAudioElement,
-			HTMLAudioElement
-		>
-	): Promise<boolean> {
+	private async onTimeUpdate(_e: JQuery.TriggeredEvent): Promise<boolean> {
 		if (this._destroyed) {
 			return false;
 		}
