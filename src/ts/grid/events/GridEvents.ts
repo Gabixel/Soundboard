@@ -196,12 +196,12 @@ class GridEvents extends EventTarget {
 
 				if (notSuccesful) return;
 
+				e.preventDefault();
+				e.stopPropagation();
+
 				let $button = getTarget(e);
 
 				$button.trigger("dragleave");
-
-				e.preventDefault();
-				e.stopPropagation();
 
 				$button.removeClass("file-dragover");
 

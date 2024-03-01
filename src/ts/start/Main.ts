@@ -48,6 +48,11 @@ abstract class Main {
 		} else {
 			throw new TypeError("JQueryFixes is not available");
 		}
+		
+		// This prevents a new window from opening when a file is randomly dropped on the page
+		$(document).on("drop", (e) => {
+			e.preventDefault();
+		});
 
 		if (appPathRequest) {
 			await appPathRequest;

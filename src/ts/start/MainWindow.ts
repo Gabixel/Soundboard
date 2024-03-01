@@ -116,7 +116,8 @@ abstract class MainWindow extends Main {
 
 		// Setup context menu
 		// TODO: class?
-		$(document).on("contextmenu", () => {
+		$(document).on("contextmenu", (e) => {
+			e.preventDefault();
 			SoundboardApi.mainWindow.openContextMenu();
 		});
 
